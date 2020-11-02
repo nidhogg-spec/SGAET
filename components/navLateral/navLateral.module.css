@@ -1,6 +1,6 @@
 .NavLateralSquare{
     position: fixed;
-    padding: 20px 10px 0 10px;
+    padding: 20px 0 0 0;
     align-content: flex-start;
     justify-content: center;
     width: 15%;
@@ -12,8 +12,16 @@
     top: 100px;
 }
 .NavLateralModulos{
-    margin: 1rem 0 0 0;
+    margin: 1rem 10px 0 10px;
     display: grid;
     grid-template-columns: 10% 80% 10%;
     justify-items: center;
+}
+.NavLateralSubModulos{
+    background-color: #44A6DB;
+    width: 100%;
+    
+    padding: 10px 0 10px 50px;
+    display: grid;
+    grid-template-columns: auto;
 }
