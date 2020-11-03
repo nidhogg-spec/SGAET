@@ -13,5 +13,7 @@
     display: grid;
     grid-template-columns: auto;
     visibility: visible;
-    transition: 0.5s;
+    transition: height 1s, padding 1s,visibility 2s;
+    
+    
 }
