@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 import assert  from 'assert';
 import bcrypt from 'bcrypt';
-import v4 from ('uuid').v4;
+const v4 = require('uuid').v4;
 import jwt from 'jsonwebtoken';
 
 const jwtsecret='SUPERSECRET2020'
@@ -20,7 +20,8 @@ const client = new MongoClient(url,{
 
 function findUser(dbo, email, callback) {
     const collection = dbo.collection('Usuario');
-    collection.findOne({email}, callback);
+    // collection.findOne({email}, callback);
+    collection.findOne({email},{projection: {'_id':0,'Nombre':0,'apellido':0,'idUsuario':0,'Celular':0}}, callback);
   }
 
 function createUser(dbo, email, password, callback) {
@@ -29,7 +30,7 @@ function createUser(dbo, email, password, callback) {
         // Store hash in your password DB.
         collection.insertOne(
         {
-            userId: v4(),
+            idUsuario: v4(),
             email,
             password: hash,
         },
@@ -45,19 +46,19 @@ export default (req, res) => {
         //logueo
         try{
             //verificar si hay correo y pasdword sino no puede proceder
-            assert.notEqual(null, req.body.Correo, 'Email required')
-            assert.notEqual(null, req.body.Password, 'Password required')
+            assert.notEqual(null, req.body.email, 'Email required')
+            assert.notEqual(null, req.body.password, 'Password required')
         }catch (bodyError){
             res.status(403).json({error: true, message: bodyError.message});
         }
         //verificar si el email existe ya en la base de datos
-        db.connect(function(err){
+        client.connect(function(err){
             assert.equal(null,err);
             console.log('Connected to MognoDB server =>');
 
             const dbo = client.db(dbName);
-            const email = req.body.Correo;
-            const password = req.body.Password;
+            const email = req.body.email;
+            const password = req.body.password;
 
             findUser(dbo, email, function(err, user){
                 if(err){
