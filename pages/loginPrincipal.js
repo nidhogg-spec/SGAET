@@ -6,6 +6,10 @@ import Link from 'next/link';
 import cookie from 'js-cookie';
 import Router from 'next/router';
 
+//componenetes
+import Header from "../components/header/Header"
+import NavLateral from "../components/navLateral/NavLateral"
+
 
 export default function loginPrincipal() {
   //Perteneciente al handle del login
@@ -55,6 +59,7 @@ export default function loginPrincipal() {
 
       {loggedIn && (
         <>
+          
           <p>Bienvenido {data.email}!</p>
           <button
             onClick={() => {
