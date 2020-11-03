@@ -1,25 +1,107 @@
 import styles from "./navLateral.module.css";
+import Modulo from "./components/modulo"
 
 //Font awesome
 
-import Link from "next/link";
-
 export default function NavLateral() {
+  let datos=[
+    {
+      modulo: "Clientes",
+      svg:"account_box-black-18dp.svg",
+      subModulos:[
+        {
+            tipo:"link",
+            subModuloName:"Lista de clientes",
+            link:"#"
+        },{
+            tipo:"sub",
+            subModuloName:"",
+            subSubModulos:[
+                {subSubModuloName:"",
+                link:"#"}
+            ]
+        },
+      ] 
+    },
+    {
+      modulo: "Reserva",
+      svg:"calendar_today-black-18dp.svg",
+      subModulos:[
+        {
+            tipo:"link",
+            subModuloName:"Cotizacion",
+            link:"#"
+        },{
+            tipo:"link",
+            subModuloName:"Lista de reserva",
+            link:"#"
+        },{
+            tipo:"link",
+            subModuloName:"Programas turisticos",
+            link:"#"
+        },{
+            tipo:"link",
+            subModuloName:"Servicios",
+            link:"#"
+        },
+      ] 
+    },
+    {
+      modulo: "Proveedores",
+      svg:"book-black-18dp.svg",
+      subModulos:[
+        {
+            tipo:"link",
+            subModuloName:"Lista de proveedores",
+            link:"#"
+        },{
+          tipo:"link",
+          subModuloName:"Evaluacon de proveedores",
+          link:"#"
+        },
+      ]
+    },
+    {
+      modulo: "Biblia",
+      svg:"playlist_add_check-black-18dp.svg",
+      subModulos:[]
+    },
+    {
+      modulo: "Ordenes de Servicio",
+      svg:"assignment-black-18dp.svg",
+      subModulos:[]
+    },
+    {
+      modulo: "Finanzas",
+      svg:"attach_money-black-18dp.svg",
+      subModulos:[
+        {
+            tipo:"link",
+            subModuloName:"Ingresos",
+            link:"#"
+        },{
+            tipo:"link",
+            subModuloName:"Egresos",
+            link:"#"
+        },
+      ] 
+    },
+    {
+      modulo: "Administracion",
+      svg:"supervised_user_circle-black-18dp.svg",
+      subModulos:[]
+    },
+  ];
   return (
     <nav className={styles.NavLateralSquare}>
-      <div>
-        <div className={styles.NavLateralModulos}>
-          <img src="/resources/account_box-black-18dp.svg" />
-          Clientes
-          <img src="/resources/keyboard_arrow_down-black-18dp.svg" />
-        </div>
-        <div className={styles.NavLateralSubModulos}>
-          <Link href="">
-            <a>Lista de clientes</a>
-          </Link>
-        </div>
-      </div>
-      <div>
+      {datos.map((modulosData)=>(
+        <Modulo data={modulosData} key={datos.indexOf(modulosData)}/>
+      ))}      
+    </nav>
+  );
+}
+/*
+<div>
         <div className={styles.NavLateralModulos}>
           <img src="/resources/calendar_today-black-18dp.svg" />
           Reservas
@@ -106,6 +188,4 @@ export default function NavLateral() {
           </Link>
         </div>
       </div>
-    </nav>
-  );
-}
+*/

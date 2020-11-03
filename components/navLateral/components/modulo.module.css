@@ -1,0 +1,17 @@
+.NavLateralModulos{
+    margin: 0.5em 10px 0.5em 10px;
+    display: grid;
+    grid-template-columns: 10% 80% 10%;
+    justify-items: center;
+    
+}
+.NavLateralSubModulos{
+    background-color: #44A6DB;
+    width: 100%;
+    height: auto;
+    padding: 0.5em 0 0.5em 50px;
+    display: grid;
+    grid-template-columns: auto;
+    visibility: visible;
+    transition: 0.5s;
+}
