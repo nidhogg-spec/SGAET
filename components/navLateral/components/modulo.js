@@ -12,12 +12,14 @@ function AnimationSubModulos(e){
     
     if(x.style.visibility=="hidden"){
         let z =x.scrollHeight;
-        x.style.height="1rem"
+        x.style.height="auto"
         x.style.padding="0.5em 0 0.5em 50px"
+        x.style.opacity="100%"
         x.style.visibility="visible"
     }else{
         x.style.height="0"
         x.style.padding="0 0 0 0"
+        x.style.opacity="0%"
         x.style.visibility="hidden"
         //setTimeout(() => x.style.visibility="hidden",500)
         
