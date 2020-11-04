@@ -2,12 +2,13 @@ import {MongoClient} from 'mongodb'
 import assert  from 'assert';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+require('dotenv').config()
 
-const jwtSecret = 'SUPERSECRET2020';
+const jwtSecret = process.env.SECRET_KEY;
 
 // const saltRounds = 10;
-const url='mongodb+srv://lukuma_admin:T7NxWbbGiCZSkYV@lukuma.jtav6.gcp.mongodb.net'
-const dbName='inkatourtravelmanagmentsystemdb'
+const url= process.env.MONGODB_URI
+const dbName= process.env.MONGODB_DB
 
 const client = new MongoClient(url, {
   useNewUrlParser: true,
@@ -51,10 +52,6 @@ export default (req, res) => {
           return;
         } else {
           authUser(db, email, password, user.password, function(err, match) {
-            // console.log(user.password)
-            // console.log(password)
-            // console.log(email)
-            // console.log(match)
             if (err) {
               res.status(500).json({error: true, message: 'Auth Failed'});
             }

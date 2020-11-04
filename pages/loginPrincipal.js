@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import Link from 'next/link';
 import cookie from 'js-cookie';
 import Router from 'next/router';
+import styles from '../styles/login.module.css'
 
 //componenetes
 import Header from "../components/header/Header"
@@ -55,11 +56,10 @@ export default function loginPrincipal() {
   }
   return (
     <div>
-      <h1>Sistema de Gestion Administrativa de Empresas Turisticas</h1>
+      <h1 className={styles.loginHeader}>Sistema de Gestion Administrativa de Empresas Turisticas</h1>
 
       {loggedIn && (
         <>
-          
           <p>Bienvenido {data.email}!</p>
           <button
             onClick={() => {
@@ -72,24 +72,36 @@ export default function loginPrincipal() {
       )}
       {!loggedIn && (
         <>
-        <form onSubmit={handleSubmit}>
-          <p>Login</p>
-          <input
-            name="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            name="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <input type="submit" value="Submit" />
+        <form className={styles.formularioLogin} onSubmit={handleSubmit}>
+          <div className={styles.formularioLogin_correo}>
+            <label className={styles.formularioLogin_label}>
+              Correo
+            </label>
+            <input
+              className={styles.formularioLogin_input}
+              name="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className={styles.formularioLogin_password}>
+            <label className={styles.formularioLogin_label}>
+              Contraseña
+            </label>
+            <input
+              className={styles.formularioLogin_input}
+              name="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <input className={styles.formularioLogin_button} type="submit" value="Login" />
           {loginError && <p style={{color: 'red'}}>{loginError}</p>}
         </form>
-          <Link href="/signup">Sign Up</Link>
+          {/*Desactivar en caso se nesecite boton para activar el registro de usuarios*/}
+          {/* <Link href="/signup">Sign Up</Link> */}
         </>
       )}
     </div>

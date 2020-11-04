@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const jwtSecret = 'SUPERSECRET2020';
+const jwtSecret = process.env.SECRET_KEY;
 
 export default (req, res) => {
     if(req.method === 'GET'){

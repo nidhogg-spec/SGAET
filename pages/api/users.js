@@ -2,13 +2,14 @@ import { MongoClient } from 'mongodb';
 import assert  from 'assert';
 import bcrypt from 'bcrypt';
 const v4 = require('uuid').v4;
+require('dotenv').config()
 import jwt from 'jsonwebtoken';
 
-const jwtsecret='SUPERSECRET2020'
+const jwtsecret= process.env.SECRET_KEY;
 
 const saltRounds=10;
-const url='mongodb+srv://lukuma_admin:T7NxWbbGiCZSkYV@lukuma.jtav6.gcp.mongodb.net'
-const dbName='inkatourtravelmanagmentsystemdb'
+const url= process.env.MONGODB_URI
+const dbName= process.env.MONGODB_DB
 
 //cadena de conexion a la base de datos
 const client = new MongoClient(url,{
@@ -45,7 +46,7 @@ export default (req, res) => {
     if(req.method== 'POST'){
         //logueo
         try{
-            //verificar si hay correo y pasdword sino no puede proceder
+            //verificar si hay correo y password sino no puede proceder
             assert.notEqual(null, req.body.email, 'Email required')
             assert.notEqual(null, req.body.password, 'Password required')
         }catch (bodyError){

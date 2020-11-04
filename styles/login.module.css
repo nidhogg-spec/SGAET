@@ -1,0 +1,33 @@
+.loginHeader{
+    text-align: center;
+    color: #434343;
+}
+.formularioLogin{
+    display: grid;
+    grid-template: 1fr 1fr 1fr 1fr/ 25%;
+    row-gap: 20px;
+    justify-content: center;
+    align-content: center;
+}
+.formularioLogin_correo{
+    display: grid;
+    grid-template: 1fr 1fr / 1fr;
+}
+.formularioLogin_password{
+    display: grid;
+    grid-template: 1fr 1fr / 1fr;
+}
+.formularioLogin_label{
+    text-align: center;
+}
+.formularioLogin_input{
+    height: 40px;
+    background-color: rgba(174, 174, 174, 34%);
+    border-radius: 15px;
+}
+.formularioLogin_button{
+    justify-self: center;
+    width: 50%;
+    border-radius: 15px;
+    height:50%;
+}
