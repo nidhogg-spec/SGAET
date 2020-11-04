@@ -1,4 +1,6 @@
 import '../styles/globals.css'
+import Header from "../components/header/Header"
+import NavLateral from "../components/navLateral/NavLateral"
 
 //this import is using the next.config,js how we see we aren't specification the exact path
 
@@ -9,6 +11,8 @@ function MyApp({ Component, pageProps }) {
     */
    
     <>
+      <Header/>
+      <NavLateral/>
       <Component {...pageProps} />
     </>
   )

@@ -3,9 +3,6 @@ import useSWR from 'swr';
 import Router from 'next/router';
 import Link from 'next/link';
 
-//componenetes
-import Header from "../components/header/Header"
-import NavLateral from "../components/navLateral/NavLateral"
 
 export default function Home() {
     const {data, revalidate} = useSWR('/api/me', async function(args) {

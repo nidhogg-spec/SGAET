@@ -1,6 +1,4 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
-import Header from "../components/header/Header"
-import NavLateral from "../components/navLateral/NavLateral"
 
 class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -13,9 +11,7 @@ class MyDocument extends Document {
          <Head>
             <link rel="icon" href="/favicon.ico" />
         </Head>
-        <body>
-          <Header/>
-          <NavLateral/>
+        <body>          
           <div className="MainContainer">
           <Main />
           <NextScript />
