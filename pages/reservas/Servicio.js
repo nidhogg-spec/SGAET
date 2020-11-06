@@ -1,10 +1,18 @@
+//css
+import CustomStyles from "../../styles/Servicio.module.css"
 
 // import React,{useState,useEffect} from 'react'
 import MaterialTable from "material-table";
+import BotonAnadir from "../../components/BotonAnadir/BotonAnadir";
 
 export default function Home() {
   return (
     <div>
+        <div className={CustomStyles.tituloBox}>
+            <span className={CustomStyles.titulo}>Servicios</span>
+            <BotonAnadir/>
+        </div>
+        
       <MaterialTable
       columns={[
         { title: "Adı", field: "name" },

@@ -1,0 +1,9 @@
+.tituloBox{
+    display: flex;
+    align-items: center;
+        
+}
+.titulo{
+    padding: 15px 25px 15px 0px;
+    font-size: 35px;
+}

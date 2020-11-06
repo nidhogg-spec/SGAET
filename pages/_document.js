@@ -10,6 +10,7 @@ class MyDocument extends Document {
       <Html>
          <Head>
             <link rel="icon" href="/favicon.ico" />
+            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         </Head>
         <body>          
           <div className="MainContainer">

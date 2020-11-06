@@ -26,14 +26,26 @@ export default function Header(){
   }
   
     return(
-        <nav className = {styles.HeaderDiv}>
+        <header className = {styles.HeaderDiv}>
             <img src='/resources/logo.png' className={styles.HeaderLogo} />
+            <span className={styles.HeaderSideName} >{window.location.pathname.split("/")[1]}  </span>
             {loggedIn && (
+              <div>
                 <p>Bienvenido {data.email}!</p>
+                <button
+            onClick={() => {
+              cookie.remove('token');
+              revalidate();
+            }}>
+            Logout
+          </button>
+              </div>
+                
+                
             )}
             {!loggedIn &&(
                     <Link href="/loginPrincipal">Loguearse</Link>
             )}
-        </nav>
+        </header>
     )
 }

@@ -42,7 +42,7 @@ export default function NavLateral() {
         },{
             tipo:"link",
             subModuloName:"Servicios",
-            link:"#"
+            link:"/reservas/Servicio"
         },
       ] 
     },
