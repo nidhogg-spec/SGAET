@@ -4,6 +4,7 @@ import CustomStyles from "../../styles/Servicio.module.css"
 // import React,{useState,useEffect} from 'react'
 import MaterialTable from "material-table";
 import BotonAnadir from "../../components/BotonAnadir/BotonAnadir";
+import Modal from "../../components/Modal/Modal"
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
         <div className={CustomStyles.tituloBox}>
             <span className={CustomStyles.titulo}>Servicios</span>
             <BotonAnadir/>
+            {/* <Modal/> */}
         </div>
         
       <MaterialTable
