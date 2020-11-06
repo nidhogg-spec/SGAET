@@ -23,6 +23,10 @@ export default function Header(){
   let loggedIn = false;
   if (data.email) {
     loggedIn = true;
+  }else{
+    if(Router.route!="/loginPrincipal"){
+      Router.push("/loginPrincipal")
+    }
   }
   
     return(
@@ -45,6 +49,7 @@ export default function Header(){
             )}
             {!loggedIn &&(
                     <Link href="/loginPrincipal">Loguearse</Link>
+                    
             )}
         </header>
     )
