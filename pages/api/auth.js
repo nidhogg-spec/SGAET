@@ -22,7 +22,6 @@ function findUser(db, email, callback) {
 
 function authUser(db, email, password, hash, callback) {
   bcrypt.compare(password, hash, callback);
-  console.log(hash)
 }
 
 export default (req, res) => {
@@ -56,15 +55,14 @@ export default (req, res) => {
               res.status(500).json({error: true, message: 'Auth Failed'});
             }
             if (match) {
-              console.log(match)
+              const rolToken = user.rol;
               const token = jwt.sign(
-                {userId: user.userId, email: user.email},
+                {userId: user.userId, email: user.email, rol: user.rol},
                 jwtSecret,
                 {
                   expiresIn: 3000, //50 minutes
-                },
-              );
-              res.status(200).json({token});
+                })
+              res.status(200).json({token,rolToken});
               return;
             } else {
               res.status(401).json({error: true, message: 'Auth Failed'});

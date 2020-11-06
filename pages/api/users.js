@@ -16,16 +16,16 @@ const client = new MongoClient(url,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-// const collection = dbo.collection('Usuario');
+
 //--------------------------------------------------------------------//
 
 function findUser(dbo, email, callback) {
     const collection = dbo.collection('Usuario');
-    // collection.findOne({email}, callback);
+
     collection.findOne({email},{projection: {'_id':0,'Nombre':0,'apellido':0,'idUsuario':0,'Celular':0}}, callback);
   }
 
-function createUser(dbo, email, password, callback) {
+function createUser(dbo, email, password,rol, callback) {
     const collection = dbo.collection('Usuario');
     bcrypt.hash(password, saltRounds, function(err, hash) {
         // Store hash in your password DB.
@@ -34,6 +34,7 @@ function createUser(dbo, email, password, callback) {
             idUsuario: v4(),
             email,
             password: hash,
+            rol,
         },
         function(err, userCreated) {
             assert.equal(err, null);
@@ -60,6 +61,7 @@ export default (req, res) => {
             const dbo = client.db(dbName);
             const email = req.body.email;
             const password = req.body.password;
+            const rol = req.body.rol;
 
             findUser(dbo, email, function(err, user){
                 if(err){
@@ -68,7 +70,7 @@ export default (req, res) => {
                 }
                 if(!user){
                     //creamos usuario
-                    createUser(dbo,email,password,function(creationResult){
+                    createUser(dbo,email,password,rol,function(creationResult){
                         if(creationResult.ops.lenght === 1){
                             const user = creationResult.ops[0];
                             const token = jwt.sign(

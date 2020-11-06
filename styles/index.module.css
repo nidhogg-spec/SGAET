@@ -1,0 +1,8 @@
+.indexLoguearse{
+    display: grid;
+    grid-template: 1fr / 1fr;
+    width: 15%;
+    text-align: center;
+    margin-left:35%;
+    background-color: rgba(174, 174, 174, 34%);
+}
