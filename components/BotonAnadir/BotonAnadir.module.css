@@ -1,0 +1,8 @@
+.BotonAnadir{
+    display: flex;
+    background-color: #78B525;
+    width: fit-content;
+    height: 100%;
+    border-radius: 25px;
+    padding: 5px 10px 5px 10px;
+}
