@@ -42,7 +42,9 @@ export default function Home() {
         title="Demo Title"
         actions={[
           {
-            icon: "save",
+            icon: () =>{
+              return <img src="/resources/add-black-18dp.svg"/>
+            },
             tooltip: "Save User",
             // onClick: (event, rowData) => alert("You saved " + rowData.name)
           },
