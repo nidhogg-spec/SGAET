@@ -26,8 +26,6 @@ export default function Home() {
       birthCity: 63,
     },
   ];
-  const url= process.env.MONGODB_URI
-  console.log(process.env)
   // console.log(process)
   return (
     <div>
@@ -61,15 +59,3 @@ export default function Home() {
     </div>
   );
 }
-
-function getData(TipoData){
-  const url= process.env.MONGODB_URI
-  const dbName= process.env.MONGODB_DB
-
-  //cadena de conexion a la base de datos
-  const client = new MongoClient(url,{
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    return url;
-} 
