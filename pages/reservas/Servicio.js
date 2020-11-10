@@ -1,6 +1,6 @@
 //packege
 import fetch from 'isomorphic-unfetch';
-
+import router from 'next/router'
 //css
 import CustomStyles from "../../styles/Servicio.module.css";
 
@@ -25,20 +25,18 @@ let PedirDatos = ()=>{
   })
 }
 let datosTabla = () =>{
-   fetch('/api/servicios',{
-    method:'GET',
-    headers:{'Content-Type': 'application/json'},
-  })
+  fetch('http://localhost:3000/api/servicios')
   .then(r=> r.json())
   .then(data=>{
     let Datos=[]
-    data.result.map((datosResult)=>{
-      Datos.push({
-        name: datosResult.idServicio,
-        TipoServicio: datosResult.TipoServicio,
-        NombreServicio: datosResult.NombreServicio,
-      })
-    })
+    console.log(data)
+    // data.result.map((datosResult)=>{
+    //   Datos.push({
+    //     name: datosResult.idServicio,
+    //     TipoServicio: datosResult.TipoServicio,
+    //     NombreServicio: datosResult.NombreServicio,
+    //   })
+    // })
     return Datos
     // let Datos = [
     //   {
@@ -60,15 +58,7 @@ let datosTabla = () =>{
 }
 
 
-export default async function Home() {
-  
-  let Columnas = [
-    { title: "Id", field: "name" },
-    { title: "Nombre del Servicio", field: "NombreServicio" },
-    { title: "Tipo del Servicio", field: "TipoServicio"},
-  ];
-  let Datos=[]
-  // Datos = datosTabla()
+function Servicio({Columnas,Datos}) {
   
   // fetch('/api/servicios',{
   //   method:'GET',
@@ -140,3 +130,32 @@ export default async function Home() {
     </div>
   );
 }
+export async function getStaticProps(){
+  let Columnas = [
+    { title: "Id", field: "name" },
+    { title: "Nombre del Servicio", field: "NombreServicio" },
+    { title: "Tipo del Servicio", field: "TipoServicio"},
+  ];
+  let Datos=[]
+  console.log(process.env.API_DOMAIN)
+  
+  await fetch(process.env.API_DOMAIN+'/api/servicios')
+  .then(r=> r.json())
+  .then(data=>{
+    console.log(data)
+    data.result.map((datosResult)=>{
+        Datos.push({
+          name: datosResult.idServicio,
+          TipoServicio: datosResult.TipoServicio,
+          NombreServicio: datosResult.NombreServicio,
+        })
+      })
+  })
+  console.log(Datos)
+  return {
+    props:{
+      Columnas: Columnas, Datos:Datos
+    }}
+}
+
+export default Servicio;
