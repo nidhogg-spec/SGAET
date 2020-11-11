@@ -42,6 +42,7 @@ export default (req, res) => {
       const password = req.body.password;
 
       findUser(db, email, function(err, user) {
+        console.log(user)
         if (err) {
           res.status(500).json({error: true, message: 'Error finding User'});
           return;
