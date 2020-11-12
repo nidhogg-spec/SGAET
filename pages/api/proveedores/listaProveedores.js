@@ -17,16 +17,6 @@ function getData2(dbo,callback){
     const collection = dbo.collection("Proveedor");
     collection.find({}).toArray(callback);
 }
-// const findDocuments = function(db, callback) {
-//     // Get the documents collection
-//     const collection = db.collection('Proveedor');
-//     // Find some documents
-//     collection.find({}).toArray(function(err, docs) {
-//       console.log("Found the following records");
-//       console.log(docs)
-//       console.log(docs.nombre)
-//     });
-//   }
 
 export default (req, res) =>{
     if(req.method == 'POST'){

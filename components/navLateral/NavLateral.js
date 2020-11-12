@@ -53,7 +53,7 @@ export default function NavLateral() {
         {
             tipo:"link",
             subModuloName:"Lista de proveedores",
-            link:"#"
+            link:"/Proveedores"
         },{
           tipo:"link",
           subModuloName:"Evaluacon de proveedores",
