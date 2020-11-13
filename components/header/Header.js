@@ -46,10 +46,6 @@ export default function Header(){
               </div>
                 
             )}
-            {!loggedIn &&(
-                    <Link href="/loginPrincipal">Loguearse</Link>
-                    
-            )}
         </header>
     )
 }
