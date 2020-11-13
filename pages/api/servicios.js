@@ -26,7 +26,7 @@ export default  (req, res) => {
             let dbo = client.db(dbName);
             
             let idServicio = req.body.idServicio;
-            console.log(req.body)
+            // console.log(req.body)
             let collection = dbo.collection(coleccion);
             // collection.findOne(idServicio)
             collection.find({},{projection:{
@@ -41,22 +41,40 @@ export default  (req, res) => {
                 client.close()
             })
         })
-    }else if(req.method === 'POST'){
-        client.connect((error)=>{
-            // assert.equal(err, null); // Preguntar
-            let dbo = client.db(dbName);
-            
-            let idServicio = req.body.idServicio;
-            console.log(req.body)
-            let collection = dbo.collection(coleccion);
-            // collection.findOne(idServicio)
-            collection.findOne({idServicio},(err,result)=>{
-                if(err){
-                    throw err
-                }
-                res.status(200).json({result});
-                client.close()
+    }else if(req.method == 'POST'){
+        if(req.body.type=='modalFindOne'){
+            client.connect((error)=>{
+                // assert.equal(err, null); // Preguntar
+                let dbo = client.db(dbName);
+                let idServicio = req.body.idServicio;
+                console.log(req.body)
+                let collection = dbo.collection(coleccion);
+                collection.findOne({idServicio},(err,result)=>{
+                    if(err){
+                        throw err
+                    }
+                    res.status(200).json({result});
+                    client.close()
+                })
             })
-        })
+        }else{
+            client.connect((error)=>{
+                // assert.equal(err, null); // Preguntar
+                let dbo = client.db(dbName);
+                
+                let idServicio = req.body.idServicio;
+                console.log(req.body)
+                let collection = dbo.collection(coleccion);
+                // collection.findOne(idServicio)
+                collection.findOne({idServicio},(err,result)=>{
+                    if(err){
+                        throw err
+                    }
+                    res.status(200).json({result});
+                    client.close()
+                })
+            })
+        }
+        
     }
 };

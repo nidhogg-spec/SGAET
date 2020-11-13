@@ -8,7 +8,8 @@ import CustomStyles from "../../styles/Servicio.module.css";
 // import React,{useState,useEffect} from 'react'
 import MaterialTable from "material-table";
 import BotonAnadir from "../../components/BotonAnadir/BotonAnadir";
-import Modal from "../../components/Modal/Modal";
+import Tabla from "../../components/TablaModal/Tabla";
+
 
 
 let PedirDatos = ()=>{
@@ -59,8 +60,50 @@ let datosTabla = () =>{
 
 
 function Servicio({Columnas,Datos}) {
+
+  return (
+    <div>
+      <div className={CustomStyles.tituloBox}>
+        <span className={CustomStyles.titulo}>Servicios</span>
+        <BotonAnadir />
+        <Tabla Columnas={Columnas} Datos={Datos} />
+      </div>
+
+      
+    </div>
+  );
+}
+export async function getStaticProps(){
+  let Columnas = [
+    { title: "Id", field: "name" },
+    { title: "Nombre del Servicio", field: "NombreServicio" },
+    { title: "Tipo del Servicio", field: "TipoServicio"},
+  ];
+  let Datos=[]
+  console.log(process.env.API_DOMAIN)
   
-  // fetch('/api/servicios',{
+  await fetch(process.env.API_DOMAIN+'/api/servicios')
+  .then(r=> r.json())
+  .then(data=>{
+    // console.log(data)
+    data.result.map((datosResult)=>{
+        Datos.push({
+          name: datosResult.idServicio,
+          TipoServicio: datosResult.TipoServicio,
+          NombreServicio: datosResult.NombreServicio,
+        })
+      })
+  })
+  // console.log(Datos)
+  return {
+    props:{
+      Columnas: Columnas, Datos:Datos
+    }}
+}
+
+export default Servicio;
+
+ // fetch('/api/servicios',{
   //   method:'GET',
         
   // })
@@ -87,75 +130,3 @@ function Servicio({Columnas,Datos}) {
   
 
   // console.log(process)
-  return (
-    <div>
-      <div className={CustomStyles.tituloBox}>
-        <span className={CustomStyles.titulo}>Servicios</span>
-        <BotonAnadir />
-        <Modal />
-        
-      </div>
-
-      <MaterialTable
-        columns={Columnas}
-        data={Datos}
-        title="Servicios"
-        actions={[
-          {
-            icon: () =>{
-              return <img src="/resources/remove_red_eye-24px.svg"/>
-            },
-            tooltip: "Save User",
-            // onClick: (event, rowData) => alert("You saved " + rowData.name)
-          },
-          (rowData) => ({
-            icon: () =>{
-              return <img src="/resources/delete-black-18dp.svg"/>
-            },
-            tooltip: "Delete User",
-            // onClick: (event, rowData) => confirm("You want to delete " + rowData.name)
-          }),
-          {
-            icon: () =>{
-              return <img src="/resources/edit-black-18dp.svg"/>
-            },
-            tooltip: "Save User",
-            // onClick: (event, rowData) => alert("You saved " + rowData.name)
-          },
-        ]}
-        options={{
-          actionsColumnIndex: -1,
-        }}
-      />
-    </div>
-  );
-}
-export async function getStaticProps(){
-  let Columnas = [
-    { title: "Id", field: "name" },
-    { title: "Nombre del Servicio", field: "NombreServicio" },
-    { title: "Tipo del Servicio", field: "TipoServicio"},
-  ];
-  let Datos=[]
-  console.log(process.env.API_DOMAIN)
-  
-  await fetch(process.env.API_DOMAIN+'/api/servicios')
-  .then(r=> r.json())
-  .then(data=>{
-    console.log(data)
-    data.result.map((datosResult)=>{
-        Datos.push({
-          name: datosResult.idServicio,
-          TipoServicio: datosResult.TipoServicio,
-          NombreServicio: datosResult.NombreServicio,
-        })
-      })
-  })
-  console.log(Datos)
-  return {
-    props:{
-      Columnas: Columnas, Datos:Datos
-    }}
-}
-
-export default Servicio;
