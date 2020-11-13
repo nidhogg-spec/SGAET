@@ -12,61 +12,13 @@ import Tabla from "../../components/TablaModal/Tabla";
 
 
 
-let PedirDatos = ()=>{
-  fetch('/api/servicios',{
-    method:'POST',
-    headers:{'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      idServicio:"001"
-    })
-  })
-  .then(r=> r.json())
-  .then(data=>{
-    console.log(data)
-  })
-}
-let datosTabla = () =>{
-  fetch('http://localhost:3000/api/servicios')
-  .then(r=> r.json())
-  .then(data=>{
-    let Datos=[]
-    console.log(data)
-    // data.result.map((datosResult)=>{
-    //   Datos.push({
-    //     name: datosResult.idServicio,
-    //     TipoServicio: datosResult.TipoServicio,
-    //     NombreServicio: datosResult.NombreServicio,
-    //   })
-    // })
-    return Datos
-    // let Datos = [
-    //   {
-    //     name: data.idServicio,
-    //     TipoServicio: data.TipoServicio,
-    //     NombreServicio: data.NombreServicio,
-    //   },
-    // ];
-    
-    // data.result.map((datosResult)=>{
-    //   Datos.push({
-    //     name: data.idServicio,
-    //     TipoServicio: data.TipoServicio,
-    //     NombreServicio: data.NombreServicio,
-    //   })
-    // })
-    // console.log(Datos)
-  })
-}
-
-
-function Servicio({Columnas,Datos}) {
-
+function Servicio({Columnas,Datos,APIpath}) {
   return (
     <div>
       <div className={CustomStyles.tituloBox}>
         <span className={CustomStyles.titulo}>Servicios</span>
         <BotonAnadir />
-        <Tabla Columnas={Columnas} Datos={Datos} />
+        <Tabla Columnas={Columnas} Datos={Datos} APIpath={APIpath} TipoModal={"Servicio"} />
       </div>
 
       
@@ -74,21 +26,23 @@ function Servicio({Columnas,Datos}) {
   );
 }
 export async function getStaticProps(){
+  const APIpath=process.env.API_DOMAIN+'/api/servicios';
+
   let Columnas = [
-    { title: "Id", field: "name" },
+    { title: "Id", field: "IdPrincipal" },
     { title: "Nombre del Servicio", field: "NombreServicio" },
     { title: "Tipo del Servicio", field: "TipoServicio"},
   ];
   let Datos=[]
   console.log(process.env.API_DOMAIN)
   
-  await fetch(process.env.API_DOMAIN+'/api/servicios')
+  await fetch(APIpath)
   .then(r=> r.json())
   .then(data=>{
     // console.log(data)
     data.result.map((datosResult)=>{
         Datos.push({
-          name: datosResult.idServicio,
+          IdPrincipal: datosResult.idServicio,
           TipoServicio: datosResult.TipoServicio,
           NombreServicio: datosResult.NombreServicio,
         })
@@ -97,7 +51,7 @@ export async function getStaticProps(){
   // console.log(Datos)
   return {
     props:{
-      Columnas: Columnas, Datos:Datos
+      Columnas: Columnas, Datos:Datos, APIpath:APIpath
     }}
 }
 
@@ -130,3 +84,50 @@ export default Servicio;
   
 
   // console.log(process)
+
+  
+// let PedirDatos = ()=>{
+//   fetch('/api/servicios',{
+//     method:'POST',
+//     headers:{'Content-Type': 'application/json'},
+//     body: JSON.stringify({
+//       idServicio:"001"
+//     })
+//   })
+//   .then(r=> r.json())
+//   .then(data=>{
+//     console.log(data)
+//   })
+// }
+// let datosTabla = () =>{
+//   fetch('http://localhost:3000/api/servicios')
+//   .then(r=> r.json())
+//   .then(data=>{
+//     let Datos=[]
+//     console.log(data)
+//     // data.result.map((datosResult)=>{
+//     //   Datos.push({
+//     //     name: datosResult.idServicio,
+//     //     TipoServicio: datosResult.TipoServicio,
+//     //     NombreServicio: datosResult.NombreServicio,
+//     //   })
+//     // })
+//     return Datos
+//     // let Datos = [
+//     //   {
+//     //     name: data.idServicio,
+//     //     TipoServicio: data.TipoServicio,
+//     //     NombreServicio: data.NombreServicio,
+//     //   },
+//     // ];
+    
+//     // data.result.map((datosResult)=>{
+//     //   Datos.push({
+//     //     name: data.idServicio,
+//     //     TipoServicio: data.TipoServicio,
+//     //     NombreServicio: data.NombreServicio,
+//     //   })
+//     // })
+//     // console.log(Datos)
+//   })
+// }

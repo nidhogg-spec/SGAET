@@ -1,47 +1,54 @@
+//Package
 import styles from "./Modal.module.css";
-// import fetch from 'isomorphic-unfetch';
 import React, { useEffect, useState } from "react";
 
-export default function Modal(props) {
-  //hooks
-  
-  const [TipoModal, setTipoModal] = useState(props.ModalType);
-  const [Data, setData] = useState({});
-  const [Id, setId] = useState(props.Id);
-  const [Coleccion, setColeccion] = useState("");
-  const [Accion, setAccion] = useState("");
-  const [Display, setDisplay] = useState("none");
+//Componentes
+import CampoTexto from './CampoTexto/CampoTexto'
 
-  // let Data={};
-  
-  // useEffect(() => {
-  //   console.log("Funciona el use effect weeeeeeeeeeeee")
-  //   if(Accion=="ObtenerDatos"){
-  //     getData();
-  //   }
-  // });
-  useEffect(async ()=>{
-       
+
+export default function Modal(props) {
+//Los siguientes datos deberian de estar en props para su correcto funcionamiento:
+//     TipoModal
+//     Id
+//     APIpath
+//     
+//El desarrollador no se hace responsable de su mal uso :v  
+  //hooks
+
+ 
+  const [TipoModal, setTipoModal] = useState(props.TipoModal);
+  const [Data, setData] = useState({NombreServicio:""});
+  // const [Id, setId] = useState(props.Id);
+  const [APIpath, setAPIpath] = useState(props.APIpath);
+  const [Accion, setAccion] = useState("ver");
+  // const [Display, setDisplay] = useState(props.Display);
+  console.log(APIpath)
+
+  useEffect(async ()=>{   
     // setId(props.Id)
     // setTipoModal(props.ModalType)
     // setDisplay(props.ModalDisplay)
-
-    let result = await fetch("http://localhost:3000/api/servicios",{
+    console.log(APIpath)
+    let result = await fetch(APIpath,{
       method:'POST',
       mode:'cors',
       headers: {'Content-Type':'application/json'},
       body:JSON.stringify({
-        "idServicio":"001",
+        "idServicio":props.Id,
         "type":'modalFindOne'
       })
+    }).catch(()=>{
+      alert("error al obtener datos del servicio escogido");
+      
     })
-    
     result.json().then(data=>{
-      setData(data.result)
+      if(data.result){
+        setData(data.result)
+      }else{
+        setData({NombreServicio:""})
+      }
+      
     })
-    console.log(Data)
-    setId(props.Id)
-    
   },[props.Id])
   useEffect(()=>{
     let modal = document.getElementById("myModalXD");
@@ -53,25 +60,48 @@ export default function Modal(props) {
     }
   },[props.Display])
   
-  return (
-    <div
-      id="myModalXD"
-      className={styles.Modal}
-      onClick={(event) => {
-        let modal = document.getElementById("myModalXD");
-        // console.log(modal);
-        if (event.target == modal) {
-          // modal.style.display = "none";
-          props.MostrarModal(false)
-        }
-      }}
-      // style={`"display: ${Display};"`}
-    >
-      <div className={styles.Modal_content}>
-        {Id}
+  switch (TipoModal) {
+    case "Proveedores":
+      return ;
+      break;
+    case "Servicio":
+      return(<div
+        id="myModalXD"
+        className={styles.Modal}
+        onClick={(event) => {
+          let modal = document.getElementById("myModalXD");
+          if (event.target == modal) {
+            props.MostrarModal(false)
+          }
+        }}
+      >
+        <div className={styles.Modal_content}>
+          <CampoTexto Title="Nombre del Servicio" ModoEdicion={false} Dato={Data.NombreServicio} />
+        </div>
       </div>
-    </div>
-  );
+      );
+      break;
+  
+    default:
+      return <div></div>
+      break;
+  }
+  // return (
+  //   <div
+  //     id="myModalXD"
+  //     className={styles.Modal}
+  //     onClick={(event) => {
+  //       let modal = document.getElementById("myModalXD");
+  //       if (event.target == modal) {
+  //         props.MostrarModal(false)
+  //       }
+  //     }}
+  //   >
+  //     <div className={styles.Modal_content}>
+  //       <CampoTexto Title="Nombre del Servicio" ModoEdicion={false} Dato={Data.NombreServicio} />
+  //     </div>
+  //   </div>
+  // );
 }
 
 // class Modal extends Component {
