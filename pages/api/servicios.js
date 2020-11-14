@@ -51,7 +51,8 @@ export default  (req, res) => {
                 let collection = dbo.collection(coleccion);
                 collection.findOne({idServicio},(err,result)=>{
                     if(err){
-                        throw err
+                        res.status(500).json({error:true, message: 'un error .v'})
+                        return;
                     }
                     res.status(200).json({result});
                     client.close()

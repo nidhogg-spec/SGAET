@@ -24,11 +24,12 @@ const CampoTexto = (props) => {
     if(ModoEdicion==true){
         return ( 
             <div>
-        
+                <span>{props.Title}</span>
+                <input value={Dato}/>
             </div> );
     }else{
         return ( 
-            <div>
+            <div className={styles.divMadre}>
                 <span>{props.Title}</span>
                 <span>{Dato}</span>
             </div> 

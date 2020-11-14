@@ -20,13 +20,20 @@ function getData2(dbo,callback){
 
 export default (req, res) =>{
     if(req.method == 'POST'){
+        
         client.connect(function(err){
             console.log('Connected to MognoDB server =>');
             const dbo = client.db(dbName);
             const coleccion = req.body.coleccion;
-            getData(dbo,coleccion, function(err, data){
-                res.status(200).json({data})
-                client.close;
+            const collection = dbo.collection("Proveedor");
+            collection.findOne({idProveedor:req.body.idProveedor},(err,result)=>{
+                if(err){
+                    res.status(500).json({error:true, message: 'un error .v'})
+                    client.close()
+                    return;
+                }
+                res.status(200).json({result});
+                client.close()
             })
         })
     }
