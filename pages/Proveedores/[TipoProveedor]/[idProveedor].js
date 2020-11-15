@@ -49,7 +49,7 @@ export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
         <div>
           <span>{DatosProveedor.nombre}</span> 
           <img src="/resources/save-black-18dp.svg" onClick={()=>{
-            setDevolverDato(true)
+            setDevolverDato(true) 
         }} 
           />
           <div className = {styles.divDatosPrincipal}>
