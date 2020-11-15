@@ -117,6 +117,7 @@ export async function getServerSideProps(context) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       idProveedor: uruId,
+      accion: "findOne",
     }),
   })
     .then((r) => r.json())
