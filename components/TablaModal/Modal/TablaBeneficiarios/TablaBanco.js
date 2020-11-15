@@ -1,7 +1,16 @@
 //css
 import styles from './TablaBanco.module.css'
+import React, { useState, useEffect } from 'react';
 
 const TablaBanco = (props) => {
+    const [ModoEdicion, setModoEdicion] = useState();
+    
+    useEffect(()=>{
+        if(props.DarDato==true){
+            props.DevolverDatoFunct(props.KeyDato,props.datosbanc)
+        }
+    },[props.DarDato])
+
     return ( 
         <>
             <span>Numero de cuentas bancarias</span>

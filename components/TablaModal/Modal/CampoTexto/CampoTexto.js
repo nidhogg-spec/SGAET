@@ -20,6 +20,13 @@ const CampoTexto = (props) => {
     useEffect(()=>{
         setDato(props.Dato)
     },[props.Dato])
+    useEffect(()=>{
+        if(props.DarDato==true){
+            console.log("Devolviendo dato "+props.KeyDato+":"+Dato)
+            props.DevolverDatoFunct(props.KeyDato,Dato)
+            // console.log("Devolviendo dato "+props.KeyDato+":"+Dato)
+        }
+    },[props.DarDato])
     
     if(ModoEdicion==true){
         return ( 

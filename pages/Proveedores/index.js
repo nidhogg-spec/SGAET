@@ -45,7 +45,20 @@ export default function Home({Columnas, Datos}){
                   return <img src="/resources/delete-black-18dp.svg"/>
                 },
                 tooltip: "Delete Proveedor",
-                // onClick: (event, rowData) => alert("You saved " + rowData.name)
+                onClick: (event, rowData) => {
+                  fetch('http://localhost:3000/api/proveedores/listaProveedores',{
+                    method:"POST",
+                    headers:{"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                      idProveedor: rowData.id,
+                      accion: "delete",
+                    }),
+                  })
+                  .then(r=>r.json())
+                  .then(data=>{
+                    alert(data.message);
+                  })
+                }
               },
             ]}
             options={{
