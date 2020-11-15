@@ -49,8 +49,20 @@ export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
         <div>
           <span>{DatosProveedor.nombre}</span> 
           <img src="/resources/save-black-18dp.svg" onClick={()=>{
+            setEdicion(false)
             setDevolverDato(true)
-        }} 
+          }} 
+          />
+          <img src="/resources/edit-black-18dp.svg" onClick={(event)=>{
+            if(Edicion==false){
+              event.target.src="/resources/close-black-18dp.svg"
+              setEdicion(true)
+            }else{
+              event.target.src="/resources/edit-black-18dp.svg"
+              setEdicion(false)
+            }
+            
+          }} 
           />
           <div className = {styles.divDatosPrincipal}>
             <div className={styles.ServiciosPersonalizados}>
@@ -86,7 +98,7 @@ export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
                 />
                 <CampoTexto
                   Title="Email"
-                  ModoEdicion={Edicion}
+                  ModoEdicion={true}
                   DevolverDatoFunct={RegistrarDato}
                   DarDato={DevolverDato}
                   KeyDato="email"
