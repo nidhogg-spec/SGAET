@@ -66,7 +66,7 @@ export default (req, res) =>{
                         return;
                     }
                     console.log("Actualizacion satifactoria");
-                    res.status(200).json({message:"Todo bien, todo correcto,  Actualizacion satifactoria"});
+                    res.status(200).json({message:"Todo bien, todo correcto, Actualizacion satifactoria"});
                     client.close()
                 })
             })
