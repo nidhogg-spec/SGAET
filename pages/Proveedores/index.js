@@ -28,16 +28,8 @@ export default function Home({Columnas, Datos}){
                   return <img src="/resources/remove_red_eye-24px.svg"/>
                 },
                 tooltip: "Show Proveedor",
-                // pathname: '/Proveedores/[tipoProveedor]',
-                // query: {tipoProveedor: rowData.tipo},
                 onClick: (event, rowData,) => Router.push({
                   pathname: `/Proveedores/${rowData.tipo}/${rowData.id}`,
-                  // pathname: `/Proveedores/${rowData.tipo}/[tipoProveedor]`,
-                  // // query: {TipoProveedor: rowData.tipo},
-                  // query: {tipoProveedor: rowData.id},
-                  // query: {tipoProveedor: rowData.id},
-                  // pathname: `/Proveedores/[tipoProveedor]`,
-                  // query: {tipoProveedor: rowData.tipo},
                 })
               },
               {

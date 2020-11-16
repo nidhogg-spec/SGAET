@@ -1,7 +1,6 @@
 import MaterialTable from "material-table";
 
 export default function Restaurante({Datos,Columnas}){
-    console.log(id)
     return(
         <div>
             <MaterialTable
