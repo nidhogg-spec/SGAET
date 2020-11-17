@@ -9,7 +9,7 @@ const client = new MongoClient(url,{
     useUnifiedTopology: true,
   });
 function getData2(dbo,callback){
-    const collection = dbo.collection("ProductoGuias");
+    const collection = dbo.collection("ProductoTransFerroviario");
     collection.find({}).toArray(callback);
 }
 
