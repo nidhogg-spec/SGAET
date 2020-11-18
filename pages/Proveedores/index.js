@@ -11,7 +11,7 @@ import Modal from '@/components/TablaModal/Modal/Modal'
 
 export default function Home({Columnas, Datos,APIpath}){
     //Variables
-    const [ModalDisplay,setModalDisplay]=useState(true)
+    const [ModalDisplay,setModalDisplay]=useState(false)
 
     //Funciones
     const AccionBoton = () =>{
