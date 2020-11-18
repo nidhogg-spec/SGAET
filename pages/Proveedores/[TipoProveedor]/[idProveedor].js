@@ -8,14 +8,11 @@ import React, { useEffect, useState, useCallback } from "react";
 import TablaBanco from "@/components/TablaModal//Modal/TablaBeneficiarios/TablaBanco";
 import CampoTexto from "@/components/TablaModal/Modal/CampoTexto/CampoTexto";
 
-<<<<<<< HEAD
 import { dark } from "@material-ui/core/styles/createPalette";
 
 const APIpath = process.env.API_DOMAIN+"/api/proveedores/listaProveedores";
 
 
-=======
->>>>>>> main
 export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
   //Variables
   const [Edicion, setEdicion] = useState(false);
