@@ -7,9 +7,10 @@ import React, { useEffect, useState, useCallback } from "react";
 //componentes
 import TablaBanco from "@/components/TablaModal//Modal/TablaBeneficiarios/TablaBanco";
 import CampoTexto from "@/components/TablaModal/Modal/CampoTexto/CampoTexto";
+
 import { dark } from "@material-ui/core/styles/createPalette";
 
-
+const APIpath = process.env.API_DOMAIN+"/api/proveedores/listaProveedores";
 
 
 export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
@@ -20,7 +21,7 @@ export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
   const router = useRouter();
   const { idProveedor, TipoProveedor } = router.query;
 
-  //Funccion
+  //Funciones
   const RegistrarDato = (keyDato, Dato) =>{
     DataEdit[keyDato]=Dato;
   }
@@ -28,7 +29,7 @@ export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
     if(DevolverDato==true){
       console.log(DataEdit)
       setDevolverDato(false)
-        fetch('http://localhost:3000/api/proveedores/listaProveedores',{
+        fetch(APIpath,{
                 method:"POST",
                 headers:{"Content-Type": "application/json"},
                 body: JSON.stringify({

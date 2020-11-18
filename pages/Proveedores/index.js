@@ -3,18 +3,30 @@ import fetch from 'isomorphic-unfetch';
 import MaterialTable from "material-table";
 import Router from 'next/router'
 
+//Componentes
+import BotonAnadir from '@/components/BotonAnadir/BotonAnadir'
+import Modal from '@/components/TablaModal/Modal/Modal'
 
 
-export default function Home({Columnas, Datos}){
-    // Datos.map((result)=>{
-    //   console.log(result.tipo)
-    // })
+
+export default function Home({Columnas, Datos,APIpath}){
+    //Variables
+    const [ModalDisplay,setModalDisplay]=useState(true)
+
+    //Funciones
+    const AccionBoton = () =>{
+      setModalDisplay(true)
+    }
+    const MostrarModal=(x)=>{
+      setModalDisplay(x)
+  }
     return (
         <div>
+            <Modal Display= {ModalDisplay} MostrarModal={MostrarModal} APIpath={APIpath} TipoModal={"Proveedores"}/>
             <MaterialTable
             columns={Columnas}
             data={Datos}
-            title="Lista de Proovedores"
+            title={<span>Lista de Proveedores <BotonAnadir Accion={AccionBoton}/> </span>}
             actions= {[
               {
                 icon: () =>{
@@ -38,7 +50,7 @@ export default function Home({Columnas, Datos}){
                 },
                 tooltip: "Delete Proveedor",
                 onClick: (event, rowData) => {
-                  fetch('http://localhost:3000/api/proveedores/listaProveedores',{
+                  fetch(APIpath,{
                     method:"POST",
                     headers:{"Content-Type": "application/json"},
                     body: JSON.stringify({
@@ -62,6 +74,8 @@ export default function Home({Columnas, Datos}){
     )
 }
 export async function getStaticProps() {
+  const APIpath = process.env.API_DOMAIN+"/api/proveedores/listaProveedores";
+  
   let Columnas = [
     { title: "ID", field: "id" },
     { title: "Nomber Proovedores", field: "proveedor" },
@@ -84,6 +98,6 @@ export async function getStaticProps() {
   })
   return {
     props:{
-      Columnas: Columnas, Datos:Datos
+      Columnas: Columnas, Datos:Datos,APIpath:APIpath
     }}
 }
