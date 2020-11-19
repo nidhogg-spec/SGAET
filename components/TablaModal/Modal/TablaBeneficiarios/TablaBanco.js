@@ -12,7 +12,7 @@ const TablaBanco = (props) => {
     //comunicacion con padre
     const [ObtenerDatos, setObtenerDatos] = useState();
     const [DevolverDato, setDevolverDato] = useState(false);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(props.datosbanc ? (props.datosbanc.Bancos || []) : []);
     const [Edicion, setEdicion] = useState(props.ModoEdicion);
 
 
@@ -22,15 +22,11 @@ const TablaBanco = (props) => {
         setEdicion(props.ModoEdicion)
     }, [props.ModoEdicion]);
 
-    useEffect(() => {
-        setData(props.datosbanc.Bancos)
-    }, [props.datosbanc.Bancos]);
-
     useEffect(()=>{
         if(props.DarDato==true){
             RegistBancos =[] 
             data.map(dt =>{
-                RegistBancos.push({Nombre:dt.NombreBanco,Cuenta:dt.nCuentaBanco,CCI:dt.CCI})
+                RegistBancos.push({Nombre:dt.Nombre,Cuenta:dt.Cuenta,CCI:dt.CCI})
             })
             DataRegist["Bancos"]=RegistBancos;
             props.DevolverDatoFunct(props.KeyDato,DataRegist)
@@ -60,7 +56,7 @@ const TablaBanco = (props) => {
                         DevolverDatoFunct={RegistrarDato}
                         DarDato={props.DarDato}
                         KeyDato="Beneficiario"
-                        Dato={props.datosbanc.Beneficiario}
+                        Dato={props.datosbanc ? props.datosbanc.Beneficiario : ""}
                     />
                     <CampoTexto 
                         Title="RUC"
@@ -68,7 +64,7 @@ const TablaBanco = (props) => {
                         DevolverDatoFunct={RegistrarDato}
                         DarDato={props.DarDato}
                         KeyDato="RUC"
-                        Dato={props.datosbanc.RUC}
+                        Dato={props.datosbanc ? props.datosbanc.RUC : ""}
                     />
                 </div>
                 <MaterialTable
@@ -110,81 +106,6 @@ const TablaBanco = (props) => {
 
                 />
             </div>
-
-                // <span>Numero de cuentas bancarias</span>
-                // <div className={styles.DataCuentasBancarias}>
-                //     <span >Beneficiario</span><input className={styles.spanDoble} value={props.datosbanc.Beneficiario || "Nor Found"}/>
-                //         <input value={banco.Nombre}/>
-                //         <input value={banco.Cuenta}/>
-                //         <input value={banco.CCI}/>
-
-                //     <span>RUC</span><span className={styles.spanDoble}> {props.datosbanc.RUC || "Nor Found"} </span>
-                //     <span>Direccion Registrada</span><span className={styles.spanDoble}> {props.datosbanc.DireccionRegistrada || "Nor Found"} </span>
-                // </div>
-            
         );
-    // }else{
-    //     columnas=[
-    //         {title: 'Nombre del Banco', field: 'Nombre'},
-    //         {title: 'Cuenta Bancaria', field: 'Cuenta'},
-    //         {title: 'CCI', field: 'CCI'},
-    //     ]
-    //     return ( 
-    //         <div>
-    //             <span className={styles.DataCuentasBancarias}>Numero de cuentas bancarias</span>
-    //             <div className={styles.CamposDeTexto}>
-    //                 <CampoTexto 
-    //                     Title="Beneficiario"
-    //                     ModoEdicion={Edicion}
-    //                     DevolverDatoFunct={RegistrarDato}
-    //                     DarDato={props.DarDato}
-    //                     KeyDato="Beneficiario"
-    //                     Dato={{}}
-    //                 />
-    //                 <CampoTexto 
-    //                     Title="RUC"
-    //                     ModoEdicion={Edicion}
-    //                     DevolverDatoFunct={RegistrarDato}
-    //                     DarDato={props.DarDato}
-    //                     KeyDato="RUC"
-    //                     Dato={{}}
-    //                 />
-    //                 <CampoTexto 
-    //                     Title="Direccion Registrada"
-    //                     ModoEdicion={Edicion}
-    //                     DevolverDatoFunct={RegistrarDato}
-    //                     DarDato={props.DarDato}
-    //                     KeyDato="DireccionRegistrada"
-    //                     Dato={{}}
-    //                 />
-    //             </div>
-                
-    //             <MaterialTable
-    //                 title="Datos de Cuentas Bancarias"
-    //                 columns={columnas}
-    //                 data={props.datosbanc.Bancos}
-    //             />
-    //         </div>
-    //      );
-    // }
-}
-const InputBanco = (props) => {
-    const [Nombre, setNombre] = useState(props.Nombre || "");
-    const [Cuenta, setCuenta] = useState(props.Cuenta || "");
-    const [CCI, setCCI] = useState(props.CCI || "");
-    eEffect(()=>{
-        if(DevolverDato==true){
-          props.FuncionDevolver(Nombre,Cuenta,CCI)
-          setDevolverDato(false)
-        }
-      },[props.DevolverDato])
-
-    return (
-        <>
-            <input value={Nombre} onChange={(event)=> setNombre(event.target.value)}/>
-            <input value={Cuenta} onChange={(event)=> setCuenta(event.target.value)}/>
-            <input value={CCI} onChange={(event)=> setCCI(event.target.value)}/>
-        </>
-    );
-}
+    }
 export default TablaBanco;
