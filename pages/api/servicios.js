@@ -1,9 +1,6 @@
 import { MongoClient } from "mongodb";
-import assert from "assert";
-import bcrypt from "bcrypt";
-const v4 = require("uuid").v4;
 require("dotenv").config();
-import jwt from "jsonwebtoken";
+
 
 const jwtsecret = process.env.SECRET_KEY;
 
@@ -61,7 +58,7 @@ export default async (req, res) => {
             let collection = dbo.collection(coleccion);
             collection.findOne({ idServicio }, (err, result) => {
               if (err) {
-                res.status(500).json({ error: true, message: "un error .v" });
+                res.status(500).json({ error: true, message: "un error 1 .v" });
                 return;
               }
               res.status(200).json({ result });
@@ -72,45 +69,52 @@ export default async (req, res) => {
         case "Create":
           // Intentando generar id
           let IdNumero = 1;
+          client = new MongoClient(url, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+          });
           try {
-            client = new MongoClient(url, {
-              useNewUrlParser: true,
-              useUnifiedTopology: true,
-            });
             await client.connect();
             let collection = client.db(dbName).collection(coleccion);
-            const options = {
-              sort: { idProveedor: -1 },
-            };
+
+            const options = {sort: {}};
+            options.sort[keyId]=-1;
             const result = await collection.findOne({}, options);
+            console.log(result)
             if (result) {
               IdNumero = parseInt(result[keyId].slice(2), 10);
+              IdNumero++
             }
             req.body.data[keyId] =
               IdLetras +
               ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
             // console.log(req.body.data[keyId]);
           } catch (error) {
-            console.log("error - " + error);
-          } finally {
-            client.close();
+            console.log("error 1 - " + error);
           }
           //Enviando Datos
+          client = new MongoClient(url, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+          });
           try {
-            client = new MongoClient(url, {
-              useNewUrlParser: true,
-              useUnifiedTopology: true,
-            });
             await client.connect();
             let collection = client.db(dbName).collection(coleccion);
-            await collection.insertOne(req.body.data, function (err, res) {
-              if (err) throw err;
+            await collection.insertOne(req.body.data, function (err, result) {
+              if (err) {
+                res.status(500).json({ error: true, message: "un error 2 .v "+err });
+                // client.close();
+                return;
+              }
               console.log("Insercion completada");
+              res.status(200).json({
+                message: "Todo bien, todo correcto, Insercion satifactoria"
+              });
             });
           } catch (error) {
-            console.log("error - " + error);
-          } finally {
-            client.close();
+            console.log("error 2 - " + error);
+          }finally{
+            await client.close()
           }
           break;
         default:
@@ -130,22 +134,18 @@ export default async (req, res) => {
         };
         let query = {};
         query[keyId] = req.body.idProveedor;
-        collection.updateOne(
-            query,
-          dataActu,
-          (err, result) => {
-            if (err) {
-              res.status(500).json({ error: true, message: "un error .v" });
-              client.close();
-              return;
-            }
-            console.log("Actualizacion satifactoria");
-            res.status(200).json({
-              message: "Todo bien, todo correcto, Actualizacion satifactoria",
-            });
+        collection.updateOne(query, dataActu, (err, result) => {
+          if (err) {
+            res.status(500).json({ error: true, message: "un error .v" });
             client.close();
+            return;
           }
-        );
+          console.log("Actualizacion satifactoria");
+          res.status(200).json({
+            message: "Todo bien, todo correcto, Actualizacion satifactoria",
+          });
+          client.close();
+        });
       });
       break;
     case "DELETE":
