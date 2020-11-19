@@ -3,6 +3,7 @@ import styles from "@/globalStyles/Proveedor.module.css";
 import TablaProveedores from "../../../components/ContactoProveedor/ContactoProveedor";
 import MaterialTable from "material-table";
 import React, { useEffect, useState, useCallback } from "react";
+import { MongoClient } from "mongodb";
 
 //componentes
 import TablaBanco from "@/components/TablaModal//Modal/TablaBeneficiarios/TablaBanco";
@@ -163,7 +164,7 @@ export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
             ></MaterialTable>
             {/* <TablaProveedores/> */}
           </div>
-        // </div>
+         </div>
       );
       break;
     case "Restaurante" :
@@ -491,20 +492,91 @@ export async function getServerSideProps(context) {
       ]
       break;
   }
-  
-  await fetch(process.env.API_DOMAIN + "/api/proveedores/listaProveedores", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      idProveedor: uruId,
-      accion: "findOne",
-    }),
-  })
-    .then((r) => r.json())
-    .then((data) => {
-      // console.log(data);
-      DatosProveedor = data.result;
+  /*---------------------------------------------------------------------------------*/
+  const url = process.env.MONGODB_URI;
+  const dbName = process.env.MONGODB_DB;
+  let client = new MongoClient(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  let productos=[]
+  let collectionName=""
+  try {
+    console.log('mongo xdxdxdxd')
+    await client.connect()
+    let collection = client.db(dbName).collection('Proveedor');
+    let result = await collection.findOne(
+      { idProveedor: uruId, }
+    );
+    // DatosProveedor = JSON.stringify(result);
+    result._id=JSON.stringify(result._id)
+    DatosProveedor = result
+
+  } catch (error) {
+    console.log("Error cliente Mongo 1 => "+error)
+  } finally{
+    client.close()
+  }
+  switch (provDinamico) {
+    case 'hotel':
+      collectionName='ProductoHoteles'
+      break;
+    case 'restaurante':
+      collectionName='ProductoRestaurantes'
+      break;
+    case 'transporte':
+      collectionName='ProductoTranportes'
+      break;
+    case 'guia':
+      collectionName='ProductoGuias'
+      break;
+    case 'agencia':
+      collectionName='ProductoAgencias'
+      break;
+    default:
+      collectionName='ProductoOtros'
+      break;
+  }
+  /* Obtener los productos */
+  try {
+    console.log("mongo 2 xdxdxdxd")
+    client = new MongoClient(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
+    await client.connect()
+    let collection = client.db(dbName).collection(collectionName);
+    let result = await collection.find(
+      { idProveedor: uruId, }
+    );
+    // result.map(product =>{
+    //   productos.push(producto)
+    // })
+    console.log(result)
+    result.forEach(product => {
+      console.log(product)
+    });
+
+  } catch (error) {
+    console.log("Error cliente Mongo 2 => "+error)
+  }
+
+
+  /*---------------------------------------------------------------------------------*/
+
+  // await fetch(process.env.API_DOMAIN + "/api/proveedores/listaProveedores", {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({
+  //     idProveedor: uruId,
+  //     accion: "findOne",
+  //   }),
+  // })
+  //   .then((r) => r.json())
+  //   .then((data) => {
+  //     // console.log(data);
+  //     DatosProveedor = data.result;
+  //   });
   await fetch(process.env.API_DOMAIN + `/api/proveedores/${provDinamico}`)
     .then((r) => r.json())
     .then((data1) => {
