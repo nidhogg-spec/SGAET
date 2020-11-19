@@ -34,6 +34,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
     case "hotel":
       Columnas= [
         // { title: "Destino", field: "destino", defaultGroupOrder: 0 },
+        { title: "ID Producto Hotel", field: "IdProductoHotel" },
         { title: "tipoTarifa", field: "tipoTarifa" },
         { title: "TipoHabitacion", field: "tipoHabitacion" },
         { title: "Precio Publicado", field: "precioPubli" },
@@ -340,7 +341,6 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                       alert(data.message);
                     })
                   setDatosEditables([...datosEditables, newData]);
-                  
                   resolve();
                 }, 1000)
               }),
@@ -351,15 +351,19 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                   const index = oldData.tableData.id;
                   dataUpdate[index] = newData;
                   setDatosEditables([...dataUpdate]);
+                  
+                  delete dataUpdate[index]._id
 
-                  console.log([...dataUpdate])
-                  console.log("este dato weeee"+index)
+                  // console.log(dataUpdate[index])
+                  // console.log(dataUpdate[index].IdProductoHotel)
+                  // console.log("este dato weeee"+index)
+                  // console.log()
                   
                   fetch("http://localhost:3000/api/proveedores/hotel",{
                     method:"POST",
                     headers:{"Content-Type": "application/json"},
                     body: JSON.stringify({
-                      idProveedor: index,
+                      idProducto: dataUpdate[index].IdProductoHotel,
                       data: dataUpdate[index],
                       accion: "update",
                     }),
@@ -375,11 +379,28 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             onRowDelete: oldData =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const dataDelete = [...data];
+                  const dataDelete = [...datosEditables];
                   const index = oldData.tableData.id;
                   dataDelete.splice(index, 1);
-                  setData([...dataDelete]);
-                  
+                  setDatosEditables([...dataDelete]);
+
+                  console.log(dataDelete[index])
+                  console.log(dataDelete[index].IdProductoHotel)
+
+                  fetch("http://localhost:3000/api/proveedores/hotel",{
+                    method:"POST",
+                    headers:{"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                      idProducto: dataDelete[index].IdProductoHotel,
+                      data: dataDelete[index],
+                      accion: "delete",
+                    }),
+                  })
+                  .then(r=>r.json())
+                  .then(data=>{
+                    alert(data.message);
+                  })
+
                   resolve()
                 }, 1000)
               }),
