@@ -156,9 +156,9 @@ export async function getStaticProps() {
   .then(data1=>{
     data1.data.map((datosResult)=>{
         Datos.push({
-          idProveedor:datosResult.idProveedor,
-          nombre: datosResult.nombre,
-          ubicacion: datosResult.ubicacion,
+          id:datosResult.idProveedor,
+          proveedor: datosResult.nombre,
+          ubicacion: datosResult.direccionRegistrada,
           tipo: datosResult.tipo,
         })
       })
