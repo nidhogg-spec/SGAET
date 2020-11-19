@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 //Componentes
 import CampoTexto from './CampoTexto/CampoTexto'
 import TablaBanco from './TablaBeneficiarios/TablaBanco'
+import Selector from './Selector/Selector'
 
 
 export default function Modal(props) {
@@ -77,11 +78,12 @@ export default function Modal(props) {
         if(DevolverDato==true){
           console.log(DataRegist)
           setDevolverDato(false)
+            console.log(DataRegist)
             fetch(APIpath,{
                     method:"POST",
                     headers:{"Content-Type": "application/json"},
                     body: JSON.stringify({
-                      tipoProveedor:TipoProveedor,
+                      tipoProveedor: DataRegist.tipo,
                       accion: "create",
                       data: DataRegist
                     }),
@@ -105,23 +107,118 @@ export default function Modal(props) {
         }
       }}>
         <div className={styles.Modal_content}>
-          <select onChange={(event)=>{
-            setTipoProveedor(event.target.value)
-          }}>
-            <option value="Hotel" selected>Hotel</option>
-            <option value="Agencia">Agencia</option>
-            <option value="Guia">Guia</option>
-            <option value="Transporte terrestre">Transporte terrestre</option>
-            <option value="Restaurante">Restaurante</option>
-            <option value="Transporte ferroviario">Transporte ferroviario</option>
-            <option value="Otro">Hotel</option>
-          </select>
+          
           <img src="/resources/save-black-18dp.svg" onClick={()=>{
             setDevolverDato(true)
           }} />
           <img src="/resources/close-black-18dp.svg"/>
         <div className={styles.divContacto}>
               <span>Datos de Contacto</span>
+              <div className={styles.DatosProveedor}>
+                <CampoTexto
+                  Title="Nombre del Proveedor"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="nombre"
+                  Dato={""}
+                />
+                <Selector
+                  Title="Tipo de Proveedor"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="tipo"
+                  Dato={"Hotel"}
+                  SelectOptions={[
+                    {value:'Hotel',texto:'Hotel'},
+                    {value:'Agencia',texto:'Agencia'},
+                    {value:'Guia',texto:'Guia'},
+                    {value:'TransporteTerrestre',texto:'Transporte Terrestre'},
+                    {value:'Restaurante',texto:'Restaurante'},
+                    {value:'TransporteFerroviario',texto:'Transporte Ferroviario'},
+                    {value:'Otro',texto:'Otro'},
+                  ]}
+                />
+                <Selector
+                  Title="Tipo de Documento"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="TipoDocumento"
+                  Dato={"RUC"}
+                  SelectOptions={[
+                    {value:'DNI',texto:'DNI'},
+                    {value:'RUC',texto:'RUC'}
+                  ]}
+                />
+                <CampoTexto
+                  Title="Numero de Documento"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="NroDocumento"
+                  Dato={""}
+                />
+                <Selector
+                  Title="Tipo de Moneda"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="TipoMoneda"
+                  Dato={"Dolar"}
+                  SelectOptions={[
+                    {value:'Sol',texto:'Soles'},
+                    {value:'Dolar',texto:'Dolares'}
+                  ]}
+                />
+                <CampoTexto
+                  Title="Enlace al Documento"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="EnlaceDocumento"
+                  Dato={""}
+                />
+                <CampoTexto
+                  Title="Gerente General"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="GerenteGeneral"
+                  Dato={""}
+                />
+                <CampoTexto
+                  Title="Numero de estrellas"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="NEstrellas"
+                  Dato={""}
+                />
+                <CampoTexto
+                  Title="Enlace a Pagina web"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="Web"
+                  Dato={""}
+                />
+                <Selector
+                  Title="Estado"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="Estado"
+                  Dato={1}
+                  SelectOptions={[
+                    {value:0,texto:'Inactivo'},
+                    {value:1,texto:'Activo'}
+                  ]}
+                />
+              </div>
+              
+              
               <div className={styles.DataContacto}>
                 <CampoTexto
                   Title="Razon Social"

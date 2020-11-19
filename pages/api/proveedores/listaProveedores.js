@@ -118,7 +118,12 @@ export default async (req, res) => {
         } finally {
           client.close();
         }
-        
+        client = new MongoClient(url, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        });
+        await client.connect();
+        let collection = client.db(dbName).collection(coleccion);
         collection.insertOne(req.body.data, (err, result) => {
           if (err) {
             res.status(500).json({ error: true, message: "un error .v" });

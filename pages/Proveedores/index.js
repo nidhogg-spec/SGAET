@@ -91,7 +91,7 @@ export async function getStaticProps() {
         Datos.push({
           id:datosResult.idProveedor,
           proveedor: datosResult.nombre,
-          ubicacion: datosResult.ubicacion,
+          ubicacion: datosResult.direccionRegistrada,
           tipo: datosResult.tipo,
         })
       })
