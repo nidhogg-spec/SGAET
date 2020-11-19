@@ -204,6 +204,14 @@ export default function Modal(props) {
                   KeyDato="Web"
                   Dato={""}
                 />
+                <CampoTexto
+                  Title="Destino donde esta el proveedor"
+                  ModoEdicion={true}
+                  DevolverDatoFunct={RegistrarDato}
+                  DarDato={DevolverDato}
+                  KeyDato="Destino"
+                  Dato={""}
+                />
                 <Selector
                   Title="Estado"
                   ModoEdicion={true}
