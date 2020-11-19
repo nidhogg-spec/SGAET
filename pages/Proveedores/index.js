@@ -144,8 +144,8 @@ export async function getStaticProps() {
   const APIpath = process.env.API_DOMAIN+"/api/proveedores/listaProveedores";
   
   let Columnas = [
-    { title: "ID", field: "idProveedor" },
-    { title: "Nombre Proovedores", field: "nombre" },
+    { title: "ID", field: "id" },
+    { title: "Nombre Proovedores", field: "proveedor" },
     { title: "Ubicacion Proovedor", field: "ubicacion" },
     { title: "Tipo de Proovedor", field: "tipo" },
   ];

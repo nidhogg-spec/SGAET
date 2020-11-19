@@ -28,13 +28,11 @@ export default function TipoProveedor({ Datos, DatosProveedor }) {
 
   const provDinamico = TipoProveedor.toLowerCase()
 
-  console.log(Datos)
 
   switch(provDinamico){
     case "hotel":
       Columnas= [
         // { title: "Destino", field: "destino", defaultGroupOrder: 0 },
-        { title: "Destino", field: "destino" },
         { title: "tipoTarifa", field: "tipoTarifa" },
         { title: "TipoHabitacion", field: "tipoHabitacion" },
         { title: "Precio Publicado", field: "precioPubli" },
@@ -206,32 +204,48 @@ export default function TipoProveedor({ Datos, DatosProveedor }) {
           <div>
             <MaterialTable
               columns={Columnas}
-              data={Datos}
+              data={datosEditables}
               title="Productos del hotel"
                 editable={{
                 onRowAdd: newData =>
                 new Promise ((resolve,reject) => {
-                  // console.log(newData)
-                  // console.log(datosEditables)
-                  setTimeout(()=>{
+                  setTimeout(() => {
+
                     fetch('http://localhost:3000/api/proveedores/hotel',{
-                    method:"POST",
-                    headers:{"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                      data: newData,
-                      accion: "create",
-                    }),
-                  })
+                      method:"POST",
+                      headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        data: newData,
+                        accion: "create",
+                      }),
+                    })
                   .then(r=>r.json())
                   .then(data=>{
                   })
                     setDatosEditables([...datosEditables, newData])
+                    
                     resolve();
-                  },1000)
+
+                  }, 1000)
                 }),
                 onRowUpdate: (newData, oldData)=>
                   new Promise((resolve, reject)=>{
                     setTimeout(()=>{
+                      const dataUpdate = [...datosEditables];
+                      const index = oldData.tableData.id;
+                      dataUpdate[index] = newData;
+                      setDatosEditables([...dataUpdate])
+
+                      fetch('http://localhost:3000/api/proveedores/hotel',{
+                        method:"POST",
+                        headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          data: newData,
+                          idProveedor: idProveedor,
+                          accion: "update",
+                        }),
+                      })
+                      resolve();
 
                     },1000)
                   }),
@@ -244,9 +258,8 @@ export default function TipoProveedor({ Datos, DatosProveedor }) {
               }}
               options={{
                 actionsColumnIndex: -1,
-                grouping: true
               }}
-            ></MaterialTable>
+            />
             {/* <TablaProveedores/> */}
           </div>
          </div>
@@ -505,81 +518,15 @@ export default function TipoProveedor({ Datos, DatosProveedor }) {
   }
 }
 export async function getServerSideProps(context) {
- 
-  var Datos = [];
-  let DatosProveedor = {};
-  const uruId = context.query.idProveedor;
-  const provDinamico = context.query.TipoProveedor.toLowerCase()
-  /*----------------------------------------------------------------*/
-  /*Variables para capturar valores de los hoteles debido a que estan en documentos separados en mongo*/
-  let dest = ""
-  let tiptar = ""
-  let ig  = ""
-  /*----------------------------------------------------------------*/
-   /*Variables para capturar valores de los Tranporte debido a que estan en documentos separados en mongo*/
-   let serv = ""
-   /*----------------------------------------------------------------*/
-  let Columnas = [];
 
-  // switch(provDinamico){
-  //   case "hotel":
-  //     Columnas= [
-  //       { title: "Destino", field: "destino", defaultGroupOrder: 0 },
-  //       { title: "tipoTarifa", field: "tipoTarifa" },
-  //       { title: "TipoHabitacion", field: "tipoHabitacion" },
-  //       { title: "Precio Publicado", field: "precioPubli" },
-  //       { title: "Precio Confidencial", field: "precioConfi" },
-  //       { title: "IGV", field: "igv" },
-  //     ]
-  //     break;
-  //   case "restauranet":
-  //     Columnas= [
-  //       { title: "Servicio", field: "servicio" },
-  //       { title: "Precio", field: "precio" },
-  //       { title: "Caracteristicas", field: "caracte" },
-  //     ]
-  //     break;
-  //   case "transporte":
-  //     Columnas=[
-  //       { title: "Servicio", field: "servicio", defaultGroupOrder: 0 },
-  //       { title: "Horario", field: "horario" },
-  //       { title: "Tipo de Vehiculo", field: "tipvehiculo" },
-  //       { title: "Precio Soles", field: "PrecioSoles" },
-  //       { title: "Precio Dolares", field: "PrecioDolares" },
-  //     ]
-  //     break;
-  //   case "guia":
-  //     Columnas=[
-  //       { title: "Direccion", field: "direccion" },
-  //       { title: "DNI", field: "dni" },
-  //       { title: "Idiomas", field: "idiomas" },
-  //       { title: "Asociacion", field: "asociacion" },
-  //       { title: "N° Carne", field: "carne" },
-  //       { title: "Fecha Expedicion", field: "fecExpedi" },
-  //       { title: "Fecha Caducidad", field: "fecCaduc" }
-  //     ]
-  //     break;
-  //   case "agencia":
-  //     Columnas=[
-  //       { title: "Servicio", field: "servicio" },
-  //       { title: "Precio Confidencial", field: "precioConfi" },
-  //       { title: "Precio Publicado", field: "precioPubli" },
-  //       { title: "Incluye", field: "incluye" },
-  //       { title: "Duracion", field: "duracion" },
-  //       { title: "Observacion", field: "observacion" }
-  //     ]
-  //     break;
-  //   case "transferroviario":
-  //     Columnas=[
-  //       { title: "Servicio", field: "servicio" },
-  //       { title: "Precio Confidencial", field: "precioConfi" },
-  //       { title: "Precio Publicado", field: "precioPubli" },
-  //       { title: "Incluye", field: "incluye" },
-  //       { title: "Duracion", field: "duracion" },
-  //       { title: "Observacion", field: "observacion" }
-  //     ]
-  //     break;
-  // }
+  var Datos = [];
+
+  let DatosProveedor = {};
+
+  const uruId = context.query.idProveedor;
+
+  const provDinamico = context.query.TipoProveedor.toLowerCase()
+
   /*---------------------------------------------------------------------------------*/
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
@@ -587,7 +534,6 @@ export async function getServerSideProps(context) {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  let productos=[]
   let collectionName=""
   try {
     console.log('mongo xdxdxdxd')
@@ -626,49 +572,6 @@ export async function getServerSideProps(context) {
       collectionName='ProductoOtros'
       break;
   }
-  function getData(dbo, callback) {
-    const collection = dbo.collection(collectionName);
-    collection.find({}).toArray(callback);
-  }
-  /* Obtener los productos en Variable Datos*/
-  // try {
-  //   console.log("mongo 2 xdxdxdxd")
-  //   client = new MongoClient(url, {
-  //     useNewUrlParser: true,
-  //     useUnifiedTopology: true,
-  //   });
-  //   client.connect(function (err) {
-  //     console.log("Connected to MognoDB server =>");
-  //     const dbo = client.db(dbName);
-
-  //     getData(dbo, function (err, result) {
-  //       if (err) {
-  //         res.status(500).json({ error: true, message: "un error .v" });
-  //         client.close();
-  //         return;
-  //       }
-  //       // console.log(result)
-  //       Datos=result
-        
-  //       client.close;
-  //     });
-  //   });
-    // await client.connect()
-    // let collection = client.db(dbName).collection(collectionName);
-    // let result = await collection.find(
-    //   { idProveedor: uruId, }
-    // );
-    // // result.map(product =>{
-    // //   productos.push(producto)
-    // // })
-    // console.log(result)
-    // // result.forEach(product => {
-    // //   console.log(product)
-    // // });
-  //   console.log(Datos)
-  // } catch (error) {
-  //   console.log("Error cliente Mongo 2 => "+error)
-  // }
   try {
     console.log('mongo 2 xdxdxdxd')
     client = new MongoClient(url, {
@@ -678,123 +581,23 @@ export async function getServerSideProps(context) {
     await client.connect()
     let collection = client.db(dbName).collection(collectionName);
     let result = await collection.find({}).toArray();
-    // DatosProveedor = JSON.stringify(result);
-    
-    Datos = JSON.stringify(result)
 
-    console.log(Datos)
+    // DatosProveedor = JSON.stringify(result);
+    // Datos = JSON.stringify(result)
+
+    result.map(x => {
+       x._id= JSON.stringify(x._id)
+    })
+    Datos=result
+
+    // console.log(Datos)
   } catch (error) {
     console.log("Error cliente Mongo 2 => "+error)
   } finally{
     client.close()
   }
-  /*---------------------------------------------------------------------------------*/
-
-  // await fetch(process.env.API_DOMAIN + "/api/proveedores/listaProveedores", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({
-  //     idProveedor: uruId,
-  //     accion: "findOne",
-  //   }),
-  // })
-  //   .then((r) => r.json())
-  //   .then((data) => {
-  //     // console.log(data);
-  //     DatosProveedor = data.result;
-  //   });
-
-  /* Obtener los productos */
-
-  // await fetch(process.env.API_DOMAIN + `/api/proveedores/${provDinamico}`)
-  //   .then((r) => r.json())
-  //   .then((data1) => {
-  //     switch(provDinamico){
-  //       case 'hotel':
-  //         data1.data.map((datosResult) => {
-  //           if (uruId == datosResult.idProveedor) {
-  //             if(datosResult.PrecioConfi == undefined){
-  //               dest = datosResult.destino
-  //               tiptar = datosResult.tipoTarifa
-  //               ig = datosResult.IGV
-  //             }
-  //             if(datosResult.PrecioPubli !== undefined && datosResult.PrecioConfi !== undefined){
-  //               Datos.push({
-  //                 destino: dest,
-  //                 tipoTarifa: tiptar,
-  //                 igv: ig,
-  //                 tipoHabitacion: datosResult.TipoHabitacion,
-  //                 precioPubli: datosResult.PrecioPubli,
-  //                 precioConfi: datosResult.PrecioConfi
-  //               });
-  //             } 
-  //           }
-  //         });
-  //         break;
-  //       case 'restaurante':
-  //         data1.data.map((datosResult)=>{
-  //           if (uruId == datosResult.idProveedor) {
-  //             Datos.push({
-  //               servicio: datosResult.nombreServicio,
-  //               precio: datosResult.precioDolares,
-  //               caracte: datosResult.descripcionServicio
-  //             })
-  //           }
-  //         })
-  //         break;
-  //       case 'transporte':
-  //         data1.data.map((datosResult) => {
-  //           if (uruId == datosResult.idProveedor) {
-  //             if(datosResult.TipoVehiculo == undefined){
-  //               serv = datosResult.Servicio
-  //             }
-  //             if(datosResult.PrecioSoles !== undefined && datosResult.PrecioDolares !== undefined){
-  //               Datos.push({
-  //                 servicio: serv,
-  //                 horario: datosResult.Horario,
-  //                 tipvehiculo: datosResult.TipoVehiculo,
-  //                 PrecioSoles: datosResult.PrecioSoles,
-  //                 PrecioDolares: datosResult.PrecioDolares
-  //               });
-  //             } 
-  //           }
-  //         });
-  //         break;
-  //         case 'guia':
-  //         data1.data.map((datosResult)=>{
-  //           if (uruId == datosResult.idProveedor) {
-  //             Datos.push({
-  //               direccion: datosResult.Direccion,
-  //               dni: datosResult.DNI,
-  //               idiomas: datosResult.Idiomas,
-  //               asociacion: datosResult.Asociacion ,
-  //               carne: datosResult.NumCarne,
-  //               fecExpedi: datosResult.FechaExp,
-  //               fecCaduc: datosResult.FechaExp,
-  //               dni: datosResult.DNI
-  //             })
-  //           }
-  //         })
-  //         break;
-  //         case 'agencia':
-  //           data1.data.map((datosResult)=>{
-  //             if (uruId == datosResult.idProveedor) {
-  //               Datos.push({
-  //                 servicio: datosResult.Servicio,
-  //                 precioConfi: datosResult.PrecioConfi,
-  //                 precioPubli: datosResult.PrecioPubli,
-  //                 incluye: datosResult.Incluye ,
-  //                 duracion: datosResult.Duracion,
-  //                 observacion: datosResult.Observacion
-  //               })
-  //             }
-  //           })
-  //           break;
-  //     }
-  //   });
   return {
     props: {
-      Columnas: Columnas,
       Datos: Datos,
       DatosProveedor: DatosProveedor,
     },
