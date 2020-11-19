@@ -3,16 +3,26 @@ import fetch from 'isomorphic-unfetch';
 import MaterialTable from "material-table";
 import Router from 'next/router'
 
+//Componentes
+import BotonAnadir from '@/components/BotonAnadir/BotonAnadir'
+import Modal from '@/components/TablaModal/Modal/Modal'
 
 
-export default function Home({Columnas, Datos}){
 
-  const [datosEditables,setDatosEditables] = useState(Datos)
-    // Datos.map((result)=>{
-    //   console.log(result.tipo)
-    // })
+export default function Home({Columnas, Datos,APIpath}){
+    //Variables
+    const [ModalDisplay,setModalDisplay]=useState(false)
+
+    //Funciones
+    const AccionBoton = () =>{
+      setModalDisplay(true)
+    }
+    const MostrarModal=(x)=>{
+      setModalDisplay(x)
+  }
     return (
         <div>
+            <Modal Display= {ModalDisplay} MostrarModal={MostrarModal} APIpath={APIpath} TipoModal={"Proveedores"}/>
             <MaterialTable
             columns={Columnas}
             data={datosEditables}
@@ -51,6 +61,8 @@ export default function Home({Columnas, Datos}){
                   }, 1000);
                 })
             }}
+            data={Datos}
+            title={<span>Lista de Proveedores <BotonAnadir Accion={AccionBoton}/> </span>}
             actions= {[
               {
                 icon: () =>{
@@ -60,6 +72,26 @@ export default function Home({Columnas, Datos}){
                 onClick: (event, rowData,) => Router.push({
                   pathname: `/Proveedores/${rowData.tipo}/${rowData.id}`,
                 })
+              },
+              {
+                icon: () =>{
+                  return <img src="/resources/delete-black-18dp.svg"/>
+                },
+                tooltip: "Delete Proveedor",
+                onClick: (event, rowData) => {
+                  fetch(APIpath,{
+                    method:"POST",
+                    headers:{"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                      idProveedor: rowData.id,
+                      accion: "delete",
+                    }),
+                  })
+                  .then(r=>r.json())
+                  .then(data=>{
+                    alert(data.message);
+                  })
+                }
               },
             ]}
             // actions= {[
@@ -109,6 +141,8 @@ export default function Home({Columnas, Datos}){
     )
 }
 export async function getStaticProps() {
+  const APIpath = process.env.API_DOMAIN+"/api/proveedores/listaProveedores";
+  
   let Columnas = [
     { title: "ID", field: "idProveedor" },
     { title: "Nombre Proovedores", field: "nombre" },
@@ -131,6 +165,6 @@ export async function getStaticProps() {
   })
   return {
     props:{
-      Columnas: Columnas, Datos:Datos
+      Columnas: Columnas, Datos:Datos,APIpath:APIpath
     }}
 }
