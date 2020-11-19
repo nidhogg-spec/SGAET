@@ -381,6 +381,9 @@ export default function TipoProveedor({ Columnas, Datos, DatosProveedor }) {
                 columns={Columnas}
                 data={Datos}
                 title="Productos de Tranporte"
+                editable={{
+                  isEditable: rowData => rowData
+                }}
                 actions={[
                   {
                     icon: () => {

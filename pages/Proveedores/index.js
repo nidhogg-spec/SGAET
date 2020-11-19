@@ -6,6 +6,8 @@ import Router from 'next/router'
 
 
 export default function Home({Columnas, Datos}){
+
+  const [datosEditables,setDatosEditables] = useState(Datos)
     // Datos.map((result)=>{
     //   console.log(result.tipo)
     // })
@@ -13,16 +15,43 @@ export default function Home({Columnas, Datos}){
         <div>
             <MaterialTable
             columns={Columnas}
-            data={Datos}
+            data={datosEditables}
             title="Lista de Proovedores"
+            editable={{
+              onRowAdd: newData =>
+              new Promise ((resolve,reject) => {
+                console.log(newData)
+                console.log(datosEditables)
+                setTimeout(()=>{
+                  fetch('http://localhost:3000/api/proveedores/listaProveedores',{
+                  method:"POST",
+                  headers:{"Content-Type": "application/json"},
+                  body: JSON.stringify({
+                    data: newData,
+                    accion: "create",
+                  }),
+                })
+                .then(r=>r.json())
+                .then(data=>{
+                })
+                  setDatosEditables([...datosEditables, newData])
+                  resolve();
+                },1000)
+              }),
+              onRowUpdate: (newData, oldData)=>
+                new Promise((resolve, reject)=>{
+                  setTimeout(()=>{
+
+                  },1000)
+                }),
+              onRowDelete: oldData=>
+                new Promise((resolve,reject)=>{
+                  setTimeout(() => {
+                    
+                  }, 1000);
+                })
+            }}
             actions= {[
-              {
-                icon: () =>{
-                  return <img src="/resources/edit-black-18dp.svg"/>
-                },
-                tooltip: "Edit Proveedor",
-                // onClick: (event, rowData) => alert("You saved " + rowData.name)
-              },
               {
                 icon: () =>{
                   return <img src="/resources/remove_red_eye-24px.svg"/>
@@ -32,27 +61,45 @@ export default function Home({Columnas, Datos}){
                   pathname: `/Proveedores/${rowData.tipo}/${rowData.id}`,
                 })
               },
-              {
-                icon: () =>{
-                  return <img src="/resources/delete-black-18dp.svg"/>
-                },
-                tooltip: "Delete Proveedor",
-                onClick: (event, rowData) => {
-                  fetch('http://localhost:3000/api/proveedores/listaProveedores',{
-                    method:"POST",
-                    headers:{"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                      idProveedor: rowData.id,
-                      accion: "delete",
-                    }),
-                  })
-                  .then(r=>r.json())
-                  .then(data=>{
-                    alert(data.message);
-                  })
-                }
-              },
             ]}
+            // actions= {[
+            //   {
+            //     icon: () =>{
+            //       return <img src="/resources/edit-black-18dp.svg"/>
+            //     },
+            //     tooltip: "Edit Proveedor",
+            //     // onClick: (event, rowData) => alert("You saved " + rowData.name)
+            //   },
+            //   {
+            //     icon: () =>{
+            //       return <img src="/resources/remove_red_eye-24px.svg"/>
+            //     },
+            //     tooltip: "Show Proveedor",
+            //     onClick: (event, rowData,) => Router.push({
+            //       pathname: `/Proveedores/${rowData.tipo}/${rowData.id}`,
+            //     })
+            //   },
+            //   {
+            //     icon: () =>{
+            //       return <img src="/resources/delete-black-18dp.svg"/>
+            //     },
+            //     tooltip: "Delete Proveedor",
+            //     onClick: (event, rowData) => {
+            //       fetch('http://localhost:3000/api/proveedores/listaProveedores',{
+            //         method:"POST",
+            //         headers:{"Content-Type": "application/json"},
+            //         body: JSON.stringify({
+            //           idProveedor: rowData.id,
+            //           accion: "delete",
+            //         }),
+            //       })
+            //       .then(r=>r.json())
+            //       .then(data=>{
+            //         alert(data.message);
+            //       })
+            //     }
+            //   },
+            // ]}
             options={{
               actionsColumnIndex: -1,
             }}
@@ -63,8 +110,8 @@ export default function Home({Columnas, Datos}){
 }
 export async function getStaticProps() {
   let Columnas = [
-    { title: "ID", field: "id" },
-    { title: "Nomber Proovedores", field: "proveedor" },
+    { title: "ID", field: "idProveedor" },
+    { title: "Nombre Proovedores", field: "nombre" },
     { title: "Ubicacion Proovedor", field: "ubicacion" },
     { title: "Tipo de Proovedor", field: "tipo" },
   ];
@@ -75,8 +122,8 @@ export async function getStaticProps() {
   .then(data1=>{
     data1.data.map((datosResult)=>{
         Datos.push({
-          id:datosResult.idProveedor,
-          proveedor: datosResult.nombre,
+          idProveedor:datosResult.idProveedor,
+          nombre: datosResult.nombre,
           ubicacion: datosResult.ubicacion,
           tipo: datosResult.tipo,
         })
