@@ -25,42 +25,42 @@ export default function Home({Columnas, Datos,APIpath}){
             <Modal Display= {ModalDisplay} MostrarModal={MostrarModal} APIpath={APIpath} TipoModal={"Proveedores"}/>
             <MaterialTable
             columns={Columnas}
-            data={datosEditables}
+            data={Datos}
             title="Lista de Proovedores"
-            editable={{
-              onRowAdd: newData =>
-              new Promise ((resolve,reject) => {
-                console.log(newData)
-                console.log(datosEditables)
-                setTimeout(()=>{
-                  fetch('http://localhost:3000/api/proveedores/listaProveedores',{
-                  method:"POST",
-                  headers:{"Content-Type": "application/json"},
-                  body: JSON.stringify({
-                    data: newData,
-                    accion: "create",
-                  }),
-                })
-                .then(r=>r.json())
-                .then(data=>{
-                })
-                  setDatosEditables([...datosEditables, newData])
-                  resolve();
-                },1000)
-              }),
-              onRowUpdate: (newData, oldData)=>
-                new Promise((resolve, reject)=>{
-                  setTimeout(()=>{
+            // editable={{
+            //   onRowAdd: newData =>
+            //   new Promise ((resolve,reject) => {
+            //     console.log(newData)
+            //     console.log(datosEditables)
+            //     setTimeout(()=>{
+            //       fetch('http://localhost:3000/api/proveedores/listaProveedores',{
+            //       method:"POST",
+            //       headers:{"Content-Type": "application/json"},
+            //       body: JSON.stringify({
+            //         data: newData,
+            //         accion: "create",
+            //       }),
+            //     })
+            //     .then(r=>r.json())
+            //     .then(data=>{
+            //     })
+            //       setDatosEditables([...datosEditables, newData])
+            //       resolve();
+            //     },1000)
+            //   }),
+            //   onRowUpdate: (newData, oldData)=>
+            //     new Promise((resolve, reject)=>{
+            //       setTimeout(()=>{
 
-                  },1000)
-                }),
-              onRowDelete: oldData=>
-                new Promise((resolve,reject)=>{
-                  setTimeout(() => {
+            //       },1000)
+            //     }),
+            //   onRowDelete: oldData=>
+            //     new Promise((resolve,reject)=>{
+            //       setTimeout(() => {
                     
-                  }, 1000);
-                })
-            }}
+            //       }, 1000);
+            //     })
+            // }}
             data={Datos}
             title={<span>Lista de Proveedores <BotonAnadir Accion={AccionBoton}/> </span>}
             actions= {[
