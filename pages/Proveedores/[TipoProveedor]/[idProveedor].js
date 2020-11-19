@@ -321,27 +321,71 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
       <div>
         <MaterialTable
           columns={Columnas}
-          data={Datos}
+          data={datosEditables}
           title="Productos del hotel"
-          actions={[
-            {
-              icon: () => {
-                return <img src="/resources/edit-black-18dp.svg" />;
-              },
-              tooltip: "Edit Proveedor",
-              // onClick: (event, rowData) => alert("You saved " + rowData.name)
-            },
-            {
-              icon: () => {
-                return <img src="/resources/delete-black-18dp.svg" />;
-              },
-              tooltip: "Delete Proveedor",
-              // onClick: (event, rowData) => alert("You saved " + rowData.name)
-            },
-          ]}
+          editable={{
+            onRowAdd: newData =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    fetch("http://localhost:3000/api/proveedores/hotel",{
+                      method:"POST",
+                      headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        data: newData,
+                        accion: "create",
+                      }),
+                    })
+                    .then(r=>r.json())
+                    .then(data=>{
+                      alert(data.message);
+                    })
+                  setDatosEditables([...datosEditables, newData]);
+                  
+                  resolve();
+                }, 1000)
+              }),
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataUpdate = [...datosEditables];
+                  const index = oldData.tableData.id;
+                  dataUpdate[index] = newData;
+                  setDatosEditables([...dataUpdate]);
+
+                  console.log([...dataUpdate])
+                  console.log("este dato weeee"+index)
+                  
+                  fetch("http://localhost:3000/api/proveedores/hotel",{
+                    method:"POST",
+                    headers:{"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                      idProveedor: index,
+                      data: dataUpdate[index],
+                      accion: "update",
+                    }),
+                  })
+                  .then(r=>r.json())
+                  .then(data=>{
+                    alert(data.message);
+                  })
+                  
+                  resolve();
+                }, 1000)
+              }),
+            onRowDelete: oldData =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataDelete = [...data];
+                  const index = oldData.tableData.id;
+                  dataDelete.splice(index, 1);
+                  setData([...dataDelete]);
+                  
+                  resolve()
+                }, 1000)
+              }),
+          }}
           options={{
             actionsColumnIndex: -1,
-            grouping: true,
           }}
         ></MaterialTable>
         {/* <TablaProveedores/> */}
@@ -426,6 +470,7 @@ export async function getServerSideProps(context) {
   } finally{
     client.close()
   }
+  const APIpath = process.env.API_DOMAIN+"/api/proveedores/listaProveedores";
   return {
     props: {
       Datos: Datos,
