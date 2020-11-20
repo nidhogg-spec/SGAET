@@ -96,13 +96,13 @@ export default async (req, res) => {
               case "Guia":
                 IdLetras = "GU";
                 break;
-              case "Transporte terrestre":
+              case "Transporteterrestre":
                 IdLetras = "TT";
                 break;
               case "Restaurante":
                 IdLetras = "RS";
                 break;
-              case "Transporte ferroviario":
+              case "Transporteferroviario":
                 IdLetras = "TF";
                 break;
               default:

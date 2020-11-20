@@ -4,9 +4,9 @@ require('dotenv').config()
 const url= process.env.MONGODB_URI
 const dbName= process.env.MONGODB_DB
 
-const coleccion = "ProductoGuias";
-const keyId = "IdProductoGuias";
-const IdLetras = "PG";
+const coleccion = "ProductoTransportes";
+const keyId = "IdProductoTransportes";
+const IdLetras = "PT";
 
 let client = new MongoClient(url,{
   useNewUrlParser: true,
