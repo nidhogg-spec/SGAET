@@ -134,9 +134,9 @@ export default function Modal(props) {
                     {value:'Hotel',texto:'Hotel'},
                     {value:'Agencia',texto:'Agencia'},
                     {value:'Guia',texto:'Guia'},
-                    {value:'TransporteTerrestre',texto:'Transporte Terrestre'},
+                    {value:'Transporteterrestre',texto:'Transporte Terrestre'},
                     {value:'Restaurante',texto:'Restaurante'},
-                    {value:'TransporteFerroviario',texto:'Transporte Ferroviario'},
+                    {value:'Transporteferroviario',texto:'Transporte Ferroviario'},
                     {value:'Otro',texto:'Otro'},
                   ]}
                 />

@@ -6,7 +6,7 @@ const dbName= process.env.MONGODB_DB
 
 const coleccion = "ProductoAgencias";
 const keyId = "IdProductoAgencias";
-const IdLetras = "PPA";
+const IdLetras = "PA";
 
 let client = new MongoClient(url,{
   useNewUrlParser: true,
@@ -40,12 +40,12 @@ export default async (req, res) =>{
           if (result) {
             IdNumero = parseInt(result[keyId].slice(2), 10);
             IdNumero++
-            console.log(IdNumero);
+            // console.log(IdNumero);
           }
           req.body.data[keyId] =
             IdLetras +
             ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
-          console.log(req.body.data[keyId]);
+          // console.log(req.body.data[keyId]);
 
         } catch (error) {
           console.log("error - " + error);

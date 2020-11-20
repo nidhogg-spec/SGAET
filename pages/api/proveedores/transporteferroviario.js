@@ -4,9 +4,9 @@ require('dotenv').config()
 const url= process.env.MONGODB_URI
 const dbName= process.env.MONGODB_DB
 
-const coleccion = "ProductoGuias";
-const keyId = "IdProductoGuias";
-const IdLetras = "PG";
+const coleccion = "ProductoTransFerroviario";
+const keyId = "IdProductoTransFerroviario";
+const IdLetras = "PF";
 
 let client = new MongoClient(url,{
   useNewUrlParser: true,
@@ -31,7 +31,6 @@ export default async (req, res) =>{
           });
           await client.connect();
           let collection = client.db(dbName).collection(coleccion);
-
 
           const options = {sort: {}};
           options.sort[keyId]=-1;

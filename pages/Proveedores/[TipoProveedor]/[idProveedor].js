@@ -32,9 +32,13 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
   switch(provDinamico){
     case "hotel":
       Columnas= [
-        { title: "ID Producto Hotel", field: "IdProductoHotel" },
+        // { title: "ID Producto Hotel", field: "IdProductoHotel" },
         { title: "tipoTarifa", field: "tipoTarifa" },
-        { title: "TipoHabitacion", field: "tipoHabitacion" },
+        { 
+          title: "TipoHabitacion", 
+          field: "tipoHabitacion",
+          lookup: {SWB: "SWB",DWB: "DWB",DWBSuper: "DWB Super",TWB: "TWB",TWBSuper: "TWBSuper",CWB: "CWB",MWB: "MWB"}
+        },
         { title: "Precio Publicado", field: "precioPubli" },
         { title: "Precio Confidencial", field: "precioConfi" },
         { title: "IGV", field: "igv" },
@@ -47,9 +51,9 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         { title: "Caracteristicas", field: "caracte" },
       ]
       break;
-    case "transporte":
+    case "transporteterrestre":
       Columnas=[
-        { title: "Servicio", field: "servicio", defaultGroupOrder: 0 },
+        { title: "Servicio", field: "servicio" },
         { title: "Horario", field: "horario" },
         { title: "Tipo de Vehiculo", field: "tipvehiculo" },
         { title: "Precio Soles", field: "PrecioSoles" },
@@ -77,14 +81,17 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         { title: "Observacion", field: "observacion" }
       ]
       break;
-    case "transferroviario":
+    case "transporteferroviario":
       Columnas=[
-        { title: "Servicio", field: "servicio" },
-        { title: "Precio Confidencial", field: "precioConfi" },
-        { title: "Precio Publicado", field: "precioPubli" },
-        { title: "Incluye", field: "incluye" },
-        { title: "Duracion", field: "duracion" },
-        { title: "Observacion", field: "observacion" }
+        { title: "Ruta", field: "ruta" },
+        { title: "Horario", field: "horario" },
+        { 
+          title: "Tipo de Tren", 
+          field: "tipoTren"
+         },
+        { title: "Precio Adulto", field: "precioAdulto" },
+        { title: "Precio Niño", field: "precioNiño" },
+        { title: "Precio Guia", field: "precioGuia" }
       ]
       break;
   }
@@ -398,10 +405,6 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
 
                   dataDelete.splice(index, 1);
                   setDatosEditables([...dataDelete]);
-
-                  // console.log(dataDelete)
-                  // console.log(dataDelete.splice(index, 1))
-                  // console.log(dataDelete[index].IdProductoHotel)
 
                   resolve()
                 }, 1000)
