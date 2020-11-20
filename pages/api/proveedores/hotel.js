@@ -6,7 +6,7 @@ const dbName= process.env.MONGODB_DB
 
 const coleccion = "ProductoHoteles";
 const keyId = "IdProductoHotel";
-const IdLetras = "PPH";
+const IdLetras = "PH";
 
 let client = new MongoClient(url,{
     useNewUrlParser: true,
@@ -31,17 +31,22 @@ export default async (req, res) =>{
             });
             await client.connect();
             let collection = client.db(dbName).collection(coleccion);
-            const options = {
-              sort: { idProveedor: -1 },
-            };
+
+
+            const options = {sort: {}};
+            options.sort[keyId]=-1;
+
             const result = await collection.findOne({}, options);
             if (result) {
               IdNumero = parseInt(result[keyId].slice(2), 10);
+              IdNumero++
+              console.log(IdNumero);
             }
             req.body.data[keyId] =
               IdLetras +
               ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
-            // console.log(req.body.data[keyId]);
+            console.log(req.body.data[keyId]);
+
           } catch (error) {
             console.log("error - " + error);
           }
@@ -66,9 +71,9 @@ export default async (req, res) =>{
             });
           } catch (error) {
             console.log("error - " + error);
-          }
-          // } finally {
-          //   client.close();
+          } 
+          // finally {
+          //   await client.close();
           // }
             break;
           case "update":
@@ -113,7 +118,7 @@ export default async (req, res) =>{
               const dbo = client.db(dbName);
               const collection = dbo.collection(coleccion);
               collection.deleteOne(
-                { idProveedor: req.body.idProveedor },
+                { IdProductoHotel: req.body.idProducto },
                 (err, result) => {
                   if (err) {
                     res.status(500).json({ error: true, message: "un error .v" });

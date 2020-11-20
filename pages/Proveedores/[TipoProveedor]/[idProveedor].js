@@ -19,21 +19,19 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
   const [Edicion, setEdicion] = useState(false);
   const [DevolverDato, setDevolverDato] = useState(false);
   const [datosEditables, setDatosEditables] = useState(Datos)
-  
-  let Columnas = []
-  let DataEdit = {};
 
   const router = useRouter();
 
   const { idProveedor, TipoProveedor } = router.query;
-
   const provDinamico = TipoProveedor.toLowerCase()
 
+  let Columnas = []
+  let DataEdit = {};
+  let tittle = "Productos de "+ TipoProveedor
 
   switch(provDinamico){
     case "hotel":
       Columnas= [
-        // { title: "Destino", field: "destino", defaultGroupOrder: 0 },
         { title: "ID Producto Hotel", field: "IdProductoHotel" },
         { title: "tipoTarifa", field: "tipoTarifa" },
         { title: "TipoHabitacion", field: "tipoHabitacion" },
@@ -323,12 +321,12 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         <MaterialTable
           columns={Columnas}
           data={datosEditables}
-          title="Productos del hotel"
+          title={tittle}
           editable={{
             onRowAdd: newData =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                    fetch("http://localhost:3000/api/proveedores/hotel",{
+                    fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
                       method:"POST",
                       headers:{"Content-Type": "application/json"},
                       body: JSON.stringify({
@@ -359,7 +357,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                   // console.log("este dato weeee"+index)
                   // console.log()
                   
-                  fetch("http://localhost:3000/api/proveedores/hotel",{
+                  fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
                     method:"POST",
                     headers:{"Content-Type": "application/json"},
                     body: JSON.stringify({
@@ -381,18 +379,15 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                 setTimeout(() => {
                   const dataDelete = [...datosEditables];
                   const index = oldData.tableData.id;
-                  dataDelete.splice(index, 1);
-                  setDatosEditables([...dataDelete]);
 
                   console.log(dataDelete[index])
                   console.log(dataDelete[index].IdProductoHotel)
 
-                  fetch("http://localhost:3000/api/proveedores/hotel",{
+                  fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
                     method:"POST",
                     headers:{"Content-Type": "application/json"},
                     body: JSON.stringify({
                       idProducto: dataDelete[index].IdProductoHotel,
-                      data: dataDelete[index],
                       accion: "delete",
                     }),
                   })
@@ -400,6 +395,13 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                   .then(data=>{
                     alert(data.message);
                   })
+
+                  dataDelete.splice(index, 1);
+                  setDatosEditables([...dataDelete]);
+
+                  // console.log(dataDelete)
+                  // console.log(dataDelete.splice(index, 1))
+                  // console.log(dataDelete[index].IdProductoHotel)
 
                   resolve()
                 }, 1000)
@@ -477,15 +479,11 @@ export async function getServerSideProps(context) {
     let collection = client.db(dbName).collection(collectionName);
     let result = await collection.find({}).toArray();
 
-    // DatosProveedor = JSON.stringify(result);
-    // Datos = JSON.stringify(result)
-
     result.map(x => {
        x._id= JSON.stringify(x._id)
     })
     Datos=result
 
-    // console.log(Datos)
   } catch (error) {
     console.log("Error cliente Mongo 2 => "+error)
   } finally{
