@@ -23,7 +23,7 @@ export default async (req, res) => {
         // assert.equal(err, null); // Preguntar
         let dbo = client.db(dbName);
 
-        let idServicio = req.body.idServicio;
+        let idServicio = req.body.idDato;
         // console.log(req.body)
         let collection = dbo.collection(coleccion);
         // collection.findOne(idServicio)
@@ -32,7 +32,8 @@ export default async (req, res) => {
             {},
             {
               projection: {
-                idServicio: 1,
+                _id:0,
+                IdServicio: 1,
                 NombreServicio: 1,
                 TipoServicio: 1,
               },
@@ -53,10 +54,11 @@ export default async (req, res) => {
           client.connect((error) => {
             // assert.equal(err, null); // Preguntar
             let dbo = client.db(dbName);
-            let idServicio = req.body.idServicio;
             console.log(req.body);
             let collection = dbo.collection(coleccion);
-            collection.findOne({ idServicio }, (err, result) => {
+            let query={}
+            query[keyId]=req.body.idDato
+            collection.findOne(query, (err, result) => {
               if (err) {
                 res.status(500).json({ error: true, message: "un error 1 .v" });
                 return;
@@ -93,10 +95,10 @@ export default async (req, res) => {
             console.log("error 1 - " + error);
           }
           //Enviando Datos
-          client = new MongoClient(url, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-          });
+          // client = new MongoClient(url, {
+          //   useNewUrlParser: true,
+          //   useUnifiedTopology: true,
+          // });
           try {
             await client.connect();
             let collection = client.db(dbName).collection(coleccion);
@@ -133,7 +135,7 @@ export default async (req, res) => {
           $set: req.body.data,
         };
         let query = {};
-        query[keyId] = req.body.idProveedor;
+        query[keyId] = req.body.idDato;
         collection.updateOne(query, dataActu, (err, result) => {
           if (err) {
             res.status(500).json({ error: true, message: "un error .v" });
@@ -154,7 +156,7 @@ export default async (req, res) => {
         const dbo = client.db(dbName);
         const collection = dbo.collection(coleccion);
         let query = {};
-        query[keyId] = req.body.idProveedor;
+        query[keyId] = req.body.idDato;
         collection.deleteOne(query, (err, result) => {
           if (err) {
             res.status(500).json({ error: true, message: "un error .v" });
