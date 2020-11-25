@@ -27,40 +27,6 @@ export default function Home({Columnas, Datos, APIpath}){
             columns={Columnas}
             data={Datos}
             title="Lista de Proovedores"
-            // editable={{
-            //   onRowAdd: newData =>
-            //   new Promise ((resolve,reject) => {
-            //     console.log(newData)
-            //     console.log(datosEditables)
-            //     setTimeout(()=>{
-            //       fetch('http://localhost:3000/api/proveedores/listaProveedores',{
-            //       method:"POST",
-            //       headers:{"Content-Type": "application/json"},
-            //       body: JSON.stringify({
-            //         data: newData,
-            //         accion: "create",
-            //       }),
-            //     })
-            //     .then(r=>r.json())
-            //     .then(data=>{
-            //     })
-            //       setDatosEditables([...datosEditables, newData])
-            //       resolve();
-            //     },1000)
-            //   }),
-            //   onRowUpdate: (newData, oldData)=>
-            //     new Promise((resolve, reject)=>{
-            //       setTimeout(()=>{
-
-            //       },1000)
-            //     }),
-            //   onRowDelete: oldData=>
-            //     new Promise((resolve,reject)=>{
-            //       setTimeout(() => {
-                    
-            //       }, 1000);
-            //     })
-            // }}
             data={Datos}
             title={<span>Lista de Proveedores <BotonAnadir Accion={AccionBoton}/> </span>}
             actions= {[
@@ -94,44 +60,6 @@ export default function Home({Columnas, Datos, APIpath}){
                 }
               },
             ]}
-            // actions= {[
-            //   {
-            //     icon: () =>{
-            //       return <img src="/resources/edit-black-18dp.svg"/>
-            //     },
-            //     tooltip: "Edit Proveedor",
-            //     // onClick: (event, rowData) => alert("You saved " + rowData.name)
-            //   },
-            //   {
-            //     icon: () =>{
-            //       return <img src="/resources/remove_red_eye-24px.svg"/>
-            //     },
-            //     tooltip: "Show Proveedor",
-            //     onClick: (event, rowData,) => Router.push({
-            //       pathname: `/Proveedores/${rowData.tipo}/${rowData.id}`,
-            //     })
-            //   },
-            //   {
-            //     icon: () =>{
-            //       return <img src="/resources/delete-black-18dp.svg"/>
-            //     },
-            //     tooltip: "Delete Proveedor",
-            //     onClick: (event, rowData) => {
-            //       fetch('http://localhost:3000/api/proveedores/listaProveedores',{
-            //         method:"POST",
-            //         headers:{"Content-Type": "application/json"},
-            //         body: JSON.stringify({
-            //           idProveedor: rowData.id,
-            //           accion: "delete",
-            //         }),
-            //       })
-            //       .then(r=>r.json())
-            //       .then(data=>{
-            //         alert(data.message);
-            //       })
-            //     }
-            //   },
-            // ]}
             options={{
               actionsColumnIndex: -1,
             }}
