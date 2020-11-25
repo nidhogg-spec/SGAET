@@ -1,59 +1,59 @@
-import { MongoClient } from 'mongodb';
-require('dotenv').config()
+import { MongoClient } from "mongodb";
+require("dotenv").config();
 
-const url= process.env.MONGODB_URI
-const dbName= process.env.MONGODB_DB
+const url = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DB;
 
-const coleccion = "ProductoTransportes";
-const keyId = "IdProductoTransportes";
-const IdLetras = "PT";
+const coleccion = "EvaluacionActividad";
+const keyId = "IdEvaluacionActividad";
+const IdLetras = "EA";
 
-let client = new MongoClient(url,{
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+let client = new MongoClient(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 
-function getData2(dbo,callback){
-  const collection = dbo.collection("ProductoHoteles");
+async function getData(dbo, callback) {
+  const collection = dbo.collection("EvaluacionActividad");
   collection.find({}).toArray(callback);
-}
+  }
 
-export default async (req, res) =>{
-  if (req.method == "POST") {
+export default async (req, res) => {
+    if (req.method == "POST") {
       switch (req.body.accion) {
         case "create":
           // Intentando generar id
-        let IdNumero = 1;
-        try {
-          client = new MongoClient(url, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-          });
-          await client.connect();
-          let collection = client.db(dbName).collection(coleccion);
+        // let IdNumero = 1;
+        // try {
+        //   client = new MongoClient(url, {
+        //     useNewUrlParser: true,
+        //     useUnifiedTopology: true,
+        //   });
+        //   await client.connect();
+        //   let collection = client.db(dbName).collection(coleccion);
 
 
-          const options = {sort: {}};
-          options.sort[keyId]=-1;
+        //   const options = {sort: {}};
+        //   options.sort[keyId]=-1;
 
-          const result = await collection.findOne({}, options);
-          if (result) {
-            IdNumero = parseInt(result[keyId].slice(2), 10);
-            IdNumero++
-            // console.log(IdNumero);
-          }
-          req.body.data[keyId] =
-            IdLetras +
-            ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
-          // console.log(req.body.data[keyId]);
+        //   const result = await collection.findOne({}, options);
+        //   if (result) {
+        //     IdNumero = parseInt(result[keyId].slice(2), 10);
+        //     IdNumero++
+        //     // console.log(IdNumero);
+        //   }
+        //   req.body.data[keyId] =
+        //     IdLetras +
+        //     ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
+        //   // console.log(req.body.data[keyId]);
 
-        } catch (error) {
-          console.log("error - " + error);
-        }
-        // } finally {
-        //   client.close();
+        // } catch (error) {
+        //   console.log("error - " + error);
         // }
-        //Enviando Datos
+        // // } finally {
+        // //   client.close();
+        // // }
+        // //Enviando Datos
         try {
           client = new MongoClient(url, {
             useNewUrlParser: true,
@@ -91,8 +91,8 @@ export default async (req, res) =>{
               $set: req.body.data,
             };
             
-            collection.updateOne(
-              { IdProductoTransportes: req.body.idProducto },
+            collection.updateMany(
+              { IdEvaluacionActividad: req.body.idProducto },
               dataActu,
               (err, result) => {
                 if (err) {
@@ -118,7 +118,7 @@ export default async (req, res) =>{
             const dbo = client.db(dbName);
             const collection = dbo.collection(coleccion);
             collection.deleteOne(
-              { IdProductoTransportes: req.body.idProducto },
+              { IdActividad: req.body.idProducto },
               (err, result) => {
                 if (err) {
                   res.status(500).json({ error: true, message: "un error .v" });
@@ -137,7 +137,6 @@ export default async (req, res) =>{
             );
           });
           break;
-  
         default:
           res
             .status(500)
@@ -147,19 +146,19 @@ export default async (req, res) =>{
           break;
       }
     }
-  if(req.method == 'GET'){
-      client.connect(function(err){
-          console.log('Connected to MognoDB server =>');
-          const dbo = client.db(dbName);
-
-          getData2(dbo, function(err, data){
-              if(err){
-                  res.status(500).json({error:true, message: 'un error .v'})
-                  return;
-              }
-              res.status(200).json({data})
-              client.close;
-          })
-      })
-  }
-}
+    if (req.method == "GET") {
+      client.connect(function (err) {
+        console.log("Connected to MognoDB server => de Matriz de Evaluacion");
+        const dbo = client.db(dbName);
+        getData(dbo, function (err, data) {
+          if (err) {
+            res.status(500).json({ error: true, message: "un error .v" });
+            return;
+          }
+          res.status(200).json({data})
+          client.close;
+        });
+      });
+    }
+  };
+  
