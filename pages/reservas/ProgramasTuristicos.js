@@ -275,7 +275,7 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
   );
 }
 export async function getStaticProps() {
-  const APIpath = process.env.API_DOMAIN + "/api/ProgramaTuristico";
+  const APIpath = process.env.API_DOMAIN + "/api/ProgramasTuristicos";
   const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
   let Columnas = [
