@@ -59,13 +59,14 @@ export default async (req, res) => {
           client.close();
         }
         break;
-      case "create":
+      case "Create":
         //Para CREATE el body debe de tener:
         //  data
         //  accion
         //  tipoProveedor
         let IdLetras = "";
         let IdNumero = 1;
+        let tipoProveedor=req.body.data["tipo"]
         try {
           client = new MongoClient(url, {
             useNewUrlParser: true,
@@ -77,7 +78,7 @@ export default async (req, res) => {
             sort: { idProveedor: -1 },
           };
           const result = await collection.findOne(
-            { tipo: req.body.tipoProveedor },
+            { tipo: tipoProveedor },
             options
           );
           if (result) {
@@ -86,7 +87,7 @@ export default async (req, res) => {
             IdNumero++;
             req.body.data["idProveedor"]=IdLetras+(("00000"+IdNumero.toString()).slice(IdNumero.toString().length))
           } else {
-            switch (req.body.tipoProveedor) {
+            switch (tipoProveedor) {
               case "Hotel":
                 IdLetras = "HT";
                 break;

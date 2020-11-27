@@ -10,6 +10,7 @@ import CampoNumero from "@/components/Formulario/CampoNumero/CampoNumero";
 import CampoMoney from "@/components/Formulario/CampoMoney/CampoMoney";
 import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
 import TablaSimple from "../Formulario/TablaSimple/TablaSimple";
+import TablaRelacionMulti from "../Formulario/TablaRelacionMulti/TablaRelacionMulti";
 
 const AutoModal = ({
   Formulario = {
@@ -25,11 +26,17 @@ const AutoModal = ({
   APIpath,
   ReiniciarData,
   Modo,
-  Display,
-  MostrarModal,
+  Display=false, //Solo en modoVerEdicions
+  MostrarModal=()=>{} //Solo en modoVerEdicions
 }) => {
   //   const [DataInicial, setDataInicial] = useState(Formulario);
-  const [ModoEdicion, setModoEdicion] = useState(Display);
+  let ed;
+  if (Modo=="creacion") 
+    ed=true
+  else
+    ed=false
+  
+  const [ModoEdicion, setModoEdicion] = useState(ed);
   const [APIpath_i, setAPIpath_i] = useState(APIpath);
   const [DarDato, setDarDato] = useState(false);
   const [ReinciarComponentes, setReinciarComponentes] = useState(false);
@@ -123,6 +130,22 @@ const AutoModal = ({
           />
         );
         break;
+        case "tablaRelacionMulti":
+          console.log(compo)
+        return (
+          <TablaRelacionMulti
+            Title={compo.Title}
+            ModoEdicion={ModoEdicion}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={compo.KeyDato}
+            Dato={compo.Dato}
+            Reiniciar={ReinciarComponentes}
+            columnas={compo.columnas}
+            DatoTabla={compo.DatoTabla} // Datos de la coleccion relacionada
+          />
+        );
+        break;
       default:
         return <p>Error al leer el componente</p>;
         break;
@@ -158,7 +181,7 @@ const AutoModal = ({
                 alert(data.message);
               });
             MostrarModal(false);
-
+          setModoEdicion(false);
 
         }
       }, [DarDato]);
@@ -189,7 +212,7 @@ const AutoModal = ({
               src="/resources/save-black-18dp.svg"
               onClick={() => {
                 setDarDato(true);
-                ReiniciarData()
+                // ReiniciarData()
               }}
             />
             <img
@@ -253,6 +276,7 @@ const AutoModal = ({
           modal.style.display = "none";
         }
       }, [Display_in]);
+      
       return (
         <>
           <BotonAnadir
@@ -276,6 +300,7 @@ const AutoModal = ({
                 src="/resources/save-black-18dp.svg"
                 onClick={() => {
                   setDarDato(true);
+                  ReiniciarData()
                 }}
               />
               {/* <img

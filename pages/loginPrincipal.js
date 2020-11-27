@@ -49,8 +49,11 @@ export default function loginPrincipal() {
           //set cookie
           cookie.set('token', dataCookie.token, {expires: 1});
           if(dataCookie.rolToken == "admin"){
-            Router.push('/Proovedores');
+            // Router.push('/Proovedores');
+            Router.push('/');
           }else if(dataCookie.rolToken == "proovedores"){
+            Router.push('/');
+          }else{
             Router.push('/');
           }
         }

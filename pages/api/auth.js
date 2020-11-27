@@ -73,7 +73,10 @@ export default (req, res) => {
           });
         }
       });
-    });
+    } catch (error) {
+      console.log(error)
+    }
+    
   } else {
     // Handle any other HTTP method
     res.statusCode = 401;
