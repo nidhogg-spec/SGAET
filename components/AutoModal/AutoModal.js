@@ -26,8 +26,8 @@ const AutoModal = ({
   APIpath,
   ReiniciarData,
   Modo,
-  Display,
-  MostrarModal
+  Display=false, //Solo en modoVerEdicions
+  MostrarModal=()=>{} //Solo en modoVerEdicions
 }) => {
   //   const [DataInicial, setDataInicial] = useState(Formulario);
   let ed;
