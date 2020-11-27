@@ -42,9 +42,9 @@ const Selector = (props={
       props.DevolverDatoFunct(props.KeyDato, Dato);
     }
   }, [props.DarDato]);
-  useEffect(() => {
-      console.log(Dato)
-  }, [Dato]);
+  // useEffect(() => {
+  //     console.log(Dato)
+  // }, [Dato]);
 
   // Definir JSX
 

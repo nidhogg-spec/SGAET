@@ -9,6 +9,7 @@ import { MongoClient } from "mongodb";
 import TablaBanco from "@/components/TablaModal//Modal/TablaBeneficiarios/TablaBanco";
 import CampoTexto from "@/components/TablaModal/Modal/CampoTexto/CampoTexto";
 import Selector from '@/components/TablaModal/Modal/Selector/Selector'
+import TablaSimple from '@/components/Formulario/TablaSimple/TablaSimple'
 
 import { dark } from "@material-ui/core/styles/createPalette";
 
@@ -153,7 +154,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="nombre"
-            Dato={DatosProveedor.nombre || "Not fofund"}
+            Dato={DatosProveedor.nombre || ""}
           />
           <Selector
             Title="Tipo de Proveedor"
@@ -161,7 +162,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="tipo"
-            Dato={DatosProveedor.tipo || "Not fofund"}
+            Dato={DatosProveedor.tipo || ""}
             SelectOptions={[
               { value: "Hotel", texto: "Hotel" },
               { value: "Agencia", texto: "Agencia" },
@@ -181,7 +182,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="TipoDocumento"
-            Dato={DatosProveedor.TipoDocumento || "Not fofund"}
+            Dato={DatosProveedor.TipoDocumento || ""}
             SelectOptions={[
               { value: "DNI", texto: "DNI" },
               { value: "RUC", texto: "RUC" },
@@ -193,7 +194,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="NroDocumento"
-            Dato={DatosProveedor.NroDocumento || "Not fofund"}
+            Dato={DatosProveedor.NroDocumento || ""}
           />
           <Selector
             Title="Tipo de Moneda"
@@ -201,7 +202,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="TipoMoneda"
-            Dato={DatosProveedor.TipoMoneda || "Not fofund"}
+            Dato={DatosProveedor.TipoMoneda || ""}
             SelectOptions={[
               { value: "Sol", texto: "Soles" },
               { value: "Dolar", texto: "Dolares" },
@@ -213,7 +214,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="EnlaceDocumento"
-            Dato={DatosProveedor.EnlaceDocumento || "Not fofund"}
+            Dato={DatosProveedor.EnlaceDocumento || ""}
           />
           <CampoTexto
             Title="Gerente General"
@@ -221,7 +222,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="GerenteGeneral"
-            Dato={DatosProveedor.GerenteGeneral || "Not fofund"}
+            Dato={DatosProveedor.GerenteGeneral || ""}
           />
           <CampoTexto
             Title="Numero de estrellas"
@@ -229,7 +230,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="NEstrellas"
-            Dato={DatosProveedor.NEstrellas || "Not fofund"}
+            Dato={DatosProveedor.NEstrellas || ""}
           />
           <CampoTexto
             Title="Enlace a Pagina web"
@@ -237,7 +238,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="Web"
-            Dato={DatosProveedor.Web || "Not fofund"}
+            Dato={DatosProveedor.Web || ""}
           />
           <CampoTexto
             Title="Destino donde esta el proveedor"
@@ -245,7 +246,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="Destino"
-            Dato={DatosProveedor.Destino || "Not fofund"}
+            Dato={DatosProveedor.Destino || ""}
           />
           <Selector
             Title="Estado"
@@ -253,7 +254,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
             KeyDato="Estado"
-            Dato={DatosProveedor.Estado || "Not fofund"}
+            Dato={DatosProveedor.Estado || ""}
             SelectOptions={[
               { value: 0, texto: "Inactivo" },
               { value: 1, texto: "Activo" },
@@ -263,21 +264,40 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         <div className={styles.divContacto}>
           <span>Datos de Contacto</span>
           <div className={styles.DataContacto}>
-            <CampoTexto
-              Title="Razon Social"
-              ModoEdicion={Edicion}
-              DevolverDatoFunct={RegistrarDato}
-              DarDato={DevolverDato}
-              KeyDato="RazonSocial"
-              Dato={DatosProveedor.RazonSocial || "Not fofund"}
-            />
-            <CampoTexto
+            <TablaSimple
+            Title="Numeros de Contacto"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="NumContac"
+            Dato={DatosProveedor.NumContac || []}
+            Reiniciar={false}
+            columnas={[
+              {field: "NombreContac", title: "Nombre del Contacto"},
+              {field: "Numero", title: "Numero de Contacto"},
+            ]}
+          />
+          <TablaSimple
+            Title="Correos electronicos"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="Email"
+            Dato={DatosProveedor.Email || []}
+            Reiniciar={false}
+            columnas={[
+              {field: "NombreContac", title: "Nombre del Contacto"},
+                {field: "Email", title: "Email"},
+            ]}
+          />
+          
+            {/* <CampoTexto
               Title="Numero de telefono"
               ModoEdicion={Edicion}
               DevolverDatoFunct={RegistrarDato}
               DarDato={DevolverDato}
               KeyDato="celular"
-              Dato={DatosProveedor.celular || "Not fofund"}
+              Dato={DatosProveedor.celular || ""}
             />
             <CampoTexto
               Title="Numero de telefono 2"
@@ -285,7 +305,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
               DevolverDatoFunct={RegistrarDato}
               DarDato={DevolverDato}
               KeyDato="celular2"
-              Dato={DatosProveedor.celular2 || "Not fofund"}
+              Dato={DatosProveedor.celular2 || ""}
             />
             <CampoTexto
               Title="Email"
@@ -293,7 +313,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
               DevolverDatoFunct={RegistrarDato}
               DarDato={DevolverDato}
               KeyDato="email"
-              Dato={DatosProveedor.email || "Not fofund"}
+              Dato={DatosProveedor.email || ""}
             />
             <CampoTexto
               Title="Email 2"
@@ -301,26 +321,36 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
               DevolverDatoFunct={RegistrarDato}
               DarDato={DevolverDato}
               KeyDato="email2"
-              Dato={DatosProveedor.email2 || "Not fofund"}
-            />
-            <CampoTexto
-              Title="Direccion"
-              ModoEdicion={Edicion}
-              DevolverDatoFunct={RegistrarDato}
-              DarDato={DevolverDato}
-              KeyDato="direccionRegistrada"
-              Dato={DatosProveedor.direccionRegistrada || "Not fofund"}
-            />
+              Dato={DatosProveedor.email2 || ""}
+            /> */}
+            
           </div>
         </div>
         <div className={styles.divCuentasBancarias}>
-          <TablaBanco
+        <TablaSimple
+            Title="Datos de Cuentas Bancarias"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="DatosBancarios"
+            Dato={DatosProveedor.DatosBancarios || []}
+            Reiniciar={false}
+            columnas={[
+              {field: "Banco", title: "Banco"},
+                {field: "Beneficiario", title: "Beneficiario"},
+                {field: "TipoDocumento", title: "Tipo de Documento", lookup:{RUC:'RUC',DNI:'DNI'}},
+                {field: "NumDoc", title: "Numero de Documento"},
+                {field: "Cuenta", title: "Numero de Cuenta"},
+                {field: "CCI", title: "CCI"}
+            ]}
+          />
+          {/* <TablaBanco
             datosbanc={DatosProveedor.DatosBancarios}
             ModoEdicion={Edicion}
             DevolverDatoFunct={RegistrarDato}
             KeyDato="DatosBancarios"
             DarDato={DevolverDato}
-          />
+          /> */}
         </div>
       </div>
 
