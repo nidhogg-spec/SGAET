@@ -91,7 +91,7 @@ export default async (req, res) =>{
             };
             
             collection.updateOne(
-              { IdProductoHotel: req.body.idProducto },
+              { IdProductoTransFerroviario: req.body.idProducto },
               dataActu,
               (err, result) => {
                 if (err) {
@@ -117,7 +117,7 @@ export default async (req, res) =>{
             const dbo = client.db(dbName);
             const collection = dbo.collection(coleccion);
             collection.deleteOne(
-              { IdProductoHotel: req.body.idProducto },
+              { IdProductoTransFerroviario: req.body.idProducto },
               (err, result) => {
                 if (err) {
                   res.status(500).json({ error: true, message: "un error .v" });

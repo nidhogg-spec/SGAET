@@ -237,6 +237,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
 
       setReiniciarData(false);
     }
+
   }, [ReiniciarData]);
 
   return (
@@ -297,6 +298,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
       </div>
     </div>
   );
+
 }
 export async function getStaticProps() {
   const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";

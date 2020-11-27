@@ -57,7 +57,7 @@ export default function NavLateral() {
         },{
           tipo:"link",
           subModuloName:"Evaluacon de proveedores",
-          link:"#"
+          link:"/MatrizEvaProv"
         },
       ]
     },
