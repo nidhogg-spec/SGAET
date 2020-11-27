@@ -26,8 +26,8 @@ export default function Home({Datos, datosProv}){
             field: "nombre",
             // lookup: y
           },
-          { title: "Puntaje", field: "puntaje" },
-          { title: "Porcentaje", field: "porcentaje" }
+          { title: "Puntaje", field: "puntosTotales" },
+          { title: "Porcentaje", field: "porcentajeTotal" }
         ]
 
     return( 
@@ -49,7 +49,7 @@ export default function Home({Datos, datosProv}){
                   },
                   tooltip: "Añadir Evaluacion",
                     onClick: (event, rowData,) => Router.push({
-                      pathname: `/MatrizEvaProv/Actcrit/AñadirCriterio`,
+                      pathname: `/MatrizEvaProv/Actcrit`,
                     })
                 },
                 {
@@ -73,6 +73,7 @@ export default function Home({Datos, datosProv}){
 }
 export async function getStaticProps() {
 
+    let x = []
     let Datos=[]
     let datosProv = []
 
@@ -122,17 +123,34 @@ export async function getStaticProps() {
     finally{
       client.close();
     }
-     
-    // await fetch('http://localhost:3000/api/proveedores/mep')
-    // .then(r=> r.json())
-    // .then(data1=>{
-    //   data1.data.map((datosResult)=>{
-    //     Datos.push({
-    //         puntaje:datosResult.puntaje,
-    //         porcentaje: datosResult.porcentaje,
-    //       })
-    //     })
-    // })
+    try {
+      client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("EvaluacionActividad");
+
+      let result = await collection.find({}).project({
+        "_id":0,
+        "evaperiodo":0,
+      }).toArray()
+
+      x=result
+
+    } catch (error) {
+      console.log("error - " + error);
+    } 
+    finally{
+      client.close();
+    }
+
+    Datos=x.concat(datosProv)
+
+    console.log("*///////////////////////////////////////////////////////////*")
+    console.log(x)
+    console.log(Datos)
     return {
       props:{
         Datos:Datos, datosProv: datosProv

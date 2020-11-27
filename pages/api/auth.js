@@ -61,7 +61,8 @@ export default (req, res) => {
                 {userId: user.userId, email: user.email, rol: user.rol},
                 jwtSecret,
                 {
-                  expiresIn: 3000, //50 minutes
+                  // expiresIn: 3000, //50 minutes
+                  expiresIn: "2 days"
                 })
               res.status(200).json({token,rolToken});
               return;

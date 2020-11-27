@@ -12,7 +12,7 @@ export default function NavLateral() {
         {
             tipo:"link",
             subModuloName:"Lista de clientes",
-            link:"#"
+            link:"/Clientes"
         },{
             tipo:"sub",
             subModuloName:"",

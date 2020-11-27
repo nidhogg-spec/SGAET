@@ -129,7 +129,7 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo}){
                       .then(data=>{
                         alert(data.message);
                       })
-                      console.log(dataDelete[index])
+                      console.log(dataDelete[index].IdActividad)
                       console.log(index)
 
                       dataDelete.splice(index, 1);
