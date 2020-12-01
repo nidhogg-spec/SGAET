@@ -11,6 +11,7 @@ import CampoMoney from "@/components/Formulario/CampoMoney/CampoMoney";
 import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
 import TablaSimple from "../Formulario/TablaSimple/TablaSimple";
 import TablaRelacionMulti from "../Formulario/TablaRelacionMulti/TablaRelacionMulti";
+import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio/TablaProgramaServicio"
 
 const AutoModal = ({
   Formulario = {
@@ -143,6 +144,22 @@ const AutoModal = ({
             Reiniciar={ReinciarComponentes}
             columnas={compo.columnas}
             DatoTabla={compo.DatoTabla} // Datos de la coleccion relacionada
+          />
+        );
+        break;
+        case "CustomTablaProgramaServicio":
+          console.log(compo)
+        return (
+          <TablaProgramaServicio
+            Title={compo.Title}
+            ModoEdicion={ModoEdicion}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={compo.KeyDato}
+            Dato={compo.Dato}
+            Reiniciar={ReinciarComponentes}
+            columnas={compo.columnas}
+            APIpathGeneral={compo.APIpathGeneral}
           />
         );
         break;
