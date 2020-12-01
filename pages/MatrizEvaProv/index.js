@@ -1,11 +1,17 @@
 import MaterialTable,{ MTableToolbar } from "material-table";
 import Router from 'next/router'
-import { MongoClient } from "mongodb";
+import Selector from '@/components/Formulario/Selector/Selector'
 import BotonAnadir from 'components/BotonAnadir/BotonAnadir'
+import CampoTexto from '@/components/Formulario/CampoTexto/CampoTexto'
 
-import { useEffect } from "react";
+import { MongoClient } from "mongodb";
 
-export default function Home({Datos, datosProv}){      
+import { useEffect, useState } from "react";
+
+export default function Home({datosPeriodo, datosProv, idEvaACt}){      
+
+  // var x = Datos.concat(datosProv)
+  // console.log(x)
     // var toChild = datosProv.toArray()
     // convertToReactObject(datosProv)
     // console.log(Datos)
@@ -14,6 +20,19 @@ export default function Home({Datos, datosProv}){
     // datosProv.map((x)=>{
     //   y[x.nombre]= x.nombre
     // })
+
+    // console.log(datosPeriodo[0].periodo)
+
+    
+    let arrayEvaluacion = []
+    let objetoDatos = {}
+    const [datoPeriodo,setdatoPeriodo] = useState()
+    // const [datoPeriodoSeleccionado,setdatoPeriodoSeleccionado] = useState()
+    var datoPeriodoSeleccionado = ""
+    const [objectPeriodo,setObjectPeriodo] = useState({})
+    var objetoPeriodo = {}
+    var selectPeriodo = []
+
     let Columnas=[
           { 
             title: "Id", 
@@ -30,52 +49,125 @@ export default function Home({Datos, datosProv}){
           { title: "Porcentaje", field: "porcentajeTotal" }
         ]
 
+    function getData(){
+
+      for (let index = 0; index < datosProv.length; index++) {        
+        objetoDatos = {evaperiodo:idEvaACt, idProveedor: datosProv[index].idProveedor, periodo: datoPeriodo}
+        arrayEvaluacion.push(objetoDatos)
+      }
+
+      fetch(`http://localhost:3000/api/proveedores/mep`,{
+        method:"POST",
+        headers:{"Content-Type": "application/json"},
+        body: JSON.stringify({
+          data: arrayEvaluacion,
+          accion: "createmany",
+        }),
+      })
+      .then(r=>r.json())
+      .then(data=>{
+        alert(data.message);
+      })  
+    }
+
+    useEffect(()=>{
+     
+      for (let index = 0; index < datosPeriodo.length; index++) {
+        objetoPeriodo = {value:datosPeriodo[index], texto:datosPeriodo[index]}
+
+        selectPeriodo.push(objetoPeriodo)
+      }
+
+      // selectPeriodo.map(x =>{
+      //   console.log(x.value)
+      //   console.log(x.texto)
+      // })
+
+    },[])
     return( 
         <div>
-            <MaterialTable
-                columns={Columnas}
-                data={datosProv}
-                components={{
-                  Toolbar: props => (
-                    <div>
-                      
-                    </div>
-                  ),
-                }}
-                actions= {[
-                {
-                  icon: () =>{
-                    return <img src="/resources/edit-black-18dp.svg"/>
-                  },
-                  tooltip: "Añadir Evaluacion",
-                    onClick: (event, rowData,) => Router.push({
-                      pathname: `/MatrizEvaProv/Actcrit`,
-                    })
-                },
-                {
-                  icon: () =>{
-                    return <img src="/resources/remove_red_eye-24px.svg"/>
-                  },
-                  tooltip: "Mostrar Evaluacion",
-                  onClick: (event, rowData,) => Router.push({
-                    pathname: `/MatrizEvaProv/${rowData.idProveedor}`,
-                  })
-                }
-              ]}
-            options={{
-                actionsColumnIndex: -1,
+          <BotonAnadir
+            Accion={()=>{
+              // setDarDato(true)
+              // getData1()
+              getData()
+            }}
+          />
+          <form>
+            <label>
+              Ingrese Periodo:
+            </label>
+            <input 
+              type="text" 
+              // value={datosPeriodo} 
+              onChange={e => setdatoPeriodo(e.target.value)}
+            ></input>
+            {/* <input type="submit" value="submit"></input> */}
+            {console.log(selectPeriodo)}
+            <Selector
+              Title="Seleccione Periodo"
+              ModoEdicion={true}
+              KeyDato="periodo"
+              Dato={datoPeriodoSeleccionado}
+              SelectOptions={
+                  selectPeriodo
+                  // [ {value:'Hotel',texto:'Hotel'},
+                  // {value:'Agencia',texto:'Agencia'},
+                  // {value:'Guia',texto:'Guia'},
+                  // {value:'Transporteterrestre',texto:'Transporte Terrestre'},
+                  // {value:'Restaurante',texto:'Restaurante'},
+                  // {value:'Transporteferroviario',texto:'Transporte Ferroviario'},
+                  // {value:'Otro',texto:'Otro'}]
+               
+                
+            }
+            >
+            </Selector>
+          </form>
+          <MaterialTable
+              columns={Columnas}
+              data={datosProv}
+              components={{
+                Toolbar: props => (
+                  <div>
+                    
+                  </div>
+                ),
               }}
-                title="Matriz de Evaluacion de Proveedores"
-            />
+              actions= {[
+              {
+                icon: () =>{
+                  return <img src="/resources/edit-black-18dp.svg"/>
+                },
+                tooltip: "Añadir Evaluacion",
+                  onClick: (event, rowData,) => Router.push({
+                    pathname: `/MatrizEvaProv/Actcrit`,
+                  })
+              },
+              {
+                icon: () =>{
+                  return <img src="/resources/remove_red_eye-24px.svg"/>
+                },
+                tooltip: "Mostrar Evaluacion",
+                onClick: (event, rowData,) => Router.push({
+                  pathname: `/MatrizEvaProv/${rowData.idProveedor}`,
+                })
+              }
+            ]}
+          options={{
+              actionsColumnIndex: -1,
+            }}
+              title="Matriz de Evaluacion de Proveedores"
+          />
         
         </div>
     )
 }
 export async function getStaticProps() {
 
-    let x = []
-    let Datos=[]
+    let datosPeriodo=[]
     let datosProv = []
+    let idEvaACt = []
 
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
@@ -112,7 +204,10 @@ export async function getStaticProps() {
         "email2":0,
         "direccionRegistrada":0,
         "DatosBancarios":0,
-        "Destino":0
+        "Destino":0,
+        "Email":0,
+        "NumContac":0,
+        "Encuesta":0
       }).toArray()
 
       datosProv=result
@@ -124,20 +219,21 @@ export async function getStaticProps() {
       client.close();
     }
     try {
+      let client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
       client = new MongoClient(url, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
       await client.connect();
       const dbo = client.db(dbName);
-      const collection = dbo.collection("EvaluacionActividad");
+      const collection = dbo.collection("Actividad");
+  
+      let result = await collection.find({}).project({"_id":0}).toArray()
 
-      let result = await collection.find({}).project({
-        "_id":0,
-        "evaperiodo":0,
-      }).toArray()
-
-      x=result
+      idEvaACt=result
 
     } catch (error) {
       console.log("error - " + error);
@@ -146,13 +242,28 @@ export async function getStaticProps() {
       client.close();
     }
 
-    Datos=x.concat(datosProv)
+    try {
+      client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("EvaluacionActividad");
 
-    console.log("*///////////////////////////////////////////////////////////*")
-    console.log(x)
-    console.log(Datos)
+      let result = await collection.distinct("periodo")
+
+      datosPeriodo=result
+
+    } catch (error) {
+      console.log("error - " + error);
+    } 
+    finally{
+      client.close();
+    }
+    console.log(datosPeriodo)
     return {
       props:{
-        Datos:Datos, datosProv: datosProv
+        datosPeriodo:datosPeriodo, datosProv: datosProv, idEvaACt:idEvaACt
       }}
   }

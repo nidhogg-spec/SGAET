@@ -61,8 +61,7 @@ export default (req, res) => {
                 {userId: user.userId, email: user.email, rol: user.rol},
                 jwtSecret,
                 {
-                  // expiresIn: 3000, //50 minutes
-                  expiresIn: "2 days"
+                  expiresIn: "5 days", //50 minutes
                 })
               res.status(200).json({token,rolToken});
               return;
@@ -73,10 +72,7 @@ export default (req, res) => {
           });
         }
       });
-    } catch (error) {
-      console.log(error)
-    }
-    
+    });
   } else {
     // Handle any other HTTP method
     res.statusCode = 401;

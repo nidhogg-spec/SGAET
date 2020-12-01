@@ -1,15 +1,20 @@
 import MaterialTable from "material-table";
 import {useEffect, useState} from 'react';
 import { MongoClient } from "mongodb";
+import {useRouter} from 'next/router'
 
 
-export default function Evaluacion({Datos, idEvaACt, DatosPeriodo}){
+export default function Evaluacion({Datos, idEvaACt, DatosPeriodo,estimate}){
   // console.log(DatosPeriodo)
+    const router = useRouter();
+    const Evaluacion = router.query
   // console.log(Datos)
+    const [datosEditables, setDatosEditables] = useState(Datos)
+    const [sinEvaluacion, setSinEvaluacion] = useState(estimate)
+    // const [idProv, setIdProv] = useState(Evaluacion)
 
-    const [datosEditables, setDatosEditables] = useState(DatosPeriodo)
-    // console.log(datosEditables)
     let objetoDatosMongo = {}
+    let objetoDatos = {}
     let suma = 0;
     let puntTotal = 0;
     let porcent = 0;
@@ -23,24 +28,52 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo}){
           type: "boolean"
         }
     ]
-    
     // useEffect(()=>{
-    //   let objetoDatos = {evaperiodo:datosEditables}
+    //   if(sinEvaluacion==0){
+    //     objetoDatos = {evaperiodo:datosEditables, idProveedor: Evaluacion}
   
-    //   fetch(`http://localhost:3000/api/proveedores/mep`,{
-    //       method:"POST",
-    //       headers:{"Content-Type": "application/json"},
-    //       body: JSON.stringify({
-    //         data: objetoDatos,
-    //         accion: "create",
-    //       }),
-    //     })
-    //     .then(r=>r.json())
-    //     .then(data=>{
-    //       alert(data.message);
-    //     })
-        
-    // },[datosEditables])
+    //     fetch(`http://localhost:3000/api/proveedores/mep`,{
+    //         method:"POST",
+    //         headers:{"Content-Type": "application/json"},
+    //         body: JSON.stringify({
+    //           data: objetoDatos,
+    //           accion: "create",
+    //         }),
+    //       })
+    //       .then(r=>r.json())
+    //       .then(data=>{
+    //         alert(data.message);
+    //       })  
+    //       setSinEvaluacion(1)
+    //   } else{
+    //     objetoDatos = {evaperiodo:datosEditables, idProveedor: Evaluacion}
+    //     for (let index = 0; index < idEvaACt.length; index++) {
+    //       if(idEvaACt[index].idProveedor.Evaluacion == Evaluacion.Evaluacion){
+    //         console.log("gg")
+    //         console.log(idEvaACt[index].idProveedor.Evaluacion)
+    //         console.log(Evaluacion.Evaluacion)
+    //         break
+    //       }else{
+    //         // fetch(`http://localhost:3000/api/proveedores/mep`,{
+    //         //   method:"POST",
+    //         //   headers:{"Content-Type": "application/json"},
+    //         //   body: JSON.stringify({
+    //         //     data: objetoDatos,
+    //         //     accion: "create",
+    //         //   }),
+    //         // })
+    //         // .then(r=>r.json())
+    //         // .then(data=>{
+    //         //   alert(data.message);
+    //         // })  
+    //         console.log("ffffffff")
+    //       } 
+    //     }
+    //   }
+    //   // else if(idEvaACt[0].idProveedor.Evaluacion == Evaluacion){
+    //   //   console.log("sdg")
+    //   // }
+    // },[])
 
     return(
         <MaterialTable
@@ -96,7 +129,7 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo}){
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
                         body: JSON.stringify({
-                          idProducto: idEvaACt[0].IdEvaluacionActividad,
+                          idProducto: DatosPeriodo[0].IdEvaluacionActividad,
                           data: objetoDatosMongo,
                           accion: "update",
                         }),
@@ -146,10 +179,9 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo}){
         />
     )
 }
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
-
     /*Tener en cuenta que la duplicidad de datos es porque se junto el doccumento de criterio en un objeto
     por lo que solo se deberia mostrar lo de actividad siendo que criterio
     se encuentra dentro de actividad y no es nesesario pasar ese dato */
@@ -158,7 +190,8 @@ export async function getServerSideProps() {
     let DatosPeriodo = []
     let DatosCriterio=[]
     let DatosActividad=[]
-    let idEvaACt = []
+    let idEvaACt = ["f"]
+    let estimate = 10
     
     let client = new MongoClient(url, {
       useNewUrlParser: true,
@@ -166,26 +199,26 @@ export async function getServerSideProps() {
     });
 
     /* Consulta para extraer los datos de Criterio */
-    try {
+    // try {
     
-      client = new MongoClient(url, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      await client.connect();
-      const dbo = client.db(dbName);
-      const collection = dbo.collection("Criterio");
+    //   client = new MongoClient(url, {
+    //     useNewUrlParser: true,
+    //     useUnifiedTopology: true,
+    //   });
+    //   await client.connect();
+    //   const dbo = client.db(dbName);
+    //   const collection = dbo.collection("Criterio");
   
-      let result = await collection.find({}).project({"_id":0}).toArray()
+    //   let result = await collection.find({}).project({"_id":0}).toArray()
   
-      DatosCriterio=result
+    //   DatosCriterio=result
   
-    } catch (error) {
-      console.log("error - " + error);
-    } 
-    finally{
-      client.close();
-    }
+    // } catch (error) {
+    //   console.log("error - " + error);
+    // } 
+    // finally{
+    //   client.close();
+    // }
     /* Consulta para extraer los datos de Actividad */
     try {
       let client = new MongoClient(url, {
@@ -226,27 +259,22 @@ export async function getServerSideProps() {
   
       let result = await collection.find({}).project({"_id":0}).toArray()
 
+      estimate = await collection.estimatedDocumentCount()
+
       idEvaACt=result
-  
+
     } catch (error) {
       console.log("error - " + error);
     } 
     finally{
       client.close();
     }
-    Datos = DatosActividad.concat(DatosCriterio)
-    DatosPeriodo = idEvaACt[0].evaperiodo
 
-    // console.log(DatosPeriodo)
-    // // console.log(idEvaACt[0].evaperiodo)
-    // // console.log(idEvaACt)
-    // // console.log(idEvaACt[0].IdEvaluacionActividad)
-    // // console.log(idEvaACt)
-    // // console.log(DatosCriterio)
-    // // console.log(DatosActividad)
-    // console.log(Datos)
+    Datos = DatosActividad
+    DatosPeriodo = idEvaACt
+
     return {
       props:{
-        Datos:Datos, idEvaACt:idEvaACt, DatosPeriodo:DatosPeriodo
+        Datos:Datos, idEvaACt:idEvaACt, DatosPeriodo:DatosPeriodo, estimate:estimate 
       }}
   }
