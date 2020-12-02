@@ -78,33 +78,36 @@ export default async (req, res) => {
           break;
           case "createmany":
           // // Intentando generar id
-          // let IdNumero = 1;
-          // try {
-          //   client = new MongoClient(url, {
-          //     useNewUrlParser: true,
-          //     useUnifiedTopology: true,
-          //   });
-          //   await client.connect();
-          //   let collection = client.db(dbName).collection(coleccion);
-  
-  
-          //   const options = {sort: {}};
-          //   options.sort[keyId]=-1;
-  
-          //   const result = await collection.findOne({}, options);
-          //   if (result) {
-          //     IdNumero = parseInt(result[keyId].slice(2), 10);
-          //     IdNumero++
-          //     // console.log(IdNumero);
-          //   }
+          let IdNumero2 = 1;
+          try {
+            client = new MongoClient(url, {
+              useNewUrlParser: true,
+              useUnifiedTopology: true,
+            });
+            await client.connect();
+            let collection = client.db(dbName).collection(coleccion);
+            const options = {sort: {}};
+            options.sort[keyId]=-1;
+            const result = await collection.findOne({}, options);
+            console.log(result)
+            if (result && result[keyId]) {
+              IdNumero2 = parseInt(result[keyId].slice(IdLetras.length), 10);
+              IdNumero2++
+              // console.log(IdNumero2);
+            }
+            let dt_sinID = [...req.body.data]
+            dt_sinID.map(dt=>{
+              dt[keyId]=IdLetras + ("00000" + IdNumero2.toString()).slice(IdNumero2.toString().length);
+              IdNumero2++
+            })
+            req.body.data=dt_sinID
           //   req.body.data[keyId] =
           //     IdLetras +
-          //     ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
+          //     ("00000" + IdNumero2.toString()).slice(IdNumero2.toString().length);
           //   // console.log(req.body.data[keyId]);
-  
-          // } catch (error) {
-          //   console.log("error - " + error);
-          // }
+          } catch (error) {
+            console.log("error - " + error);
+          }
           // // } finally {
           // //   client.close();
           // // }
