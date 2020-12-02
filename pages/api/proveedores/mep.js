@@ -77,7 +77,7 @@ export default async (req, res) => {
         // }
           break;
           case "createmany":
-          // Intentando generar id
+          // // Intentando generar id
           // let IdNumero = 1;
           // try {
           //   client = new MongoClient(url, {
@@ -105,9 +105,9 @@ export default async (req, res) => {
           // } catch (error) {
           //   console.log("error - " + error);
           // }
-          // } finally {
-          //   client.close();
-          // }
+          // // } finally {
+          // //   client.close();
+          // // }
           //Enviando Datos
           try {
             client = new MongoClient(url, {

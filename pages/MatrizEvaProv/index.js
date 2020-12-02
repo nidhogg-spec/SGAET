@@ -9,48 +9,33 @@ import { MongoClient } from "mongodb";
 import { useEffect, useState } from "react";
 
 export default function Home({datosPeriodo, datosProv, idEvaACt}){      
-
-  // var x = Datos.concat(datosProv)
-  // console.log(x)
-    // var toChild = datosProv.toArray()
-    // convertToReactObject(datosProv)
-    // console.log(Datos)
-    // let y = {}
-    //y[x.nombre] indica que la key del objeto y va a ser en este caso el mismo nombre
-    // datosProv.map((x)=>{
-    //   y[x.nombre]= x.nombre
-    // })
-
-    // console.log(datosPeriodo[0].periodo)
-
     
     let arrayEvaluacion = []
     let objetoDatos = {}
-    const [datoPeriodo,setdatoPeriodo] = useState()
-    // const [datoPeriodoSeleccionado,setdatoPeriodoSeleccionado] = useState()
-    var datoPeriodoSeleccionado = ""
-    const [objectPeriodo,setObjectPeriodo] = useState({})
     var objetoPeriodo = {}
-    var selectPeriodo = []
+    const [datoPeriodo,setdatoPeriodo] = useState()
+    const [datoPeriodoSeleccionado,setDatoPeriodoSeleccionado] = useState("noperiodo")
+    // let datoPeriodoSeleccionado = ""
+    const [selectPeriodo, setSelectPeriodo] = useState([])
+
+    const [urlProv, setUrlProv] = useState()
+    const [urlPeriodo, setUrlPeriodo] = useState()
+    // var selectPeriodo = []
 
     let Columnas=[
           { 
             title: "Id", 
             field: "idProveedor",
             hidden: true
-            // lookup: y
           },
           { 
             title: "Proveedor", 
             field: "nombre",
-            // lookup: y
           },
           { title: "Puntaje", field: "puntosTotales" },
           { title: "Porcentaje", field: "porcentajeTotal" }
         ]
-
     function getData(){
-
       for (let index = 0; index < datosProv.length; index++) {        
         objetoDatos = {evaperiodo:idEvaACt, idProveedor: datosProv[index].idProveedor, periodo: datoPeriodo}
         arrayEvaluacion.push(objetoDatos)
@@ -69,27 +54,29 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
         alert(data.message);
       })  
     }
+    function prueba1 (){
 
+    }
     useEffect(()=>{
-     
+     var x = []
       for (let index = 0; index < datosPeriodo.length; index++) {
         objetoPeriodo = {value:datosPeriodo[index], texto:datosPeriodo[index]}
 
-        selectPeriodo.push(objetoPeriodo)
+        x.push(objetoPeriodo)
       }
 
-      // selectPeriodo.map(x =>{
-      //   console.log(x.value)
-      //   console.log(x.texto)
-      // })
+      setSelectPeriodo(x)
 
     },[])
+
+    useEffect(() => {
+      console.log(datoPeriodoSeleccionado)
+    }, [datoPeriodoSeleccionado]);
+
     return( 
         <div>
           <BotonAnadir
             Accion={()=>{
-              // setDarDato(true)
-              // getData1()
               getData()
             }}
           />
@@ -102,27 +89,19 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
               // value={datosPeriodo} 
               onChange={e => setdatoPeriodo(e.target.value)}
             ></input>
+            <br></br>
             {/* <input type="submit" value="submit"></input> */}
-            {console.log(selectPeriodo)}
-            <Selector
-              Title="Seleccione Periodo"
-              ModoEdicion={true}
-              KeyDato="periodo"
-              Dato={datoPeriodoSeleccionado}
-              SelectOptions={
-                  selectPeriodo
-                  // [ {value:'Hotel',texto:'Hotel'},
-                  // {value:'Agencia',texto:'Agencia'},
-                  // {value:'Guia',texto:'Guia'},
-                  // {value:'Transporteterrestre',texto:'Transporte Terrestre'},
-                  // {value:'Restaurante',texto:'Restaurante'},
-                  // {value:'Transporteferroviario',texto:'Transporte Ferroviario'},
-                  // {value:'Otro',texto:'Otro'}]
-               
-                
-            }
-            >
-            </Selector>
+            <label>
+              Selecccione Periodo:
+            </label>
+            <select value={datoPeriodoSeleccionado} onChange={(e)=>{
+              setDatoPeriodoSeleccionado(e.target.value)
+            }}>
+              <option selected value="sinvalor">Seleccione Periodo</option>
+              {selectPeriodo.map(options => {
+                return <option value={options.value}>{options.texto}</option>
+              })}
+            </select>
           </form>
           <MaterialTable
               columns={Columnas}
@@ -149,9 +128,14 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
                   return <img src="/resources/remove_red_eye-24px.svg"/>
                 },
                 tooltip: "Mostrar Evaluacion",
-                onClick: (event, rowData,) => Router.push({
-                  pathname: `/MatrizEvaProv/${rowData.idProveedor}`,
-                })
+                onClick: (event, rowData,) => {
+                  let y = rowData.idProveedor.concat('', datoPeriodoSeleccionado)
+                  Router.push({
+                    pathname: `/MatrizEvaProv/${y}`,
+                  })
+                  // setUrlProv(rowData.idProveedor)
+                  // setUrlPeriodo(datoPeriodoSeleccionado)
+                }
               }
             ]}
           options={{
@@ -261,7 +245,6 @@ export async function getStaticProps() {
     finally{
       client.close();
     }
-    console.log(datosPeriodo)
     return {
       props:{
         datosPeriodo:datosPeriodo, datosProv: datosProv, idEvaACt:idEvaACt
