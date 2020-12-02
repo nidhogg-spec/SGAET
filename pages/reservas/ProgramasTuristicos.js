@@ -60,17 +60,6 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
           ],
         },
         {
-          subTitle: "Servicios Escogidos",
-          componentes: [
-            {
-              tipo: "texto",
-              Title: "Nombre",
-              KeyDato: "Servicios",
-              Dato: FormuData.Servicios,
-            },
-          ],
-        },
-        {
           subTitle: "Descripcion",
           componentes: [
             {
@@ -169,7 +158,6 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
         DuracionNoche:0,
         PrecioEstandar:0.00,
         Localizacion:"",
-        Servicios:"",
         Descripcion:"",
         Itinerario:[],
         Incluye:[],
@@ -208,7 +196,6 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
                 DuracionNoche:data.result.DuracionNoche,
                 PrecioEstandar:data.result.PrecioEstandar,
                 Localizacion:data.result.Localizacion,
-                Servicios:data.result.Servicios,
                 Descripcion:data.result.Descripcion,
                 Itinerario:data.result.Itinerario,
                 Incluye:data.result.Incluye,

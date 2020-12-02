@@ -22,7 +22,12 @@ const TablaProgramaServicio = (
   const [Data, setData] = useState(props.Dato);
   const [DataTabla, setDataTabla] = useState([]);
   const [Columns, setColumns] = useState(props.columnas);
-  const [DataTablaInit, setDataTablaInit] = useState(async ()=>{
+  const [DataTablaInit, setDataTablaInit] = useState([]);
+useEffect(() => {
+  console.log(DataTabla)
+}, [DataTabla]);
+  // hooks
+  useEffect(async () => {
     await fetch(props.APIpathGeneral, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -46,13 +51,9 @@ const TablaProgramaServicio = (
           dt["IdServicio?"]=false
         })
         setDataTabla(Datos)
-        return Datos;
+        setDataTablaInit(Datos)
       });
-  });
-useEffect(() => {
-  console.log(DataTabla)
-}, [DataTabla]);
-  // hooks
+  }, []);
   useEffect(() => {
     console.log("Estoy en props Dato")
     let DatosIniciales =DataTabla
@@ -78,13 +79,16 @@ useEffect(() => {
             onBulkUpdate: (rows) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  let dtPrueba=Data
-                  let x = DataTabla;
+                  let dtPrueba=[...Data]
+                  let x = [...DataTabla];
                   Object.entries(rows).map((row) => {
                     const index = row[1].newData.tableData.id;
                     x[index] = row[1].newData;
                     if (x[index]["IdServicio?"]) {
-                      let i =dtPrueba.findIndex(x[index]["IdServicio"])
+                      let i =dtPrueba.findIndex(Element =>{
+                        Element["IdServicio"] == x[index]["IdServicio"]
+                      }
+                        )
                       if (i==-1) {
                         dtPrueba.push(x[index])
                       }else{
@@ -97,8 +101,8 @@ useEffect(() => {
                       }
                     }
                   });
-                  setData(dtPrueba)
-                  setDataTabla(x)
+                  setData([...dtPrueba])
+                  setDataTabla([...x])
                   resolve();
                 }, 1000);
               }),
