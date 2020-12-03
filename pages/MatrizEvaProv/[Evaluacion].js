@@ -4,17 +4,29 @@ import { MongoClient } from "mongodb";
 import {useRouter} from 'next/router'
 
 
-export default function Evaluacion({Datos, idEvaACt, DatosPeriodo,estimate}){
-  // console.log(DatosPeriodo)
+export default function Evaluacion({Datos}){
+
+    /* variables en las que se guardan los datos de la url */
     const router = useRouter();
     const Evaluacion = router.query
-  // console.log(Datos)
-    const [datosEditables, setDatosEditables] = useState(Datos)
-    const [sinEvaluacion, setSinEvaluacion] = useState(estimate)
-    // const [idProv, setIdProv] = useState(Evaluacion)
-
+    /* variable en la que se extraen todos los criterios y actividades de los 
+    proveedores */
+    let datosEditables = Datos
+    /* variable en la que se extrae el string de la url */
+    let urlPerProv = Evaluacion.Evaluacion
+    /* variable en la que se guardara la evaluacion del proveedor que corresponda */
+    var dataEvaluProv = {}
+    /*Estado que se encargara de manejar los datos que se muestran en material table*/
+    const [datosTabla, setDatosTabla] = useState([])
+    /*Variable en la que se guardaran  los datos que iran al fetch de update */
     let objetoDatosMongo = {}
-    let objetoDatos = {}
+    /*Variables en las que se separa el id del periodo*/
+    var x = urlPerProv.slice(-8)
+    var count = x.length
+    var y = parseInt(count)
+    var periodo = urlPerProv.slice(-y)
+    var idprov = urlPerProv.slice(0,7)
+    /*variables que guardaran los datos que se usan para el calculo*/
     let suma = 0;
     let puntTotal = 0;
     let porcent = 0;
@@ -28,87 +40,43 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo,estimate}){
           type: "boolean"
         }
     ]
-    // useEffect(()=>{
-    //   if(sinEvaluacion==0){
-    //     objetoDatos = {evaperiodo:datosEditables, idProveedor: Evaluacion}
-  
-    //     fetch(`http://localhost:3000/api/proveedores/mep`,{
-    //         method:"POST",
-    //         headers:{"Content-Type": "application/json"},
-    //         body: JSON.stringify({
-    //           data: objetoDatos,
-    //           accion: "create",
-    //         }),
-    //       })
-    //       .then(r=>r.json())
-    //       .then(data=>{
-    //         alert(data.message);
-    //       })  
-    //       setSinEvaluacion(1)
-    //   } else{
-    //     objetoDatos = {evaperiodo:datosEditables, idProveedor: Evaluacion}
-    //     for (let index = 0; index < idEvaACt.length; index++) {
-    //       if(idEvaACt[index].idProveedor.Evaluacion == Evaluacion.Evaluacion){
-    //         console.log("gg")
-    //         console.log(idEvaACt[index].idProveedor.Evaluacion)
-    //         console.log(Evaluacion.Evaluacion)
-    //         break
-    //       }else{
-    //         // fetch(`http://localhost:3000/api/proveedores/mep`,{
-    //         //   method:"POST",
-    //         //   headers:{"Content-Type": "application/json"},
-    //         //   body: JSON.stringify({
-    //         //     data: objetoDatos,
-    //         //     accion: "create",
-    //         //   }),
-    //         // })
-    //         // .then(r=>r.json())
-    //         // .then(data=>{
-    //         //   alert(data.message);
-    //         // })  
-    //         console.log("ffffffff")
-    //       } 
-    //     }
-    //   }
-    //   // else if(idEvaACt[0].idProveedor.Evaluacion == Evaluacion){
-    //   //   console.log("sdg")
-    //   // }
-    // },[])
+    /*para encontrar el proveedor que perteneze la evaluacion 
+    si falla algo añadir el [] en el use effect*/
+    useEffect(()=>{
+      for (let index = 0; index < datosEditables.length; index++) {
+        if (idprov==datosEditables[index].idProveedor) {
+          console.log("Existe we")
+          dataEvaluProv=datosEditables[index]
+        }
+      }
+    })
+  /*setea los datos de evaperiodo del proveedor seleccionado para que sea usado
+  en la tabla */
+    useEffect(()=>{        
+      setDatosTabla(dataEvaluProv.evaperiodo)
+    },[])
 
     return(
         <MaterialTable
             columns={Columnas}
-            data={datosEditables}
+            data={datosTabla}
             title="Matriz de Evaluacion Puntajes y Porcentajes"
             editable={{
               onBulkUpdate: changes =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                      const dataUpdate = [...datosEditables];
-                      
-                      // dataUpdate[index] = newData;
-                      // for (let index = 0; index < 10; index++) {
-                      // array.forEach(element => {
-                        
-                      // });
-                      // console.log(Object.entries(changes))
+                      const dataUpdate = [...datosTabla];
+                      /*el objeto change contiene los datos nuevos y viejos de la
+                      tabla por lo que se usa este metodo para poder visualizar los datos 
+                      y a su ves setear los nuevos datos en el estado*/
                       Object.entries(changes).map((dt,key)=>{
-                        // 
                         const index = dt[1].oldData.tableData.id;
                         dataUpdate[index] = dt[1].newData
                         
-                        setDatosEditables([...dataUpdate])
+                        setDatosTabla([...dataUpdate])
 
-                        // console.log(dataUpdate[index].valor)
-                        // let valor = parseInt(dataUpdate[index].valor,10)
-                        // // console.log(dataUpdate[index].estado)
-                        // if(dataUpdate[index].estado === "1" && dataUpdate[index].IdActividad ){
-                        //   puntTotal = puntTotal + valor
-                        // }
-                        // console.log(key)
-                        
                       })
-                      
+                      /*recorre los datos actualizados y calcula los puntajes */
                       for (let index = 0; index < dataUpdate.length; index++) {  
                         let valor = parseInt(dataUpdate[index].valor,10)
 
@@ -123,13 +91,11 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo,estimate}){
 
                       objetoDatosMongo = {evaperiodo:dataUpdate,puntosTotales: suma, porcentajeTotal: porcent }
 
-                      /*Recordar que esta parte del codigo tiene que ser comparado con el periodo en el que se este llevando a cabo la evaluacion */
-                      // console.log(idEvaACt[0].IdEvaluacionActividad)
                       fetch(`http://localhost:3000/api/proveedores/mep`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
                         body: JSON.stringify({
-                          idProducto: DatosPeriodo[0].IdEvaluacionActividad,
+                          idProducto: dataEvaluProv.IdEvaluacionActividad,
                           data: objetoDatosMongo,
                           accion: "update",
                         }),
@@ -144,11 +110,8 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo,estimate}){
                 onRowDelete: oldData =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                      const dataDelete = [...datosEditables];
+                      const dataDelete = [...datosTabla];
                       const index = oldData.tableData.id;
-
-                      // console.log(dataDelete[index])
-                      // console.log(dataDelete[index].IdProductoHotel)
 
                       fetch(`http://localhost:3000/api/proveedores/mep`,{
                         method:"POST",
@@ -166,7 +129,7 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo,estimate}){
                       console.log(index)
 
                       dataDelete.splice(index, 1);
-                      setDatosEditables([...dataDelete]);
+                      setDatosTabla([...dataDelete]);
 
                       resolve()
                     }, 1000)
@@ -180,69 +143,17 @@ export default function Evaluacion({Datos, idEvaACt, DatosPeriodo,estimate}){
     )
 }
 export async function getServerSideProps(context) {
+
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
-    /*Tener en cuenta que la duplicidad de datos es porque se junto el doccumento de criterio en un objeto
-    por lo que solo se deberia mostrar lo de actividad siendo que criterio
-    se encuentra dentro de actividad y no es nesesario pasar ese dato */
 
     let Datos=[]
-    let DatosPeriodo = []
-    let DatosCriterio=[]
-    let DatosActividad=[]
-    let idEvaACt = ["f"]
-    let estimate = 10
     
     let client = new MongoClient(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
 
-    /* Consulta para extraer los datos de Criterio */
-    // try {
-    
-    //   client = new MongoClient(url, {
-    //     useNewUrlParser: true,
-    //     useUnifiedTopology: true,
-    //   });
-    //   await client.connect();
-    //   const dbo = client.db(dbName);
-    //   const collection = dbo.collection("Criterio");
-  
-    //   let result = await collection.find({}).project({"_id":0}).toArray()
-  
-    //   DatosCriterio=result
-  
-    // } catch (error) {
-    //   console.log("error - " + error);
-    // } 
-    // finally{
-    //   client.close();
-    // }
-    /* Consulta para extraer los datos de Actividad */
-    try {
-      let client = new MongoClient(url, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      client = new MongoClient(url, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      await client.connect();
-      const dbo = client.db(dbName);
-      const collection = dbo.collection("Actividad");
-  
-      let result = await collection.find({}).project({"_id":0}).toArray()
-
-      DatosActividad=result
-  
-    } catch (error) {
-      console.log("error - " + error);
-    } 
-    finally{
-      client.close();
-    }
     /* Consulta para extraer los datos de EvaluacionActividad */
     try {
       let client = new MongoClient(url, {
@@ -256,12 +167,11 @@ export async function getServerSideProps(context) {
       await client.connect();
       const dbo = client.db(dbName);
       const collection = dbo.collection("EvaluacionActividad");
-  
-      let result = await collection.find({}).project({"_id":0}).toArray()
 
-      estimate = await collection.estimatedDocumentCount()
-
-      idEvaACt=result
+      let result = await collection.find({}).project({
+        "_id":0, 
+      }).toArray()
+      Datos=result
 
     } catch (error) {
       console.log("error - " + error);
@@ -269,12 +179,8 @@ export async function getServerSideProps(context) {
     finally{
       client.close();
     }
-
-    Datos = DatosActividad
-    DatosPeriodo = idEvaACt
-
     return {
       props:{
-        Datos:Datos, idEvaACt:idEvaACt, DatosPeriodo:DatosPeriodo, estimate:estimate 
+        Datos:Datos
       }}
   }

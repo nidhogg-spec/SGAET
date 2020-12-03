@@ -54,9 +54,6 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
         alert(data.message);
       })  
     }
-    function prueba1 (){
-
-    }
     useEffect(()=>{
      var x = []
       for (let index = 0; index < datosPeriodo.length; index++) {
