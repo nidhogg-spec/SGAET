@@ -11,10 +11,6 @@ import CampoTexto from "@/components/TablaModal/Modal/CampoTexto/CampoTexto";
 import Selector from '@/components/TablaModal/Modal/Selector/Selector'
 import TablaSimple from '@/components/Formulario/TablaSimple/TablaSimple'
 
-import { dark } from "@material-ui/core/styles/createPalette";
-
-
-
 export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
   //Variables
   const [Edicion, setEdicion] = useState(false);
@@ -28,7 +24,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
 
   let Columnas = []
   let DataEdit = {};
-  let tittle = "Productos de "+ TipoProveedor
+  let tittle = "Servicios de "+ TipoProveedor
 
   switch(provDinamico){
     case "hotel":
@@ -38,17 +34,26 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         { 
           title: "TipoHabitacion", 
           field: "tipoHabitacion",
-          lookup: {SWB: "SWB",DWB: "DWB",DWBSuper: "DWB Super",TWB: "TWB",TWBSuper: "TWBSuper",CWB: "CWB",MWB: "MWB"}
+          lookup: {Simple: "Simple",Doble: "Doble",Mwfamiliar: "Mw familiar",Triple: "Triple",Familiar: "Familiar",Suit: "Suit",Semisuit: "Semisuit"}
         },
-        { title: "Precio Publicado", field: "precioPubli" },
-        { title: "Precio Confidencial", field: "precioConfi" },
+        { title: "DescripHabitacion", field: "descripcionHabitacion" },
+        { 
+          title: "Cama Adicional", 
+          field: "camAdic",
+          type: "boolean"
+
+        },
+        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
+        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
         { title: "IGV", field: "igv" },
       ]
       break;
-    case "restauranet":
+    case "restaurante":
       Columnas= [
         { title: "Servicio", field: "servicio" },
         { title: "Precio", field: "precio" },
+        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
+        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
         { title: "Caracteristicas", field: "caracte" },
       ]
       break;
@@ -58,7 +63,6 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         { title: "Horario", field: "horario" },
         { title: "Tipo de Vehiculo", field: "tipvehiculo" },
         { title: "Precio Soles", field: "PrecioSoles" },
-        { title: "Precio Dolares", field: "PrecioDolares" },
       ]
       break;
     case "guia":
@@ -66,17 +70,18 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         { title: "Direccion", field: "direccion" },
         { title: "DNI", field: "dni" },
         { title: "Idiomas", field: "idiomas" },
-        { title: "Asociacion", field: "asociacion" },
+        { title: "Gremio", field: "gremio" },
         { title: "N° Carne", field: "carne" },
-        { title: "Fecha Expedicion", field: "fecExpedi" },
-        { title: "Fecha Caducidad", field: "fecCaduc" }
+        { title: "Fecha Expedicion", field: "fecExpedi" , type: "date"   },
+        { title: "Fecha Caducidad", field: "fecCaduc" , type: "date" }
       ]
       break;
     case "agencia":
       Columnas=[
-        { title: "Servicio", field: "servicio" },
-        { title: "Precio Confidencial", field: "precioConfi" },
-        { title: "Precio Publicado", field: "precioPubli" },
+        { title: "Nombre del Servicio", field: "servicio" },
+        { title: "codigo del Servicio", field: "codServicio" },
+        { title: "Precio Confidencial", field: "precioConfi" , type: "numeric" },
+        { title: "Precio Publicado", field: "precioPubli" , type: "numeric" },
         { title: "Incluye", field: "incluye" },
         { title: "Duracion", field: "duracion" },
         { title: "Observacion", field: "observacion" }
@@ -85,14 +90,18 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
     case "transporteferroviario":
       Columnas=[
         { title: "Ruta", field: "ruta" },
-        { title: "Horario", field: "horario" },
+        { title: "Hora Salida", field: "salida" },
+        { title: "Hora Llegada", field: "llegada" },
         { 
           title: "Tipo de Tren", 
           field: "tipoTren"
          },
-        { title: "Precio Adulto", field: "precioAdulto" },
-        { title: "Precio Niño", field: "precioNiño" },
-        { title: "Precio Guia", field: "precioGuia" }
+        { title: "Precio Adulto Confi", field: "precioAdultoConfi" , type: "numeric" },
+        { title: "Precio Niño Confi", field: "precioNiñoConfi", type: "numeric"  },
+        { title: "Precio Guia Confi", field: "precioGuiaConfi" , type: "numeric" },
+        { title: "Precio Adulto Publi", field: "precioAdultoPubli" , type: "numeric" },
+        { title: "Precio Niño Publi", field: "precioNiñoPubli" , type: "numeric" },
+        { title: "Precio Guia Publi", field: "precioGuiaPubli" , type: "numeric" }
       ]
       break;
   }
@@ -363,6 +372,9 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             onRowAdd: newData =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
+                    let x
+                    let idprov= DatosProveedor.idProveedor
+                    newData.idProveedor = idprov
                     fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
                       method:"POST",
                       headers:{"Content-Type": "application/json"},
@@ -510,7 +522,7 @@ export async function getServerSideProps(context) {
     });
     await client.connect();
     let collection = client.db(dbName).collection(collectionName);
-    let result = await collection.find({}).toArray();
+    let result = await collection.find({idProveedor: uruId}).toArray();
 
     result.map(x => {
        x._id= JSON.stringify(x._id)
@@ -522,6 +534,7 @@ export async function getServerSideProps(context) {
   } finally{
     client.close()
   }
+  // console.log(DatosProveedor.idProveedor)
   const APIpath = process.env.API_DOMAIN+"/api/proveedores/listaProveedores";
   return {
     props: {
