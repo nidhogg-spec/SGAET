@@ -1,26 +1,25 @@
 import MaterialTable,{ MTableToolbar } from "material-table";
 import Router from 'next/router'
-import Selector from '@/components/Formulario/Selector/Selector'
 import BotonAnadir from 'components/BotonAnadir/BotonAnadir'
-import CampoTexto from '@/components/Formulario/CampoTexto/CampoTexto'
+
 
 import { MongoClient } from "mongodb";
 
 import { useEffect, useState } from "react";
 
-export default function Home({datosPeriodo, datosProv, idEvaACt}){      
-    
+export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaAct}){    
+    // console.log(datosEvaAct)  
+    // console.log(datosProv)  
+    let datosEvaActPeriodo = []
+    let datosTabla = []
     let arrayEvaluacion = []
     let objetoDatos = {}
     var objetoPeriodo = {}
+    const [datosTablaShow,setDatosTablaShow] = useState([])
     const [datoPeriodo,setdatoPeriodo] = useState()
     const [datoPeriodoSeleccionado,setDatoPeriodoSeleccionado] = useState("noperiodo")
     // let datoPeriodoSeleccionado = ""
     const [selectPeriodo, setSelectPeriodo] = useState([])
-
-    const [urlProv, setUrlProv] = useState()
-    const [urlPeriodo, setUrlPeriodo] = useState()
-    // var selectPeriodo = []
 
     let Columnas=[
           { 
@@ -36,8 +35,8 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
           { title: "Porcentaje", field: "porcentajeTotal" }
         ]
     function getData(){
-      for (let index = 0; index < datosProv.length; index++) {        
-        objetoDatos = {evaperiodo:idEvaACt, idProveedor: datosProv[index].idProveedor, periodo: datoPeriodo}
+      for (let index = 0; index < datosjuntos.length; index++) {        
+        objetoDatos = {evaperiodo:datosActividad, idProveedor: datosjuntos[index].idProveedor, periodo: datoPeriodo}
         arrayEvaluacion.push(objetoDatos)
       }
 
@@ -54,6 +53,42 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
         alert(data.message);
       })  
     }
+
+    function compare (a,b){
+      let comp = 0
+      if(a.idProveedor>b.idProveedor){
+        comp = 1;
+      }else if(a.idProveedor<b.idProveedor){
+        comp= -1
+      }
+      return comp
+    }
+    /* ----------------------------------------------------------------------- */
+    useEffect(()=>{
+      let filtroPeriodo = datosEvaAct.filter((row)=>{
+        return row.periodo==datoPeriodoSeleccionado
+      })
+
+      let filtroPeriodoOrdenado = filtroPeriodo.sort(compare)
+      let datosProvOrdenado = datosProv.sort(compare)
+
+      filtroPeriodoOrdenado.map((x, index)=>{
+        if(x.idProveedor == datosProvOrdenado[index].idProveedor){
+          datosTabla.push({
+            idProveedor: x.idProveedor,
+            nombre: datosProvOrdenado[index].nombre,
+            puntosTotales: x.puntosTotales,
+            porcentajeTotal: x.porcentajeTotal
+          })
+        }
+        if (datosTabla[index].puntosTotales === undefined && datosTabla[index].porcentajeTotal === undefined) {
+          datosTabla[index].puntosTotales = null
+          datosTabla[index].porcentajeTotal = null
+        }
+      })
+      console.log(datosTabla)
+      setDatosTablaShow(datosTabla)
+    },[datoPeriodoSeleccionado])
     useEffect(()=>{
      var x = []
       for (let index = 0; index < datosPeriodo.length; index++) {
@@ -65,10 +100,6 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
       setSelectPeriodo(x)
 
     },[])
-
-    useEffect(() => {
-      console.log(datoPeriodoSeleccionado)
-    }, [datoPeriodoSeleccionado]);
 
     return( 
         <div>
@@ -83,7 +114,7 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
             </label>
             <input 
               type="text" 
-              // value={datosPeriodo} 
+              value={datosTabla} 
               onChange={e => setdatoPeriodo(e.target.value)}
             ></input>
             <br></br>
@@ -102,7 +133,7 @@ export default function Home({datosPeriodo, datosProv, idEvaACt}){
           </form>
           <MaterialTable
               columns={Columnas}
-              data={datosProv}
+              data={datosTablaShow} 
               components={{
                 Toolbar: props => (
                   <div>
@@ -148,7 +179,8 @@ export async function getStaticProps() {
 
     let datosPeriodo=[]
     let datosProv = []
-    let idEvaACt = []
+    let datosActividad = []
+    var datosEvaAct = []
 
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
@@ -190,8 +222,29 @@ export async function getStaticProps() {
         "NumContac":0,
         "Encuesta":0
       }).toArray()
-
-      datosProv=result
+      datosProv= result
+     
+    } catch (error) {
+      console.log("error - " + error);
+    } 
+    finally{
+      client.close();
+    }
+    try {
+      client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("EvaluacionActividad");
+      
+      let result = await collection.find({}).project({
+        "_id":0,
+        "evaperiodo":0,
+        "IdEvaluacionActividad":0,
+      }).toArray()
+      datosEvaAct= result
 
     } catch (error) {
       console.log("error - " + error);
@@ -214,7 +267,7 @@ export async function getStaticProps() {
   
       let result = await collection.find({}).project({"_id":0}).toArray()
 
-      idEvaACt=result
+      datosActividad=result
 
     } catch (error) {
       console.log("error - " + error);
@@ -244,6 +297,6 @@ export async function getStaticProps() {
     }
     return {
       props:{
-        datosPeriodo:datosPeriodo, datosProv: datosProv, idEvaACt:idEvaACt
+        datosPeriodo:datosPeriodo, datosActividad:datosActividad, datosEvaAct:datosEvaAct, datosProv:datosProv
       }}
   }

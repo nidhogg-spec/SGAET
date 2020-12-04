@@ -32,8 +32,8 @@ export default function Evaluacion({Datos}){
     let porcent = 0;
 
     let Columnas = [
-        {title: "Criterio",field: "criterio" , editable: 'never'},
-        { title: "Actividad", field: "descripcion", editable: 'never' },
+        {title: "Actividad",field: "criterio" , editable: 'never'},
+        { title: "Criterio", field: "descripcion", editable: 'never' },
         { 
           title: "¿Cumple?", 
           field: "cumple" ,
