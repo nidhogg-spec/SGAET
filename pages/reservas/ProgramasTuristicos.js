@@ -242,7 +242,7 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
         MostrarModal={MostrarModal}
       />
       <div className={CustomStyles.tituloBox}>
-        <span className={CustomStyles.titulo}>Servicios</span>
+        <span className={CustomStyles.titulo}>Programas turisticos</span>
         <AutoModal
           Formulario={FormularioCreacion} //debe ser diferente por lo de formulario vacio
           IdDato={IdDato}
@@ -255,7 +255,7 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
         <MaterialTable
           columns={Columnas}
           data={TablaDatos}
-          title="Servicios"
+          title="Programas turisticos"
           actions={[
             {
               icon: () => {

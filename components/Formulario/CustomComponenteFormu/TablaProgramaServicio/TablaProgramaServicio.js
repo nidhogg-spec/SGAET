@@ -10,7 +10,7 @@ const TablaProgramaServicio = (
     Title: "Nombre del Proveedor",
     ModoEdicion: true,
     DevolverDatoFunct : (()=>{console.log("Te olvidades de una function devolver dato, brother")}),
-    DarDato: { DevolverDato },
+    DarDato: false,
     KeyDato: "KeyDatoGeneral",
     Dato: [],
     Reiniciar,
@@ -63,6 +63,17 @@ useEffect(() => {
     })
     setDataTabla(DatosIniciales)
   }, [props.Dato]);
+  useEffect(() => {
+    if(props.DarDato){
+      props.DevolverDatoFunct(props.KeyDato,Data)
+    }
+  }, [props.DarDato]);
+  useEffect(() => {
+    if (props.Reiniciar==true) {
+        setData(props.Dato)
+        setDataTabla(DataTablaInit)
+    }
+}, [props.Reiniciar]);
 
 
  if (ModoEdicion == true) {
@@ -85,10 +96,9 @@ useEffect(() => {
                     const index = row[1].newData.tableData.id;
                     x[index] = row[1].newData;
                     if (x[index]["IdServicio?"]) {
-                      let i =dtPrueba.findIndex(Element =>{
+                      let i =dtPrueba.findIndex((Element,number,obj) =>{
                         Element["IdServicio"] == x[index]["IdServicio"]
-                      }
-                        )
+                      })
                       if (i==-1) {
                         dtPrueba.push(x[index])
                       }else{
