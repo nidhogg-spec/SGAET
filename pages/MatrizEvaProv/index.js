@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaAct}){    
     // console.log(datosEvaAct)  
     // console.log(datosProv)  
-    let datosEvaActPeriodo = []
+    // let datosEvaActPeriodo = []
     let datosTabla = []
     let arrayEvaluacion = []
     let objetoDatos = {}

@@ -111,18 +111,18 @@ const [datosEditables, setDatosEditables] = useState(Datos);
                       },
                       tooltip: "Mostrar todo",
                       onClick: (event, rowData) => Router.push({
-                          pathname: '/Clientes/detalleCliente',
+                          pathname: `/Clientes/${rowData.IdCliente}`,
                       })
                     },
-                    {
-                      tooltip: "Seguimiento",
-                      icon: ()=>{
-                        return <img src="/resources/seguimiento-online.png" />;
-                      },
-                        // onClick: (event, rowData) => Router.push({
-                        //     pathname: '/Clientes/detalleCliente',
-                        // })
-                    }
+                    // {
+                    //   icon: ()=>{
+                    //     return <img src="/resources/seguimiento-online.png" />;
+                    //   },
+                    //   tooltip: "Seguimiento",
+                    //   onClick: (event, rowData) => Router.push({
+                    //       pathname: '/Clientes/detalleCliente',
+                    //   })
+                    // }
                 ]}
                   options={{
                     actionsColumnIndex: -1,
