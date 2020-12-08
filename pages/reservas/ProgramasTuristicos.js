@@ -12,7 +12,7 @@ import BotonAnadir from "../../components/BotonAnadir/BotonAnadir";
 import Tabla from "../../components/TablaModal/Tabla";
 import AutoModal from "@/components/AutoModal/AutoModal";
 
-function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
+function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
   //Funciones
   const MostrarModal = (x) => {
     setDisplay(x);
@@ -57,17 +57,6 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
                 Dato: FormuData.Localizacion,
                 InputStep: "1",
               },
-          ],
-        },
-        {
-          subTitle: "Servicios Escogidos",
-          componentes: [
-            {
-              tipo: "texto",
-              Title: "Nombre",
-              KeyDato: "Servicios",
-              Dato: FormuData.Servicios,
-            },
           ],
         },
         {
@@ -125,12 +114,32 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
             componentes: [
               {
                 tipo: "tablaSimple",
-                Title: "Incluye",
+                Title: "",
                 KeyDato: "RecomendacionesLlevar",
                 Dato: FormuData.RecomendacionesLlevar, //deber ser un [] - array - Sino todo explota
                 columnas: [
                   { field: "Recomendacion", title: "Recomendacion" },
                 ],
+              },
+            ],
+          },
+          {
+            subTitle: "Servicios del programa turistico",
+            componentes: [
+              {
+                tipo: "CustomTablaProgramaServicio",
+                Title: "",
+                KeyDato: "Servicios",
+                Dato: FormuData.Servicios, //deber ser un [] - array - Sino todo explota
+                columnas: [
+                  { field: "IdServicio", title: "ID", hidden:true , editable:"never"},
+                  { field: "NombreServicio", title: "Nombre", editable:"never" },
+                  { field: "Opcional", title: "Recomendacion", type:"boolean"},
+                  { field: "NumeroOpcion", title: "Recomendacion", type:"numeric" },
+                  { field: "Pregunta", title: "Recomendacion" },
+                  { field: "IdServicio?", title: "Recomendacion", type:"boolean" },
+                ],
+                APIpathGeneral:APIpathGeneral
               },
             ],
           },
@@ -149,12 +158,12 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
         DuracionNoche:0,
         PrecioEstandar:0.00,
         Localizacion:"",
-        Servicios:"",
         Descripcion:"",
         Itinerario:[],
         Incluye:[],
         NoIncluye:[],
-        RecomendacionesLlevar:[]
+        RecomendacionesLlevar:[],
+        Servicios:[]
     })
   );
   const [IdDato, setIdDato] = useState();
@@ -187,12 +196,12 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
                 DuracionNoche:data.result.DuracionNoche,
                 PrecioEstandar:data.result.PrecioEstandar,
                 Localizacion:data.result.Localizacion,
-                Servicios:data.result.Servicios,
                 Descripcion:data.result.Descripcion,
                 Itinerario:data.result.Itinerario,
                 Incluye:data.result.Incluye,
                 NoIncluye:data.result.NoIncluye,
-                RecomendacionesLlevar:data.result.RecomendacionesLlevar
+                RecomendacionesLlevar:data.result.RecomendacionesLlevar,
+                Servicios:data.result.Servicios || []
             })
           );
         });
@@ -233,7 +242,7 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
         MostrarModal={MostrarModal}
       />
       <div className={CustomStyles.tituloBox}>
-        <span className={CustomStyles.titulo}>Servicios</span>
+        <span className={CustomStyles.titulo}>Programas turisticos</span>
         <AutoModal
           Formulario={FormularioCreacion} //debe ser diferente por lo de formulario vacio
           IdDato={IdDato}
@@ -246,7 +255,7 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
         <MaterialTable
           columns={Columnas}
           data={TablaDatos}
-          title="Servicios"
+          title="Programas turisticos"
           actions={[
             {
               icon: () => {
@@ -275,7 +284,7 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, DatosProveedores }) {
   );
 }
 export async function getStaticProps() {
-  const APIpath = process.env.API_DOMAIN + "/api/ProgramasTuristicos";
+  const APIpath = process.env.API_DOMAIN + "/api/programasTuristicos";
   const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
   let Columnas = [
@@ -329,6 +338,7 @@ export async function getStaticProps() {
       Datos: Datos,
       APIpath: APIpath,
       DatosProveedores: DatosProveedores,
+      APIpathGeneral:APIpathGeneral
     },
   };
 }

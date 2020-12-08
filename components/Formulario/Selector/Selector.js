@@ -65,10 +65,19 @@ const Selector = (props={
       </div>
     );
   } else {
+    console.log(props.SelectOptions)
+    let data = props.SelectOptions.find((opt)=>{
+      return opt["value"]==Dato
+    }) 
     return (
+      
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
-        <span>{Dato}</span>
+        <span>{
+          props.SelectOptions.find((opt)=>{
+            return opt["value"]==Dato
+          }).texto
+        }</span>
       </div>
     );
   }

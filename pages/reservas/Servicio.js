@@ -216,7 +216,9 @@ function Servicio({ Columnas, Datos, APIpath, DatosProveedores }) {
           Display={false}
           MostrarModal={MostrarModal}
         />
-        <MaterialTable
+      </div>
+      <div>
+      <MaterialTable
           columns={Columnas}
           data={TablaDatos}
           title="Servicios"
@@ -236,7 +238,25 @@ function Servicio({ Columnas, Datos, APIpath, DatosProveedores }) {
                 return <img src="/resources/delete-black-18dp.svg" />;
               },
               tooltip: "Delete User",
-              onClick: (event, rowData) => {},
+              onClick: async (event, rowData) => {
+                try {
+                  await fetch(APIpath, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      idProveedor: rowData.id,
+                      accion: "delete",
+                    }),
+                  })
+                    .then((r) => r.json())
+                    .then((data) => {
+                      alert(data.message);
+                    });
+                } catch (error) {
+                  console.log(error)
+                  alert(error);
+                }
+              },
             }),
           ]}
           options={{

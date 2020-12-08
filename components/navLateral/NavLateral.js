@@ -30,7 +30,7 @@ export default function NavLateral() {
         {
             tipo:"link",
             subModuloName:"Cotizacion",
-            link:"#"
+            link:"http://localhost:3000/reservas/Cotizacion"
         },{
             tipo:"link",
             subModuloName:"Lista de reserva",
