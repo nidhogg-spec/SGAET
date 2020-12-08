@@ -145,7 +145,11 @@ const TablaServicioCotizacion = (
   }, [props.ModoEdicion]);
   useEffect(() => {
     if (props.DarDato == true) {
-      props.DevolverDatoFunct(props.KeyDato, Data);
+        let servicios=[]
+        CotiServicio.map((element)=>{
+            servicios.push(element['IdServicio'])
+        })
+      props.DevolverDatoFunct(props.KeyDato, servicios);
     }
   }, [props.DarDato]);
 
