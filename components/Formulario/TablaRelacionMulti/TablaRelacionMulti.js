@@ -21,7 +21,7 @@ const TablaRelacionMulti = (
 ) => {
   const [ModoEdicion, setModoEdicion] = useState(props.ModoEdicion);
   const [Data, setData] = useState(props.Dato);
-  const [DatosTablaCompleto, setDatosTablaCompleto] = useState(props.DatoTabla);
+  const [DatosTablaCompleto, setDatosTablaCompleto] = useState(props.DatoTabla||[]);
   useEffect(() => {
     setData(props.Dato);
     // DatosTablaCompleto.map((dt) => {
