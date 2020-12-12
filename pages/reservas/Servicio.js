@@ -1,7 +1,7 @@
 //packege
 import fetch from "isomorphic-unfetch";
 import router from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 //css
 import CustomStyles from "../../styles/Servicio.module.css";
 
@@ -29,6 +29,12 @@ function Servicio({ Columnas, Datos, APIpath, DatosProveedores }) {
               Title: "Nombre del servicio",
               KeyDato: "NombreServicio",
               Dato: FormuData.NombreServicio,
+            },
+            {
+              tipo: "texto",
+              Title: "Codigo de Servicio",
+              KeyDato: "CodigoServicio",
+              Dato: FormuData.CodigoServicio,
             },
             {
               tipo: "selector",

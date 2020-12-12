@@ -1,18 +1,12 @@
+import React, { useState, useEffect } from 'react';
+import {useRouter} from 'next/router'
+
 import MaterialTable from "material-table";
 
-import { colors } from "@material-ui/core";
-
-export default function Home() {
-  let columns=[
-    { title: "Adı", field: "name" },
-    { title: "Soyadı", field: "surname" },
-    { title: "Doğum Yılı", field: "birthYear", type: "numeric" },
-    {
-      title: "Doğum Yeri",
-      field: "birthCity",
-      lookup: { 34: "İstanbul", 63: "Şanlıurfa" },
-    },
-  ]
+const Index=({
+  DataReservas
+}) => {
+  const router = useRouter()
   let data=[
     {
       name: "Mehmet",
@@ -21,14 +15,61 @@ export default function Home() {
       birthCity: 63,
     },
   ]
+  
   return (
     <div>
       <MaterialTable
-      columns={columns}
-      data={Datos}
-      title="Demo Title"
-      
+
+      columns={
+      [{ title: "Id", field: "IdReservaCotizacion" },
+      { title: "NombreGrupo", field: "NombreGrupo" },
+      { title: "CodGrupo", field: "CodGrupo"},
+      {
+        title: "FechaIN",
+        field: "FechaIN",
+      }]}
+      data={DataReservas}
+      title={null}
+      actions={
+        [
+          {
+            icon: () => {
+              return <img src="/resources/remove_red_eye-24px.svg" />;
+            },
+            tooltip: "Mostrar reserva",
+            onClick: (event, rowData) => {
+              router.push(`/reservas/reserva/${rowData.IdReservaCotizacion}`)
+            },
+          },
+          
+        ]}
+        options={{
+          actionsColumnIndex: -1,
+        }
+      }
       />
     </div>
   )
+  
 }
+export async function getStaticProps(){
+  let DataReservas=[]
+  const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
+  await fetch(APIpathGeneral, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      coleccion: "ReservaCotizacion",
+      accion: "FindAll",
+      projection:{},
+    }),
+  })
+    .then((r) => r.json())
+    .then((data) => {
+      DataReservas = data.result;
+    });
+  return({props:{
+    DataReservas:DataReservas
+  }})
+}
+export default Index;
