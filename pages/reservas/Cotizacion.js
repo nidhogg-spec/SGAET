@@ -172,8 +172,7 @@ const Cotizacion = ({
         }
       });
       console.log(servicios);
-      let dataGuardar = DataNuevaEdit;
-      delete dataGuardar["Servicios"];
+
       await fetch(APIpathGeneral, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -189,7 +188,9 @@ const Cotizacion = ({
         .then((data) => {
           console.log(data.result);
         });
-
+      let dataGuardar = DataNuevaEdit;
+      delete dataGuardar["Servicios"];
+      dataGuardar['Estado']=0
       await fetch(APIpathGeneral, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -317,13 +318,41 @@ const Cotizacion = ({
               Reiniciar={ReinciarComponentes}
             /> */}
           </div>
+          <CampoTexto
+            Title={"Nombre de Grupo"}
+            ModoEdicion={true}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={"NombreGrupo"}
+            Dato={DataCotizacion.NombreGrupo}
+            Reiniciar={ReinciarComponentes}
+          />
+          <CampoTexto
+            Title={"Codigo de Grupo"}
+            ModoEdicion={true}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={"CodGrupo"}
+            Dato={DataCotizacion.CodGrupo}
+            Reiniciar={ReinciarComponentes}
+          />
+          <CampoNumero
+            Title={"Numero de Pasajeros"}
+            ModoEdicion={true}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={"Npasajeros"}
+            Dato={DataCotizacion.Npasajeros}
+            Reiniciar={ReinciarComponentes}
+            InputStep="1"
+          />
           <CampoFecha
             Title={"Fecha de Inicio"}
             ModoEdicion={true}
             DevolverDatoFunct={DarDatoFunction}
             DarDato={DarDato}
-            KeyDato={"FechaInicio"}
-            Dato={DataCotizacion.FechaInicio}
+            KeyDato={"FechaIN"}
+            Dato={DataCotizacion.FechaIN}
             Reiniciar={ReinciarComponentes}
           />
           <CampoFecha
@@ -331,8 +360,8 @@ const Cotizacion = ({
             ModoEdicion={true}
             DevolverDatoFunct={DarDatoFunction}
             DarDato={DarDato}
-            KeyDato={"FechaFin"}
-            Dato={DataCotizacion.FechaFin}
+            KeyDato={"FechaOUT"}
+            Dato={DataCotizacion.FechaOUT}
             Reiniciar={ReinciarComponentes}
           />
         </div>

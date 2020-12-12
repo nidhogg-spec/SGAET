@@ -34,7 +34,7 @@ export default function NavLateral() {
         },{
             tipo:"link",
             subModuloName:"Lista de reserva",
-            link:"#"
+            link:"/reservas"
         },{
             tipo:"link",
             subModuloName:"Programas turisticos",

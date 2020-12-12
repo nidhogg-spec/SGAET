@@ -79,8 +79,8 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
               KeyDato: "Itinerario",
               Dato: FormuData.Itinerario, //deber ser un [] - array - Sino todo explota
               columnas: [
-                { field: "Hora Inicio", title: "HoraInicio", type: "time" },
-                { field: "Hora Fin", title: "HoraFin", type: "time" },
+                { field: "Hora Inicio", title: "HoraInicio", initialEditValue:"00:00:00" },
+                { field: "Hora Fin", title: "HoraFin", initialEditValue:"00:00:00" },
                 { field: "Actividad", title: "Actividad" },
               ],
             },
@@ -263,7 +263,7 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
               },
               tooltip: "Save User",
               onClick: (event, rowData) => {
-                setIdDato(rowData.IdServicio);
+                setIdDato(rowData.IdProgramaTuristico);
                 setDisplay(true);
               },
             },

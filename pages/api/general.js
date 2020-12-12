@@ -57,7 +57,42 @@ export default async (req, res) => {
               });
           });
           break;
+        case "FindOne":
+          client = new MongoClient(url, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+          });
+          /*Que debe de ir en el REQ
+              - accion
+              - coleccion
+              - dataFound
+              - keyId
+              - projection
+            */
+          await client.connect(async (error) => {
+            // assert.equal(err, null); // Preguntar
+            let dbo = client.db(dbName);
+
+            let collection = dbo.collection(req.body.coleccion);
+            // collection.findOne(idServicio)
+            let query = {};
+            query[req.body.keyId]=req.body.dataFound
+            console.log(query)
+            let result =await collection
+              .findOne(query, {
+                projection: req.body.projection,
+              })
+              
+              res.status(200).json({ result });
+              // client.close();
+          });
+          break;
         case "FindAll":
+          /*Que debe de ir en el REQ
+              - Accion
+              - coleccion
+              - projection
+            */
           try {
             await client.connect((error) => {
               // assert.equal(err, null); // Preguntar
