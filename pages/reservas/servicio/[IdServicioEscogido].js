@@ -50,7 +50,7 @@ console.log(DataServicioEscogido)
     <>
       <div>4
         <span>Servicio</span>{OrdenServicio? <button onClick={()=>{
-          router.push(`/reserva/ordenServicio/${DataServicioEscogido.OrdenServicio['TipoOrden']}/${IdServicioEscogido}`)
+          router.push(`/reservas/OrdenServicio/${DataServicioEscogido.OrdenServicio['TipoOrden']}/${IdServicioEscogido}`)
         }}>Orden de servicio</button> : <></> } 
       </div>
       <div>
