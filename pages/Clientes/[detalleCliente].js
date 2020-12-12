@@ -15,6 +15,7 @@ export default function detalleCliente({Datos, DatosSeguimiento}){
     const [datosTablaSeguimiento, setDatosTablaSeguimiento] = useState(DatosSeguimiento)
     const [modoEdicion, setModoEdicion] = useState(false)
     const [datosPersonales,setDatosPersonales]  = useState(false)
+    
     const Columnas = [
         { title: "ID", field: "IdSeguimiento", hidden: true},
         { title: "Fecha", field: "Fecha", type:"date"},

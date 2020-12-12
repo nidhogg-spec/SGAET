@@ -67,11 +67,6 @@ export default function NavLateral() {
       subModulos:[]
     },
     {
-      modulo: "Ordenes de Servicio",
-      svg:"assignment-black-18dp.svg",
-      subModulos:[]
-    },
-    {
       modulo: "Finanzas",
       svg:"attach_money-black-18dp.svg",
       subModulos:[
