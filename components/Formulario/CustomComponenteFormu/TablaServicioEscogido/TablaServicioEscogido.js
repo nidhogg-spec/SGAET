@@ -76,6 +76,31 @@ const TablaServicioEscogido = (props={
                     title={props.Title}
                     columns={props.columnas}
                     data={Data}
+                    actions={[
+                        rowData => ({
+                            icon: () => {
+                              return <img src="/resources/remove_red_eye-24px.svg" />;
+                            },
+                            tooltip: "Mostrar reserva",
+                            onClick: (event, rowData) => {
+                              router.push(`/reservas/servicio/${rowData.IdServicioEscogido}`)
+                            },
+                            // disabled: rowData.OrdenServicio==null
+                          }),
+                          rowData => ({
+                            icon: () => {
+                              return <img src="/resources/remove_red_eye-24px.svg" />;
+                            },
+                            tooltip: "Orden de servicio",
+                            onClick: (event, rowData) => {
+                              router.push(`/reservas/OrdenServicio/${rowData.OrdenServicio['TipoOrden']}/${rowData.IdServicioEscogido}`)
+                            },
+                            disabled: rowData.OrdenServicio==null
+                          }),
+                      ]}
+                      options={{
+                        actionsColumnIndex: -1
+                      }}
                 />
             </div> 
         );
