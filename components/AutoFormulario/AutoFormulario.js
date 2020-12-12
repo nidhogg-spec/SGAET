@@ -1,5 +1,5 @@
 //Package
-import styles from "./AutoModal.module.css";
+import styles from "./AutoFormulario.module.css";
 import React, { useEffect, useState } from "react";
 
 //Componentes
@@ -8,12 +8,16 @@ import CampoGranTexto from "@/components/Formulario/CampoGranTexto/CampoGranText
 import Selector from "@/components/Formulario/Selector/Selector";
 import CampoNumero from "@/components/Formulario/CampoNumero/CampoNumero";
 import CampoMoney from "@/components/Formulario/CampoMoney/CampoMoney";
+import CampoFecha from "@/components/Formulario/CampoFecha/CampoFecha";
 import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
 import TablaSimple from "../Formulario/TablaSimple/TablaSimple";
 import TablaRelacionMulti from "../Formulario/TablaRelacionMulti/TablaRelacionMulti";
-import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio/TablaProgramaServicio"
+import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio/TablaProgramaServicio";
+import TablaServicioEscogido from "@/components/Formulario/CustomComponenteFormu/TablaServicioEscogido/TablaServicioEscogido";
 
-const AutoModal = ({
+
+
+const AutoFormulario = ({
   Formulario = {
     title: "",
     secciones: [
@@ -23,36 +27,43 @@ const AutoModal = ({
       },
     ],
   },
-  IdDato = "",
-  APIpath,
-  ReiniciarData,
+  // APIpath,
   Modo,
-  Display=false, //Solo en modoVerEdicions
-  MostrarModal=()=>{} //Solo en modoVerEdicions
+  DarDato = false,
+  DarDatoFunction = () => {
+    alert("Falta mandar DarDatoFunction");
+  },
 }) => {
   //   const [DataInicial, setDataInicial] = useState(Formulario);
   let ed;
-  if (Modo=="creacion") 
-    ed=true
-  else
-    ed=false
-  
+  if (Modo == "creacion") ed = true;
+  else ed = false;
+
   const [ModoEdicion, setModoEdicion] = useState(ed);
-  const [APIpath_i, setAPIpath_i] = useState(APIpath);
-  const [DarDato, setDarDato] = useState(false);
+  // const [APIpath_i, setAPIpath_i] = useState(APIpath);
+  // const [DarDato, setDarDato] = useState(false);
   const [ReinciarComponentes, setReinciarComponentes] = useState(false);
 
-  let DataNuevaEdit = {};
   //funciones
-  const DarDatoFunction = (keyDato, Dato) => {
-    DataNuevaEdit[keyDato] = Dato;
-  };
   const GenerarComponente = (compo) => {
     // console.log(compo.tipo);
     switch (compo.tipo) {
       case "texto":
         return (
           <CampoTexto
+            Title={compo.Title}
+            ModoEdicion={ModoEdicion}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={compo.KeyDato}
+            Dato={compo.Dato}
+            Reiniciar={ReinciarComponentes}
+          />
+        );
+        break;
+        case "fecha":
+        return (
+          <CampoFecha
             Title={compo.Title}
             ModoEdicion={ModoEdicion}
             DevolverDatoFunct={DarDatoFunction}
@@ -131,7 +142,7 @@ const AutoModal = ({
           />
         );
         break;
-        case "tablaRelacionMulti":
+      case "tablaRelacionMulti":
         return (
           <TablaRelacionMulti
             Title={compo.Title}
@@ -146,7 +157,7 @@ const AutoModal = ({
           />
         );
         break;
-        case "CustomTablaProgramaServicio":
+      case "CustomTablaProgramaServicio":
         return (
           <TablaProgramaServicio
             Title={compo.Title}
@@ -158,6 +169,20 @@ const AutoModal = ({
             Reiniciar={ReinciarComponentes}
             columnas={compo.columnas}
             APIpathGeneral={compo.APIpathGeneral}
+          />
+        );
+        break;
+        case "TablaServicioEscogido":
+        return (
+          <TablaServicioEscogido
+            Title={compo.Title}
+            ModoEdicion={ModoEdicion}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={compo.KeyDato}
+            Dato={compo.Dato}
+            Reiniciar={ReinciarComponentes}
+            columnas={compo.columnas}
           />
         );
         break;
@@ -176,58 +201,54 @@ const AutoModal = ({
 
   switch (Modo) {
     case "verEdicion":
-      useEffect(() => {
-        if (DarDato == true) {
-          console.log("Esta en modo verEdicion");
-          setDarDato(false);
-          console.log(DataNuevaEdit);
-
-        //   editar fetch
-            fetch(APIpath_i, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                idDato: IdDato,
-                data: DataNuevaEdit,
-              }),
-            })
-              .then((r) => r.json())
-              .then((data) => {
-                alert(data.message);
-              });
-            MostrarModal(false);
-          setModoEdicion(false);
-
-        }
-      }, [DarDato]);
-      useEffect(() => {
-        let modal = document.getElementById("MiModalVerEdicion");
-        // setDisplay(Display)
-        if (Display == true) {
-          modal.style.display = "block";
-        } else {
-          modal.style.display = "none";
-        }
-      }, [Display]);
-    //   console.log(Formulario)
       return (
-        <div
-          id="MiModalVerEdicion"
-          className={styles.Modal}
-          onClick={(event) => {
-            let modal = document.getElementById("MiModalVerEdicion");
-            if (event.target == modal) {
-              MostrarModal(false);
-            }
-          }}
-        >
-          <div className={styles.Modal_content}>
+        <div className={styles.Modal_content}>
+          <span>{Formulario.title}</span>
+          {/* <img
+            src="/resources/save-black-18dp.svg"
+            onClick={() => {
+              setDarDato(true);
+              // ReiniciarData()
+            }}
+          /> */}
+          <img
+            src="/resources/edit-black-18dp.svg"
+            onClick={(event) => {
+              if (ModoEdicion == false) {
+                event.target.src = "/resources/close-black-18dp.svg";
+                setModoEdicion(true);
+              } else {
+                event.target.src = "/resources/edit-black-18dp.svg";
+                setReinciarComponentes(true);
+                setModoEdicion(false);
+              }
+            }}
+          />
+          {Formulario.secciones.map((seccion) => {
+            return (
+              <div>
+                <span>{seccion.subTitle}</span>
+                <div>
+                  {seccion.componentes.map((componente) => {
+                    return GenerarComponente(componente);
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+      break;
+    case "creacion":
+      return (
+        <>
+          <div className={styles.FormuContent}>
             <span>{Formulario.title}</span>
             <img
               src="/resources/save-black-18dp.svg"
               onClick={() => {
                 setDarDato(true);
-                // ReiniciarData()
+                // ReiniciarData();
               }}
             />
             <img
@@ -256,95 +277,6 @@ const AutoModal = ({
               );
             })}
           </div>
-        </div>
-      );
-      break;
-    case "creacion":
-      const [Display_in, setDisplay_in] = useState(false);
-      useEffect(() => {
-        if (DarDato == true) {
-          console.log("estas en modo creacion");
-          setDarDato(false);
-        //   console.log(DataNuevaEdit);
-          fetch(APIpath_i, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              accion: "Create",
-              data: DataNuevaEdit,
-            }),
-          })
-            .then((r) => r.json())
-            .then((data) => {
-              alert(data.message);
-            });
-          setReinciarComponentes(true);
-          ReiniciarData()
-          setDisplay_in(false);
-        }
-      }, [DarDato]);
-      useEffect(() => {
-        let modal = document.getElementById("MiModalCreacion");
-        if (Display_in == true) {
-          modal.style.display = "block";
-        } else {
-          modal.style.display = "none";
-        }
-      }, [Display_in]);
-      
-      return (
-        <>
-          <BotonAnadir
-            Accion={() => {
-              setDisplay_in(true);
-            }}
-          />
-          <div
-            id="MiModalCreacion"
-            className={styles.Modal}
-            onClick={(event) => {
-              let modal = document.getElementById("MiModalCreacion");
-              if (event.target == modal) {
-                setDisplay_in(false);
-              }
-            }}
-          >
-            <div className={styles.Modal_content}>
-              <span>{Formulario.title}</span>
-              <img
-                src="/resources/save-black-18dp.svg"
-                onClick={() => {
-                  setDarDato(true);
-                  ReiniciarData()
-                }}
-              />
-              {/* <img
-                src="/resources/edit-black-18dp.svg"
-                onClick={(event) => {
-                  if (ModoEdicion == false) {
-                    event.target.src = "/resources/close-black-18dp.svg";
-                    setModoEdicion(true);
-                  } else {
-                    event.target.src = "/resources/edit-black-18dp.svg";
-                    setReinciarComponentes(true);
-                    setModoEdicion(false);
-                  }
-                }}
-              /> */}
-              {Formulario.secciones.map((seccion) => {
-                return (
-                  <div>
-                    <span>{seccion.subTitle}</span>
-                    <div>
-                      {seccion.componentes.map((componente) => {
-                        return GenerarComponente(componente);
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
         </>
       );
       break;
@@ -354,4 +286,4 @@ const AutoModal = ({
   }
 };
 
-export default AutoModal;
+export default AutoFormulario;
