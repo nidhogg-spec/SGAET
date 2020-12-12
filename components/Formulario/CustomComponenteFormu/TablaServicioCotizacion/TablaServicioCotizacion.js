@@ -22,12 +22,12 @@ const TablaServicioCotizacion = (
   const [ModoEdicion, setModoEdicion] = useState(props.ModoEdicion);
   //Datos obtenidos de servicio en PromasTuristicos
   const [Data, setData] = useState([]);
-  const [DataInit, setDataInit] = useState();
+  const [DataInit, setDataInit] = useState([]);
   //Datos q se guardaran en la cotizacion
-  const [CotiServicio, setCotiServicio] = useState();
-  const [CotiServicioInit, setCotiServicioInit] = useState();
+  const [CotiServicio, setCotiServicio] = useState([]);
+  const [CotiServicioInit, setCotiServicioInit] = useState([]);
   //Lista de servicios para añadir
-  const [ServiciosInit, setServiciosInit] = useState();
+  const [ServiciosInit, setServiciosInit] = useState([]);
   const [DataTableServicios, setDataTableServicios] = useState([]);
   //Funciones
   const ActualizacionDatos = () => {};
@@ -183,10 +183,10 @@ const TablaServicioCotizacion = (
             onRowDelete: (oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const dataDelete = [...Data];
+                  const dataDelete = [...CotiServicio];
                   const index = oldData.tableData.id;
                   dataDelete.splice(index, 1);
-                  setData([...dataDelete]);
+                  setCotiServicio([...dataDelete]);
 
                   resolve();
                 }, 1000);
