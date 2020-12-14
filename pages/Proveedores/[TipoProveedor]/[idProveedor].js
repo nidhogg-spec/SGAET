@@ -503,14 +503,18 @@ export async function getServerSideProps(context) {
   }
   
   switch (provDinamico) {
+    
     case "hotel":
       collectionName = "ProductoHoteles";
       break;
     case "restaurante":
       collectionName = "ProductoRestaurantes";
       break;
-    case "transporte":
+    case "transporteterrestre":
       collectionName = "ProductoTranportes";
+      break;
+    case "transporteferroviario":
+      collectionName = "ProductoTransFerroviario";
       break;
     case "guia":
       collectionName = "ProductoGuias";
