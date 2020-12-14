@@ -104,6 +104,14 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         { title: "Precio Guia Publi", field: "precioGuiaPubli" , type: "numeric" }
       ]
       break;
+      case "otro":
+      Columnas=[
+        { title: "Nombre del Servicio o Producto", field: "servicio" },
+        { title: "codigo del Servicio o Producto", field: "codServicio" },
+        { title: "Precio Confidencial", field: "precioConfi" , type: "numeric" },
+        { title: "Precio Publicado", field: "precioPubli" , type: "numeric" },
+      ]
+      break;
   }
   //Funciones
   const RegistrarDato = (keyDato, Dato) => {
@@ -522,11 +530,13 @@ export async function getServerSideProps(context) {
     });
     await client.connect();
     let collection = client.db(dbName).collection(collectionName);
-    let result = await collection.find({idProveedor: uruId}).toArray();
+    let result = await collection.find({idProveedor: uruId}).project({
+      "_id":0, 
+    }).toArray()
 
-    result.map(x => {
-       x._id= JSON.stringify(x._id)
-    })
+    // result.map(x => {
+    //    x._id= JSON.stringify(x._id)
+    // })
     Datos=result
 
   } catch (error) {
