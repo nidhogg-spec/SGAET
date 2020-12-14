@@ -73,11 +73,11 @@ export default function NavLateral() {
         {
             tipo:"link",
             subModuloName:"Ingresos",
-            link:"#"
+            link:"/Finanzas/Ingresos"
         },{
             tipo:"link",
             subModuloName:"Egresos",
-            link:"#"
+            link:"/Finanzas/Egresos"
         },
       ] 
     },
