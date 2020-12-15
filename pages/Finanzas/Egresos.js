@@ -12,15 +12,20 @@ export default function Egresos({Egresos}){
     const [modoEdicion, setModoEdicion] = useState(false)
     const [darDato,setDarDato]  = useState(false)
 
-    const [sumaSaldo,setSumaSaldo]  = useState()
+    const [sumaGastosAdministrativos,setSumaGastosAdministrativos]  = useState()
+
+    function setData (key,data){
+      x[key] = data
+    }
 
     useEffect(()=>{
       let y = 0
       Egresos.map(x=>{
          y = y +x.TotalEgresosAdministrativo
-        setSumaSaldo(y)
+         setSumaGastosAdministrativos(y)
       })
-    },[sumaSaldo])
+      setSaldoReserva(Egresos[0].SumaAdelantoNeto-Egresos[0].SumaTotalNeto-sumaGastosAdministrativos)
+    },[sumaGastosAdministrativos])
     let Columna = [
         { title: "ID", field: "Egresos", hidden: true},
         { title: "Fecha Gastos Administrativos", field: "FechaEgresosAdministrativo", type: "date"},
@@ -130,11 +135,19 @@ export default function Egresos({Egresos}){
                 }}
             />
              <CampoTexto
-              Title= "Saldo"
+              Title= "Suma Gastos Administrativos"
               ModoEdicion= {modoEdicion}
-              Dato={sumaSaldo}
+              Dato={sumaGastosAdministrativos}
               DarDato={darDato}
               KeyDato= "SumaEgresosAdministrativos"
+              Reiniciar={false}
+            />
+             <CampoTexto
+              Title= "Saldo"
+              ModoEdicion= {modoEdicion}
+              Dato={saldoReserva}
+              DarDato={darDato}
+              KeyDato= "SaldoReserva"
               Reiniciar={false}
             />
         </div>
