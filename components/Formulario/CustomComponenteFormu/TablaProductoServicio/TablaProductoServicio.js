@@ -12,9 +12,11 @@ const TablaProductoServicio = (
     DevolverDatoFunct: { RegistrarDato },
     DarDato: { DevolverDato },
     KeyDato: "nombre",
-    Dato: [],
+    DataProductosSeleccionados: [],
+    DataProductosTodos:[],
+    TipoProveedor:"otro",
     Reiniciar: true,
-    // columnas:[]
+    columnas:[]
   }
 ) => {
   // Variables
@@ -24,11 +26,11 @@ const TablaProductoServicio = (
   const [Data, setData] = useState([]);
   const [DataInit, setDataInit] = useState([]);
   //Datos q se guardaran en la cotizacion
-  const [CotiServicio, setCotiServicio] = useState([]);
-  const [CotiServicioInit, setCotiServicioInit] = useState([]);
+  const [DataProductosSeleccionados, setDataProductosSeleccionados] = useState(props.DataProductosSeleccionados);
+  const [DataProductosSeleccionadosInit, setDataProductosSeleccionadosInit] = useState(props.DataProductosSeleccionados);
   //Lista de servicios para añadir
-  const [ServiciosInit, setServiciosInit] = useState([]);
-  const [DataTableServicios, setDataTableServicios] = useState([]);
+  const [DataProductosTodosInit, setDataProductosTodosInit] = useState([]);
+  const [DataProductosTodos, setDataProductosTodos] = useState([]);
   //Funciones
   const ActualizacionDatos = () => {};
   //Hooks
@@ -50,7 +52,7 @@ const TablaProductoServicio = (
     
   }, [props.DarDato]);
 
-  if (ModoEdicion == true) {
+  // if (ModoEdicion == true) {
     /* Esquema de datos de los productos de un servicio
       - IdProductoServicio
       - IdProductoOriginal
@@ -62,13 +64,12 @@ const TablaProductoServicio = (
     return (
       <div>
         <h1>{props.Title}</h1>
-        <button>Añadir</button>
         
         <MaterialTable
           title={props.Title}
           columns={[
             {
-              field: "Id",
+              field: "IdProductoServicio",
               title: "IdProductoServicio",
               editable: "never",
               hidden: true,
@@ -84,15 +85,15 @@ const TablaProductoServicio = (
             { field: "Precio", title: "Precio"},
             { field: "Costo", title: "Costo"},
           ]}
-          data={CotiServicio}
+          data={DataProductosSeleccionados}
           editable={{
             onRowDelete: (oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const dataDelete = [...CotiServicio];
+                  const dataDelete = [...DataProductosSeleccionados];
                   const index = oldData.tableData.id;
                   dataDelete.splice(index, 1);
-                  setCotiServicio([...dataDelete]);
+                  setDataProductosSeleccionados([...dataDelete]);
 
                   resolve();
                 }, 1000);
@@ -101,39 +102,103 @@ const TablaProductoServicio = (
         />
         <div className={styles.MasServicios}>
           <MaterialTable
-            title={"Servicios para añadir"}
-            columns={[
-              {
-                field: "IdServicio",
-                title: "Id",
-                editable: "never",
-                hidden: true,
-              },
-              { field: "NombreServicio", title: "Nombre", editable: "never" },
-            ]}
-            data={DataTableServicios}
+            title={"Productos/Servicios para añadir"}
+            columns={props.columnas}
+            data={props.DataProductosTodos}
             actions={[
               {
                 icon: "add",
                 tooltip: "Añadir Servicio a Cotizacion",
                 onClick: (event, rowData) => {
-                  let x = [...CotiServicio];
-                  x.push({
-                    IdServicio: rowData["IdServicio"],
-                    NombreServicio: rowData["NombreServicio"],
-                    Origen: "Añadido Manual",
-                    Incluido: true,
-                    NumeroOpcion: null,
-                  });
-                  setCotiServicio(x);
-                  let ActuDataTableServicios = [...DataTableServicios];
-                  ActuDataTableServicios.splice(
-                    ActuDataTableServicios.findIndex((value) => {
+                  let x = [...DataProductosSeleccionados];
+                  switch (props.TipoProveedor.toLowerCase()) {
+                    case "hotel":
+                      x.push({
+                        //Segun esquema de columnas
+                        // IdProductoServicio: rowData["NombreServicio"],
+                        IdProductoOriginal: rowData["IdProductoHotel"],
+                        NombreProducto: rowData["tipoHabitacion"],
+                        DescripcionProducto: rowData["descripcionHabitacion"],
+                        Precio: rowData["precioPubli"],
+                        Costo: rowData["precioConfi"]
+                      })
+                      break;
+                    case "restaurante":
+                      x.push({
+                        //Segun esquema de columnas
+                        // IdProductoServicio: rowData["NombreServicio"],
+                        IdProductoOriginal: rowData["idProveedor"],
+                        NombreProducto: rowData["nombreServicio"],
+                        DescripcionProducto: rowData["descripcionServicio"],
+                        Precio: rowData["precioDolares"],
+                        Costo: null
+                      })
+                      break;
+                    case "transporteterrestre":
+                      x.push({
+                        //Segun esquema de columnas
+                        // IdProductoServicio: rowData["NombreServicio"],
+                        IdProductoOriginal: rowData["IdProductoHotel"],
+                        NombreProducto: rowData["tipoHabitacion"],
+                        DescripcionProducto: rowData["TipoVehiculo"] +' '+ rowData["Horario"],
+                        Precio: rowData["precioPubli"],
+                        Costo: rowData["precioConfi"]
+                      })
+                      break;
+                    case "guia":
+                      x.push({
+                        //Segun esquema de columnas
+                        // IdProductoServicio: rowData["NombreServicio"],
+                        IdProductoOriginal: rowData["IdProductoHotel"],
+                        NombreProducto: rowData["tipoHabitacion"],
+                        DescripcionProducto: rowData["descripcionHabitacion"],
+                        Precio: rowData["precioPubli"],
+                        Costo: rowData["precioConfi"]
+                      })
+                      break;
+                    case "agencia":
+                      x.push({
+                        //Segun esquema de columnas
+                        // IdProductoServicio: rowData["NombreServicio"],
+                        IdProductoOriginal: rowData["IdProductoHotel"],
+                        NombreProducto: rowData["tipoHabitacion"],
+                        DescripcionProducto: rowData["descripcionHabitacion"],
+                        Precio: rowData["precioPubli"],
+                        Costo: rowData["precioConfi"]
+                      })
+                      break;
+                    case "transporteferroviario":
+                      x.push({
+                        //Segun esquema de columnas
+                        // IdProductoServicio: rowData["NombreServicio"],
+                        IdProductoOriginal: rowData["IdProductoHotel"],
+                        NombreProducto: rowData["tipoHabitacion"],
+                        DescripcionProducto: rowData["descripcionHabitacion"],
+                        Precio: rowData["precioPubli"],
+                        Costo: rowData["precioConfi"]
+                      })
+                      break;
+                    case "otro":
+                      x.push({
+                        //Segun esquema de columnas
+                        // IdProductoServicio: rowData["NombreServicio"],
+                        IdProductoOriginal: rowData["IdProductoHotel"],
+                        NombreProducto: rowData["tipoHabitacion"],
+                        DescripcionProducto: rowData["descripcionHabitacion"],
+                        Precio: rowData["precioPubli"],
+                        Costo: rowData["precioConfi"]
+                      })
+                      break;
+                  }
+                  setDataProductosSeleccionados(x);
+                  let ActuDataProductosTodos = [...DataProductosTodos];
+                  ActuDataProductosTodos.splice(
+                    ActuDataProductosTodos.findIndex((value) => {
                       return value["IdServicio"] == rowData["IdServicio"];
                     }),
                     1
                   );
-                  setDataTableServicios(ActuDataTableServicios);
+                  setDataProductosTodos(ActuDataProductosTodos);
                 },
               },
             ]}
@@ -141,17 +206,17 @@ const TablaProductoServicio = (
         </div>
       </div>
     );
-  } else {
-    return (
-      <div className={styles.divMadre}>
-        <MaterialTable
-          title={props.Title}
-          columns={props.columnas}
-          data={Data}
-        />
-      </div>
-    );
-  }
+  // } else {
+  //   return (
+  //     <div className={styles.divMadre}>
+  //       <MaterialTable
+  //         title={props.Title}
+  //         columns={props.columnas}
+  //         data={Data}
+  //       />
+  //     </div>
+  //   );
+  // }
 };
 
 export default TablaProductoServicio;
