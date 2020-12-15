@@ -76,15 +76,14 @@ export default async (req, res) => {
             let collection = dbo.collection(req.body.coleccion);
             // collection.findOne(idServicio)
             let query = {};
-            query[req.body.keyId]=req.body.dataFound
-            console.log(query)
-            let result =await collection
-              .findOne(query, {
-                projection: req.body.projection,
-              })
-              
-              res.status(200).json({ result });
-              // client.close();
+            query[req.body.keyId] = req.body.dataFound;
+            console.log(query);
+            let result = await collection.findOne(query, {
+              projection: req.body.projection,
+            });
+
+            res.status(200).json({ result });
+            // client.close();
           });
           break;
         case "FindAll":
@@ -230,6 +229,44 @@ export default async (req, res) => {
             });
           } catch (error) {
             console.log(error);
+          }
+
+          break;
+        case "update":
+          /*Que debe de ir en el REQ
+              - Accion
+              - coleccion
+              - keyId
+              - Prefijo
+              - data
+            */
+           let client_update = new MongoClient(url, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+          });
+          try {
+            await client_update.connect(async (error) => {
+              // assert.equal(err, null); // Preguntar
+              let dbo = client_update.db(dbName);
+
+              let collection = dbo.collection(req.body.coleccion);
+              // collection.findOne(idServicio)
+              let newvalues = { $set: req.body.data };
+              await collection.updateOne(req.body.query,newvalues,function (err, res) {
+                if (err) {
+                  console.log(err);
+                  throw err;
+                }
+                console.log(
+                  "Uctualizadicimo"
+                );
+              })
+              res.status(200).json({ result: "Insercion realizada" });
+            });
+          } catch (error) {
+            console.log(error);
+          } finally {
+            client_update.close();
           }
 
           break;
