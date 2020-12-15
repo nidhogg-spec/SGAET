@@ -10,6 +10,7 @@ const ServicioEscogido = ({
   DataServicios,
   DataProductosTodos,
   ColumnasProductosTodos,
+  api_general
 }) => {
   // --------------------------------------------------------------------------------------
   // Aqui va todo lo necesario para trabajar con el autoFormulario
@@ -24,27 +25,37 @@ const ServicioEscogido = ({
       setDarDato(false);
       console.log(DataNuevaEdit);
       //   console.log(DataNuevaEdit);
-      //   fetch(APIpath_i, {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({
-      //       accion: "Create",
-      //       data: DataNuevaEdit,
-      //     }),
-      //   })
-      //     .then((r) => r.json())
-      //     .then((data) => {
-      //       alert(data.message);
-      //     });
+        fetch(api_general, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            coleccion: "ServicioEscogido",
+            accion: "update",
+            query:{"IdServicioEscogido":URI_IdReservaCotizacion} ,
+            data: DataNuevaEdit,
+          }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            alert(data.message);
+          });
     }
   }, [DarDato]);
   // --------------------------------------------------------------------------------------
-  const TipoProveedor = DataServicios['TipoServicio']
+  const TipoProveedor = DataServicios["TipoServicio"];
   //Estados
-  const [DataServicioEscogido, setDataServicioEscogido] = useState(DataServicios);
-  const [IdServicioEscogido, setIdServicioEscogido] = useState(URI_IdReservaCotizacion);
-  const [DT_DataProductosTodos, setDT_DataProductosTodos] = useState(DataProductosTodos);
-  const [DT_ColumnasProductosTodos, setDT_ColumnasProductosTodos] = useState(ColumnasProductosTodos);
+  const [DataServicioEscogido, setDataServicioEscogido] = useState(
+    DataServicios
+  );
+  const [IdServicioEscogido, setIdServicioEscogido] = useState(
+    URI_IdReservaCotizacion
+  );
+  const [DT_DataProductosTodos, setDT_DataProductosTodos] = useState(
+    DataProductosTodos
+  );
+  const [DT_ColumnasProductosTodos, setDT_ColumnasProductosTodos] = useState(
+    ColumnasProductosTodos
+  );
   // const [OrdenServicio, setOrdenServicio] = useState(false);
   const OrdenServicio = useBoolOrdenServicio(
     DataServicioEscogido.OrdenServicio
@@ -55,6 +66,14 @@ const ServicioEscogido = ({
     <>
       <div>
         <span>Servicio</span>
+        <img
+          src="/resources/save-black-18dp.svg"
+          onClick={() => {
+            DataNuevaEdit = {};
+            setDarDato(true);
+          }}
+        />
+
         {OrdenServicio ? (
           <button
             onClick={() => {
@@ -183,10 +202,11 @@ const ServicioEscogido = ({
                     tipo: "TablaProductoServicio",
                     Title: "Producto/Servicio",
                     KeyDato: "ProdServSeleccionados",
-                    DataProductosSeleccionados: DataServicioEscogido.ProdServSeleccionados || [],
-                    DataProductosTodos:DataProductosTodos,
+                    DataProductosSeleccionados:
+                      DataServicioEscogido.ProdServSeleccionados || [],
+                    DataProductosTodos: DataProductosTodos,
                     columnas: ColumnasProductosTodos,
-                    TipoProveedor:TipoProveedor
+                    TipoProveedor: TipoProveedor,
                   },
                 ],
               },
@@ -204,6 +224,7 @@ export default ServicioEscogido;
 
 export async function getServerSideProps(context) {
   //-------------------------------------------------------------------------------
+  const api_general = process.env.API_DOMAIN+"/api/general"
   const Id = context.query.IdServicioEscogido;
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
@@ -355,7 +376,7 @@ export async function getServerSideProps(context) {
 
   await client.connect();
   let collectionName = "";
-  
+
   switch (DataServicios["TipoServicio"].toLowerCase()) {
     case "hotel":
       collectionName = "ProductoHoteles";
@@ -391,11 +412,11 @@ export async function getServerSideProps(context) {
   //   console.log(DataProductosTodos);
   //   client.close();
   // });
-  let res = await collection.find().toArray()
-  res.map(ele=>{
-    delete ele['_id']
-  })
-  DataProductosTodos=res
+  let res = await collection.find().toArray();
+  res.map((ele) => {
+    delete ele["_id"];
+  });
+  DataProductosTodos = res;
   // console.log("El de abajo es puto")
   // console.log(DataProductosTodos)
   //-------------------------------------------------------------------------------
@@ -406,6 +427,7 @@ export async function getServerSideProps(context) {
       DataServicios: DataServicios,
       DataProductosTodos: DataProductosTodos,
       ColumnasProductosTodos: ColumnasProductosTodos,
+      api_general:api_general
     },
   };
 }
