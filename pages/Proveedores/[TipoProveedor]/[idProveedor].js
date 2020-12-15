@@ -511,7 +511,7 @@ export async function getServerSideProps(context) {
       collectionName = "ProductoRestaurantes";
       break;
     case "transporteterrestre":
-      collectionName = "ProductoTranportes";
+      collectionName = "ProductoTransportes";
       break;
     case "transporteferroviario":
       collectionName = "ProductoTransFerroviario";

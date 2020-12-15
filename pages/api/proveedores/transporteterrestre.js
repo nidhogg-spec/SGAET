@@ -59,7 +59,7 @@ export default async (req, res) =>{
             useNewUrlParser: true,
             useUnifiedTopology: true,
           });
-          
+          console.log(req.body.data);
           await client.connect();
           let collection = client.db(dbName).collection(coleccion);
           await collection.insertOne(req.body.data, function (err, res) {

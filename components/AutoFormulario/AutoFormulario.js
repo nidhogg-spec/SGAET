@@ -14,8 +14,7 @@ import TablaSimple from "../Formulario/TablaSimple/TablaSimple";
 import TablaRelacionMulti from "../Formulario/TablaRelacionMulti/TablaRelacionMulti";
 import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio/TablaProgramaServicio";
 import TablaServicioEscogido from "@/components/Formulario/CustomComponenteFormu/TablaServicioEscogido/TablaServicioEscogido";
-
-
+import TablaProductoServicio from "@/components/Formulario/CustomComponenteFormu/TablaProductoServicio/TablaProductoServicio";
 
 const AutoFormulario = ({
   Formulario = {
@@ -61,7 +60,7 @@ const AutoFormulario = ({
           />
         );
         break;
-        case "fecha":
+      case "fecha":
         return (
           <CampoFecha
             Title={compo.Title}
@@ -172,7 +171,7 @@ const AutoFormulario = ({
           />
         );
         break;
-        case "TablaServicioEscogido":
+      case "TablaServicioEscogido":
         return (
           <TablaServicioEscogido
             Title={compo.Title}
@@ -181,6 +180,22 @@ const AutoFormulario = ({
             DarDato={DarDato}
             KeyDato={compo.KeyDato}
             Dato={compo.Dato}
+            Reiniciar={ReinciarComponentes}
+            columnas={compo.columnas}
+          />
+        );
+        break;
+      case "TablaProductoServicio":
+        return (
+          <TablaProductoServicio
+            Title={compo.Title}
+            ModoEdicion={ModoEdicion}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={compo.KeyDato}
+            DataProductosSeleccionados= {compo.DataProductosSeleccionados}
+            DataProductosTodos={compo.DataProductosTodos}
+            TipoProveedor={compo.TipoProveedor}
             Reiniciar={ReinciarComponentes}
             columnas={compo.columnas}
           />
