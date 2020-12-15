@@ -1,26 +1,154 @@
 import MaterialTable from 'material-table'
+import CampoTexto from '@/components/Formulario/CampoTexto/CampoTexto'
 import { MongoClient } from "mongodb";
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 
 export default function Egresos({Egresos}){
 
+    let x = {}
     const [datosTabla, setDatosTabla] = useState(Egresos)
-    
+    const [saldoReserva, setSaldoReserva] = useState()
+
+    const [modoEdicion, setModoEdicion] = useState(false)
+    const [darDato,setDarDato]  = useState(false)
+
+    const [sumaGastosAdministrativos,setSumaGastosAdministrativos]  = useState()
+
+    function setData (key,data){
+      x[key] = data
+    }
+
+    useEffect(()=>{
+      let y = 0
+      Egresos.map(x=>{
+         y = y +x.TotalEgresosAdministrativo
+         setSumaGastosAdministrativos(y)
+      })
+      setSaldoReserva(Egresos[0].SumaAdelantoNeto-Egresos[0].SumaTotalNeto-sumaGastosAdministrativos)
+    },[sumaGastosAdministrativos])
     let Columna = [
         { title: "ID", field: "Egresos", hidden: true},
-        { title: "Ingreso Total", field: "Ingreso"},
-        { title: "Gastos Operativos", field: "EgresoOperativos"},
-        { title: "Fecha Gastos Administrativos", field: "FechaEgresosAdministrativo"},
-        { title: "Gastos Administrativos", field: "EgresosAdministrativo"},
-        { title: "Saldo de Reservas", field: "SaldoReserv"},
+        { title: "Fecha Gastos Administrativos", field: "FechaEgresosAdministrativo", type: "date"},
+        { title: "Descripcion Gastos Administrativos", field: "DescripcionEgresosAdministrativo"},
+        { title: "Total Gastos Administrativos", field: "TotalEgresosAdministrativo", type: "numeric"},
     ]
     
     return(
         <div>
-            Este es Egreso
+            <CampoTexto
+              Title= "Ingresos"
+              ModoEdicion= {modoEdicion}
+              Dato={Egresos[0].SumaAdelantoNeto}
+              DarDato={darDato}
+              KeyDato= "SumaAdelantoNeto"
+              Reiniciar={false}
+            />
+             <CampoTexto
+              Title= "Gastos Operativos"
+              ModoEdicion= {modoEdicion}
+              Dato={Egresos[0].SumaTotalNeto}
+              DarDato={darDato}
+              KeyDato= "SumaTotalNeto"
+              Reiniciar={false}
+            />
             <MaterialTable
                 title="Egresos"
+                data= {datosTabla}
                 columns={Columna}
+                editable={{
+                  onRowAdd: newData =>
+                    new Promise((resolve, reject) => {
+                      setTimeout(() => {
+                          newData.SumaAdelantoNeto = Egresos[0].SumaAdelantoNeto
+                          newData.SumaTotalNeto = Egresos[0].SumaTotalNeto
+                          fetch(`http://localhost:3000/api/finanzas/reportesfinanzas`,{
+                            method:"POST",
+                            headers:{"Content-Type": "application/json"},
+                            body: JSON.stringify({
+                              data: newData,
+                              accion: "create",
+                            }),
+                          })
+                          .then(r=>r.json())
+                          .then(data=>{
+                            alert(data.message);
+                          })
+                        setDatosTabla([...datosTabla, newData]);
+                        resolve();
+                      }, 1000)
+                    }),
+                  onRowUpdate: (newData, oldData) =>
+                    new Promise((resolve, reject) => {
+                      setTimeout(() => {
+                        let sumGastosAdministrativos
+                        const dataUpdate = [...datosTabla];
+                        const index = oldData.tableData.id;
+                        newData.SaldoReserv = 
+                        dataUpdate[index] = newData;
+                        setDatosTabla([...dataUpdate]);
+                                               
+                        fetch(`http://localhost:3000/api/finanzas/reportesfinanzas`,{
+                          method:"POST",
+                          headers:{"Content-Type": "application/json"},
+                          body: JSON.stringify({
+                            idProducto: dataUpdate[index].IdReporteFinanza,
+                            data: dataUpdate[index],
+                            accion: "update",
+                          }),
+                        })
+                        .then(r=>r.json())
+                        .then(data=>{
+                          alert(data.message);
+                        })
+                        
+                        resolve();
+                      }, 1000)
+                    }),
+                  onRowDelete: oldData =>
+                    new Promise((resolve, reject) => {
+                      setTimeout(() => {
+                        const dataDelete = [...datosTabla];
+                        const index = oldData.tableData.id;
+      
+                        fetch(`http://localhost:3000/api/finanzas/reportesfinanzas`,{
+                          method:"POST",
+                          headers:{"Content-Type": "application/json"},
+                          body: JSON.stringify({
+                            idProducto: dataDelete[index].IdReporteFinanza,
+                            accion: "delete",
+                          }),
+                        })
+                        .then(r=>r.json())
+                        .then(data=>{
+                          alert(data.message);
+                        })
+      
+                        dataDelete.splice(index, 1);
+                        setDatosTabla([...dataDelete]);
+      
+                        resolve()
+                      }, 1000)
+                    }),
+                }}
+                options={{
+                  actionsColumnIndex: -1,
+                }}
+            />
+             <CampoTexto
+              Title= "Suma Gastos Administrativos"
+              ModoEdicion= {modoEdicion}
+              Dato={sumaGastosAdministrativos}
+              DarDato={darDato}
+              KeyDato= "SumaEgresosAdministrativos"
+              Reiniciar={false}
+            />
+             <CampoTexto
+              Title= "Saldo"
+              ModoEdicion= {modoEdicion}
+              Dato={saldoReserva}
+              DarDato={darDato}
+              KeyDato= "SaldoReserva"
+              Reiniciar={false}
             />
         </div>
     )
