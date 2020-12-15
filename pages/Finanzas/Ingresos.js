@@ -79,7 +79,6 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
     function PasarSuma(){
       let x = {}
       x = {SumaAdelantoNeto: sumaAdelantoNeto, SumaTotalNeto: sumaTotalDolares}
-
       fetch(`http://localhost:3000/api/finanzas/reportesfinanzas`,{
         method:"POST",
         headers:{"Content-Type": "application/json"},
@@ -278,8 +277,7 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
                     resolve();
                   }, 1000)
                 }),
-              }}
-              
+              }}           
               options={{
                 actionsColumnIndex: -1,
               }}
