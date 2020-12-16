@@ -64,7 +64,11 @@ export default function NavLateral() {
     {
       modulo: "Biblia",
       svg:"playlist_add_check-black-18dp.svg",
-      subModulos:[]
+      subModulos:[{
+        tipo:"link",
+        subModuloName:"Lista Biblia",
+        link:"/Biblia"
+      }]
     },
     {
       modulo: "Finanzas",
