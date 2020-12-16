@@ -4,9 +4,9 @@ require("dotenv").config();
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
 
-const coleccion = "Egreso";
-const keyId = "IdEgreso";
-const IdLetras = "EG";
+const coleccion = "ReportesFinanzas";
+const keyId = "IdReporteFinanza";
+const IdLetras = "RF";
 
 let client = new MongoClient(url, {
     useNewUrlParser: true,
@@ -57,68 +57,13 @@ let client = new MongoClient(url, {
             
             await client.connect();
             let collection = client.db(dbName).collection(coleccion);
-            collection.insertOne(req.body.data, function (err, res) {
-                if (err){
+            await collection.insertOne(req.body.data, function (err, res) {
+              if (err){
                 console.log(err)
                 throw err;
-                }
-                console.log("Insercion completada");
-                res
-                .status(200)
-                .json({
-                  message: "Todo bien, todo correcto, Añadicion satifactoria",
-                });
+              } 
+              console.log("Insercion completada");
             });
-            // let result = await collection.find({}).project({
-            //   "_id":0, 
-            // }).toArray()
-
-            // // console.log(req.body.data.IdServ) 
-
-            // let idreq =  req.body.data.IdServicioEscogido
-
-            // // console.log(result.length) 
-            // // console.log(idreq) 
-
-            // for (let index = 0; index <= result.length; index++) {
-            //   if(result.length==0){
-            //     console.log("1");
-            //     collection.insertOne(req.body.data, function (err, res) {
-            //       if (err){
-            //         console.log(err)
-            //         throw err;
-            //       }
-            //       console.log("Insercion completada");
-            //       // res
-            //       // .status(200)
-            //       // .json({
-            //       //   message: "Todo bien, todo correcto, Añadicion satifactoria",
-            //       // });
-            //     });
-            //   }
-            //   else if(result[index].IdServicioEscogido == idreq){
-            //     console.log("2");
-            //     console.log("Ya existe una orden de servicio")
-            //     // client.close()
-            //     break;
-            //   }else if(result[index].IdServicioEscogido != idreq && index == result.length-1){
-            //     console.log("3");
-            //     collection.insertOne(req.body.data, function (err, res) {
-            //       if (err){
-            //         console.log(err)
-            //         throw err;
-            //       }
-            //       console.log("Insercion completada");
-            //       // res
-            //       // .status(200)
-            //       // .json({
-            //       //   message:
-                      
-            //       //   "Todo bien, todo correcto, Añadicion satifactoria",
-            //       // });
-            //     });  
-            //   }
-            // }
           } catch (error) {
             console.log("error - " + error);
           } 
@@ -142,7 +87,7 @@ let client = new MongoClient(url, {
               };
               
               collection.updateOne(
-                { IdEgreso: req.body.idProducto },
+                { IdReporteFinanza: req.body.idProducto },
                 dataActu,
                 (err, result) => {
                   if (err) {
@@ -168,7 +113,7 @@ let client = new MongoClient(url, {
               const dbo = client.db(dbName);
               const collection = dbo.collection(coleccion);
               collection.deleteOne(
-                { IdEgreso: req.body.idProducto },
+                { IdReporteFinanza: req.body.idProducto },
                 (err, result) => {
                   if (err) {
                     res.status(500).json({ error: true, message: "un error .v" });
@@ -197,5 +142,19 @@ let client = new MongoClient(url, {
             break;
         }
       }
+    // if (req.method == "GET") {
+    //   client.connect(function (err) {
+    //     console.log("Connected to MognoDB server => de Matriz de Evaluacion");
+    //     const dbo = client.db(dbName);
+    //     getData(dbo, function (err, data) {
+    //       if (err) {
+    //         res.status(500).json({ error: true, message: "un error .v" });
+    //         return;
+    //       }
+    //       res.status(200).json({data})
+    //       client.close;
+    //     });
+    //   });
+    // }
   };
   
