@@ -236,8 +236,7 @@ export default async (req, res) => {
           /*Que debe de ir en el REQ
               - Accion
               - coleccion
-              - keyId
-              - Prefijo
+              - query
               - data
             */
            let client_update = new MongoClient(url, {
@@ -267,6 +266,42 @@ export default async (req, res) => {
             console.log(error);
           } finally {
             client_update.close();
+          }
+
+          break;
+          case "DeleteOne":
+          /*Que debe de ir en el REQ
+              - Accion
+              - coleccion
+              - keyId
+              - Prefijo
+              - data
+            */
+           let client_deleteone = new MongoClient(url, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+          });
+          try {
+            await client_deleteone.connect(async (error) => {
+              // assert.equal(err, null); // Preguntar
+              let dbo = client_deleteone.db(dbName);
+              let collection = dbo.collection(req.body.coleccion);
+              // collection.findOne(idServicio)
+              await collection.deleteOne(req.body.query,function (err, res) {
+                if (err) {
+                  console.log(err);
+                  throw err;
+                }
+                console.log(
+                  "Eliminado"
+                );
+              })
+              res.status(200).json({ result: "Eliminacion realizada" });
+            });
+          } catch (error) {
+            console.log(error);
+          } finally {
+            client_deleteone.close();
           }
 
           break;
