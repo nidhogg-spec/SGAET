@@ -2,25 +2,23 @@ import MaterialTable,{ MTableToolbar } from "material-table";
 import Router from 'next/router'
 import BotonAnadir from 'components/BotonAnadir/BotonAnadir'
 
-
 import { MongoClient } from "mongodb";
 
 import { useEffect, useState } from "react";
 
 export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaAct}){    
-    // console.log(datosEvaAct)  
-    // console.log(datosProv)  
-    // let datosEvaActPeriodo = []
     let datosTabla = []
     let arrayEvaluacion = []
     let objetoDatos = {}
     var objetoPeriodo = {}
+
     const [datosTablaShow,setDatosTablaShow] = useState([])
     const [datoPeriodo,setdatoPeriodo] = useState()
     const [datoPeriodoSeleccionado,setDatoPeriodoSeleccionado] = useState("noperiodo")
-    // let datoPeriodoSeleccionado = ""
     const [selectPeriodo, setSelectPeriodo] = useState([])
-
+    const [selectPeriodoActivo, setSelectPeriodoActivo] = useState([])
+    const [datoPeriodoActivo,setdatoPeriodoActivo] = useState()
+    
     let Columnas=[
           { 
             title: "Id", 
@@ -35,11 +33,10 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
           { title: "Porcentaje", field: "porcentajeTotal" }
         ]
     function getData(){
-      for (let index = 0; index < datosjuntos.length; index++) {        
-        objetoDatos = {evaperiodo:datosActividad, idProveedor: datosjuntos[index].idProveedor, periodo: datoPeriodo}
+      datosProv.map(x=>{
+        objetoDatos = {evaperiodo:datosActividad, idProveedor: x.idProveedor, periodo: datoPeriodo}
         arrayEvaluacion.push(objetoDatos)
-      }
-
+      })
       fetch(`http://localhost:3000/api/proveedores/mep`,{
         method:"POST",
         headers:{"Content-Type": "application/json"},
@@ -63,6 +60,40 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
       }
       return comp
     }
+
+    function EnviarEvaluacionPeriodo(){
+      let objetoIdProvEvaProv = []
+      let ArrayPocentajeProvEvaProv = []
+      let objetoPocentajeProvEvaProv = {}
+
+      datosTablaShow.map(x=>{
+        objetoIdProvEvaProv.push(x.idProveedor)
+        // objetoPocentajeProvEvaProv[porcentajeTotal,periodoActual] = x.porcentajeTotal,datoPeriodoSeleccionado
+        objetoPocentajeProvEvaProv= {porcentajeTotal: x.porcentajeTotal, periodoActual: datoPeriodoSeleccionado}
+        if(objetoPocentajeProvEvaProv.porcentajeTotal==undefined){
+          objetoPocentajeProvEvaProv.porcentajeTotal=null
+        }
+        ArrayPocentajeProvEvaProv.push(objetoPocentajeProvEvaProv)
+      })
+      console.log(objetoIdProvEvaProv)
+      console.log(ArrayPocentajeProvEvaProv)
+
+      fetch(`http://localhost:3000/api/proveedores/listaProveedores`,{
+        method:"POST",
+        headers:{"Content-Type": "application/json"},
+        body: JSON.stringify({
+          idProveedor: objetoIdProvEvaProv,
+          data: ArrayPocentajeProvEvaProv,
+          accion: "updateMany",
+        }),
+      })
+      .then(r=>r.json())
+      .then(data=>{
+        alert(data.message);
+      })
+      setdatoPeriodoActivo(datoPeriodoSeleccionado)
+    }
+
     /* ----------------------------------------------------------------------- */
     useEffect(()=>{
       let filtroPeriodo = datosEvaAct.filter((row)=>{
@@ -72,32 +103,31 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
       let filtroPeriodoOrdenado = filtroPeriodo.sort(compare)
       let datosProvOrdenado = datosProv.sort(compare)
 
-      filtroPeriodoOrdenado.map((x, index)=>{
-        if(x.idProveedor == datosProvOrdenado[index].idProveedor){
-          datosTabla.push({
-            idProveedor: x.idProveedor,
-            nombre: datosProvOrdenado[index].nombre,
-            puntosTotales: x.puntosTotales,
-            porcentajeTotal: x.porcentajeTotal
-          })
-        }
-        if (datosTabla[index].puntosTotales === undefined && datosTabla[index].porcentajeTotal === undefined) {
-          datosTabla[index].puntosTotales = null
-          datosTabla[index].porcentajeTotal = null
-        }
+      datosProvOrdenado.map((x)=>{
+        filtroPeriodoOrdenado.map((y)=>{
+          if(x.idProveedor == y.idProveedor){
+            datosTabla.push({
+              idProveedor: y.idProveedor,
+              nombre: x.nombre,
+              puntosTotales: y.puntosTotales,
+              porcentajeTotal: y.porcentajeTotal
+            })
+          }
+        })
       })
-      console.log(datosTabla)
+
       setDatosTablaShow(datosTabla)
     },[datoPeriodoSeleccionado])
+
     useEffect(()=>{
      var x = []
-      for (let index = 0; index < datosPeriodo.length; index++) {
-        objetoPeriodo = {value:datosPeriodo[index], texto:datosPeriodo[index]}
-
-        x.push(objetoPeriodo)
-      }
-
-      setSelectPeriodo(x)
+    //  console.log(datosPeriodo)
+     datosPeriodo.map(value=>{
+      objetoPeriodo = {value:value, texto:value}
+      x.push(objetoPeriodo)
+     })
+     
+    setSelectPeriodo(x)
 
     },[])
 
@@ -114,11 +144,12 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
             </label>
             <input 
               type="text" 
-              value={datosTabla} 
+              value={datoPeriodo} 
               onChange={e => setdatoPeriodo(e.target.value)}
             ></input>
             <br></br>
             {/* <input type="submit" value="submit"></input> */}
+
             <label>
               Selecccione Periodo:
             </label>
@@ -130,7 +161,24 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
                 return <option value={options.value}>{options.texto}</option>
               })}
             </select>
+            
+            {/* <label>
+              Selecccione Periodo Actual:
+            </label>
+            <select value={datoPeriodoActivo} onChange={(e)=>{
+              setdatoPeriodoActivo(e.target.value)
+            }}>
+            {selectPeriodo.map(options => {
+              return <option value={options.value}>{options.texto}</option>
+            })}
+            </select>             */}
           </form>
+          <span>El periodo Activo actual es: {datoPeriodoActivo}</span>
+          <BotonAnadir
+            Accion={()=>{
+              EnviarEvaluacionPeriodo()
+            }}
+          />
           <MaterialTable
               columns={Columnas}
               data={datosTablaShow} 

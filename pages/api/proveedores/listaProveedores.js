@@ -170,6 +170,46 @@ export default async (req, res) => {
           );
         });
         break;
+        case "updateMany":
+          client.connect(function (err) {
+            console.log("Connected to MognoDB server =>");
+            const dbo = client.db(dbName);
+            const collection = dbo.collection(coleccion);
+            let dataActu = {
+              $set: req.body.data,
+            };
+            let idActu = {
+              idProveedor: req.body.idProveedor
+            }
+            collection.bulkWrite([
+              {updateMany:{
+                "filter": idActu,
+                "update": dataActu
+              }}
+            ])
+            // collection.updateMany(
+            //   { idProveedor:{
+            //     $in: req.body.idProveedor
+            //   } },
+            //   dataActu,
+            //   (err, result) => {
+            //     if (err) {
+            //       res.status(500).json({ error: true, message: console.error(err)});
+            //       client.close();
+            //       return;
+            //     }
+            //     console.log("Actualizacion satifactoria");
+            //     res
+            //       .status(200)
+            //       .json({
+            //         message:
+            //           "Todo bien, todo correcto, Actualizacion satifactoria",
+            //       });
+            //     client.close();
+            //   }
+            // );
+          });
+          break;
       case "delete":
         client.connect(function (err) {
           console.log("Connected to MognoDB server =>");

@@ -17,7 +17,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
         { 
           title: "Estado", 
           field: "estado",
-          lookup: {0:"0",1:"1"}
+          lookup: {0:"Inactivo",1:"Activo"}
         },
     ]
     let ColumnasActividad = [
@@ -31,7 +31,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
       { 
         title: "Estado", 
         field: "estado",
-        lookup: {0:"0",1:"1"}
+        lookup: {0:"Inactivo",1:"Activo"}
       },
   ]
     return(
@@ -39,7 +39,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
         <MaterialTable
               columns={ColumnasCriterio}
               data= {datosCritEditables}
-              title="Criterio de Evaluacion de Proveedores"
+              title="Criterio por Actividad de Evaluacion de Proveedores"
               editable={{
                 onRowAdd: newData =>
                   new Promise((resolve, reject) => {
@@ -63,10 +63,10 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                 onRowUpdate: (newData, oldData) =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                      const dataUpdate = [...datosCritEditables];
+                      const dataUpdate = [...datosActEditables];
                       const index = oldData.tableData.id;
                       dataUpdate[index] = newData;
-                      setDatosCritEditables([...dataUpdate]);
+                      setDatosActEditables([...dataUpdate]);
                       
                       // delete dataUpdate[index]._id
                       
@@ -90,7 +90,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                 onRowDelete: oldData =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                      const dataDelete = [...datosCritEditables];
+                      const dataDelete = [...datosActEditables];
                       const index = oldData.tableData.id;
 
                       // console.log(dataDelete[index])
@@ -110,7 +110,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       })
 
                       dataDelete.splice(index, 1);
-                      setDatosCritEditables([...dataDelete]);
+                      setDatosActEditables([...dataDelete]);
 
                       resolve()
                     }, 1000)
@@ -120,11 +120,10 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                 actionsColumnIndex: -1,
               }}
           />
-
-          <MaterialTable
+        <MaterialTable
               columns={ColumnasActividad}
               data= {datosActEditables}
-              title="Actividad por Criterio de Evaluacion de Proveedores"
+              title="Actividad de Evaluacion de Proveedores"
               editable={{
                 onRowAdd: newData =>
                   new Promise((resolve, reject) => {
