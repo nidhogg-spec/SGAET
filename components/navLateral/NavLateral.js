@@ -11,15 +11,13 @@ export default function NavLateral() {
       subModulos:[
         {
             tipo:"link",
-            subModuloName:"Lista de clientes",
-            link:"/Clientes"
-        },{
-            tipo:"sub",
-            subModuloName:"",
-            subSubModulos:[
-                {subSubModuloName:"",
-                link:"#"}
-            ]
+            subModuloName:"Lista de Clientes/Prospectos",
+            link:"/Clientes/ListClienteProspecto"
+        },
+        {
+          tipo:"link",
+          subModuloName:"Lista de Pasajeros",
+          link:"/Clientes/ListPasajeros"
         },
       ] 
     },
