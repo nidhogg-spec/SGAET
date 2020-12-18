@@ -61,7 +61,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
       return comp
     }
 
-    function EnviarEvaluacionPeriodo(){
+     function EnviarEvaluacionPeriodo(){
       let objetoIdProvEvaProv = []
       let ArrayPocentajeProvEvaProv = []
       let objetoPocentajeProvEvaProv = {}
@@ -69,7 +69,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
       datosTablaShow.map(x=>{
         objetoIdProvEvaProv.push(x.idProveedor)
         // objetoPocentajeProvEvaProv[porcentajeTotal,periodoActual] = x.porcentajeTotal,datoPeriodoSeleccionado
-        objetoPocentajeProvEvaProv= {porcentajeTotal: x.porcentajeTotal, periodoActual: datoPeriodoSeleccionado}
+        objetoPocentajeProvEvaProv= {proveedor:x.idProveedor,porcentajeTotal: x.porcentajeTotal, periodoActual: datoPeriodoSeleccionado}
         if(objetoPocentajeProvEvaProv.porcentajeTotal==undefined){
           objetoPocentajeProvEvaProv.porcentajeTotal=null
         }
@@ -78,19 +78,23 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
       console.log(objetoIdProvEvaProv)
       console.log(ArrayPocentajeProvEvaProv)
 
-      fetch(`http://localhost:3000/api/proveedores/listaProveedores`,{
-        method:"POST",
-        headers:{"Content-Type": "application/json"},
-        body: JSON.stringify({
-          idProveedor: objetoIdProvEvaProv,
-          data: ArrayPocentajeProvEvaProv,
-          accion: "updateMany",
-        }),
+      ArrayPocentajeProvEvaProv.map((x)=>{
+        let y = {porcentajeTotal: x.porcentajeTotal, periodoActual:x.periodoActual}
+         fetch(`http://localhost:3000/api/proveedores/listaProveedores`,{
+          method:"POST",
+          headers:{"Content-Type": "application/json"},
+          body: JSON.stringify({
+            idProveedor: x.proveedor,
+            data: y,
+            accion: "update",
+          }),
+        })
+        .then(r=>r.json())
+        .then(data=>{
+          alert(data.message);
+        })
       })
-      .then(r=>r.json())
-      .then(data=>{
-        alert(data.message);
-      })
+     
       setdatoPeriodoActivo(datoPeriodoSeleccionado)
     }
 
