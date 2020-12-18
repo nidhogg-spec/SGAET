@@ -15,6 +15,7 @@ import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu
 
 const AutoModal = ({
   Formulario = {
+    id:'',
     title: "",
     secciones: [
       {
@@ -23,8 +24,8 @@ const AutoModal = ({
       },
     ],
   },
-  ModalDisplay
-  // IdDato = "",
+  ModalDisplay,
+  IdDato = "",
   // APIpath,
   // ReiniciarData,
   // Display, //Solo en modoVerEdicions
@@ -175,6 +176,7 @@ const AutoModal = ({
     if (DarDato == true) {
       console.log("Esta en modo verEdicion");
       setDarDato(false);
+      DataNuevaEdit[IdDato]=Formulario.id;
       setModalData(DataNuevaEdit)
       console.log(DataNuevaEdit);
       setDisplay(false);
