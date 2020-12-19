@@ -165,11 +165,118 @@ export default async (req, res) => {
                   message:
                     "Todo bien, todo correcto, Actualizacion satifactoria",
                 });
-              client.close();
+              // client.close();
             }
           );
         });
         break;
+        case "updateMany":
+          client.connect(function (err) {
+            console.log("Connected to MognoDB server =>");
+            const dbo = client.db(dbName);
+            const collection = dbo.collection(coleccion);
+            let dataActu = {
+              $set: req.body.data,
+            };
+            // let idActu = {
+            //   idProveedor: req.body.idProveedor
+            // }
+            // collection.bulkWrite([
+            //   {updateMany:{
+            //     "filter": idActu,
+            //     "update": dataActu
+            //   }}
+            // ])
+            // for (let index = 0; index < array.length; index++) {
+            //   const element = array[index];
+              
+            // }
+            // let result = collection.find({}).project({
+            //   "_id":0,
+            //   "tipo":0,
+            //   "TipoDocumento":0,
+            //   "NroDocumento":0,
+            //   "TipoMoneda":0,
+            //   "EnlaceDocumento":0,
+            //   "GerenteGeneral":0,
+            //   "NEstrellas":0,
+            //   "Web":0,
+            //   "Estado":0,
+            //   "RazonSocial":0,
+            //   "celular":0,
+            //   "celular2":0,
+            //   "email":0,
+            //   "email2":0,
+            //   "direccionRegistrada":0,
+            //   "DatosBancarios":0,
+            //   "Destino":0,
+            //   "Email":0,
+            //   "NumContac":0,
+            //   "Encuesta":0
+            // }).toArray()
+            for (let index = 0; index < req.body.data.length; index++) {
+              // if(result[index].idProveedor == req.body.data[index].idProveedor){
+                collection.updateOne(
+                  {idProveedor: req.body.data[index].idProveedor},
+                  {
+                    $set: 
+                    {
+                      porcentajeTotal : req.body.data[index].porcentajeTotal,
+                      periodo: req.body.data[index].periodoActual
+                    }
+                  },
+                  (err, result) => {
+                    if (err) {
+                      res.status(500).json({ error: true, message: console.error(err)});
+                      client.close();
+                      return;
+                    }
+                    console.log("Actualizacion satifactoria");
+                    res
+                      .status(200)
+                      .json({
+                        message:
+                          console.log(result)
+                      });
+                    res
+                      .status(200)
+                      .json({
+                        message:
+                          "Todo bien, todo correcto, Actualizacion satifactoria",
+                      });
+                  }
+                );
+              // }              
+            }
+            // client.close();
+            // collection.updateMany(
+            //   { idProveedor: { $in:req.body.idProveedor }},
+            //   dataActu,
+            //   // dataActu,
+            //   (err, result) => {
+            //     if (err) {
+            //       res.status(500).json({ error: true, message: console.error(err)});
+            //       client.close();
+            //       return;
+            //     }
+            //     console.log("Actualizacion satifactoria");
+            //     res
+            //       .status(200)
+            //       .json({
+            //         message:
+            //           console.log(result)
+            //       });
+            //     res
+            //       .status(200)
+            //       .json({
+            //         message:
+            //           "Todo bien, todo correcto, Actualizacion satifactoria",
+            //       });
+            //     client.close();
+            //   }
+            // );
+          });
+          break;
       case "delete":
         client.connect(function (err) {
           console.log("Connected to MognoDB server =>");
