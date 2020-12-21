@@ -165,7 +165,6 @@ export default async (req, res) => {
                     message:
                       "Todo bien, todo correcto, Actualizacion satifactoria",
                   });
-                client.close();
               }
             );
           });

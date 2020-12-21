@@ -1,21 +1,23 @@
 import MaterialTable from "material-table";
 import { MongoClient } from "mongodb";
-import {useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 
 export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
-    
+
     const [datosActEditables, setDatosActEditables] = useState(DatosActividad)
     const [datosCritEditables, setDatosCritEditables] = useState(DatosCriterio)
-    
+
+    const isInitialMount = useRef(true)
+
     let y = {}
-    datosCritEditables.map((x)=>{
+    DatosCriterio.map((x)=>{
       y[x.criterio] = x.criterio
     })
 
     let ColumnasCriterio = [
         {title: "Nombre Criterio",field: "criterio",},
-        { 
-          title: "Estado", 
+        {
+          title: "Estado",
           field: "estado",
           lookup: {0:"Inactivo",1:"Activo"}
         },
@@ -28,12 +30,99 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
         field: "criterio",
         lookup: y
       },
-      { 
-        title: "Estado", 
+      {
+        title: "Estado",
         field: "estado",
         lookup: {0:"Inactivo",1:"Activo"}
       },
   ]
+  useEffect(()=>{
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    }else{
+      let dataFetch = []
+      let estructuraFetch = {}
+      datosCritEditables.map((x,index)=>{
+        datosActEditables.map((y,index2)=>{
+          if(x.estado == 0 && x.criterio == y.criterio){
+            y.estado = 0
+            setDatosActEditables([...datosActEditables])
+            
+          }//el problema es este if
+  
+          if(x.estado == 1 && y.criterio==x.criterio){
+            y.estado = 1
+            setDatosActEditables([...datosActEditables])
+          }
+        })
+      })
+      // console.log(datosActividadPrevio)
+      // console.log(datosActEditables)
+
+      // datosActividadPrevio.map((prev,index)=>{
+      //   if(datosActEditables[index].estado != prev.estado){
+      //     estructuraFetch= {
+      //       updateOne: 
+      //       {
+      //       "filter": {IdActividad: datosActEditables[index].IdActividad},
+      //       "update": {$set:{estado:datosActEditables[index].estado}}
+      //     }}
+      //     dataFetch.push(estructuraFetch)
+      //   }
+      // })
+      // // console.log(idFetch)
+      datosActEditables.map(act=>{
+        estructuraFetch ={
+          updateOne:
+          {
+            "filter": {IdActividad: act.IdActividad},
+            "update": {$set:{estado: act.estado}}
+          }
+        }
+        dataFetch.push(estructuraFetch)
+      })
+      
+      fetch(`http://localhost:3000/api/proveedores/actividad`,{
+        method:"POST",
+        headers:{"Content-Type": "application/json"},
+        body: JSON.stringify({
+          data: dataFetch,
+          accion: "updateEstado",
+        }),
+      })
+      .then(r=>r.json())
+      .then(data=>{
+        alert(data.message);
+      })
+    }
+  },[datosCritEditables])
+
+  // useEffect(()=>{
+  //   let idFetch = []
+  //   let dataFetch = {}
+
+  //   DatosActividadPrevio.map((prev,index)=>{
+  //     if(datosActEditables[index].estado != prev.estado){
+  //       idFetch.push(datosActEditables[index].IdActividad)
+  //       dataFetch= {estado:datosActEditables[index].estado}
+  //     }
+  //   })
+  //   console.log(idFetch)
+  //   console.log(dataFetch)
+  //   fetch(`http://localhost:3000/api/proveedores/actividad`,{
+  //     method:"POST",
+  //     headers:{"Content-Type": "application/json"},
+  //     body: JSON.stringify({
+  //       idProducto: idFetch,
+  //       data: dataFetch,
+  //       accion: "updateEstado",
+  //     }),
+  //   })
+  //   .then(r=>r.json())
+  //   .then(data=>{
+  //     alert(data.message);
+  //   })
+  // },datosActEditables)
     return(
       <div>
         <MaterialTable
@@ -63,13 +152,13 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                 onRowUpdate: (newData, oldData) =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                      const dataUpdate = [...datosActEditables];
+                      const dataUpdate = [...datosCritEditables];
                       const index = oldData.tableData.id;
                       dataUpdate[index] = newData;
-                      setDatosActEditables([...dataUpdate]);
-                      
-                      // delete dataUpdate[index]._id
-                      
+                      setDatosCritEditables([...dataUpdate]);
+
+                      delete dataUpdate[index]._id
+
                       fetch(`http://localhost:3000/api/proveedores/criterio`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
@@ -83,14 +172,14 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       .then(data=>{
                         alert(data.message);
                       })
-                      
+
                       resolve();
                     }, 1000)
                   }),
                 onRowDelete: oldData =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                      const dataDelete = [...datosActEditables];
+                      const dataDelete = [...datosCritEditables];
                       const index = oldData.tableData.id;
 
                       // console.log(dataDelete[index])
@@ -110,7 +199,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       })
 
                       dataDelete.splice(index, 1);
-                      setDatosActEditables([...dataDelete]);
+                      setDatosCritEditables([...dataDelete]);
 
                       resolve()
                     }, 1000)
@@ -151,9 +240,9 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       const index = oldData.tableData.id;
                       dataUpdate[index] = newData;
                       setDatosActEditables([...dataUpdate]);
-                      
+
                       // delete dataUpdate[index]._id
-                      
+
                       fetch(`http://localhost:3000/api/proveedores/actividad`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
@@ -167,7 +256,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       .then(data=>{
                         alert(data.message);
                       })
-                      
+
                       resolve();
                     }, 1000)
                   }),
@@ -220,7 +309,7 @@ export async function getStaticProps() {
     useUnifiedTopology: true,
   });
   try {
-    
+
     client = new MongoClient(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -235,7 +324,7 @@ export async function getStaticProps() {
 
   } catch (error) {
     console.log("error - " + error);
-  } 
+  }
   finally{
     client.close();
   }
@@ -259,7 +348,7 @@ export async function getStaticProps() {
 
   } catch (error) {
     console.log("error - " + error);
-  } 
+  }
   finally{
     client.close();
   }
