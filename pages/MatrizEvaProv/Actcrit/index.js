@@ -152,13 +152,20 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                 onRowUpdate: (newData, oldData) =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                      const dataUpdate = [...datosCritEditables];
+                      const dataUpdate = [...datosActEditables];
                       const index = oldData.tableData.id;
                       dataUpdate[index] = newData;
+<<<<<<< HEAD
                       setDatosCritEditables([...dataUpdate]);
 
                       delete dataUpdate[index]._id
 
+=======
+                      setDatosActEditables([...dataUpdate]);
+                      
+                      // delete dataUpdate[index]._id
+                      
+>>>>>>> main
                       fetch(`http://localhost:3000/api/proveedores/criterio`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
@@ -179,7 +186,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                 onRowDelete: oldData =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                      const dataDelete = [...datosCritEditables];
+                      const dataDelete = [...datosActEditables];
                       const index = oldData.tableData.id;
 
                       // console.log(dataDelete[index])
@@ -199,7 +206,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       })
 
                       dataDelete.splice(index, 1);
-                      setDatosCritEditables([...dataDelete]);
+                      setDatosActEditables([...dataDelete]);
 
                       resolve()
                     }, 1000)
