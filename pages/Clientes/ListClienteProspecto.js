@@ -57,23 +57,23 @@ export default function Home({ Datos, api_general }) {
   useEffect(() => {
     console.log("estoy en el donde quiero estar");
     console.log(ModalData)
-    // if (ModalData != {}) {
-    //   console.log(ModalData);
-    //   fetch(`http://localhost:3000/api/general`, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       accion: "update",
-    //       coleccion: "ClienteProspecto",
-    //       query: { IdClienteProspecto: Data["IdClienteProspecto"] },
-    //       data:{ $set: Data },
-    //     }),
-    //   })
-    //     .then((r) => r.json())
-    //     .then((data) => {
-    //       alert(data.message);
-    //     });
-    // }
+    if (ModalData['IdClienteProspecto']) {
+      console.log(ModalData);
+      fetch(api_general, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accion: "update",
+          coleccion: "ClienteProspecto",
+          query: { IdClienteProspecto: Data["IdClienteProspecto"] },
+          data:ModalData,
+        }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          alert(data.message);
+        });
+    }
   }, [ModalData]);
   //------------------------------------------------
 
@@ -88,6 +88,7 @@ export default function Home({ Datos, api_general }) {
         >
           <AutoModal_v2
             Formulario={{
+              id:Data['IdClienteProspecto'],
               title: "Datos de Cliente/Prospecto",
               secciones: [
                 {
@@ -131,6 +132,23 @@ export default function Home({ Datos, api_general }) {
                         { texto: "DNI", value: "DNI" },
                         { texto: "RUC", value: "RUC" },
                       ],
+                    },
+                    {
+                      tipo: "selector",
+                      Title: "Tipo de Comision",
+                      KeyDato: "TipoComision",
+                      Dato: Data["TipoComision"],
+                      SelectOptions: [
+                        { texto: "Seleccion un Tipo de Comision", value: null },
+                        { texto: "Fijo", value: "Fijo" },
+                        { texto: "Porcentual", value: "Porcentual" },
+                      ],
+                    },
+                    {
+                      tipo: "money",
+                      Title: "Comision",
+                      KeyDato: "Comision",
+                      Dato: Data["Comision"],
                     },
                     {
                       tipo: "texto",
@@ -178,7 +196,7 @@ export default function Home({ Datos, api_general }) {
               ],
             }}
             ModalDisplay={ModalDisplay}
-            // IdDato={}
+            IdDato={'IdClienteProspecto'}
             // APIpath={}
           />
         </ModalDisplay.Provider>
