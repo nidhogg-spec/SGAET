@@ -7,8 +7,8 @@
     padding: 10px 25px 25px 25px;
 }
 .divDatosPrincipal{
-    display: grid;
-    grid-template-columns: 1fr 2fr;
+    /* display: grid;
+    grid-template-columns: 1fr 2fr; */
 }
 .ServiciosPersonalizados{
     grid-row: 1/3;
