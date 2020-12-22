@@ -21,18 +21,6 @@ export default function Home({ Columnas, Datos, APIpath }) {
           subTitle: "Datos de Empresa",
           componentes: [
             {
-              tipo: "texto",
-              Title: "Nombre del Proveedor",
-              KeyDato: "nombre",
-              Dato: FormuData.nombre || "",
-            },
-            {
-              tipo: "texto",
-              Title: "Razon Social",
-              KeyDato: "RazonSocial",
-              Dato: FormuData.RazonSocial || "",
-            },
-            {
               tipo: "selector",
               Title: "Tipo",
               KeyDato: "tipo",
@@ -51,6 +39,18 @@ export default function Home({ Columnas, Datos, APIpath }) {
               ],
             },
             {
+              tipo: "texto",
+              Title: "Razon Social",
+              KeyDato: "RazonSocial",
+              Dato: FormuData.RazonSocial || "",
+            },
+            {
+              tipo: "texto",
+              Title: "Nombre Comercial",
+              KeyDato: "nombre",
+              Dato: FormuData.nombre || "",
+            },
+            {
               tipo: "selector",
               Title: "Tipo de Documento",
               KeyDato: "TipoDocumento",
@@ -58,6 +58,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
               SelectOptions: [
                 { value: "RUC", texto: "RUC" },
                 { value: "DNI", texto: "DNI" },
+                { value: "CarnetExtranjeria", texto: "Carnet de Extranjeria" },
               ],
             },
             {
@@ -65,6 +66,12 @@ export default function Home({ Columnas, Datos, APIpath }) {
               Title: "Numero de Documento",
               KeyDato: "NroDocumento",
               Dato: FormuData.NroDocumento || "",
+            },
+            {
+              tipo: "texto",
+              Title: "Direccion fiscal",
+              KeyDato: "DomicilioFiscal",
+              Dato: FormuData.DomicilioFiscal || "",
             },
             {
               tipo: "selector",
@@ -78,10 +85,48 @@ export default function Home({ Columnas, Datos, APIpath }) {
             },
             {
               tipo: "texto",
-              Title: "Nombre del Gerente General",
-              KeyDato: "GerenteGeneral",
-              Dato: FormuData.GerenteGeneral || "",
+              Title: "Numero de telefono o celular principal",
+              KeyDato: "NumeroPrincipal",
+              Dato: FormuData.NumeroPrincipal || "",
             },
+            {
+              tipo: "texto",
+              Title: "Email principal",
+              KeyDato: "EmailPrincipal",
+              Dato: FormuData.EmailPrincipal || "",
+            },
+            {
+              tipo: "selector",
+              Title: "Estado",
+              KeyDato: "Encuesta",
+              Dato: FormuData.Estado || 1,
+              SelectOptions: [
+                { value: 0, texto: "Inactivo" },
+                { value: 1, texto: "Activo" },
+              ],
+            },
+          ],
+        },
+        {
+          subTitle: "Representantante Legal",
+          componentes: [
+            {
+              tipo: "texto",
+              Title: "Nombre del Gerente General",
+              KeyDato: "NombreRepresentanteLegal",
+              Dato: FormuData.NombreRepresentanteLegal || "",
+            },
+            {
+              tipo: "texto",
+              Title: "Numero del documento de identidad",
+              KeyDato: "NroDocIdentRepresentanteLegal",
+              Dato: FormuData.NroDocIdentRepresentanteLegal || "",
+            },
+          ]
+        },
+        {
+          subTitle: "Otros datos",
+          componentes: [
             {
               tipo: "selector",
               Title: "Numero de Estrellas",
@@ -97,32 +142,16 @@ export default function Home({ Columnas, Datos, APIpath }) {
               ],
             },
             {
-              tipo: "selector",
-              Title: "Estado",
-              KeyDato: "Encuesta",
-              Dato: FormuData.Estado || 1,
-              SelectOptions: [
-                { value: 0, texto: "Inactivo" },
-                { value: 1, texto: "Activo" },
-              ],
-            },
-            {
               tipo: "texto",
               Title: "Enlace a documento brindado",
               KeyDato: "EnlaceDocumento",
               Dato: FormuData.EnlaceDocumento || "",
             },
-          ],
+          ]
         },
         {
           subTitle: "Datos de Contacto",
           componentes: [
-            {
-              tipo: "texto",
-              Title: "Direccion de Oficina",
-              KeyDato: "direccionRegistrada",
-              Dato: FormuData.direccionRegistrada || "",
-            },
             {
               tipo: "texto",
               Title: "Web",
@@ -131,21 +160,13 @@ export default function Home({ Columnas, Datos, APIpath }) {
             },
             {
               tipo: "tablaSimple",
-              Title: "Numeros de Contacto",
-              KeyDato: "NumContac",
-              Dato: FormuData.NumContac || [], //deber ser un [] - array - Sino todo explota
+              Title: "Contactos",
+              KeyDato: "Contacto",
+              Dato: FormuData.Contacto || [], //deber ser un [] - array - Sino todo explota
               columnas: [
                 { field: "NombreContac", title: "Nombre del Contacto" },
-                { field: "Numero", title: "Numero de Contacto" },
-              ],
-            },
-            {
-              tipo: "tablaSimple",
-              Title: "Correos electronicos",
-              KeyDato: "Email",
-              Dato: FormuData.Email || [], //deber ser un [] - array - Sino todo explota
-              columnas: [
-                { field: "NombreContac", title: "Nombre del Contacto" },
+                { field: "Area", title: "Area de trabajo" },
+                { field: "Numero", title: "Telefono/Celular" },
                 { field: "Email", title: "Email" },
               ],
             },
@@ -162,6 +183,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
               columnas: [
                 { field: "Banco", title: "Banco" },
                 { field: "Beneficiario", title: "Beneficiario" },
+                { field: "TipoCuenta", title: "Tipo de Cuenta Bancaria" },
                 {
                   field: "TipoDocumento",
                   title: "Tipo de Documento",
@@ -293,6 +315,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
           ]}
           options={{
             actionsColumnIndex: -1,
+            filtering: true
           }}
         />
       </div>
@@ -304,10 +327,18 @@ export async function getStaticProps() {
   const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
 
   let Columnas = [
-    { title: "ID", field: "id" },
-    { title: "Nombre Proovedores", field: "proveedor" },
-    { title: "Ubicacion Proovedor", field: "ubicacion" },
-    { title: "Tipo de Proovedor", field: "tipo" },
+    { title: "ID", field: "id" , filtering: false},
+    { title: "Nombre Proovedores", field: "proveedor" ,filtering: false },
+    { title: "Ubicacion Proovedor", field: "ubicacion" , filtering: false },
+    { title: "Tipo de Proovedor", field: "tipo", lookup: { 
+      Hotel: 'Hotel', 
+      Agencia: 'Agencia',
+      Guia:'Guia',
+      TransporteTerrestre:'Transporte Terrestre',
+      Restaurante:'Restaurante',
+      TransporteFerroviario:'Transporte Ferroviario',
+      Otro:'Otro'
+     }},
   ];
   let Datos = [];
   let errorGetData = true;

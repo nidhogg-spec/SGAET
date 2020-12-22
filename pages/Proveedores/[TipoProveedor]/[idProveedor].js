@@ -30,7 +30,15 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
     case "hotel":
       Columnas= [
         // { title: "ID Producto Hotel", field: "IdProductoHotel" },
-        { title: "tipoTarifa", field: "tipoTarifa" },
+        { 
+          title: "Tipo Pasajero", 
+          field: "TipoPaxs" ,
+          lookup: {
+            Nacional: "Nacional",
+            Extranjero: "Extranjero",
+            Unico: "Unico",
+          }
+        },
         { 
           title: "TipoHabitacion", 
           field: "tipoHabitacion",
@@ -45,43 +53,89 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         },
         { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
         { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
+        { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
         { title: "IGV", field: "igv" },
       ]
       break;
     case "restaurante":
       Columnas= [
+        { 
+          title: "Tipo Pasajero", 
+          field: "TipoPaxs" ,
+          lookup: {
+            Nacional: "Nacional",
+            Extranjero: "Extranjero",
+            Unico: "Unico",
+          }
+        },
         { title: "Servicio", field: "servicio" },
-        { title: "Precio", field: "precio" },
+        { title: "Codigo", field: "codServicio" },
+        { title: "Caracteristicas", field: "caracte" },
         { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
         { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
-        { title: "Caracteristicas", field: "caracte" },
+        { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
       ]
       break;
     case "transporteterrestre":
       Columnas=[
+        { 
+          title: "Tipo Pasajero", 
+          field: "TipoPaxs" ,
+          lookup: {
+            Nacional: "Nacional",
+            Extranjero: "Extranjero",
+            Unico: "Unico",
+          }
+        },
+        { title: "Codigo", field: "codServicio" },
         { title: "Servicio", field: "servicio" },
         { title: "Horario", field: "horario" },
         { title: "Tipo de Vehiculo", field: "tipvehiculo" },
-        { title: "Precio Soles", field: "PrecioSoles" },
+        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
+        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
+        { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
       ]
       break;
     case "guia":
       Columnas=[
+        { 
+          title: "Tipo Pasajero", 
+          field: "TipoPaxs" ,
+          lookup: {
+            Nacional: "Nacional",
+            Extranjero: "Extranjero",
+            Unico: "Unico",
+          }
+        },
+        { title: "Codigo", field: "codServicio" },
         { title: "Direccion", field: "direccion" },
         { title: "DNI", field: "dni" },
         { title: "Idiomas", field: "idiomas" },
         { title: "Gremio", field: "gremio" },
         { title: "N° Carne", field: "carne" },
         { title: "Fecha Expedicion", field: "fecExpedi" , type: "date"   },
-        { title: "Fecha Caducidad", field: "fecCaduc" , type: "date" }
+        { title: "Fecha Caducidad", field: "fecCaduc" , type: "date" },
+        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
+        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
+        { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
       ]
       break;
     case "agencia":
       Columnas=[
+        { 
+          title: "Tipo Pasajero", 
+          field: "TipoPaxs" ,
+          lookup: {
+            Nacional: "Nacional",
+            Extranjero: "Extranjero",
+            Unico: "Unico",
+          }
+        },
         { title: "Nombre del Servicio", field: "servicio" },
         { title: "codigo del Servicio", field: "codServicio" },
-        { title: "Precio Confidencial", field: "precioConfi" , type: "numeric" },
-        { title: "Precio Publicado", field: "precioPubli" , type: "numeric" },
+        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
+        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
+        { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
         { title: "Incluye", field: "incluye" },
         { title: "Duracion", field: "duracion" },
         { title: "Observacion", field: "observacion" }
@@ -89,6 +143,15 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
       break;
     case "transporteferroviario":
       Columnas=[
+        { 
+          title: "Tipo Pasajero", 
+          field: "TipoPaxs" ,
+          lookup: {
+            Nacional: "Nacional",
+            Extranjero: "Extranjero",
+            Unico: "Unico",
+          }
+        },
         { title: "Ruta", field: "ruta" },
         { title: "Hora Salida", field: "salida" },
         { title: "Hora Llegada", field: "llegada" },
@@ -96,20 +159,41 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
           title: "Tipo de Tren", 
           field: "tipoTren"
          },
-        { title: "Precio Adulto Confi", field: "precioAdultoConfi" , type: "numeric" },
-        { title: "Precio Niño Confi", field: "precioNiñoConfi", type: "numeric"  },
-        { title: "Precio Guia Confi", field: "precioGuiaConfi" , type: "numeric" },
-        { title: "Precio Adulto Publi", field: "precioAdultoPubli" , type: "numeric" },
-        { title: "Precio Niño Publi", field: "precioNiñoPubli" , type: "numeric" },
-        { title: "Precio Guia Publi", field: "precioGuiaPubli" , type: "numeric" }
+         { 
+          title: "Etapa Pasajero", 
+          field: "EtapaPaxs" ,
+          lookup: {
+            Adulto: "Adulto",
+            Niño: "Niño",
+            Guia: "Guia",
+          }
+        },
+        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
+        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
+        { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
+        // { title: "Precio Guia Confi", field: "precioGuiaConfi" , type: "numeric" },
+        // { title: "Precio Adulto Publi", field: "precioAdultoPubli" , type: "numeric" },
+        // { title: "Precio Niño Publi", field: "precioNiñoPubli" , type: "numeric" },
+        // { title: "Precio Guia Publi", field: "precioGuiaPubli" , type: "numeric" }
       ]
       break;
       case "otro":
       Columnas=[
+        {
+          title: "Tipo Pasajero", 
+          field: "TipoPaxs" ,
+          lookup: {
+            Nacional: "Nacional",
+            Extranjero: "Extranjero",
+            Unico: "Unico",
+          }
+        },
         { title: "Nombre del Servicio o Producto", field: "servicio" },
         { title: "codigo del Servicio o Producto", field: "codServicio" },
-        { title: "Precio Confidencial", field: "precioConfi" , type: "numeric" },
-        { title: "Precio Publicado", field: "precioPubli" , type: "numeric" },
+        { title: "Descripcion", field: "Descripcion" },
+        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
+        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
+        { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
       ]
       break;
   }
@@ -139,7 +223,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
 
   return (
     <div>
-      <span>{DatosProveedor.nombre}</span>
+      <h1>{DatosProveedor.nombre}</h1>
       <img
         src="/resources/save-black-18dp.svg"
         onClick={() => {
@@ -159,20 +243,9 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
           }
         }}
       />
+      <a href='#ProductoServicio_area'>Productos/Servicios</a>
       <div className={styles.divDatosPrincipal}>
-        <div className={styles.ServiciosPersonalizados}>
-          <span>Servicios Personalizados</span>
-          <textarea value={DatosProveedor.ServiciosPersonalizados} />
-        </div>
         <div className={styles.DatosProveedor}>
-          <CampoTexto
-            Title="Nombre del Proveedor"
-            ModoEdicion={Edicion}
-            DevolverDatoFunct={RegistrarDato}
-            DarDato={DevolverDato}
-            KeyDato="nombre"
-            Dato={DatosProveedor.nombre || ""}
-          />
           <Selector
             Title="Tipo de Proveedor"
             ModoEdicion={Edicion}
@@ -193,6 +266,22 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
               { value: "Otro", texto: "Otro" },
             ]}
           />
+          <CampoTexto
+            Title="Razon Social"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="RazonSocial"
+            Dato={DatosProveedor.RazonSocial || ""}
+          />
+          <CampoTexto
+            Title="Nombre Comercial"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="nombre"
+            Dato={DatosProveedor.nombre || ""}
+          />
           <Selector
             Title="Tipo de Documento"
             ModoEdicion={Edicion}
@@ -203,6 +292,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             SelectOptions={[
               { value: "DNI", texto: "DNI" },
               { value: "RUC", texto: "RUC" },
+              { value: "CarnetExtranjeria", texto: "Carnet de Extranjeria" },
             ]}
           />
           <CampoTexto
@@ -212,6 +302,14 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             DarDato={DevolverDato}
             KeyDato="NroDocumento"
             Dato={DatosProveedor.NroDocumento || ""}
+          />
+          <CampoTexto
+            Title="Direccion fiscal"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="DomicilioFiscal"
+            Dato={DatosProveedor.DomicilioFiscal || ""}
           />
           <Selector
             Title="Tipo de Moneda"
@@ -234,36 +332,20 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             Dato={DatosProveedor.EnlaceDocumento || ""}
           />
           <CampoTexto
-            Title="Gerente General"
+            Title="Numero de telefono o celular principal"
             ModoEdicion={Edicion}
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
-            KeyDato="GerenteGeneral"
-            Dato={DatosProveedor.GerenteGeneral || ""}
+            KeyDato="NumeroPrincipal"
+            Dato={DatosProveedor.NumeroPrincipal || ""}
           />
           <CampoTexto
-            Title="Numero de estrellas"
+            Title="Email principal"
             ModoEdicion={Edicion}
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
-            KeyDato="NEstrellas"
-            Dato={DatosProveedor.NEstrellas || ""}
-          />
-          <CampoTexto
-            Title="Enlace a Pagina web"
-            ModoEdicion={Edicion}
-            DevolverDatoFunct={RegistrarDato}
-            DarDato={DevolverDato}
-            KeyDato="Web"
-            Dato={DatosProveedor.Web || ""}
-          />
-          <CampoTexto
-            Title="Destino donde esta el proveedor"
-            ModoEdicion={Edicion}
-            DevolverDatoFunct={RegistrarDato}
-            DarDato={DevolverDato}
-            KeyDato="Destino"
-            Dato={DatosProveedor.Destino || ""}
+            KeyDato="EmailPrincipal"
+            Dato={DatosProveedor.EmailPrincipal || ""}
           />
           <Selector
             Title="Estado"
@@ -277,71 +359,81 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
               { value: 1, texto: "Activo" },
             ]}
           />
+
+          <h2>Representantante Legal</h2>
+          <CampoTexto
+            Title="Nombre del Gerente General"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="NombreRepresentanteLegal"
+            Dato={DatosProveedor.NombreRepresentanteLegal || ""}
+          />
+          <CampoTexto
+            Title="Numero del documento de identidad"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="NroDocIdentRepresentanteLegal"
+            Dato={DatosProveedor.NroDocIdentRepresentanteLegal || ""}
+          />
+
+          <h2>Otros datos</h2>
+
+
+          <Selector
+            Title="Numero de estrellas"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="NEstrellas"
+            Dato={DatosProveedor.NEstrellas || ""}
+            SelectOptions={[
+              { value: 0, texto: "0" },
+              { value: 1, texto: "1" },
+              { value: 2, texto: "2" },
+              { value: 3, texto: "3" },
+              { value: 4, texto: "4" },
+              { value: 5, texto: "5" },
+            ]}
+          />
+          <CampoTexto
+            Title="Enlace a Pagina web"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="Web"
+            Dato={DatosProveedor.Web || ""}
+          />
+
+          {/* <CampoTexto
+            Title="Destino donde esta el proveedor"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="Destino"
+            Dato={DatosProveedor.Destino || ""}
+          /> */}
+          
         </div>
         <div className={styles.divContacto}>
           <span>Datos de Contacto</span>
-          <div className={styles.DataContacto}>
-            <TablaSimple
-            Title="Numeros de Contacto"
-            ModoEdicion={Edicion}
-            DevolverDatoFunct={RegistrarDato}
-            DarDato={DevolverDato}
-            KeyDato="NumContac"
-            Dato={DatosProveedor.NumContac || []}
-            Reiniciar={false}
-            columnas={[
-              {field: "NombreContac", title: "Nombre del Contacto"},
-              {field: "Numero", title: "Numero de Contacto"},
-            ]}
-          />
-          <TablaSimple
-            Title="Correos electronicos"
-            ModoEdicion={Edicion}
-            DevolverDatoFunct={RegistrarDato}
-            DarDato={DevolverDato}
-            KeyDato="Email"
-            Dato={DatosProveedor.Email || []}
-            Reiniciar={false}
-            columnas={[
-              {field: "NombreContac", title: "Nombre del Contacto"},
-                {field: "Email", title: "Email"},
-            ]}
-          />
           
-            {/* <CampoTexto
-              Title="Numero de telefono"
-              ModoEdicion={Edicion}
-              DevolverDatoFunct={RegistrarDato}
-              DarDato={DevolverDato}
-              KeyDato="celular"
-              Dato={DatosProveedor.celular || ""}
-            />
-            <CampoTexto
-              Title="Numero de telefono 2"
-              ModoEdicion={Edicion}
-              DevolverDatoFunct={RegistrarDato}
-              DarDato={DevolverDato}
-              KeyDato="celular2"
-              Dato={DatosProveedor.celular2 || ""}
-            />
-            <CampoTexto
-              Title="Email"
-              ModoEdicion={Edicion}
-              DevolverDatoFunct={RegistrarDato}
-              DarDato={DevolverDato}
-              KeyDato="email"
-              Dato={DatosProveedor.email || ""}
-            />
-            <CampoTexto
-              Title="Email 2"
-              ModoEdicion={Edicion}
-              DevolverDatoFunct={RegistrarDato}
-              DarDato={DevolverDato}
-              KeyDato="email2"
-              Dato={DatosProveedor.email2 || ""}
-            /> */}
-            
-          </div>
+            <TablaSimple
+            Title="Contactos"
+            ModoEdicion={Edicion}
+            DevolverDatoFunct={RegistrarDato}
+            DarDato={DevolverDato}
+            KeyDato="Contacto"
+            Dato={DatosProveedor.Contacto || []}
+            Reiniciar={false}
+            columnas={[
+              { field: "NombreContac", title: "Nombre del Contacto" },
+                { field: "Area", title: "Area de trabajo" },
+                { field: "Numero", title: "Telefono/Celular" },
+                { field: "Email", title: "Email" },
+            ]}
+          />
         </div>
         <div className={styles.divCuentasBancarias}>
         <TablaSimple
@@ -355,6 +447,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
             columnas={[
               {field: "Banco", title: "Banco"},
                 {field: "Beneficiario", title: "Beneficiario"},
+                { field: "TipoCuenta", title: "Tipo de Cuenta Bancaria" },
                 {field: "TipoDocumento", title: "Tipo de Documento", lookup:{RUC:'RUC',DNI:'DNI'}},
                 {field: "NumDoc", title: "Numero de Documento"},
                 {field: "Cuenta", title: "Numero de Cuenta"},
@@ -371,7 +464,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         </div>
       </div>
 
-      <div>
+      <div id='ProductoServicio_area'>
         <MaterialTable
           columns={Columnas}
           data={datosEditables}
