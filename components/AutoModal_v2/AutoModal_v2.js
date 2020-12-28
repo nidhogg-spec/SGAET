@@ -11,11 +11,12 @@ import CampoMoney from "@/components/Formulario/CampoMoney/CampoMoney";
 import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
 import TablaSimple from "../Formulario/TablaSimple/TablaSimple";
 import TablaRelacionMulti from "../Formulario/TablaRelacionMulti/TablaRelacionMulti";
-import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio/TablaProgramaServicio"
+import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio/TablaProgramaServicio";
+import TablaProgramaServicio_v2 from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio_v2/TablaProgramaServicio_v2";
 
 const AutoModal = ({
   Formulario = {
-    id:'',
+    id: "",
     title: "",
     secciones: [
       {
@@ -31,10 +32,9 @@ const AutoModal = ({
   // Display, //Solo en modoVerEdicions
   // MostrarModal=()=>{} //Solo en modoVerEdicions
 }) => {
-  const [
-    [Display, setDisplay],
-    [ModalData, setModalData]
-  ] = useContext(ModalDisplay)
+  const [[Display, setDisplay], [ModalData, setModalData]] = useContext(
+    ModalDisplay
+  );
 
   const [ModoEdicion, setModoEdicion] = useState(false);
   const [DarDato, setDarDato] = useState(false);
@@ -129,7 +129,7 @@ const AutoModal = ({
           />
         );
         break;
-        case "tablaRelacionMulti":
+      case "tablaRelacionMulti":
         return (
           <TablaRelacionMulti
             Title={compo.Title}
@@ -144,7 +144,7 @@ const AutoModal = ({
           />
         );
         break;
-        case "CustomTablaProgramaServicio":
+      case "CustomTablaProgramaServicio":
         return (
           <TablaProgramaServicio
             Title={compo.Title}
@@ -156,6 +156,20 @@ const AutoModal = ({
             Reiniciar={ReinciarComponentes}
             columnas={compo.columnas}
             APIpathGeneral={compo.APIpathGeneral}
+          />
+        );
+        break;
+      case "TablaProgramaServicio_v2":
+        return (
+          <TablaProgramaServicio_v2
+            Title={compo.Title}
+            ModoEdicion={ModoEdicion}
+            DevolverDatoFunct={DarDatoFunction}
+            DarDato={DarDato}
+            KeyDato={compo.KeyDato}
+            Dato={compo.Dato}
+            ListaServiciosProductos={compo.ListaServiciosProductos}
+            Reiniciar={ReinciarComponentes}
           />
         );
         break;
@@ -176,8 +190,8 @@ const AutoModal = ({
     if (DarDato == true) {
       console.log("Esta en modo verEdicion");
       setDarDato(false);
-      DataNuevaEdit[IdDato]=Formulario.id;
-      setModalData(DataNuevaEdit)
+      DataNuevaEdit[IdDato] = Formulario.id;
+      setModalData(DataNuevaEdit);
       console.log(DataNuevaEdit);
       setDisplay(false);
       setModoEdicion(false);
@@ -193,55 +207,54 @@ const AutoModal = ({
       modal.style.display = "none";
     }
   }, [Display]);
-      return (
-        <div
-          id="MiModalVerEdicion"
-          className={styles.Modal}
+  return (
+    <div
+      id="MiModalVerEdicion"
+      className={styles.Modal}
+      onClick={(event) => {
+        let modal = document.getElementById("MiModalVerEdicion");
+        if (event.target == modal) {
+          setDisplay(false);
+        }
+      }}
+    >
+      <div className={styles.Modal_content}>
+        <h1>{Formulario.title}</h1>
+        <img
+          src="/resources/save-black-18dp.svg"
+          onClick={() => {
+            setDarDato(true);
+            // ReiniciarData()
+          }}
+        />
+        <img
+          src="/resources/edit-black-18dp.svg"
           onClick={(event) => {
-            let modal = document.getElementById("MiModalVerEdicion");
-            if (event.target == modal) {
-              setDisplay(false)
+            if (ModoEdicion == false) {
+              event.target.src = "/resources/close-black-18dp.svg";
+              setModoEdicion(true);
+            } else {
+              event.target.src = "/resources/edit-black-18dp.svg";
+              setReinciarComponentes(true);
+              setModoEdicion(false);
             }
           }}
-        >
-          <div className={styles.Modal_content}>
-            <h1>{Formulario.title}</h1>
-            <img
-              src="/resources/save-black-18dp.svg"
-              onClick={() => {
-                setDarDato(true);
-                // ReiniciarData()
-              }}
-            />
-            <img
-              src="/resources/edit-black-18dp.svg"
-              onClick={(event) => {
-                if (ModoEdicion == false) {
-                  event.target.src = "/resources/close-black-18dp.svg";
-                  setModoEdicion(true);
-                } else {
-                  event.target.src = "/resources/edit-black-18dp.svg";
-                  setReinciarComponentes(true);
-                  setModoEdicion(false);
-                }
-              }}
-            />
-            {Formulario.secciones.map((seccion) => {
-              return (
-                <div>
-                  <h2>{seccion.subTitle}</h2>
-                  <div>
-                    {seccion.componentes.map((componente) => {
-                      return GenerarComponente(componente);
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      );
-
+        />
+        {Formulario.secciones.map((seccion) => {
+          return (
+            <div>
+              <h2>{seccion.subTitle}</h2>
+              <div>
+                {seccion.componentes.map((componente) => {
+                  return GenerarComponente(componente);
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 export default AutoModal;
