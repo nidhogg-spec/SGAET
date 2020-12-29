@@ -125,7 +125,7 @@ const TablaProgramaServicio_v2 = (
             {
               field: "PrecioUnitario",
               title: "Precio Unitario",
-              editable: "never",
+              editable: "always",
               type: "numeric",
             },
             {

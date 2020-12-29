@@ -57,6 +57,12 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral,ListaSer
               Dato: FormuData.NombrePrograma,
             },
             {
+              tipo: "texto",
+              Title: "Condigo",
+              KeyDato: "CodigoPrograma",
+              Dato: FormuData.NombrePrograma,
+            },
+            {
               tipo: "numero",
               Title: "Duracion Dias",
               KeyDato: "DuracionDias",
@@ -437,7 +443,7 @@ export async function getStaticProps() {
       ListaServiciosProductos.push({
         IdServicioProducto: x["IdProductoTransportes"] || null,
         TipoServicio: "Transporte Terrestre" || null,
-        Nombre: x["codServicio"] + " - " + x["TipoPaxs"] + " - " + x["servicio"]+" - " + x["horario"] || null,
+        Nombre: x["codServicio"] + " / " +x['EtapaPaxs'] + " / " + x["TipoPaxs"] + " / " + x["servicio"]+" / Horario:" + x["horario"] || null,
         Descripcion:
           "Tipo de Vehiculo: " +
           x["tipvehiculo"] || null,
@@ -512,7 +518,7 @@ export async function getStaticProps() {
       ListaServiciosProductos.push({
         IdServicioProducto: x["IdProductoTransFerroviario"] || null,
         TipoServicio: "Transporte Ferroviario" || null,
-        Nombre: x["TipoPaxs"] + " - " + x["ruta"]+ ' - Horario:'+x["salida"]+'-'+x["llegada"] || null,
+        Nombre: x["TipoPaxs"] + " / " +x['EtapaPaxs']+ " / " + x["ruta"]+ '/ Horario:'+x["salida"]+'-'+x["llegada"] || null,
         Descripcion:
           "Tipo de tren: " +
           x["tipoTren"] || null,
