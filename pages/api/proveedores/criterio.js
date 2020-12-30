@@ -90,7 +90,6 @@ export default async (req, res) => {
               let dataActu = {
                 $set: req.body.data,
               };
-              
               collection.updateOne(
                 { IdCriterio: req.body.idProducto },
                 dataActu,
@@ -101,12 +100,12 @@ export default async (req, res) => {
                     return;
                   }
                   console.log("Actualizacion satifactoria");
-                  res
-                    .status(200)
-                    .json({
-                      message:
-                        "Todo bien, todo correcto, Actualizacion satifactoria",
-                    });
+                  // res
+                  //   .status(200)
+                  //   .json({
+                  //     message:
+                  //       "Todo bien, todo correcto, Actualizacion satifactoria",
+                  //   });
                   client.close();
                 }
               );

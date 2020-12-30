@@ -32,8 +32,8 @@ export default function Evaluacion({Datos}){
     let porcent = 0;
 
     let Columnas = [
-        {title: "Actividad",field: "criterio" , editable: 'never'},
-        { title: "Criterio", field: "descripcion", editable: 'never' },
+        {title: "Criterio",field: "criterio" , editable: 'never'},
+        { title: "Actividad", field: "descripcion", editable: 'never' },
         { 
           title: "¿Cumple?", 
           field: "cumple" ,
@@ -44,7 +44,7 @@ export default function Evaluacion({Datos}){
     si falla algo añadir el [] en el use effect*/
     useEffect(()=>{
       for (let index = 0; index < datosEditables.length; index++) {
-        if (idprov==datosEditables[index].idProveedor) {
+        if (idprov==datosEditables[index].idProveedor && periodo==datosEditables[index].periodo) {
           console.log("Existe we")
           dataEvaluProv=datosEditables[index]
         }
@@ -52,7 +52,8 @@ export default function Evaluacion({Datos}){
     })
   /*setea los datos de evaperiodo del proveedor seleccionado para que sea usado
   en la tabla */
-    useEffect(()=>{        
+    useEffect(()=>{   
+      console.log(dataEvaluProv)     
       setDatosTabla(dataEvaluProv.evaperiodo)
     },[])
 
