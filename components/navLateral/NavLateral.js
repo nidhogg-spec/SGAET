@@ -36,12 +36,13 @@ export default function NavLateral() {
         },{
             tipo:"link",
             subModuloName:"Programas turisticos",
-            link:"/reservas/ProgramasTuristicos"
-        },{
-            tipo:"link",
-            subModuloName:"Servicios",
-            link:"/reservas/Servicio"
+            link:"/reservas/ProgramaTuristico"
         },
+        // {
+        //     tipo:"link",
+        //     subModuloName:"Servicios",
+        //     link:"/reservas/Servicio"
+        // },
       ] 
     },
     {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import fetch from "isomorphic-unfetch";
 import MaterialTable from "material-table";
 import Router from "next/router";
+import Link from "next/link";
 
 //Componentes
 import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
@@ -122,7 +123,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
               KeyDato: "NroDocIdentRepresentanteLegal",
               Dato: FormuData.NroDocIdentRepresentanteLegal || "",
             },
-          ]
+          ],
         },
         {
           subTitle: "Otros datos",
@@ -147,7 +148,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
               KeyDato: "EnlaceDocumento",
               Dato: FormuData.EnlaceDocumento || "",
             },
-          ]
+          ],
         },
         {
           subTitle: "Datos de Contacto",
@@ -242,7 +243,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
             .then((data) => {
               // console.log(data)
               data.data.map((datosResult) => {
-                ActuTablaDatos.push({ 
+                ActuTablaDatos.push({
                   id: datosResult.idProveedor,
                   proveedor: datosResult.nombre,
                   ubicacion: datosResult.direccionRegistrada,
@@ -259,7 +260,6 @@ export default function Home({ Columnas, Datos, APIpath }) {
 
       setReiniciarData(false);
     }
-
   }, [ReiniciarData]);
 
   return (
@@ -277,21 +277,62 @@ export default function Home({ Columnas, Datos, APIpath }) {
       {/* <Modal Display= {ModalDisplay} MostrarModal={MostrarModal} APIpath={APIpath} TipoModal={"Proveedores"}/> */}
       <div>
         <MaterialTable
-          columns={Columnas}
+          columns={[
+            { title: "ID", field: "id", filtering: false },
+            {
+              title: "Nombre Proovedores",
+              field: "proveedor",
+              filtering: false,
+            },
+            {
+              title: "Ubicacion Proovedor",
+              field: "ubicacion",
+              filtering: false,
+            },
+            {
+              title: "Tipo de Proovedor",
+              field: "tipo",
+              lookup: {
+                Hotel: "Hotel",
+                Agencia: "Agencia",
+                Guia: "Guia",
+                TransporteTerrestre: "Transporte Terrestre",
+                Restaurante: "Restaurante",
+                TransporteFerroviario: "Transporte Ferroviario",
+                Otro: "Otro",
+              },
+            },
+            {
+              field: "url",
+              title: "Enlace",
+              width:'45px',
+              cellStyle:{
+                  textAlign:'center'
+              },
+              filtering: false,
+              render: (rowData) => {
+                return(<Link href={`/Proveedores/${rowData.tipo}/${rowData.id}`}>
+                  <a>
+                    <img src="/resources/remove_red_eye-24px.svg" />
+                  </a>
+                </Link>);
+              },
+            },
+          ]}
           data={TablaDatos}
           title="Lista de Proovedores"
           title={<span>Lista de Proveedores</span>}
           actions={[
-            {
-              icon: () => {
-                return <img src="/resources/remove_red_eye-24px.svg" />;
-              },
-              tooltip: "Show Proveedor",
-              onClick: (event, rowData) =>
-                Router.push({
-                  pathname: `/Proveedores/${rowData.tipo}/${rowData.id}`,
-                }),
-            },
+            // {
+            //   icon: (rowData) => {
+            //     return <img src="/resources/remove_red_eye-24px.svg" /> ;
+            //   },
+            //   tooltip: "Show Proveedor",
+            //   // onClick: (event, rowData) =>
+            //   //   Router.push({
+            //   //     pathname: `/Proveedores/${rowData.tipo}/${rowData.id}`,
+            //   //   }),
+            // },
             {
               icon: () => {
                 return <img src="/resources/delete-black-18dp.svg" />;
@@ -315,31 +356,17 @@ export default function Home({ Columnas, Datos, APIpath }) {
           ]}
           options={{
             actionsColumnIndex: -1,
-            filtering: true
+            filtering: true,
           }}
         />
       </div>
     </div>
   );
-
 }
 export async function getStaticProps() {
   const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
 
-  let Columnas = [
-    { title: "ID", field: "id" , filtering: false},
-    { title: "Nombre Proovedores", field: "proveedor" ,filtering: false },
-    { title: "Ubicacion Proovedor", field: "ubicacion" , filtering: false },
-    { title: "Tipo de Proovedor", field: "tipo", lookup: { 
-      Hotel: 'Hotel', 
-      Agencia: 'Agencia',
-      Guia:'Guia',
-      TransporteTerrestre:'Transporte Terrestre',
-      Restaurante:'Restaurante',
-      TransporteFerroviario:'Transporte Ferroviario',
-      Otro:'Otro'
-     }},
-  ];
+  let Columnas = [];
   let Datos = [];
   let errorGetData = true;
   do {

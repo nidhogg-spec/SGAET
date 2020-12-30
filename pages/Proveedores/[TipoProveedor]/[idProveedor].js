@@ -49,12 +49,10 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
           title: "Cama Adicional", 
           field: "camAdic",
           type: "boolean"
-
         },
         { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
         { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
         { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
-        { title: "IGV", field: "igv" },
       ]
       break;
     case "restaurante":
@@ -221,6 +219,11 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
     }
   }, [DevolverDato]);
 
+
+  /* Para la funcion de duplicar un columna */
+  const materialTableRef = React.createRef();
+  const [initialFormData, setinitialFormData] = useState({});
+  
   return (
     <div>
       <h1>{DatosProveedor.nombre}</h1>
@@ -469,6 +472,25 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
           columns={Columnas}
           data={datosEditables}
           title={tittle}
+          //------------ Funcion de duplicado ----------------------------------------------
+          tableRef={materialTableRef}
+          initialFormData={initialFormData}
+          actions={[
+            {
+              icon: 'library_add',
+              tooltip: 'Duplicate User',
+              onClick: (event, rowData) => {
+                const materialTable = materialTableRef.current;
+                setinitialFormData({...rowData})
+                materialTable.dataManager.changeRowEditing();
+                materialTable.setState({
+                  ...materialTable.dataManager.getRenderState(),
+                  showAddRow: true,
+                });
+              }
+            }
+          ]}
+          //-------------------------------------------------------------------------
           editable={{
             onRowAdd: newData =>
               new Promise((resolve, reject) => {
@@ -489,6 +511,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                       alert(data.message);
                     })
                   setDatosEditables([...datosEditables, newData]);
+                  setinitialFormData({})
                   resolve();
                 }, 1000)
               }),
@@ -506,12 +529,35 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                   // console.log(dataUpdate[index].IdProductoHotel)
                   // console.log("este dato weeee"+index)
                   // console.log()
-                  
+                  let IdKey = ''
+                  switch (provDinamico) {
+                    case "hotel":
+                      IdKey = "IdProductoHoteles";
+                      break;
+                    case "restaurante":
+                      IdKey = "IdProductoRestaurantes";
+                      break;
+                    case "transporteterrestre":
+                      IdKey = "IdProductoTransportes";
+                      break;
+                    case "transporteferroviario":
+                      IdKey = "IdProductoTransFerroviario";
+                      break;
+                    case "guia":
+                      IdKey = "IdProductoGuias";
+                      break;
+                    case "agencia":
+                      IdKey = "IdProductoAgencias";
+                      break;
+                    default:
+                      IdKey = "IdProductoOtros";
+                      break;
+                  }
                   fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
                     method:"POST",
                     headers:{"Content-Type": "application/json"},
                     body: JSON.stringify({
-                      idProducto: dataUpdate[index].IdProductoHotel,
+                      idProducto: dataUpdate[index][IdKey],
                       data: dataUpdate[index],
                       accion: "update",
                     }),
@@ -532,12 +578,35 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
 
                   console.log(dataDelete[index])
                   console.log(dataDelete[index].IdProductoHotel)
-
+                  let IdKey = ''
+                  switch (provDinamico) {
+                    case "hotel":
+                      IdKey = "IdProductoHoteles";
+                      break;
+                    case "restaurante":
+                      IdKey = "IdProductoRestaurantes";
+                      break;
+                    case "transporteterrestre":
+                      IdKey = "IdProductoTransportes";
+                      break;
+                    case "transporteferroviario":
+                      IdKey = "IdProductoTransFerroviario";
+                      break;
+                    case "guia":
+                      IdKey = "IdProductoGuias";
+                      break;
+                    case "agencia":
+                      IdKey = "IdProductoAgencias";
+                      break;
+                    default:
+                      IdKey = "IdProductoOtros";
+                      break;
+                  }
                   fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
                     method:"POST",
                     headers:{"Content-Type": "application/json"},
                     body: JSON.stringify({
-                      idProducto: dataDelete[index].IdProductoHotel,
+                      idProducto: dataDelete[index][IdKey],
                       accion: "delete",
                     }),
                   })
