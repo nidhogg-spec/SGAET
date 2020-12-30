@@ -24,8 +24,8 @@ export default function Header(){
   if (data.email) {
     loggedIn = true;
   }else{
-    if(Router.route!="/loginPrincipal"){
-      Router.push("/loginPrincipal")
+    if(Router.route!="/"){
+      Router.push("/")
     }
   }
   

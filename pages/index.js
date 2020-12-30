@@ -120,8 +120,10 @@ const CambioDolar = () => {
   const [EstadoEditado, setEstadoEditado] = useState(false);
   const [ValueDolartoSol, setValueDolartoSol] = useState(0);
   const [ValueDolarSolInit, setValueDolarSolInit] = useState(0);
+  const [Loading, setLoading] = useState(false);
 
   useEffect(async () => {
+    setLoading(true)
     let DolarSol = 0
     await fetch("/api/DataSistema", {
       method: "POST",
@@ -137,6 +139,7 @@ const CambioDolar = () => {
     console.log(DolarSol)
     setValueDolarSolInit(DolarSol);
     setValueDolartoSol(DolarSol);
+    setLoading(false)
   }, []);
 
   return (
@@ -147,34 +150,58 @@ const CambioDolar = () => {
           <span>Cambio soles a dolares</span>
           {EstadoEditado ? (
             <>
-              <img
-                src="/resources/save-black-18dp.svg"
-                onClick={() => {
-                  fetch("/api/DataSistema", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      accion: "CambiarCambioDolar",
-                      value: ValueDolartoSol,
-                    }),
-                  });
-                  // ReiniciarData()
-                }}
-              />
-              <img
-                src="/resources/close-black-18dp.svg"
-                onClick={(event) => {
-                  setEstadoEditado(false);
-                }}
-              />
+              { Loading ? (
+                <>
+                  <span>Guardando ...</span>
+                </>
+              ) : (
+                <>
+                  <img
+                  src="/resources/save-black-18dp.svg"
+                  onClick={async() => {
+                    setLoading(true)
+                    await fetch("/api/DataSistema", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        accion: "CambiarCambioDolar",
+                        value: ValueDolartoSol,
+                      }),
+                    });
+                    setValueDolarSolInit(ValueDolartoSol)
+                    setEstadoEditado(false);
+                    setLoading(false)
+                    // ReiniciarData()
+                  }}
+                />
+                <img
+                  src="/resources/close-black-18dp.svg"
+                  onClick={(event) => {
+                    setEstadoEditado(false);
+                    setValueDolartoSol(ValueDolarSolInit)
+                  }}
+                />
+                </>
+              )}
+              
             </>
           ) : (
-            <img
-              src="/resources/edit-black-18dp.svg"
-              onClick={(event) => {
-                setEstadoEditado(true);
-              }}
-            />
+            <>
+            { Loading ? (
+                <>
+                  <span> Cargando ...</span>
+                </>
+              ) : (
+                <>
+                  <img
+                  src="/resources/edit-black-18dp.svg"
+                  onClick={(event) => {
+                    setEstadoEditado(true);
+                  }}
+                />
+                </>
+              )}
+            </>
           )}
         </div>
         <div>
