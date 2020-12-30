@@ -57,6 +57,11 @@ export default function NavLateral() {
           subModuloName:"Evaluacon de proveedores",
           link:"/MatrizEvaProv"
         },
+        {
+          tipo:"link",
+          subModuloName:"Reporte MEP",
+          link:"/MatrizEvaProv/ReporteEvaluacion"
+        },
       ]
     },
     {

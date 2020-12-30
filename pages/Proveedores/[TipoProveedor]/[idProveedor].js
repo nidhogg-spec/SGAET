@@ -54,7 +54,6 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
         { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
         { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
-        { title: "IGV", field: "igv" },
       ]
       break;
     case "restaurante":
