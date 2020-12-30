@@ -102,17 +102,43 @@ export default async (req, res) => {
                     return;
                   }
                   console.log("Actualizacion satifactoria");
-                  res
-                    .status(200)
-                    .json({
-                      message:
-                        "Todo bien, todo correcto, Actualizacion satifactoria",
-                    });
-                  client.close();
+                  // res
+                  //   .status(200)
+                  //   .json({
+                  //     message:
+                  //       "Todo bien, todo correcto, Actualizacion satifactoria",
+                  //   });
                 }
               );
             });
             break;
+            case "updateEstado":
+              client = new MongoClient(url,{
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+              });
+              
+              client.connect(function (err) {
+                
+                console.log("Connected to MognoDB server =>");
+                const dbo = client.db(dbName);
+                const collection = dbo.collection(coleccion);
+                let dataActu = {
+                  $set: req.body.data,
+                };
+                collection.bulkWrite(
+                  req.body.data,
+                  (err,result)=>{
+                    if (err) {
+                      res.status(500).json({ error: true, message: "un error .v"+ err });
+                      client.close();
+                      return;
+                    }
+                    console.log("Actualizacion satifactoria");
+                  }
+                  );
+              });
+              break;
           case "delete":
             client.connect(function (err) {
               console.log("Connected to MognoDB server =>");

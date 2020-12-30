@@ -16,7 +16,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
     const [datoPeriodo,setdatoPeriodo] = useState()
     const [datoPeriodoSeleccionado,setDatoPeriodoSeleccionado] = useState("noperiodo")
     const [selectPeriodo, setSelectPeriodo] = useState([])
-    const [selectPeriodoActivo, setSelectPeriodoActivo] = useState([])
+    // const [selectPeriodoActivo, setSelectPeriodoActivo] = useState([])
     const [datoPeriodoActivo,setdatoPeriodoActivo] = useState()
     
     let Columnas=[
@@ -33,8 +33,14 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
           { title: "Porcentaje", field: "porcentajeTotal" }
         ]
     function getData(){
-      datosProv.map(x=>{
-        objetoDatos = {evaperiodo:datosActividad, idProveedor: x.idProveedor, periodo: datoPeriodo}
+      let actividadesActivas = []
+      datosActividad.map((y)=>{
+        if(y.estado==1){
+          actividadesActivas.push(y)
+        }
+      })
+      datosProv.map((x)=>{
+        objetoDatos = {evaperiodo:actividadesActivas, idProveedor: x.idProveedor, periodo: datoPeriodo}
         arrayEvaluacion.push(objetoDatos)
       })
       fetch(`http://localhost:3000/api/proveedores/mep`,{
