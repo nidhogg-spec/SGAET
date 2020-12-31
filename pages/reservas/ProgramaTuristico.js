@@ -371,7 +371,8 @@ export async function getStaticProps() {
         nombre:1,
         tipo:1,
         idProveedor:1,
-        porcentajeTotal:1
+        porcentajeTotal:1,
+        TipoMoneda:1
       })
       .toArray();
       console.log(resultProveedores)
@@ -400,7 +401,9 @@ export async function getStaticProps() {
         Precio: x["precioCoti"] || 0.00,
         Costo: x["precioConfi"] || 0.00,
         NombreProveedor: proveedor['nombre'],
-        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null
+        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null,
+        Currency: proveedor['TipoMoneda'] || null,
+        PrecioPublicado:x['precioPubli'] || null
       });
     });
     // Restaurantes
@@ -425,7 +428,9 @@ export async function getStaticProps() {
         Precio: x["precioCoti"] || 0.00,
         Costo: x["precioConfi"] || 0.00,
         NombreProveedor: proveedor['nombre'],
-        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null
+        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null,
+        Currency: proveedor['TipoMoneda'] || null,
+        PrecioPublicado:x['precioPubli'] || null
       });
     });
     //Transporte Terrestre
@@ -450,7 +455,9 @@ export async function getStaticProps() {
         Precio: x["precioCoti"] || 0.00,
         Costo: x["precioConfi"] || 0.00,
         NombreProveedor: proveedor['nombre'],
-        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null
+        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null,
+        Currency: proveedor['TipoMoneda'] || null,
+        PrecioPublicado:x['precioPubli'] || null
       });
     });
     //Guia
@@ -475,7 +482,9 @@ export async function getStaticProps() {
         Precio: x["precioCoti"] || 0.00,
         Costo: x["precioConfi"] || 0.00,
         NombreProveedor: proveedor['nombre'],
-        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null
+        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null,
+        Currency: proveedor['TipoMoneda'] || null,
+        PrecioPublicado:x['precioPubli'] || null
       });
     });
     //Agencia
@@ -500,7 +509,9 @@ export async function getStaticProps() {
         Precio: x["precioCoti"] || 0.00,
         Costo: x["precioConfi"] || 0.00,
         NombreProveedor: proveedor['nombre'],
-        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null
+        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null,
+        Currency: proveedor['TipoMoneda'] || null,
+        PrecioPublicado:x['precioPubli'] || null
       });
     });
     // Transporte Ferroviario
@@ -525,7 +536,9 @@ export async function getStaticProps() {
         Precio: x["precioCoti"] || 0.00,
         Costo: x["precioConfi"] || 0.00,
         NombreProveedor: proveedor['nombre'],
-        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null
+        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null,
+        Currency: proveedor['TipoMoneda'] || null,
+        PrecioPublicado:x['precioPubli'] || null
       });
     });
     // Otro
@@ -548,7 +561,9 @@ export async function getStaticProps() {
         Precio: x["precioCoti"] || 0.00,
         Costo: x["precioConfi"] || 0.00,
         NombreProveedor: proveedor['nombre'],
-        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null
+        PuntajeProveedor: proveedor['porcentajeTotal']+'%' || null,
+        Currency: proveedor['TipoMoneda'] || null,
+        PrecioPublicado:x['precioPubli'] || null
       });
     });
   } catch (error) {

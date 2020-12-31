@@ -18,7 +18,7 @@ const TablaProgramaServicio_v2 = (
     // columnas:[]
   }
 ) => {
-  // Variables
+  // -------------------------------Variables---------------------------------
   let editableacion = {};
   const [ModoEdicion, setModoEdicion] = useState(props.ModoEdicion);
   //Datos obtenidos de servicio en PromasTuristicos
@@ -30,35 +30,15 @@ const TablaProgramaServicio_v2 = (
   //Lista de servicios para añadir
   const [ServiciosInit, setServiciosInit] = useState([]);
   const [DataTableServicios, setDataTableServicios] = useState([]);
-  //Funciones
-  const ActualizacionDatos = () => {};
-  //Hooks
-  // useEffect(async () => {
-  //   let Datos = [];
-  //   try {
-  //     await fetch(props.APIpathGeneral, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         coleccion: "Servicio",
-  //         accion: "FindAll",
-  //         projection: {
-  //           _id: 0,
-  //           IdServicio: 1,
-  //           NombreServicio: 1,
-  //         },
-  //       }),
-  //     })
-  //       .then((r) => r.json())
-  //       .then((data) => {
-  //         Datos = data.result;
-  //         setServiciosInit(Datos);
-  //       });
-  //   } catch (error) {
-  //     console.log("Error - Extraccion servicio - " + error);
-  //   }
-  //   setDataTableServicios(Datos);
-  // }, []);
+  // PAra el calculo de totales
+  const [CurrencyTotal, setCurrencyTotal] = useState("Dolar");
+  const [MontoTotal, setMontoTotal] = useState(0);
+  // const [CambioDolar, setCambioDolar] = useState(window.sessionStorage.getItem('CambioDolar') || 0);
+  const [CambioDolar, setCambioDolar] = useState(0);
+
+  //---------------------------------------------------------------------------------
+
+  //------------------------------------Hooks-----------------------------------------
   useEffect(() => {
     try {
       let ActuDataTableServicios = [...ServiciosInit];
@@ -93,101 +73,177 @@ const TablaProgramaServicio_v2 = (
       props.DevolverDatoFunct(props.KeyDato, servicios);
     }
   }, [props.DarDato]);
+  useEffect(() => {
+    let temp_MontoTotal = 0;
+    switch (CurrencyTotal) {
+      case "Dolar":
+        CotiServicio.map((uni_CotiServi) => {
+          switch (uni_CotiServi["Currency"]) {
+            case "Dolar":
+              temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
+              break;
+            case "Sol":
+              temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]) / CambioDolar;
+              break;
+          }
+        });
+        break;
+      case "Sol":
+        CotiServicio.map((uni_CotiServi) => {
+          switch (uni_CotiServi["Currency"]) {
+            case "Dolar":
+              temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]) * CambioDolar;
+              break;
+            case "Sol":
+              temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
+              break;
+          }
+        });
+        break;
+    }
+    setMontoTotal(temp_MontoTotal);
+  }, [CotiServicio,CurrencyTotal]);
+  useEffect(async() => {
+    await fetch("/api/DataSistema", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        accion: "ObtenerCambioDolar",
+      }),
+    })
+    .then((r) => r.json())
+    .then((data) => {
+      setCambioDolar(data.value)
+      sessionStorage.setItem('CambioDolar',data.value)
+    });
+  }, []);
+
+  //---------------------------------------------------------------------------------
 
   if (ModoEdicion == true) {
     return (
       <div>
         <span>{props.Title}</span>
-        <button>Añadir</button>
-        <MaterialTable
-          title={props.Title}
-          columns={[
-            {
-              field: "IdServicioProducto",
-              title: "IdServicioProducto",
-              editable: "never",
-              hidden: true,
-            },
-            {
-              field: "CostoUnitario",
-              title: "Costo Unitario",
-              editable: "never",
-              type: "numeric",
-              hidden: true,
-            },
-            { field: "NombreServicio", title: "Nombre", editable: "never" },
-            {
-              field: "Cantidad",
-              title: "Cantidad",
-              editable: "always",
-              type: "numeric",
-            },
-            {
-              field: "PrecioUnitario",
-              title: "Precio Unitario",
-              editable: "always",
-              type: "numeric",
-            },
-            {
-              field: "IGV",
-              title: "IGV incluido?",
-              editable: "always",
-              type: "boolean",
-            },
-            {
-              field: "PrecioTotal",
-              title: "Precio Total",
-              editable: "never",
-              type: "numeric",
-            },
-            {
-              field: "CostoTotal",
-              title: "Costo Total",
-              editable: "never",
-              type: "numeric",
-            },
-          ]}
-          data={CotiServicio}
-          editable={{
-            onBulkUpdate: (cambios) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  // if (typeof(cambios) === 'object') {
-                  //   cambios = [cambios]
-                  // } 
-                  Object.entries(cambios).map((cambio) => {
-                    let temp_CotiServicio = [...CotiServicio];
-                    let temp_newData = cambio[1]["newData"]
-                    let id = temp_newData["tableData"]["id"];
-                    
-                    temp_CotiServicio[id]["Cantidad"] =
-                      temp_newData["Cantidad"];
-                    temp_CotiServicio[id]["IGV"] = temp_newData["IGV"];
-                    if (temp_CotiServicio[id]["IGV"]) {
-                      temp_CotiServicio[id]["PrecioTotal"] =temp_newData["Cantidad"] *temp_newData["PrecioUnitario"] *1.18;
-                      temp_CotiServicio[id]["CostoTotal"] =temp_newData["Cantidad"] *temp_newData["CostoUnitario"] *1.18;
-                    } else {
-                      (temp_CotiServicio[id]["PrecioTotal"] = temp_newData["Cantidad"] * temp_newData["PrecioUnitario"]);
-                      temp_CotiServicio[id]["CostoTotal"] =temp_newData["Cantidad"] * temp_newData["CostoUnitario"];
-                    }
-                    console.log(temp_CotiServicio);
-                    setCotiServicio(temp_CotiServicio);
+        <div>
+          <MaterialTable
+            title={props.Title}
+            columns={[
+              {
+                field: "IdServicioProducto",
+                title: "IdServicioProducto",
+                editable: "never",
+                hidden: true,
+              },
+              {
+                field: "PrecioConfiUnitario",
+                title: "Precio Confidencial Unitario",
+                editable: "never",
+                type: "numeric",
+                hidden: true,
+              },
+              { field: "NombreServicio", title: "Nombre", editable: "never" },
+              {
+                field: "Cantidad",
+                title: "Cantidad",
+                editable: "always",
+                type: "numeric",
+              },
+              {
+                field: "Currency",
+                title: "Moneda",
+                editable: "never",
+                lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+              },
+              {
+                field: "PrecioCotiUnitario",
+                title: "Precio Cotizacion Unitario",
+                editable: "always",
+                type: "numeric",
+              },
+              {
+                field: "PrecioPublicado",
+                title: "Precio Publicado",
+                editable: "never",
+                type: "numeric",
+              },
+              {
+                field: "IGV",
+                title: "IGV incluido?",
+                editable: "always",
+                type: "boolean",
+              },
+              {
+                field: "PrecioCotiTotal",
+                title: "Precio Cotizacion Total",
+                editable: "never",
+                type: "numeric",
+              },
+              {
+                field: "PrecioConfiTotal",
+                title: "Precio Confidencial Total",
+                editable: "never",
+                type: "numeric",
+              },
+            ]}
+            data={CotiServicio}
+            editable={{
+              onBulkUpdate: (cambios) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    // if (typeof(cambios) === 'object') {
+                    //   cambios = [cambios]
+                    // }
+                    Object.entries(cambios).map((cambio) => {
+                      let temp_CotiServicio = [...CotiServicio];
+                      let temp_newData = cambio[1]["newData"];
+                      let id = temp_newData["tableData"]["id"];
+
+                      temp_CotiServicio[id]["Cantidad"] =
+                        temp_newData["Cantidad"];
+                      temp_CotiServicio[id]["IGV"] = temp_newData["IGV"];
+                      if (temp_CotiServicio[id]["IGV"]) {
+                        temp_CotiServicio[id]["PrecioCotiTotal"] =
+                          (temp_newData["Cantidad"] *
+                          temp_newData["PrecioCotiUnitario"] *
+                          1.18).toFixed(2);
+                        temp_CotiServicio[id]["PrecioConfiTotal"] =
+                          (temp_newData["Cantidad"] *
+                          temp_newData["PrecioConfiUnitario"] *
+                          1.18).toFixed(2);
+                      } else {
+                        temp_CotiServicio[id]["PrecioCotiTotal"] =
+                          (temp_newData["Cantidad"] *
+                          temp_newData["PrecioCotiUnitario"]).toFixed(2);
+                        temp_CotiServicio[id]["PrecioConfiTotal"] =
+                          (temp_newData["Cantidad"] *
+                          temp_newData["PrecioConfiUnitario"]).toFixed(2);
+                      }
+                      temp_CotiServicio[id]['PrecioCotiUnitario']=temp_newData['PrecioCotiUnitario']
+                      setCotiServicio(temp_CotiServicio);
+                      resolve();
+                    });
+                  }, 1000);
+                }),
+              onRowDelete: (oldData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    const dataDelete = [...CotiServicio];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+                    setCotiServicio([...dataDelete]);
                     resolve();
-                  });
-                }, 1000);
-              }),
-            onRowDelete: (oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataDelete = [...CotiServicio];
-                  const index = oldData.tableData.id;
-                  dataDelete.splice(index, 1);
-                  setCotiServicio([...dataDelete]);
-                  resolve();
-                }, 1000);
-              }),
-          }}
-        />
+                  }, 1000);
+                }),
+            }}
+          />
+          <select onChange={(event)=>{
+            setCurrencyTotal(event.target.value)
+          }}>
+            <option value='Dolar' selected>Dolares</option>
+            <option value='Sol'>Soles</option>
+          </select>
+          <span>El precio total es: {CurrencyTotal=='Dolar'?'$':'S/.'}{MontoTotal.toFixed(2)}</span>
+        </div>
         <div className={styles.MasServicios}>
           <MaterialTable
             title={"Servicios para añadir"}
@@ -207,8 +263,15 @@ const TablaProgramaServicio_v2 = (
               { title: "Nombre del Proveedor", field: "NombreProveedor" },
               { title: "Puntaje del Proveedor", field: "PuntajeProveedor" },
               { field: "Descripcion", title: "Descripcion", editable: "never" },
-              { field: "Precio", title: "Precio", editable: "never" },
-              { field: "Costo", title: "Costo", editable: "never" },
+              {
+                field: "Currency",
+                title: "Moneda",
+                editable: "never",
+                lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+              },
+              { field: "Precio", title: "Precio", editable: "never", type: "numeric",},
+              { field: "Costo", title: "Costo", editable: "never", type: "numeric",},
+              { field: "PrecioPublicado", title: "Precio Publicado", editable: "never", type: "numeric",},
             ]}
             data={props.ListaServiciosProductos}
             actions={[
@@ -219,13 +282,15 @@ const TablaProgramaServicio_v2 = (
                   let x = [...CotiServicio];
                   x.push({
                     IdServicioProducto: rowData["IdServicioProducto"],
-                    CostoUnitario: rowData["Costo"],
+                    PrecioConfiUnitario: rowData["Costo"],
                     NombreServicio: rowData["Nombre"],
                     Cantidad: 1,
-                    PrecioUnitario: rowData["Precio"],
+                    PrecioCotiUnitario: rowData["Precio"],
                     IGV: false,
-                    PrecioTotal: rowData["Precio"],
-                    CostoTotal: rowData["Costo"],
+                    PrecioCotiTotal: rowData["Precio"],
+                    PrecioConfiTotal: rowData["Costo"],
+                    Currency: rowData["Currency"],
+                    PrecioPublicado:rowData["PrecioPublicado"],
                   });
                   setCotiServicio(x);
                   let ActuDataTableServicios = [...DataTableServicios];
