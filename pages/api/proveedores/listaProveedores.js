@@ -106,6 +106,9 @@ export default async (req, res) => {
               case "TransporteFerroviario":
                 IdLetras = "TF";
                 break;
+              case "SitioTuristico":
+                IdLetras = "ST";
+                break;
               default:
                 IdLetras = "NF";
                 break;

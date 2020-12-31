@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import fetch from "isomorphic-unfetch";
 import MaterialTable from "material-table";
-import Router from "next/router";
 import Link from "next/link";
 
 //Componentes
-import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
-import Modal from "@/components/TablaModal/Modal/Modal";
 import AutoModal from "@/components/AutoModal/AutoModal";
 
-export default function Home({ Columnas, Datos, APIpath }) {
+export default function Home({Datos, APIpath }) {
   //Funciones
   const AccionBoton = () => {
     setModalDisplay(true);
@@ -32,6 +29,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
                 { value: "Guia", texto: "Guia" },
                 { value: "TransporteTerrestre", texto: "Transporte Terrestre" },
                 { value: "Restaurante", texto: "Restaurante" },
+                { value: "SitioTuristico", texto: "Sitio Turistico" },
                 {
                   value: "TransporteFerroviario",
                   texto: "Transporte Ferroviario",
@@ -70,8 +68,8 @@ export default function Home({ Columnas, Datos, APIpath }) {
             },
             {
               tipo: "texto",
-              Title: "Direccion fiscal",
-              KeyDato: "DomicilioFiscal",
+              Title: "Domicilio fiscal",
+              KeyDato: "direccionRegistrada",
               Dato: FormuData.DomicilioFiscal || "",
             },
             {
@@ -128,20 +126,20 @@ export default function Home({ Columnas, Datos, APIpath }) {
         {
           subTitle: "Otros datos",
           componentes: [
-            {
-              tipo: "selector",
-              Title: "Numero de Estrellas",
-              KeyDato: "NEstrellas",
-              Dato: FormuData.NEstrellas || 0,
-              SelectOptions: [
-                { value: 0, texto: "0" },
-                { value: 1, texto: "1" },
-                { value: 2, texto: "2" },
-                { value: 3, texto: "3" },
-                { value: 4, texto: "4" },
-                { value: 5, texto: "5" },
-              ],
-            },
+            // {
+            //   tipo: "selector",
+            //   Title: "Numero de Estrellas",
+            //   KeyDato: "NEstrellas",
+            //   Dato: FormuData.NEstrellas || 0,
+            //   SelectOptions: [
+            //     { value: 0, texto: "0" },
+            //     { value: 1, texto: "1" },
+            //     { value: 2, texto: "2" },
+            //     { value: 3, texto: "3" },
+            //     { value: 4, texto: "4" },
+            //     { value: 5, texto: "5" },
+            //   ],
+            // },
             {
               tipo: "texto",
               Title: "Enlace a documento brindado",
@@ -298,6 +296,7 @@ export default function Home({ Columnas, Datos, APIpath }) {
                 Guia: "Guia",
                 TransporteTerrestre: "Transporte Terrestre",
                 Restaurante: "Restaurante",
+                SitioTuristico: "Sitio Turistico",
                 TransporteFerroviario: "Transporte Ferroviario",
                 Otro: "Otro",
               },
@@ -323,16 +322,6 @@ export default function Home({ Columnas, Datos, APIpath }) {
           title="Lista de Proovedores"
           title={<span>Lista de Proveedores</span>}
           actions={[
-            // {
-            //   icon: (rowData) => {
-            //     return <img src="/resources/remove_red_eye-24px.svg" /> ;
-            //   },
-            //   tooltip: "Show Proveedor",
-            //   // onClick: (event, rowData) =>
-            //   //   Router.push({
-            //   //     pathname: `/Proveedores/${rowData.tipo}/${rowData.id}`,
-            //   //   }),
-            // },
             {
               icon: () => {
                 return <img src="/resources/delete-black-18dp.svg" />;
@@ -365,8 +354,6 @@ export default function Home({ Columnas, Datos, APIpath }) {
 }
 export async function getStaticProps() {
   const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
-
-  let Columnas = [];
   let Datos = [];
   let errorGetData = true;
   do {
@@ -391,7 +378,6 @@ export async function getStaticProps() {
 
   return {
     props: {
-      Columnas: Columnas,
       Datos: Datos,
       APIpath: APIpath,
     },
