@@ -175,6 +175,27 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
         // { title: "Precio Guia Publi", field: "precioGuiaPubli" , type: "numeric" }
       ]
       break;
+      case "sitioturistico":
+        Columnas=[
+          {
+            title: "Nombre del Servicio", 
+            field: "NomServicio" ,
+          },
+          { 
+            title: "Categoria", 
+            field: "Categoria",
+            lookup: {
+              Adulto: "Adulto",
+              Niño: "Niño",
+              AdultoMayor: "Adulto Mayor",
+            }
+          },
+          { title: "Horario de Atencion", field: "HoraAtencion" },
+          { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
+          { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
+          { title: "Precio Cotizacion", field: "precioCoti", type: "numeric" },
+        ]
+        break;
       case "otro":
       Columnas=[
         {
@@ -224,6 +245,9 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
   const materialTableRef = React.createRef();
   const [initialFormData, setinitialFormData] = useState({});
   
+  function validarDuplicado (){
+
+  }
   return (
     <div>
       <h1>{DatosProveedor.nombre}</h1>
@@ -262,6 +286,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
               { value: "Guia", texto: "Guia" },
               { value: "TransporteTerrestre", texto: "Transporte Terrestre" },
               { value: "Restaurante", texto: "Restaurante" },
+              { value: "SitioTuristico", texto: "Sitio Turistico" },
               {
                 value: "TransporteFerroviario",
                 texto: "Transporte Ferroviario",
@@ -383,14 +408,35 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
 
           <h2>Otros datos</h2>
 
-
+          {
+          provDinamico =='hotel' 
+            ? 
+            <Selector
+              Title="Numero de estrellas"
+              ModoEdicion={Edicion}
+              DevolverDatoFunct={RegistrarDato}
+              DarDato={DevolverDato}
+              KeyDato="NEstrellas"
+              Dato={DatosProveedor.NEstrellas || ""}
+              SelectOptions={[
+                { value: 0, texto: "0" },
+                { value: 1, texto: "1" },
+                { value: 2, texto: "2" },
+                { value: 3, texto: "3" },
+                { value: 4, texto: "4" },
+                { value: 5, texto: "5" },
+              ]}
+            />
+            :
+          provDinamico =='restaurante' 
+          ? 
           <Selector
-            Title="Numero de estrellas"
+            Title="Numero de Tenedores"
             ModoEdicion={Edicion}
             DevolverDatoFunct={RegistrarDato}
             DarDato={DevolverDato}
-            KeyDato="NEstrellas"
-            Dato={DatosProveedor.NEstrellas || ""}
+            KeyDato="NTenedores"
+            Dato={DatosProveedor.NTenedores || ""}
             SelectOptions={[
               { value: 0, texto: "0" },
               { value: 1, texto: "1" },
@@ -400,6 +446,9 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
               { value: 5, texto: "5" },
             ]}
           />
+          :
+          null}
+          
           <CampoTexto
             Title="Enlace a Pagina web"
             ModoEdicion={Edicion}
@@ -481,6 +530,8 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
               tooltip: 'Duplicate User',
               onClick: (event, rowData) => {
                 const materialTable = materialTableRef.current;
+                console.log(materialTable)
+                console.log(initialFormData)
                 setinitialFormData({...rowData})
                 materialTable.dataManager.changeRowEditing();
                 materialTable.setState({
@@ -494,25 +545,57 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
           editable={{
             onRowAdd: newData =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    let x
-                    let idprov= DatosProveedor.idProveedor
-                    newData.idProveedor = idprov
-                    fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
-                      method:"POST",
-                      headers:{"Content-Type": "application/json"},
-                      body: JSON.stringify({
-                        data: newData,
-                        accion: "create",
-                      }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
-                      alert(data.message);
-                    })
-                  setDatosEditables([...datosEditables, newData]);
-                  setinitialFormData({})
-                  resolve();
+                setTimeout(() => {    
+                  let duplicados = false             
+                  for (const keyDuplicar in initialFormData) 
+                    if 
+                    (
+                      /*Caso de Hotel Solo*/
+                      keyDuplicar == "descripcionHabitacion" | 
+                      /*Caso de Hotel Solo*/
+                      keyDuplicar == "NomServicio" |
+                      /*Caso de Restaurante,TransporteTerrestre*/
+                      keyDuplicar == "servicio" | 
+                      /*Caso de Restaurante,TransporteTerrestre,Guia,Agencia*/
+                      keyDuplicar == "codServicio" |
+                      keyDuplicar == "caracte" | 
+                      /*Caso de Guia solo*/
+                      keyDuplicar == "carne" | 
+                      /*Caso de TrasnporteFerroviario solo*/
+                      keyDuplicar == "llegada" | 
+                       /*Caso de TrasnporteFerroviario solo*/
+                      keyDuplicar == "salida" | 
+                      /*Caso de Guia solo*/
+                      keyDuplicar == "dni"
+                    ) 
+                    {
+                      if (initialFormData[keyDuplicar]!=newData[keyDuplicar]) {
+
+                        setDatosEditables([...datosEditables, newData]);
+                        duplicados=true
+                        setinitialFormData({})     
+
+                      }else{
+
+                        alert("Existen Datos Duplicados: "+ newData[keyDuplicar])
+
+                      }
+                    }
+                    if(duplicados){
+                      fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
+                        method:"POST",
+                        headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          data: newData,
+                          accion: "create",
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                        alert(data.message);
+                      })
+                    }
+                    resolve();
                 }, 1000)
               }),
             onRowUpdate: (newData, oldData) =>
@@ -525,11 +608,8 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                   
                   delete dataUpdate[index]._id
 
-                  // console.log(dataUpdate[index])
-                  // console.log(dataUpdate[index].IdProductoHotel)
-                  // console.log("este dato weeee"+index)
-                  // console.log()
                   let IdKey = ''
+                  
                   switch (provDinamico) {
                     case "hotel":
                       IdKey = "IdProductoHoteles";
@@ -542,6 +622,9 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                       break;
                     case "transporteferroviario":
                       IdKey = "IdProductoTransFerroviario";
+                      break;
+                    case "sitioturistico":
+                      IdKey = "IdProductoSitioTuristico";
                       break;
                     case "guia":
                       IdKey = "IdProductoGuias";
@@ -578,6 +661,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
 
                   console.log(dataDelete[index])
                   console.log(dataDelete[index].IdProductoHotel)
+
                   let IdKey = ''
                   switch (provDinamico) {
                     case "hotel":
@@ -591,6 +675,9 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
                       break;
                     case "transporteferroviario":
                       IdKey = "IdProductoTransFerroviario";
+                      break;
+                    case "sitioturistico":
+                      IdKey = "IdProductoSitioTuristico";
                       break;
                     case "guia":
                       IdKey = "IdProductoGuias";
@@ -677,6 +764,9 @@ export async function getServerSideProps(context) {
       break;
     case "transporteferroviario":
       collectionName = "ProductoTransFerroviario";
+      break;
+    case "sitioturistico":
+      collectionName = "ProductoSitioTuristico";
       break;
     case "guia":
       collectionName = "ProductoGuias";

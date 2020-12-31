@@ -12,6 +12,7 @@ const ListaProveedoresColumnas = [
         Agencia: 'Agencia',
         Guia:'Guia',
         TransporteTerrestre:'Transporte Terrestre',
+        SitioTuristico:'Sitio Turistico',
         Restaurante:'Restaurante',
         TransporteFerroviario:'Transporte Ferroviario',
         Otro:'Otro'
@@ -43,7 +44,7 @@ function GenerarReporte(){
 
         i++
     })
-    console.log(ComparacionProveedoresColumnas)
+    // console.log(ComparacionProveedoresColumnas)
     setComProvColumn(ComparacionProveedoresColumnas)
     setShowComparacion(true)
     alert("aca es")
@@ -61,7 +62,7 @@ useEffect(() => {
             }
         })
     })
-    console.log(EvaActividadSeleccionado)
+    // console.log(EvaActividadSeleccionado)
     /*Este Recorrido es para setear los valores distintos del campo cumple*/
     EvaActividadSeleccionado.map((x,index1)=>{
         x.evaperiodo.map((y)=>{
@@ -71,7 +72,7 @@ useEffect(() => {
         })
     })
     /*Este recorrido es para darle el formate que Material Table requiere*/
-    console.log(EvaActividadSeleccionado)
+    //console.log(EvaActividadSeleccionado)
     EvaActividadSeleccionado.map((x,EvaluacionIndex)=>{
         
         x.evaperiodo.map((y,index)=>{
