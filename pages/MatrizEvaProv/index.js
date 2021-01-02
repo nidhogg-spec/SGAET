@@ -28,9 +28,23 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
           { 
             title: "Proveedor", 
             field: "nombre",
+            filtering: false
           },
-          { title: "Puntaje", field: "puntosTotales" },
-          { title: "Porcentaje", field: "porcentajeTotal" }
+          { 
+            title: "Tipo Proveedor", 
+            field: "tipo",lookup:{
+              Hotel: 'Hotel', 
+              Agencia: 'Agencia',
+              Guia:'Guia',
+              TransporteTerrestre:'Transporte Terrestre',
+              SitioTuristico:'Sitio Turistico',
+              Restaurante:'Restaurante',
+              TransporteFerroviario:'Transporte Ferroviario',
+              Otro:'Otro'
+          }
+          },
+          { title: "Puntaje", field: "puntosTotales", filtering: false },
+          { title: "Porcentaje", field: "porcentajeTotal", filtering: false }
         ]
     function getData(){
       let actividadesActivas = []
@@ -119,6 +133,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
             datosTabla.push({
               idProveedor: y.idProveedor,
               nombre: x.nombre,
+              tipo: x.tipo,
               puntosTotales: y.puntosTotales,
               porcentajeTotal: y.porcentajeTotal
             })
@@ -225,6 +240,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
               }
             ]}
           options={{
+              filtering: true,
               actionsColumnIndex: -1,
             }}
               title="Matriz de Evaluacion de Proveedores"
@@ -259,7 +275,6 @@ export async function getStaticProps() {
 
       let result = await collection.find({}).project({
         "_id":0,
-        "tipo":0,
         "TipoDocumento":0,
         "NroDocumento":0,
         "TipoMoneda":0,
