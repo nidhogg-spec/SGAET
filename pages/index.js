@@ -137,6 +137,7 @@ const CambioDolar = () => {
       DolarSol = data.value;
     });
     console.log(DolarSol)
+    sessionStorage.setItem('CambioDolar',DolarSol)
     setValueDolarSolInit(DolarSol);
     setValueDolartoSol(DolarSol);
     setLoading(false)
