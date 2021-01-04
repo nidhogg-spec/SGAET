@@ -273,9 +273,7 @@ export default async (req, res) => {
           /*Que debe de ir en el REQ
               - Accion
               - coleccion
-              - keyId
-              - Prefijo
-              - data
+              - query
             */
            let client_deleteone = new MongoClient(url, {
             useNewUrlParser: true,

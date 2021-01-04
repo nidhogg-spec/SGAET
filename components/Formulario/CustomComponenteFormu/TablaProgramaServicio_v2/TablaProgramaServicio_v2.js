@@ -66,11 +66,7 @@ const TablaProgramaServicio_v2 = (
   }, [props.ModoEdicion]);
   useEffect(() => {
     if (props.DarDato == true) {
-      let servicios = [];
-      CotiServicio.map((element) => {
-        servicios.push(element["IdServicio"]);
-      });
-      props.DevolverDatoFunct(props.KeyDato, servicios);
+      props.DevolverDatoFunct(props.KeyDato, CotiServicio);
     }
   }, [props.DarDato]);
   useEffect(() => {
@@ -78,7 +74,7 @@ const TablaProgramaServicio_v2 = (
     switch (CurrencyTotal) {
       case "Dolar":
         CotiServicio.map((uni_CotiServi) => {
-          switch (uni_CotiServi["Currency"]) {
+          switch (uni_CotiServi["Currency"] || "Dolar") {
             case "Dolar":
               temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
               break;
@@ -103,19 +99,24 @@ const TablaProgramaServicio_v2 = (
     }
     setMontoTotal(temp_MontoTotal);
   }, [CotiServicio,CurrencyTotal]);
-  useEffect(async() => {
-    await fetch("/api/DataSistema", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        accion: "ObtenerCambioDolar",
-      }),
-    })
-    .then((r) => r.json())
-    .then((data) => {
-      setCambioDolar(data.value)
-      sessionStorage.setItem('CambioDolar',data.value)
-    });
+  useEffect(() => {
+    let CambioDolar_temp= sessionStorage.getItem('CambioDolar')
+    if(CambioDolar_temp){
+      setCambioDolar(CambioDolar_temp)
+    }else{
+      fetch("/api/DataSistema", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accion: "ObtenerCambioDolar",
+        }),
+      })
+      .then((r) => r.json())
+      .then((data) => {
+        setCambioDolar(data.value)
+        sessionStorage.setItem('CambioDolar',data.value)
+      });
+    }
   }, []);
 
   //---------------------------------------------------------------------------------
@@ -269,8 +270,8 @@ const TablaProgramaServicio_v2 = (
                 editable: "never",
                 lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
               },
-              { field: "Precio", title: "Precio", editable: "never", type: "numeric",},
-              { field: "Costo", title: "Costo", editable: "never", type: "numeric",},
+              { field: "Precio", title: "Precio Cotizacion", editable: "never", type: "numeric",},
+              { field: "Costo", title: "Precio Confidencial", editable: "never", type: "numeric",},
               { field: "PrecioPublicado", title: "Precio Publicado", editable: "never", type: "numeric",},
             ]}
             data={props.ListaServiciosProductos}
