@@ -1,0 +1,22 @@
+[
+    {
+        "groupName": "Administracion",
+        "precedence": 1
+    },
+    {
+        "groupName": "Gerencia",
+        "precedence": 2
+    },
+    {
+        "groupName": "Ventas",
+        "precedence": 3
+    },
+    {
+        "groupName": "ReservaCotizacion",
+        "precedence": 4
+    },
+    {
+        "groupName": "Marketing",
+        "precedence": 5
+    }
+]

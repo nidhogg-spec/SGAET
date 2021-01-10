@@ -1,18 +1,72 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/login.module.css";
+import {Auth, API} from 'aws-amplify'
+import { withSSRContext } from 'aws-amplify'
 
-export default function loginPrincipal() {
+export default function loginPrincipal({ authenticated, username }) {
+  const [userName, setUserName] = useState(null)
+  const [password, setPassword] = useState(null)
+  const [user, setUser] = useState(null)
 
-  return (
-    <div>
-      <h1 className={styles.loginHeader}>
-        Sistema de Gestion Administrativa de Empresas Turisticas
-      </h1>
-      <CambioDolar />
-    </div>
-  );
+  async function signIn() {
+    try {
+        await Auth.signIn(
+            userName, 
+            password);
+            console.log('signing in');
+    } catch (error) {
+        console.log('error signing in', error);
+    }
+  }
+  
+  useEffect(()=>{   
+    //Acceder a la sesion del usuario en el cliente
+    Auth.currentAuthenticatedUser()
+        .then(user =>{
+            console.log("User: ",user)
+            setUser(user)
+        })
+        .catch(err=> setUser(null))
+  } ,[])
+  if (!authenticated) {
+    return(
+      <div>
+        <input placeholder="username" onChange={(e)=>setUserName(e.target.value)} name="username"></input>
+        <input placeholder="password" onChange={(e)=>setPassword(e.target.value)} name="password"></input>
+        <button onClick={signIn}>SignIn</button>
+      </div>
+    )
+  }else if(authenticated){
+    return (
+      <div>
+        {/* <h2>Bienvenido{username}</h2> */}
+        {/* <button onClick={signOut}>SignOut</button> */}
+        <h1 className={styles.loginHeader}>
+          Sistema de Gestion Administrativa de Empresas Turisticas
+        </h1>
+        <CambioDolar />
+      </div>
+    );
+  }
 }
+export async function getServerSideProps(context) {
+  const { Auth } = withSSRContext(context)
+  try {
+    const user = await Auth.currentAuthenticatedUser()
 
+    return {
+      props: {
+        authenticated: true, username: user.username
+      }
+    }
+  } catch (err) {
+    return {
+      props: {
+        authenticated: false
+      }
+    }
+  }
+}
 const CambioDolar = () => {
   const [EstadoEditado, setEstadoEditado] = useState(false);
   const [ValueDolartoSol, setValueDolartoSol] = useState(0);

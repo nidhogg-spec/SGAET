@@ -1,10 +1,11 @@
 import '../styles/globals.css'
 import Header from "../components/header/Header"
-import useSWR from "swr";
 import NavLateral from "../components/navLateral/NavLateral"
+import Amplify from 'aws-amplify'
+import config from 'src/aws-exports'
 
 //this import is using the next.config,js how we see we aren't specification the exact path
-
+Amplify.configure({...config,ssr: true})
 function MyApp({ Component, pageProps }) {
 
   // const { data, revalidate } = useSWR("/api/me", async function (args) {

@@ -1,8 +1,6 @@
 {
-    "identityPoolName": "sgaet7e1932d9_identitypool_7e1932d9",
-    "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "sgaet7e1932d9",
-    "userPoolName": "sgaet7e1932d9_userpool_7e1932d9",
+    "resourceNameTruncated": "sgaet1d95cd7b",
+    "userPoolName": "sgaet1d95cd7b_userpool_1d95cd7b",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -18,21 +16,21 @@
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-        "email"
+        "name"
     ],
     "userpoolClientGenerateSecret": true,
-    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientRefreshTokenValidity": "7",
     "userpoolClientWriteAttributes": [
-        "email"
+        "name"
     ],
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "sgaet77e1932d9_userpoolclient_lambda_role",
-    "userpoolClientSetAttributes": false,
-    "sharedId": "7e1932d9",
-    "resourceName": "sgaet7e1932d9",
-    "authSelections": "identityPoolAndUserPool",
+    "userpoolClientLambdaRole": "sgaet11d95cd7b_userpoolclient_lambda_role",
+    "userpoolClientSetAttributes": true,
+    "sharedId": "1d95cd7b",
+    "resourceName": "sgaet1d95cd7b1d95cd7b",
+    "authSelections": "userPoolOnly",
     "authRoleArn": {
         "Fn::GetAtt": [
             "AuthRole",
@@ -45,9 +43,17 @@
             "Arn"
         ]
     },
-    "useDefault": "default",
+    "useDefault": "manual",
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "triggers": "{}",
+    "hostedUI": false,
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
+    "parentStack": {
+        "Ref": "AWS::StackId"
+    },
+    "permissions": [],
     "dependsOn": []
 }
