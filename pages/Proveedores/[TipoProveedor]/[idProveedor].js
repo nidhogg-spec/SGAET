@@ -581,7 +581,7 @@ export default function TipoProveedor({ Datos, DatosProveedor,APIpath }) {
 
                       }
                     }
-                    if(duplicados){
+                    if(duplicados==false){
                       fetch(`http://localhost:3000/api/proveedores/${provDinamico}`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
