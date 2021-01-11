@@ -121,6 +121,22 @@ export async function getServerSideProps(context) {
     }
   }
 }
+export async function getStaticProps({ req, res }) {
+  const { Auth } = withSSRContext({ req })
+  try {
+    const user = await Auth.currentAuthenticatedUser()
+    return {
+      props: {
+        authenticated: true,
+        username: user.username
+      }
+    }
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
+  return {props: {}}
+}
 const CambioDolar = () => {
   const [EstadoEditado, setEstadoEditado] = useState(false);
   const [ValueDolartoSol, setValueDolartoSol] = useState(0);

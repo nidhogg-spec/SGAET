@@ -2,34 +2,29 @@
 import styles from "./Header.module.css";
 
 //modulos
-import { Auth } from 'aws-amplify'
+import { Auth,withSSRContext } from 'aws-amplify'
 
-import Router from 'next/router';
+import {useRouter} from 'next/router';
 import Link from 'next/link';
 import { useEffect, useState } from "react";
 
 
-export default function Header(){
+export default function Header({username}){
   const [data,setData]=useState(false)
   const [loged,setLoged]=useState(false)
-  let loggedIn = false
+  const router = useRouter()
+
   useEffect( async ()=>{
+    console.log(username)
     await Auth.currentAuthenticatedUser()
       .then((x)=>{
         setData(x)
         setLoged(true)
-        loggedIn=true
       })
       .catch(err => {
-        loggedIn=false
+        router.push('/')
         setData(null)
       })
-      if (loggedIn==false) {
-        if(Router.route != "/"){
-          console.log("gg")
-          window.location.replace("/");
-        }
-      }
   },[])
 
   if (!data) return(
@@ -45,6 +40,7 @@ export default function Header(){
         console.log('error signing out: ', error);
     }
   }
+  
   return(
       <header className = {styles.HeaderDiv}>
           <img src='/resources/logo.png' className={styles.HeaderLogo} />
@@ -69,4 +65,20 @@ export default function Header(){
           )}
       </header>
   )
+}
+export async function getInitialProps({ req, res }) {
+  const { Auth } = withSSRContext({ req })
+  try {
+    const user = await Auth.currentAuthenticatedUser()
+    return {
+      props: {
+        authenticated: true,
+        username: user.username
+      }
+    }
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
+  return {props: {}}
 }

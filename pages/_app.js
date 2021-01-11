@@ -1,9 +1,7 @@
 import '../styles/globals.css'
 import Header from "../components/header/Header"
 import NavLateral from "../components/navLateral/NavLateral"
-import {useEffect} from 'react'
-import {Amplify,Auth} from 'aws-amplify'
-import Router from "next/router";
+import {Amplify } from 'aws-amplify'
 import config from 'src/aws-exports'
 
 //this import is using the next.config,js how we see we aren't specification the exact path
@@ -18,6 +16,7 @@ function MyApp({ Component, pageProps }) {
   // });
   //tener en cuenta quer los estado que se manejen en esta pagina seran persistente para
   //las vinculadas posteriorment
+  
   return (
     /*Here is where the indexjs is rendering is something like the index in react you can also
     add the footer under the component and will work like the footer don't delete the <> </> cause throws and error
@@ -25,11 +24,6 @@ function MyApp({ Component, pageProps }) {
     <>     
       <Header/>
       <NavLateral/>
-      {/* {data!=undefined && (
-        data.email && (
-          
-        )
-      )} */}
       <Component {...pageProps} />
     </>
   )
