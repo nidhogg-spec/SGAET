@@ -13,7 +13,11 @@
     },
     "categories": {
       "auth": {
-        "sgaet1d95cd7b1d95cd7b": {}
+        "sgaet1d95cd7b1d95cd7b": {},
+        "userPoolGroups": {}
+      },
+      "function": {
+        "AdminQueries530eda5b": {}
       }
     }
   }

@@ -2,25 +2,34 @@
 import styles from "./Header.module.css";
 
 //modulos
-import { withSSRContext,Auth } from 'aws-amplify'
+import { Auth } from 'aws-amplify'
 
 import Router from 'next/router';
 import Link from 'next/link';
 import { useEffect, useState } from "react";
 
 
-export default function Header({ authenticated, username }){
-   const [data,setData]=useState()
-  // const {data, revalidate} = useSWR('/api/me', async function(args) {
-  //   const res = await fetch(args);
-  //   return res.json();
-  // })co
-  useEffect(()=>{
-    Auth.currentAuthenticatedUser()
-      .then(x=>{
+export default function Header(){
+  const [data,setData]=useState(false)
+  const [loged,setLoged]=useState(false)
+  let loggedIn = false
+  useEffect( async ()=>{
+    await Auth.currentAuthenticatedUser()
+      .then((x)=>{
         setData(x)
+        setLoged(true)
+        loggedIn=true
       })
-      .catch(err => setData(null))
+      .catch(err => {
+        loggedIn=false
+        setData(null)
+      })
+      if (loggedIn==false) {
+        if(Router.route != "/"){
+          console.log("gg")
+          window.location.replace("/");
+        }
+      }
   },[])
 
   if (!data) return(
@@ -28,14 +37,6 @@ export default function Header({ authenticated, username }){
         <img src='/resources/logo.png' className={styles.HeaderLogo} />
     </nav>
   )
-  let loggedIn = false;
-  if (data.username) {
-    loggedIn = true;
-  }else{
-    if(Router.route!="/"){
-      Router.push("/")
-    }
-  }
   async function signOut() {
     try {
         await Auth.signOut();
@@ -48,38 +49,24 @@ export default function Header({ authenticated, username }){
       <header className = {styles.HeaderDiv}>
           <img src='/resources/logo.png' className={styles.HeaderLogo} />
           <span className={styles.HeaderSideName} >{window.location.pathname.split("/")[1]}  </span>
-          {loggedIn && (
+          {loged && (
             <div>
               <p>Bienvenido {data.username}!</p>
-              <button
+              <form onSubmit={signOut} method="post">
+                <input
+                  className={styles.formularioLogin_button}
+                  type="submit"
+                  value="Logout"
+                />
+              </form>
+              {/* <button
                 onClick={() => {
                   signOut()
                 }}>
                 Logout
-              </button>
+              </button> */}
             </div>
           )}
       </header>
   )
-}
-export async function getServerSideProps(context) {
-  console.log("fsdfsdf")
-  const { Auth } = withSSRContext(context)
-
-  try {
-    
-    const user = await Auth.currentAuthenticatedUser()
-    
-    return {
-      props: {
-        authenticated: true, username: user.username
-      }
-    }
-  } catch (err) {
-    return {
-      props: {
-        authenticated: false
-      }
-    }
-  }
 }

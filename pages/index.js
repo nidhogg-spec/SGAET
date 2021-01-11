@@ -1,53 +1,107 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/login.module.css";
 import {Auth, API} from 'aws-amplify'
+import {useRouter} from "next/router";
 import { withSSRContext } from 'aws-amplify'
 
-export default function loginPrincipal({ authenticated, username }) {
-  const [userName, setUserName] = useState(null)
-  const [password, setPassword] = useState(null)
-  const [user, setUser] = useState(null)
+export default function loginPrincipal({ authenticated }) {
+  const [userName, setUserName] = useState("")
+  const [password, setPassword] = useState("")
+  const Router = useRouter()
 
-  async function signIn() {
+  async function signIn(e) {
     try {
-        await Auth.signIn(
-            userName, 
-            password);
-            console.log('signing in');
+      e.preventDefault()
+      await Auth.signIn(
+        userName, 
+        password);
+        console.log('signing in');
+        Router.push("/")
     } catch (error) {
         console.log('error signing in', error);
     }
   }
-  
-  useEffect(()=>{   
-    //Acceder a la sesion del usuario en el cliente
-    Auth.currentAuthenticatedUser()
-        .then(user =>{
-            console.log("User: ",user)
-            setUser(user)
-        })
-        .catch(err=> setUser(null))
-  } ,[])
-  if (!authenticated) {
-    return(
-      <div>
-        <input placeholder="username" onChange={(e)=>setUserName(e.target.value)} name="username"></input>
-        <input placeholder="password" onChange={(e)=>setPassword(e.target.value)} name="password"></input>
-        <button onClick={signIn}>SignIn</button>
-      </div>
-    )
-  }else if(authenticated){
-    return (
-      <div>
-        {/* <h2>Bienvenido{username}</h2> */}
-        {/* <button onClick={signOut}>SignOut</button> */}
-        <h1 className={styles.loginHeader}>
-          Sistema de Gestion Administrativa de Empresas Turisticas
-        </h1>
-        <CambioDolar />
-      </div>
-    );
-  }
+  // useEffect(()=>{   
+  //   //Acceder a la sesion del usuario en el cliente
+  //   Auth.currentAuthenticatedUser()
+  //       .then(user =>{
+  //           console.log("User: ",user)
+  //           setUser(user)
+  //       })
+  //       .catch(err=> setUser(null))
+  // } ,[])
+  return(
+    <div>
+      <h1 className={styles.loginHeader}>
+        Sistema de Gestion Administrativa de Empresas Turisticas
+      </h1>
+
+      {authenticated && (
+        <>
+          {/* <p>Bienvenido {data.email}!</p>
+          <button
+            onClick={() => {
+              cookie.remove('token');
+              revalidate();
+            }}>
+            Logout
+          </button> */}
+          <CambioDolar />
+        </>
+      )}
+      {!authenticated && (
+        <>
+          <form className={styles.formularioLogin} onSubmit={signIn} method="post">
+            <div className={styles.formularioLogin_correo}>
+              <label className={styles.formularioLogin_label}>Correo</label>
+              <input
+                className={styles.formularioLogin_input}
+                name="username"
+                type="text"
+                onChange={(e) => setUserName(e.target.value)}
+              />
+            </div>
+            <div className={styles.formularioLogin_password}>
+              <label className={styles.formularioLogin_label}>Contraseña</label>
+              <input
+                className={styles.formularioLogin_input}
+                name="password"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <input
+              className={styles.formularioLogin_button}
+              type="submit"
+              value="Login"
+            />
+          </form>
+          {/*Desactivar en caso se nesecite boton para activar el registro de usuarios*/}
+          {/* <Link href="/signup">Sign Up</Link> */}
+        </>
+      )}
+    </div>
+  )
+  // if (!authenticated) {
+  //   return(
+  //     <div>
+  //       <input placeholder="username" onChange={(e)=>setUserName(e.target.value)} name="username"></input>
+  //       <input placeholder="password" onChange={(e)=>setPassword(e.target.value)} name="password"></input>
+  //       <button onClick={signIn}>SignIn</button>
+  //     </div>
+  //   )
+  // }else if(authenticated){
+  //   return (
+  //     <div>
+  //       {/* <h2>Bienvenido{username}</h2> */}
+  //       {/* <button onClick={signOut}>SignOut</button> */}
+  //       <h1 className={styles.loginHeader}>
+  //         Sistema de Gestion Administrativa de Empresas Turisticas
+  //       </h1>
+  //       <CambioDolar />
+  //     </div>
+  //   );
+  // }
 }
 export async function getServerSideProps(context) {
   const { Auth } = withSSRContext(context)

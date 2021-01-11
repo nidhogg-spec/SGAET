@@ -1,13 +1,17 @@
 import '../styles/globals.css'
 import Header from "../components/header/Header"
 import NavLateral from "../components/navLateral/NavLateral"
-import Amplify from 'aws-amplify'
+import {useEffect} from 'react'
+import {Amplify,Auth} from 'aws-amplify'
+import Router from "next/router";
 import config from 'src/aws-exports'
 
 //this import is using the next.config,js how we see we aren't specification the exact path
-Amplify.configure({...config,ssr: true})
-function MyApp({ Component, pageProps }) {
 
+Amplify.configure({...config,ssr: true})
+
+function MyApp({ Component, pageProps }) {
+    
   // const { data, revalidate } = useSWR("/api/me", async function (args) {
   //   const res = await fetch(args);
   //   return res.json();
