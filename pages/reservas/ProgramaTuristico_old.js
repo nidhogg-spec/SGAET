@@ -2,9 +2,7 @@
 import fetch from "isomorphic-unfetch";
 import router from "next/router";
 import React, { useEffect, useState, createContext, useRef } from "react";
-// import {Data_ProgramasTuristicos} from '../../query/query'
-import {MongoClient} from 'mongodb'
-
+import { MongoClient } from "mongodb";
 
 //css
 import CustomStyles from "../../styles/ProgramasTuristicos.module.css";
@@ -17,13 +15,14 @@ import AutoModal_v2 from "@/components/AutoModal_v2/AutoModal_v2";
 import FusionProgramas from '@/components/ComponentesUnicos/ProgramaTuristico/FusionProgramas/FusionProgramas';
 
 
-function ProgramasTuristicos({
+const ProgramasTuristicos=({
   Columnas,
   Datos,
   APIpath,
   APIpathGeneral,
   ListaServiciosProductos,
-}) {
+})=>{
+  console.log(ListaServiciosProductos);
   //--------------- Acciones para que funcione el AutoMdoal --------------
   //--------------------------------------------------------------------
   const [Display, setDisplay] = useState(false);
@@ -31,9 +30,8 @@ function ProgramasTuristicos({
   const ModalDisplay = createContext([
     [{}, () => {}],
     [{}, () => {}],
-    [{}, () => {}],
   ]);
-
+  const [Data, setData] = useState({});
   const firstUpdate = useRef(true);
 
   const DevolverEstructuraFormulario = (FormuData = {}) => {
@@ -290,20 +288,20 @@ function ProgramasTuristicos({
         });
     }
   }, [ModalData]);
+
   return (
     <div>
       <ModalDisplay.Provider
         value={[
           [Display, setDisplay],
           [ModalData, setModalData],
-          [Formulario, setFormulario]
         ]}
       >
-        <AutoModal_v2
+        {/* <AutoModal_v2
           Formulario={Formulario}
           ModalDisplay={ModalDisplay} //Contexto - Por si lo preguntaban
           IdDato={"IdProgramaTuristico"}
-        />
+        /> */}
       
       <span className={CustomStyles.titulo}>Programas turisticos</span>
       <button
@@ -365,12 +363,11 @@ function ProgramasTuristicos({
       </div>
       <div>
         <span>Opciones Avanzadas</span>
-        <FusionProgramas 
+        {/* <FusionProgramas 
           TablaDatos={TablaDatos}
           DevolverEstructuraFormulario={DevolverEstructuraFormulario}
           ModalDisplay={ModalDisplay}
-          APIpathGeneral = {APIpathGeneral}
-        />
+        /> */}
       </div>
       </ModalDisplay.Provider>
     </div>
@@ -378,9 +375,7 @@ function ProgramasTuristicos({
 }
 
 
-
-
-export async function getServerSideProps() {
+export async function getServerSideProps() { 
   const APIpath = process.env.API_DOMAIN + "/api/programasTuristicos";
   const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
@@ -666,5 +661,6 @@ export async function getServerSideProps() {
     },
   };
 }
+
 export default ProgramasTuristicos;
 
