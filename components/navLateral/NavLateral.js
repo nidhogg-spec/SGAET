@@ -1,100 +1,220 @@
 import styles from "./navLateral.module.css";
 import Modulo from "./components/modulo"
+import useSWR from "swr";
+import { useEffect,useState } from "react";
 
 //Font awesome
-
+  // {
+    //   modulo: "Clientes",
+    //   svg:"account_box-black-18dp.svg",
+    //   subModulos:[
+    //     {
+    //         tipo:"link",
+    //         subModuloName:"Lista de Clientes/Prospectos",
+    //         link:"/Clientes/ListClienteProspecto"
+    //     },
+    //     {
+    //       tipo:"link",
+    //       subModuloName:"Lista de Pasajeros",
+    //       link:"/Clientes/ListPasajeros"
+    //     },
+    //   ] 
+    // },
+    // {
+    //   modulo: "Reserva",
+    //   svg:"calendar_today-black-18dp.svg",
+    //   subModulos:[
+    //     {
+    //         tipo:"link",
+    //         subModuloName:"Cotizacion",
+    //         link:"http://localhost:3000/reservas/Cotizacion"
+    //     },{
+    //         tipo:"link",
+    //         subModuloName:"Lista de reserva",
+    //         link:"/reservas"
+    //     },{
+    //         tipo:"link",
+    //         subModuloName:"Programas turisticos",
+    //         link:"/reservas/ProgramaTuristico"
+    //     },
+    //     // {
+    //     //     tipo:"link",
+    //     //     subModuloName:"Servicios",
+    //     //     link:"/reservas/Servicio"
+    //     // },
+    //   ] 
+    // },
+    // {
+    //   modulo: "Proveedores",
+    //   svg:"book-black-18dp.svg",
+    //   subModulos:[
+    //     {
+    //         tipo:"link",
+    //         subModuloName:"Lista de proveedores",
+    //         link:"/Proveedores"
+    //     },{
+    //       tipo:"link",
+    //       subModuloName:"Evaluacon de proveedores",
+    //       link:"/MatrizEvaProv"
+    //     },
+    //     {
+    //       tipo:"link",
+    //       subModuloName:"Reporte MEP",
+    //       link:"/MatrizEvaProv/ReporteEvaluacion"
+    //     },
+    //   ]
+    // },
+    // {
+    //   modulo: "Biblia",
+    //   svg:"playlist_add_check-black-18dp.svg",
+    //   subModulos:[{
+    //     tipo:"link",
+    //     subModuloName:"Lista Biblia",
+    //     link:"/Biblia"
+    //   }]
+    // },
+    // {
+    //   modulo: "Finanzas",
+    //   svg:"attach_money-black-18dp.svg",
+    //   subModulos:[
+    //     {
+    //         tipo:"link",
+    //         subModuloName:"Ingresos",
+    //         link:"/Finanzas/Ingresos"
+    //     },{
+    //         tipo:"link",
+    //         subModuloName:"Egresos",
+    //         link:"/Finanzas/Egresos"
+    //     },
+    //   ] 
+    // },
 export default function NavLateral() {
+  // const { data, revalidate } = useSWR("/api/me", async function (args) {
+  //   const res = await fetch(args);
+  //   return res.json();
+  // });
+  // const [dataFiltrada,setDataFiltrada] = useState([])
   let datos=[
     {
-      modulo: "Clientes",
+      modulo: "Ventas",
       svg:"account_box-black-18dp.svg",
       subModulos:[
         {
             tipo:"link",
-            subModuloName:"Lista de Clientes/Prospectos",
-            link:"/Clientes/ListClienteProspecto"
+            subModuloName:"Programa Turistico",
+            link:"/reservas/ProgramaTuristico"
+        },
+        {
+          tipo:"link",
+          subModuloName:"Cotizaciones",
+          link:"/reservas/Cotizacion"
+        },
+        {
+          tipo:"link",
+          subModuloName:"Reservas Clientes",
+          link:"/reservas"
+        },
+        {
+          tipo:"link",
+          subModuloName:"Finanzas",
+          link:"#"
+        },
+        
+      ] 
+    },
+    {
+      modulo: "Reserva y Operaciones",
+      svg:"account_box-black-18dp.svg",
+      subModulos:[
+        {
+          tipo:"link",
+          subModuloName:"Proveedores y Servicios",
+          link:"/Proveedores"
+        },
+        {
+          tipo:"link",
+          subModuloName:"Programa Turistico",
+          link:"/reservas/ProgramaTuristico"
+        },
+        //En este caso solo puede ver mas no editar
+        {
+          tipo:"link",
+          subModuloName:"Reservas Clientes",
+          link:"/reservas"
+        },
+        {
+          tipo:"link",
+          subModuloName:"Reservas Proveedores",
+          link:"/reservas"
+        },
+      ] 
+    },
+    {
+      modulo: "Marketing",
+      svg:"account_box-black-18dp.svg",
+      subModulos:[
+        {
+          tipo:"link",
+          subModuloName:"Lista de Clientes",
+          link:"/Clientes/ListClienteProspecto"
         },
         {
           tipo:"link",
           subModuloName:"Lista de Pasajeros",
           link:"/Clientes/ListPasajeros"
         },
-      ] 
-    },
-    {
-      modulo: "Reserva",
-      svg:"calendar_today-black-18dp.svg",
-      subModulos:[
-        {
-            tipo:"link",
-            subModuloName:"Cotizacion",
-            link:"http://localhost:3000/reservas/Cotizacion"
-        },{
-            tipo:"link",
-            subModuloName:"Lista de reserva",
-            link:"/reservas"
-        },{
-            tipo:"link",
-            subModuloName:"Programas turisticos",
-            link:"/reservas/ProgramaTuristico"
-        },
-        // {
-        //     tipo:"link",
-        //     subModuloName:"Servicios",
-        //     link:"/reservas/Servicio"
-        // },
-      ] 
-    },
-    {
-      modulo: "Proveedores",
-      svg:"book-black-18dp.svg",
-      subModulos:[
-        {
-            tipo:"link",
-            subModuloName:"Lista de proveedores",
-            link:"/Proveedores"
-        },{
-          tipo:"link",
-          subModuloName:"Evaluacon de proveedores",
-          link:"/MatrizEvaProv"
-        },
-        {
-          tipo:"link",
-          subModuloName:"Reporte MEP",
-          link:"/MatrizEvaProv/ReporteEvaluacion"
-        },
-      ]
-    },
-    {
-      modulo: "Biblia",
-      svg:"playlist_add_check-black-18dp.svg",
-      subModulos:[{
-        tipo:"link",
-        subModuloName:"Lista Biblia",
-        link:"/Biblia"
-      }]
-    },
-    {
-      modulo: "Finanzas",
-      svg:"attach_money-black-18dp.svg",
-      subModulos:[
-        {
-            tipo:"link",
-            subModuloName:"Ingresos",
-            link:"/Finanzas/Ingresos"
-        },{
-            tipo:"link",
-            subModuloName:"Egresos",
-            link:"/Finanzas/Egresos"
-        },
+        //En este caso solo puede ver mas no editar
       ] 
     },
     {
       modulo: "Administracion",
       svg:"supervised_user_circle-black-18dp.svg",
-      subModulos:[]
+      subModulos:[
+        {
+          tipo:"link",
+          subModuloName:"Ingresos",
+          link:"/Finanzas/Ingresos"
+        },{
+          tipo:"link",
+          subModuloName:"Egresos",
+          link:"/Finanzas/Egresos"
+        },
+      ]
+    },
+    {
+      modulo: "Gerencia",
+      svg:"supervised_user_circle-black-18dp.svg",
+      subModulos:[
+        {
+          tipo:"link",
+          subModuloName:"Ingresos",
+          link:"/Finanzas/Ingresos"
+        },{
+          tipo:"link",
+          subModuloName:"Egresos",
+          link:"/Finanzas/Egresos"
+        },
+      ]
     },
   ];
+  // useEffect(()=>{
+  //   let y = []
+  //   console.log(data.rol)
+  //   console.log(datos)
+  //   datos.map(x=>{
+  //     if (data.rol == "Gerencia" | data.rol == "superuser") {
+  //       y.push(x)
+  //     }else if(data.rol == "Administracion" && x.modulo != "Gerencia" && x.modulo != "Administracion"){
+  //       y.push(x)
+  //     }
+  //     if(x.modulo != "Administracion" || x.modulo != "Gerencia" ){
+  //       if (x.modulo.toLowerCase() == data.rol.toLowerCase()) {
+  //         y.push(x)
+  //       }
+  //     }
+  //   })
+  //   setDataFiltrada(y) 
+  // },[])
   return (
     <nav className={styles.NavLateralSquare}>
       {datos.map((modulosData)=>(
