@@ -4,27 +4,39 @@ import styles from "./Header.module.css";
 //modulos
 import { Auth,withSSRContext } from 'aws-amplify'
 
-import {useRouter} from 'next/router';
+import Router,{useRouter} from 'next/router';
 import Link from 'next/link';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import {useAppContext} from '@/components/Contexto'
 
 
-export default function Header({username}){
+export default function Header(){
   const [data,setData]=useState(false)
-  const [loged,setLoged]=useState(false)
+  const [[Logged,setLogged]]=useAppContext()
   const router = useRouter()
-
+  // const [Logged, setLogged] = useContext(LogState)
+  
   useEffect( async ()=>{
-    console.log(username)
     await Auth.currentAuthenticatedUser()
       .then((x)=>{
         setData(x)
-        setLoged(true)
+        setLogged(true)
       })
       .catch(err => {
+        setLogged(false)
         router.push('/')
         setData(null)
-      })
+      })      
+  },[Logged])
+
+  useEffect(()=>{
+    fetch    
+    if(Logged==false){
+      if(Router.route != "/"){
+        console.log(Router.route)
+        Router.push("/")
+      }
+    }
   },[])
 
   if (!data) return(
@@ -45,7 +57,7 @@ export default function Header({username}){
       <header className = {styles.HeaderDiv}>
           <img src='/resources/logo.png' className={styles.HeaderLogo} />
           <span className={styles.HeaderSideName} >{window.location.pathname.split("/")[1]}  </span>
-          {loged && (
+          {Logged && (
             <div>
               <p>Bienvenido {data.username}!</p>
               <form onSubmit={signOut} method="post">
@@ -65,20 +77,4 @@ export default function Header({username}){
           )}
       </header>
   )
-}
-export async function getInitialProps({ req, res }) {
-  const { Auth } = withSSRContext({ req })
-  try {
-    const user = await Auth.currentAuthenticatedUser()
-    return {
-      props: {
-        authenticated: true,
-        username: user.username
-      }
-    }
-  } catch (err) {
-    res.writeHead(302, { Location: '/' })
-    res.end()
-  }
-  return {props: {}}
 }

@@ -2,22 +2,38 @@ import React, { useState, useEffect } from "react";
 import styles from "../styles/login.module.css";
 import {Auth, API} from 'aws-amplify'
 import {useRouter} from "next/router";
-import { withSSRContext } from 'aws-amplify'
+import {useAppContext} from '@/components/Contexto'
 
-export default function loginPrincipal({ authenticated }) {
+export default function loginPrincipal(props) {
   const [userName, setUserName] = useState("")
   const [password, setPassword] = useState("")
-  const Router = useRouter()
+  const [newPassword, setNewPassword] = useState("")
+  const [nombre, setNewNombre] = useState("")
+  const [[loged,setLogged]] = useAppContext()
 
+  const Router = useRouter()
   async function signIn(e) {
     try {
       e.preventDefault()
-      await Auth.signIn(
-        userName, 
-        password);
-        console.log('signing in');
-        Router.push("/")
+      await Auth.signIn(userName,password)
+        .then(user=>{
+          if(user.challengeName  === 'NEW_PASSWORD_REQUIRED'){
+            const { requiredAttributes } = user.challengeParam
+            // console.log(userName)
+            // console.log(newPassword)
+            Auth.completeNewPassword(user, newPassword,{name:nombre})
+            .then(user=>{
+              setLogged(true)
+              console.log(user)
+            })
+            .catch(err=>console.log(err))
+          }
+          setLogged(true)
+          console.log('signing in');
+        })
+        .catch(err=>console.log(err))
     } catch (error) {
+        setLogged(false)
         console.log('error signing in', error);
     }
   }
@@ -36,7 +52,7 @@ export default function loginPrincipal({ authenticated }) {
         Sistema de Gestion Administrativa de Empresas Turisticas
       </h1>
 
-      {authenticated && (
+      {loged && (
         <>
           {/* <p>Bienvenido {data.email}!</p>
           <button
@@ -49,7 +65,7 @@ export default function loginPrincipal({ authenticated }) {
           <CambioDolar />
         </>
       )}
-      {!authenticated && (
+      {!loged && (
         <>
           <form className={styles.formularioLogin} onSubmit={signIn} method="post">
             <div className={styles.formularioLogin_correo}>
@@ -70,6 +86,24 @@ export default function loginPrincipal({ authenticated }) {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+            <div className={styles.formularioLogin_correo}>
+              <label className={styles.formularioLogin_label}>Ingrese su Nombre</label>
+              <input
+                className={styles.formularioLogin_input}
+                name="nombre"
+                type="text"
+                onChange={(e) => setNewNombre(e.target.value)}
+              />
+            </div>
+            <div className={styles.formularioLogin_password}>
+              <label className={styles.formularioLogin_label}>Nueva Contraseña</label>
+              <input
+                className={styles.formularioLogin_input}
+                name="password"
+                type="password"
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
             <input
               className={styles.formularioLogin_button}
               type="submit"
@@ -82,61 +116,23 @@ export default function loginPrincipal({ authenticated }) {
       )}
     </div>
   )
-  // if (!authenticated) {
-  //   return(
-  //     <div>
-  //       <input placeholder="username" onChange={(e)=>setUserName(e.target.value)} name="username"></input>
-  //       <input placeholder="password" onChange={(e)=>setPassword(e.target.value)} name="password"></input>
-  //       <button onClick={signIn}>SignIn</button>
-  //     </div>
-  //   )
-  // }else if(authenticated){
-  //   return (
-  //     <div>
-  //       {/* <h2>Bienvenido{username}</h2> */}
-  //       {/* <button onClick={signOut}>SignOut</button> */}
-  //       <h1 className={styles.loginHeader}>
-  //         Sistema de Gestion Administrativa de Empresas Turisticas
-  //       </h1>
-  //       <CambioDolar />
-  //     </div>
-  //   );
-  // }
 }
-export async function getServerSideProps(context) {
-  const { Auth } = withSSRContext(context)
-  try {
-    const user = await Auth.currentAuthenticatedUser()
-
-    return {
-      props: {
-        authenticated: true, username: user.username
-      }
-    }
-  } catch (err) {
-    return {
-      props: {
-        authenticated: false
-      }
-    }
-  }
-}
-export async function getStaticProps({ req, res }) {
-  const { Auth } = withSSRContext({ req })
-  try {
-    const user = await Auth.currentAuthenticatedUser()
-    return {
-      props: {
-        authenticated: true,
-        username: user.username
-      }
-    }
-  } catch (err) {
-    res.writeHead(302, { Location: '/' })
-    res.end()
-  }
-  return {props: {}}
-}
+// export async function getServerSideProps({ req, res }) {
+//   const { Auth } = withSSRContext({ req })
+//   try {
+//     const user = await Auth.currentAuthenticatedUser()
+//     return {
+//       props: {
+//         authenticated: true,
+//         username: user.username
+//       }
+//     }
+//   } catch (err) {
+//     res.writeHead(302, { Location: '/' })
+//     res.end()
+//   }
+//   return {props: {}}
+// }
 const CambioDolar = () => {
   const [EstadoEditado, setEstadoEditado] = useState(false);
   const [ValueDolartoSol, setValueDolartoSol] = useState(0);
