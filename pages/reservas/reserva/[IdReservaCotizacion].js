@@ -1,22 +1,58 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 //Componentes
 import AutoFormulario from "@/components/AutoFormulario/AutoFormulario";
+import Loader from "@/components/Loading/Loading";
+import ServicioEscogido from "../servicio/[IdServicioEscogido]";
 
-const ReservaCotizacion = (
-  props = {
-    DataReservas,
-    URI_IdReservaCotizacion,
-    DataServicios
-  }
-) => {
+const ReservaCotizacion = ({ APIPatch }) => {
+  const router = useRouter();
+  const { IdReservaCotizacion } = router.query;
   // --------------------------------------------------------------------------------------
   // Aqui va todo lo necesario para trabajar con el autoFormulario
   const [DarDato, setDarDato] = useState(false);
+  const [ReservaCotizacion, setReservaCotizacion] = useState({});
+  const [AllServicioEscojido, setAllServicioEscojido] = useState([]);
+  const [ClienteCotizacion, setClienteCotizacion] = useState({});
+  const [Estado, setEstado] = useState(0);
+  const [Loading, setLoading] = useState(false);
   let DataNuevaEdit = {};
   const DarDatoFunction = (keyDato, Dato) => {
     DataNuevaEdit[keyDato] = Dato;
   };
+  useEffect(async () => {
+    setLoading(true);
+    await Promise.all([
+      new Promise(async (resolve, reject) => {
+        await fetch(
+          APIPatch + "/api/reserva/DataReserva/" + IdReservaCotizacion
+        )
+          .then((r) => r.json())
+          .then((data) => {
+            setReservaCotizacion(data.ReservaCotizacion);
+            setClienteCotizacion(data.ClienteProspecto);
+            if (data.ReservaCotizacion["Estado"]) {
+              setEstado(data.ReservaCotizacion["Estado"]);
+            } else {
+              setEstado(0);
+            }
+            resolve();
+          });
+      }),
+      new Promise(async (resolve, reject) => {
+        await fetch(
+          APIPatch + "/api/reserva/DataServicio/" + IdReservaCotizacion
+        )
+          .then((r) => r.json())
+          .then((data) => {
+            setAllServicioEscojido(data.AllServicioEscojido);
+            resolve();
+          });
+      }),
+    ]);
+    setLoading(false);
+  }, []);
   useEffect(() => {
     if (DarDato == true) {
       console.log("estas en modo creacion");
@@ -38,20 +74,13 @@ const ReservaCotizacion = (
     }
   }, [DarDato]);
   // --------------------------------------------------------------------------------------
-  console.log(props.DataServicios);
-  //Estados
-  const [DataReservaCotizacin, setDataReservaCotizacin] = useState(
-    props.DataReservas
-  );
 
-  //efectos
-  useEffect(() => {
-    setDataReservaCotizacin(props.DataReservas);
-  }, [props.DataReservas]);
+  //Estados
 
   return (
     <>
-      <span>Datos de Reserva</span>
+      <Loader Loading={Loading} />
+      <h3>Datos de Reserva</h3>
       <img
         src="/resources/save-black-18dp.svg"
         onClick={() => {
@@ -59,8 +88,15 @@ const ReservaCotizacion = (
           setDarDato(true);
         }}
       />
+      <select value={Estado}>
+        <option value={0}>Cotizacion</option>
+        <option value={1}>Reserva sin confirmar</option>
+        <option value={2}>Reserva confirmada</option>
+        <option value={3}>Reserva pagada</option>
+      </select>
       <div>
         <div>
+          <h3>Datos de Reserva/Cotizacion</h3>
           <AutoFormulario
             Formulario={{
               title: "",
@@ -72,55 +108,55 @@ const ReservaCotizacion = (
                       tipo: "texto",
                       Title: "Codigo de Grupo",
                       KeyDato: "CodGrupo",
-                      Dato: DataReservaCotizacin.CodGrupo || "",
+                      Dato: ReservaCotizacion.CodGrupo || "",
                     },
                     {
                       tipo: "texto",
                       Title: "Nombre de Grupo",
                       KeyDato: "NombreGrupo",
-                      Dato: DataReservaCotizacin.NombreGrupo || "",
+                      Dato: ReservaCotizacion.NombreGrupo || "",
                     },
                     {
                       tipo: "numero",
                       Title: "Numero de pasajeros",
                       KeyDato: "Npasajeros",
-                      Dato: DataReservaCotizacin.Npasajeros || "",
+                      Dato: ReservaCotizacion.Npasajeros || "",
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha IN",
                       KeyDato: "FechaIN",
-                      Dato: DataReservaCotizacin.FechaIN || "",
+                      Dato: ReservaCotizacion.FechaIN || "",
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha OUT",
                       KeyDato: "FechaOUT",
-                      Dato: DataReservaCotizacin.FechaOUT || "",
+                      Dato: ReservaCotizacion.FechaOUT || "",
                     },
                     {
                       tipo: "texto",
                       Title: "Voucher",
                       KeyDato: "NroVoucher",
-                      Dato: DataReservaCotizacin.NroVoucher || "",
+                      Dato: ReservaCotizacion.NroVoucher || "",
                     },
                     {
                       tipo: "texto",
                       Title: "Idioma",
                       KeyDato: "Idioma",
-                      Dato: DataReservaCotizacin.Idioma || "",
+                      Dato: ReservaCotizacion.Idioma || "",
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha de entrega voucher",
                       KeyDato: "FechaEntrega",
-                      Dato: DataReservaCotizacin.FechaEntrega || "",
+                      Dato: ReservaCotizacion.FechaEntrega || "",
                     },
                     {
                       tipo: "money",
                       Title: "Precio",
                       KeyDato: "precio",
-                      Dato: DataReservaCotizacin.precio || "",
+                      Dato: ReservaCotizacion.precio || "",
                     },
                   ],
                 },
@@ -131,9 +167,66 @@ const ReservaCotizacion = (
             DarDatoFunction={DarDatoFunction}
           />
         </div>
-        <div></div>
+        <div>
+          <h3>Datos del Cotizante</h3>
+          <div>
+            <span>Nombre completo</span>
+            <input
+              value={ClienteCotizacion["NombreCompleto"] || null}
+              onChange={(event) => {
+                let temp_cliente = ClienteCotizacion;
+                temp_cliente["NombreCompleto"] = event.target.value;
+                setClienteCotizacion(temp_cliente);
+              }}
+            />
+          </div>
+          <div>
+            <span>Tipo de documento</span>
+            <input
+              value={ClienteCotizacion["TipoDocumento"] || null}
+              onChange={(event) => {
+                let temp_cliente = ClienteCotizacion;
+                temp_cliente["TipoDocumento"] = event.target.value;
+                setClienteCotizacion(temp_cliente);
+              }}
+            />
+          </div>
+          <div>
+            <span>Numero de documento</span>
+            <input
+              value={ClienteCotizacion["NroDocumento"] || null}
+              onChange={(event) => {
+                let temp_cliente = ClienteCotizacion;
+                temp_cliente["NroDocumento"] = event.target.value;
+                setClienteCotizacion(temp_cliente);
+              }}
+            />
+          </div>
+          <div>
+            <span>Celular</span>
+            <input
+              value={ClienteCotizacion["Celular"] || null}
+              onChange={(event) => {
+                let temp_cliente = ClienteCotizacion;
+                temp_cliente["Celular"] = event.target.value;
+                setClienteCotizacion(temp_cliente);
+              }}
+            />
+          </div>
+          <div>
+            <span>Email</span>
+            <input
+              value={ClienteCotizacion["Email"] || null}
+              onChange={(event) => {
+                let temp_cliente = ClienteCotizacion;
+                temp_cliente["Email"] = event.target.value;
+                setClienteCotizacion(temp_cliente);
+              }}
+            />
+          </div>
+        </div>
       </div>
-      <div>
+      {/* <div>
         <AutoFormulario
           Formulario={{
             title: "",
@@ -145,27 +238,27 @@ const ReservaCotizacion = (
                     tipo: "granTexto",
                     Title: "Descripcion del Programa turistico",
                     KeyDato: "Descripcion",
-                    Dato: DataReservaCotizacin.Descripcion || "",
+                    Dato: ReservaCotizacion.Descripcion || "",
                   },
-                  {
-                    tipo: "TablaServicioEscogido",
-                    Title: "Servicios",
-                    KeyDato: "Itinerario",
-                    Dato: props.DataServicios || [],
-                    columnas: [
-                        { field: "IdServicioEscogido", title: "Id" },
-                        { field: "NombreServicio", title: "Nombre del Servicio" },
-                        { field: "NombreProveedor", title: "Proveedor" },
-                        { field: "Estado", title: "Estado" ,
-                        lookup: { 0:'Cotizacion', 1:'Rerserva sin confirmar',2:'Reserva confirmada',3:'Reserva pagada' },
-                      },
-                    ],
-                  },
+                  // {
+                  //   tipo: "TablaServicioEscogido",
+                  //   Title: "Servicios",
+                  //   KeyDato: "Itinerario",
+                  //   Dato: AllServicioEscojido || [],
+                  //   columnas: [
+                  //       { field: "IdServicioEscogido", title: "Id" },
+                  //       { field: "NombreServicio", title: "Nombre del Servicio" },
+                  //       { field: "NombreProveedor", title: "Proveedor" },
+                  //       { field: "Estado", title: "Estado" ,
+                  //       lookup: { 0:'Cotizacion', 1:'Rerserva sin confirmar',2:'Reserva confirmada',3:'Reserva pagada' },
+                  //     },
+                  //   ],
+                  // },
                   {
                     tipo: "tablaSimple",
                     Title: "Itinierario",
                     KeyDato: "Itinerario",
-                    Dato: DataReservaCotizacin.Itinerario || "",
+                    Dato: ReservaCotizacion.Itinerario || "",
                     columnas: [
                       { field: "Hora Inicio", title: "HoraInicio" },
                       { field: "Hora Fin", title: "HoraFin" },
@@ -176,21 +269,21 @@ const ReservaCotizacion = (
                     tipo: "tablaSimple",
                     Title: "Incluye",
                     KeyDato: "Incluye",
-                    Dato: DataReservaCotizacin.Incluye || "",
+                    Dato: ReservaCotizacion.Incluye || "",
                     columnas: [{ field: "Actividad", title: "Actividad" }],
                   },
                   {
                     tipo: "tablaSimple",
                     Title: "No Incluye",
                     KeyDato: "NoIncluye",
-                    Dato: DataReservaCotizacin.NoIncluye || "",
+                    Dato: ReservaCotizacion.NoIncluye || "",
                     columnas: [{ field: "Actividad", title: "Actividad" }],
                   },
                   {
                     tipo: "tablaSimple",
                     Title: "Recomendaciones para llevar",
                     KeyDato: "RecomendacionesLlevar",
-                    Dato: DataReservaCotizacin.RecomendacionesLlevar || "",
+                    Dato: ReservaCotizacion.RecomendacionesLlevar || "",
                     columnas: [
                       { field: "Recomendacion", title: "Recomendacion" },
                     ],
@@ -203,58 +296,17 @@ const ReservaCotizacion = (
           DarDato={DarDato}
           DarDatoFunction={DarDatoFunction}
         />
-      </div>
+      </div> */}
     </>
   );
 };
 
 export async function getServerSideProps(context) {
-  let DataReservas = {};
-  let DataServicios=[]
-  const URI_IdReservaCotizacion = context.query.IdReservaCotizacion;
-  const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
-  await fetch(APIpathGeneral, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      coleccion: "ReservaCotizacion",
-      accion: "FindOne",
-      projection: {},
-      dataFound: URI_IdReservaCotizacion,
-      keyId: "IdReservaCotizacion",
-    }),
-  })
-    .then((r) => r.json())
-    .then((data) => {
-      DataReservas = data.result;
-    });
-  await fetch(APIpathGeneral, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      coleccion: "ServicioEscogido",
-      accion: "FindSome",
-      projection: {
-        _id:0,
-        IdServicioEscogido:1,
-        NombreServicio:1,
-        NombreProveedor:1,
-        Estado:1,
-        OrdenServicio:1
-      },
-      dataFound: [DataReservas.IdReservaCotizacion],
-      keyId: "IdReservaCotizacion",
-    }),
-  })
-    .then((r) => r.json())
-    .then((data) => {
-        DataServicios = data.result;
-    });
+  let APIPatch = process.env.API_DOMAIN;
+
   return {
     props: {
-      DataReservas: DataReservas,
-      URI_IdReservaCotizacion: URI_IdReservaCotizacion,
-      DataServicios:DataServicios
+      APIPatch: APIPatch,
     },
   };
 }
