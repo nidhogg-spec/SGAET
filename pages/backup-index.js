@@ -1,58 +1,70 @@
 import React, { useState, useEffect } from "react";
+import fetch from "isomorphic-unfetch";
+import useSWR from "swr";
+import cookie from "js-cookie";
+import Router from "next/router";
 import styles from "../styles/login.module.css";
-import {Auth, API} from 'aws-amplify'
-import {useRouter} from "next/router";
-import {useAppContext} from '@/components/Contexto'
 
-export default function loginPrincipal(props) {
-  const [userName, setUserName] = useState("")
-  const [password, setPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [nombre, setNewNombre] = useState("")
-  const [[loged,setLogged]] = useAppContext()
+export default function loginPrincipal() {
+  //Perteneciente al handle del login
+  const [loginError, setLoginError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  // const [rol, setRol] = useState('');
+  //------------------------------------------------------------------------------------//
+  const { data, revalidate } = useSWR("/api/me", async function (args) {
+    const res = await fetch(args);
+    return res.json();
+  });
 
-  const Router = useRouter()
-  async function signIn(e) {
-    try {
-      e.preventDefault()
-      await Auth.signIn(userName,password)
-        .then(user=>{
-          if(user.challengeName  === 'NEW_PASSWORD_REQUIRED'){
-            const { requiredAttributes } = user.challengeParam
-            // console.log(userName)
-            // console.log(newPassword)
-            Auth.completeNewPassword(user, newPassword,{name:nombre})
-            .then(user=>{
-              setLogged(true)
-              console.log(user)
-            })
-            .catch(err=>console.log(err))
-          }
-          setLogged(true)
-          console.log('signing in');
-        })
-        .catch(err=>console.log(err))
-    } catch (error) {
-        setLogged(false)
-        console.log('error signing in', error);
-    }
+  if (!data) return <h1>Loading...</h1>;
+  let loggedIn = false;
+  if (data.email) {
+    loggedIn = true;
   }
-  // useEffect(()=>{   
-  //   //Acceder a la sesion del usuario en el cliente
-  //   Auth.currentAuthenticatedUser()
-  //       .then(user =>{
-  //           console.log("User: ",user)
-  //           setUser(user)
-  //       })
-  //       .catch(err=> setUser(null))
-  // } ,[])
-  return(
+  function handleSubmit(e) {
+    e.preventDefault();
+    //call api
+    fetch("/api/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        //rol
+      }),
+    })
+      .then((r) => {
+        return r.json();
+      })
+      .then((dataCookie) => {
+        // console.log(dataCookie)
+        if (dataCookie && dataCookie.error) {
+          setLoginError(dataCookie.message);
+        }
+        if (dataCookie && dataCookie.token) {
+          //set cookie
+          cookie.set("token", dataCookie.token, { expires: 1 });
+          if (dataCookie.rolToken == "admin") {
+            // Router.push('/Proovedores');
+            Router.push("/");
+          } else if (dataCookie.rolToken == "proovedores") {
+            Router.push("/");
+          } else {
+            Router.push("/");
+          }
+        }
+      });
+  }
+  return (
     <div>
       <h1 className={styles.loginHeader}>
         Sistema de Gestion Administrativa de Empresas Turisticas
       </h1>
 
-      {loged && (
+      {loggedIn && (
         <>
           {/* <p>Bienvenido {data.email}!</p>
           <button
@@ -65,16 +77,17 @@ export default function loginPrincipal(props) {
           <CambioDolar />
         </>
       )}
-      {!loged && (
+      {!loggedIn && (
         <>
-          <form className={styles.formularioLogin} onSubmit={signIn} method="post">
+          <form className={styles.formularioLogin} onSubmit={handleSubmit}>
             <div className={styles.formularioLogin_correo}>
               <label className={styles.formularioLogin_label}>Correo</label>
               <input
                 className={styles.formularioLogin_input}
-                name="username"
+                name="email"
                 type="text"
-                onChange={(e) => setUserName(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className={styles.formularioLogin_password}>
@@ -83,25 +96,8 @@ export default function loginPrincipal(props) {
                 className={styles.formularioLogin_input}
                 name="password"
                 type="password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className={styles.formularioLogin_correo}>
-              <label className={styles.formularioLogin_label}>Ingrese su Nombre</label>
-              <input
-                className={styles.formularioLogin_input}
-                name="nombre"
-                type="text"
-                onChange={(e) => setNewNombre(e.target.value)}
-              />
-            </div>
-            <div className={styles.formularioLogin_password}>
-              <label className={styles.formularioLogin_label}>Nueva Contraseña</label>
-              <input
-                className={styles.formularioLogin_input}
-                name="password"
-                type="password"
-                onChange={(e) => setNewPassword(e.target.value)}
               />
             </div>
             <input
@@ -109,30 +105,16 @@ export default function loginPrincipal(props) {
               type="submit"
               value="Login"
             />
+            {loginError && <p style={{ color: "red" }}>{loginError}</p>}
           </form>
           {/*Desactivar en caso se nesecite boton para activar el registro de usuarios*/}
           {/* <Link href="/signup">Sign Up</Link> */}
         </>
       )}
     </div>
-  )
+  );
 }
-// export async function getServerSideProps({ req, res }) {
-//   const { Auth } = withSSRContext({ req })
-//   try {
-//     const user = await Auth.currentAuthenticatedUser()
-//     return {
-//       props: {
-//         authenticated: true,
-//         username: user.username
-//       }
-//     }
-//   } catch (err) {
-//     res.writeHead(302, { Location: '/' })
-//     res.end()
-//   }
-//   return {props: {}}
-// }
+
 const CambioDolar = () => {
   const [EstadoEditado, setEstadoEditado] = useState(false);
   const [ValueDolartoSol, setValueDolartoSol] = useState(0);
@@ -154,7 +136,6 @@ const CambioDolar = () => {
       DolarSol = data.value;
     });
     console.log(DolarSol)
-    sessionStorage.setItem('CambioDolar',DolarSol)
     setValueDolarSolInit(DolarSol);
     setValueDolartoSol(DolarSol);
     setLoading(false)
