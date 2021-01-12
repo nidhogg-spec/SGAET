@@ -89,7 +89,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       // Formateo de datos de ReservaCotizacion
       delete ReservaCotizacion['Servicios'];
       ReservaCotizacion['FechaIN'] = FechaIN;
-
+      ReservaCotizacion['Estado'] = 0;
       // Formateo de datos de ServiciosEscogidos
 
       //Formateo de datos de ClienteProspecto
