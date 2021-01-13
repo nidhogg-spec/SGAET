@@ -1,14 +1,18 @@
-import useSWR from "swr";
+import CampoFecha from '@/components/Formulario_V2/CampoFecha/CampoFecha'
+import React, { useState, useEffect } from 'react';
 
-export default function Prueba({ stars }){
-    const { data, revalidate } = useSWR("/api/me", async function (args) {
-        const res = await fetch(args);
-        return res.json();
-    });
-
+export default function Prueba(){
+    const [Prueba_array, setPrueba_array] = useState({});
     return(
         <div>
-            {/* {console.log(stars)} */}
+            <CampoFecha
+               Title="Nombre del Proveedor"
+               ModoEdicion={true}
+               setDato={setPrueba_array}
+               Dato={Prueba_array}
+               KeyDato="nombre"
+               Reiniciar={false} 
+            />
         </div>
     )
 }
