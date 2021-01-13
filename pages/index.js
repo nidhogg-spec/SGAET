@@ -9,6 +9,7 @@ export default function loginPrincipal(props) {
   const [password, setPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [nombre, setNewNombre] = useState("")
+  const [nuevoUsuario, setNuevoUsuario] = useState(false)
   const [[loged,setLogged]] = useAppContext()
 
   const Router = useRouter()
@@ -18,6 +19,7 @@ export default function loginPrincipal(props) {
       await Auth.signIn(userName,password)
         .then(user=>{
           if(user.challengeName  === 'NEW_PASSWORD_REQUIRED'){
+            setNuevoUsuario(true)
             const { requiredAttributes } = user.challengeParam
             // console.log(userName)
             // console.log(newPassword)
@@ -54,14 +56,6 @@ export default function loginPrincipal(props) {
 
       {loged && (
         <>
-          {/* <p>Bienvenido {data.email}!</p>
-          <button
-            onClick={() => {
-              cookie.remove('token');
-              revalidate();
-            }}>
-            Logout
-          </button> */}
           <CambioDolar />
         </>
       )}
@@ -86,32 +80,35 @@ export default function loginPrincipal(props) {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div className={styles.formularioLogin_correo}>
-              <label className={styles.formularioLogin_label}>Ingrese su Nombre</label>
-              <input
-                className={styles.formularioLogin_input}
-                name="nombre"
-                type="text"
-                onChange={(e) => setNewNombre(e.target.value)}
-              />
-            </div>
-            <div className={styles.formularioLogin_password}>
-              <label className={styles.formularioLogin_label}>Nueva Contraseña</label>
-              <input
-                className={styles.formularioLogin_input}
-                name="password"
-                type="password"
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-            </div>
+            {nuevoUsuario&&(
+              <div>
+                <div className={styles.formularioLogin_correo}>
+                  <label className={styles.formularioLogin_label}>Ingrese su Nombre</label>
+                  <input
+                    className={styles.formularioLogin_input}
+                    name="nombre"
+                    type="text"
+                    onChange={(e) => setNewNombre(e.target.value)}
+                  />
+                </div>
+                <div className={styles.formularioLogin_password}>
+                  <label className={styles.formularioLogin_label}>Nueva Contraseña</label>
+                  <input
+                    className={styles.formularioLogin_input}
+                    name="password"
+                    type="password"
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+            )
+            }
             <input
               className={styles.formularioLogin_button}
               type="submit"
               value="Login"
             />
           </form>
-          {/*Desactivar en caso se nesecite boton para activar el registro de usuarios*/}
-          {/* <Link href="/signup">Sign Up</Link> */}
         </>
       )}
     </div>
