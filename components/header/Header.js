@@ -29,15 +29,17 @@ export default function Header(){
       })      
   },[Logged])
 
-  useEffect(()=>{
-    fetch    
-    if(Logged==false){
-      if(Router.route != "/"){
-        console.log(Router.route)
-        Router.push("/")
-      }
-    }
-  },[])
+  /*Activar para impedir el redireccionamiento por url en la etapa de deployment*/
+  
+  // useEffect(()=>{
+  //   fetch    
+  //   if(Logged==false){
+  //     if(Router.route != "/"){
+  //       console.log(Router.route)
+  //       Router.push("/")
+  //     }
+  //   }
+  // },[])
 
   if (!data) return(
     <nav className = {styles.HeaderDiv}>
