@@ -158,21 +158,13 @@ export default function Home({ Datos, api_general }) {
                     },
                     {
                       tipo: "tablaSimple",
-                      Title: "Numeros de Culular",
-                      KeyDato: "ContactoCelular",
-                      Dato: Data["ContactoCelular"] || [],
+                      Title: "Contacto",
+                      KeyDato: "Contacto",
+                      Dato: Data["Contacto"] || [],
                       columnas: [
                         { field: "NombreContac", title: "Nombre" },
+                        { field: "Area", title: "Area" },
                         { field: "Numero", title: "Numero" },
-                      ],
-                    },
-                    {
-                      tipo: "tablaSimple",
-                      Title: "Correos electronicos",
-                      KeyDato: "ContactoEmail",
-                      Dato: Data["ContactoEmail"] || [], //deber ser un [] - array - Sino todo explota
-                      columnas: [
-                        { field: "NombreContac", title: "Nombre del Contacto" },
                         { field: "Email", title: "Email" },
                       ],
                     },

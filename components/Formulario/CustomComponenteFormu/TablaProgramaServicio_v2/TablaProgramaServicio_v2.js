@@ -144,6 +144,12 @@ const TablaProgramaServicio_v2 = (
               },
               { field: "NombreServicio", title: "Nombre", editable: "never" },
               {
+                field: "Dia",
+                title: "Numero de dia",
+                editable: "always",
+                type: "numeric",
+              },
+              {
                 field: "Cantidad",
                 title: "Cantidad",
                 editable: "always",
@@ -285,6 +291,7 @@ const TablaProgramaServicio_v2 = (
                     IdServicioProducto: rowData["IdServicioProducto"],
                     PrecioConfiUnitario: rowData["Costo"],
                     NombreServicio: rowData["Nombre"],
+                    Dia: 1,
                     Cantidad: 1,
                     PrecioCotiUnitario: rowData["Precio"],
                     IGV: false,
