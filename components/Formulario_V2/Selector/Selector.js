@@ -2,16 +2,17 @@
 import styles from "./Selector.module.css";
 import React, { useEffect, useState } from "react";
 
-const Selector = (props={
-  Title:"",
-  ModoEdicion:true,
-  DevolverDatoFunct,
-  DarDato:false,
-  KeyDato:"",
-  Dato:"",
-  SelectOptions:[],
-  Reiniciar:true
-}) => {
+const Selector = (
+  props = {
+    Title: "Nombre del Proveedor",
+    ModoEdicion: true,
+    setDato: () => {},
+    Dato: {},
+    KeyDato: "nombre",
+    Reiniciar: true,
+    SelectOptions: [],
+  }
+) => {
   //Los siguientes datos deberian de estar en props para su correcto funcionamiento:
   //    Title
   //    ModoEdicion  bool
@@ -21,66 +22,54 @@ const Selector = (props={
   //    KeyDato - Dato como el cual se guardar
   //    SelectOptions = [value, texto]
   //---------------------------------------------------------------------------------
-  const [ModoEdicion, setModoEdicion] = useState(props.ModoEdicion);
-  const [Dato, setDato] = useState(props.Dato);
-
-  //hooks
-  useEffect(() => {
-    setDato(props.Dato);
-  }, [props.Dato]);
-  useEffect(() => {
-    if (props.Reiniciar==true) {
-        setDato(props.Dato)
-    }
-}, [props.Reiniciar]);
-  useEffect(() => {
-    setModoEdicion(props.ModoEdicion);
-  }, [props.ModoEdicion]);
-
-  useEffect(() => {
-    if (props.DarDato == true) {
-      props.DevolverDatoFunct(props.KeyDato, Dato);
-    }
-  }, [props.DarDato]);
-  // useEffect(() => {
-  //     console.log(Dato)
-  // }, [Dato]);
-
-  // Definir JSX
-
-  if (ModoEdicion == true) {
+  const value = props.Dato[props.KeyDato];
+  if (props.ModoEdicion == true) {
     return (
       <div>
         <span>{props.Title}</span>
         <select
           onChange={(event) => {
-            setDato(event.target.value)
+            props.setDato({
+              ...props.Dato,
+              [props.KeyDato]: event.target.value,
+            });
           }}
-          value={Dato}
+          value={value}
         >
-          {props.SelectOptions.map(SelectOption => {
-              return <option value={SelectOption.value}>{SelectOption.texto}</option>
+          {props.SelectOptions.map((SelectOption, index) => {
+            return (
+              <Option
+                key={index.toString()}
+                value={SelectOption.value}
+                texto={SelectOption.texto}
+              ></Option>
+            );
           })}
         </select>
       </div>
     );
   } else {
-    console.log(props.SelectOptions)
-    let data = props.SelectOptions.find((opt)=>{
-      return opt["value"]==Dato
-    }) 
+    console.log(props.SelectOptions);
     return (
-      
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
-        <span>{
-          props.SelectOptions.find((opt)=>{
-            return opt["value"]==Dato
-          }).texto
-        }</span>
+        <select value={props.Dato[props.KeyDato]} disabled>
+          {props.SelectOptions.map((SelectOption, index) => {
+            return (
+              <Option
+                key={index.toString()}
+                value={SelectOption.value}
+                texto={SelectOption.texto}
+              ></Option>
+            );
+          })}
+        </select>
       </div>
     );
   }
+};
+const Option = ({ value, texto }) => {
+  return <option value={value}>{texto}</option>;
 };
 
 export default Selector;

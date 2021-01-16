@@ -9,7 +9,7 @@ const Index=({
 }) => {
   const router = useRouter()
   const [Loading, setLoading] = useState(false);
-  const [DataCotizacion, setDataCotizacion] = useState();
+  const [DataCotizacion, setDataCotizacion] = useState([]);
 
   useEffect(async() => {
     setLoading(true)

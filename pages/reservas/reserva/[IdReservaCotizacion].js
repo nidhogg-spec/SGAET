@@ -1,26 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { useRouter } from "next/router";
+// import styles from '..'
 
 //Componentes
-import AutoFormulario from "@/components/AutoFormulario/AutoFormulario";
+import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario"
 import Loader from "@/components/Loading/Loading";
-import ServicioEscogido from "../servicio/[IdServicioEscogido]";
+import MaterialTable from "material-table";
 
 const ReservaCotizacion = ({ APIPatch }) => {
   const router = useRouter();
   const { IdReservaCotizacion } = router.query;
   // --------------------------------------------------------------------------------------
   // Aqui va todo lo necesario para trabajar con el autoFormulario
-  const [DarDato, setDarDato] = useState(false);
   const [ReservaCotizacion, setReservaCotizacion] = useState({});
-  const [AllServicioEscojido, setAllServicioEscojido] = useState([]);
+  const [ServiciosEscojidos, setServiciosEscojidos] = useState([]);
+  const [AllServiciosProductos, setAllServiciosProductos] = useState([]);
   const [ClienteCotizacion, setClienteCotizacion] = useState({});
   const [Estado, setEstado] = useState(0);
   const [Loading, setLoading] = useState(false);
-  let DataNuevaEdit = {};
-  const DarDatoFunction = (keyDato, Dato) => {
-    DataNuevaEdit[keyDato] = Dato;
-  };
   useEffect(async () => {
     setLoading(true);
     await Promise.all([
@@ -46,33 +43,22 @@ const ReservaCotizacion = ({ APIPatch }) => {
         )
           .then((r) => r.json())
           .then((data) => {
-            setAllServicioEscojido(data.AllServicioEscojido);
+            setServiciosEscojidos(data.AllServicioEscojido);
+            resolve();
+          });
+      }),
+      new Promise(async (resolve, reject) => {
+        await fetch(APIPatch + "/api/Cotizacion/ObtenerTodosServicios")
+          .then((r) => r.json())
+          .then((data) => {
+            setAllServiciosProductos(data.data);
             resolve();
           });
       }),
     ]);
     setLoading(false);
   }, []);
-  useEffect(() => {
-    if (DarDato == true) {
-      console.log("estas en modo creacion");
-      setDarDato(false);
-      console.log(DataNuevaEdit);
-      //   console.log(DataNuevaEdit);
-      //   fetch(APIpath_i, {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({
-      //       accion: "Create",
-      //       data: DataNuevaEdit,
-      //     }),
-      //   })
-      //     .then((r) => r.json())
-      //     .then((data) => {
-      //       alert(data.message);
-      //     });
-    }
-  }, [DarDato]);
+
   // --------------------------------------------------------------------------------------
 
   //Estados
@@ -97,9 +83,9 @@ const ReservaCotizacion = ({ APIPatch }) => {
       <div>
         <div>
           <h3>Datos de Reserva/Cotizacion</h3>
-          <AutoFormulario
+          <AutoFormulario_v2
             Formulario={{
-              title: "",
+              title: "Prueba de guardado de datos",
               secciones: [
                 {
                   subTitle: "",
@@ -108,195 +94,118 @@ const ReservaCotizacion = ({ APIPatch }) => {
                       tipo: "texto",
                       Title: "Codigo de Grupo",
                       KeyDato: "CodGrupo",
-                      Dato: ReservaCotizacion.CodGrupo || "",
                     },
                     {
                       tipo: "texto",
                       Title: "Nombre de Grupo",
                       KeyDato: "NombreGrupo",
-                      Dato: ReservaCotizacion.NombreGrupo || "",
                     },
                     {
                       tipo: "numero",
                       Title: "Numero de pasajeros",
                       KeyDato: "Npasajeros",
-                      Dato: ReservaCotizacion.Npasajeros || "",
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha IN",
                       KeyDato: "FechaIN",
-                      Dato: ReservaCotizacion.FechaIN || "",
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha OUT",
                       KeyDato: "FechaOUT",
-                      Dato: ReservaCotizacion.FechaOUT || "",
                     },
                     {
                       tipo: "texto",
                       Title: "Voucher",
-                      KeyDato: "NroVoucher",
-                      Dato: ReservaCotizacion.NroVoucher || "",
+                      KeyDato: "Voucher",
                     },
                     {
                       tipo: "texto",
                       Title: "Idioma",
                       KeyDato: "Idioma",
-                      Dato: ReservaCotizacion.Idioma || "",
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha de entrega voucher",
                       KeyDato: "FechaEntrega",
-                      Dato: ReservaCotizacion.FechaEntrega || "",
                     },
                     {
                       tipo: "money",
                       Title: "Precio",
                       KeyDato: "precio",
-                      Dato: ReservaCotizacion.precio || "",
                     },
                   ],
                 },
               ],
             }}
-            Modo={"verEdicion"}
-            DarDato={DarDato}
-            DarDatoFunction={DarDatoFunction}
+            ModoEdicion={true}
+            Dato={ReservaCotizacion}
+            setDato={setReservaCotizacion}
+            key={'AF_ReserCoti'}
           />
         </div>
         <div>
           <h3>Datos del Cotizante</h3>
-          <div>
-            <span>Nombre completo</span>
-            <input
-              value={ClienteCotizacion["NombreCompleto"] || null}
-              onChange={(event) => {
-                let temp_cliente = ClienteCotizacion;
-                temp_cliente["NombreCompleto"] = event.target.value;
-                setClienteCotizacion(temp_cliente);
-              }}
-            />
-          </div>
-          <div>
-            <span>Tipo de documento</span>
-            <input
-              value={ClienteCotizacion["TipoDocumento"] || null}
-              onChange={(event) => {
-                let temp_cliente = ClienteCotizacion;
-                temp_cliente["TipoDocumento"] = event.target.value;
-                setClienteCotizacion(temp_cliente);
-              }}
-            />
-          </div>
-          <div>
-            <span>Numero de documento</span>
-            <input
-              value={ClienteCotizacion["NroDocumento"] || null}
-              onChange={(event) => {
-                let temp_cliente = ClienteCotizacion;
-                temp_cliente["NroDocumento"] = event.target.value;
-                setClienteCotizacion(temp_cliente);
-              }}
-            />
-          </div>
-          <div>
-            <span>Celular</span>
-            <input
-              value={ClienteCotizacion["Celular"] || null}
-              onChange={(event) => {
-                let temp_cliente = ClienteCotizacion;
-                temp_cliente["Celular"] = event.target.value;
-                setClienteCotizacion(temp_cliente);
-              }}
-            />
-          </div>
-          <div>
-            <span>Email</span>
-            <input
-              value={ClienteCotizacion["Email"] || null}
-              onChange={(event) => {
-                let temp_cliente = ClienteCotizacion;
-                temp_cliente["Email"] = event.target.value;
-                setClienteCotizacion(temp_cliente);
-              }}
-            />
-          </div>
+          <button></button>
+          <AutoFormulario_v2
+            Formulario={{
+              title: "Prueba de guardado de datos",
+              secciones: [
+                {
+                  subTitle: "Datos",
+                  componentes: [
+                    {
+                      tipo: "texto",
+                      Title: "Nombre Completo",
+                      KeyDato: "NombreCompleto",
+                    },
+                    {
+                      tipo: "selector",
+                      Title: "Tipo de Documento",
+                      KeyDato: "TipoDocumento",
+                      SelectOptions: [
+                        { value: 0, texto: "DNI" },
+                        { value: 1, texto: "RUC" },
+                        { value: 2, texto: "Pasaporte" },
+                        { value: 3, texto: "Carné de Extranjería" },
+                      ],
+                    },
+                    {
+                      tipo: "texto",
+                      Title: "Nro de Documento",
+                      KeyDato: "NroDocumento",
+                    },
+                    {
+                      tipo: "texto",
+                      Title: "Celular Principal",
+                      KeyDato: "Celular",
+                    },
+                    {
+                      tipo: "texto",
+                      Title: "Email Principal",
+                      KeyDato: "Email",
+                    },
+                  ],
+                },
+              ],
+            }}
+            ModoEdicion={true}
+            Dato={ClienteCotizacion}
+            setDato={setClienteCotizacion}
+            key={'AF_ClienteCotizacion'}
+          />
+        </div>
+        <div>
+          <TablaServicioCotizacion
+            Title="Servicios/Productos de la reserva"
+            setCotiServicio={setServiciosEscojidos}
+            CotiServicio= {ServiciosEscojidos || []}
+            ListaServiciosProductos= {AllServiciosProductos || []}
+            FechaIN={ReservaCotizacion['FechaIN']}
+          />
         </div>
       </div>
-      {/* <div>
-        <AutoFormulario
-          Formulario={{
-            title: "",
-            secciones: [
-              {
-                subTitle: "",
-                componentes: [
-                  {
-                    tipo: "granTexto",
-                    Title: "Descripcion del Programa turistico",
-                    KeyDato: "Descripcion",
-                    Dato: ReservaCotizacion.Descripcion || "",
-                  },
-                  // {
-                  //   tipo: "TablaServicioEscogido",
-                  //   Title: "Servicios",
-                  //   KeyDato: "Itinerario",
-                  //   Dato: AllServicioEscojido || [],
-                  //   columnas: [
-                  //       { field: "IdServicioEscogido", title: "Id" },
-                  //       { field: "NombreServicio", title: "Nombre del Servicio" },
-                  //       { field: "NombreProveedor", title: "Proveedor" },
-                  //       { field: "Estado", title: "Estado" ,
-                  //       lookup: { 0:'Cotizacion', 1:'Rerserva sin confirmar',2:'Reserva confirmada',3:'Reserva pagada' },
-                  //     },
-                  //   ],
-                  // },
-                  {
-                    tipo: "tablaSimple",
-                    Title: "Itinierario",
-                    KeyDato: "Itinerario",
-                    Dato: ReservaCotizacion.Itinerario || "",
-                    columnas: [
-                      { field: "Hora Inicio", title: "HoraInicio" },
-                      { field: "Hora Fin", title: "HoraFin" },
-                      { field: "Actividad", title: "Actividad"},
-                    ],
-                  },
-                  {
-                    tipo: "tablaSimple",
-                    Title: "Incluye",
-                    KeyDato: "Incluye",
-                    Dato: ReservaCotizacion.Incluye || "",
-                    columnas: [{ field: "Actividad", title: "Actividad" }],
-                  },
-                  {
-                    tipo: "tablaSimple",
-                    Title: "No Incluye",
-                    KeyDato: "NoIncluye",
-                    Dato: ReservaCotizacion.NoIncluye || "",
-                    columnas: [{ field: "Actividad", title: "Actividad" }],
-                  },
-                  {
-                    tipo: "tablaSimple",
-                    Title: "Recomendaciones para llevar",
-                    KeyDato: "RecomendacionesLlevar",
-                    Dato: ReservaCotizacion.RecomendacionesLlevar || "",
-                    columnas: [
-                      { field: "Recomendacion", title: "Recomendacion" },
-                    ],
-                  },
-                ],
-              },
-            ],
-          }}
-          Modo={"verEdicion"}
-          DarDato={DarDato}
-          DarDatoFunction={DarDatoFunction}
-        />
-      </div> */}
     </>
   );
 };
@@ -312,3 +221,349 @@ export async function getServerSideProps(context) {
 }
 
 export default ReservaCotizacion;
+
+const TablaServicioCotizacion = (
+  props = {
+    Title: "Nombre del Proveedor",
+    setCotiServicio:()=>{},
+    CotiServicio: [],
+    ListaServiciosProductos: [],
+    FechaIN,
+    // columnas:[]
+  }
+) => {
+  // -------------------------------Variables---------------------------------
+  const router = useRouter();
+  //Datos q se guardaran en la cotizacion
+  // const [CotiServicio, setCotiServicio] = useState([]);
+  const [CurrencyTotal, setCurrencyTotal] = useState("Dolar");
+  const [MontoTotal, setMontoTotal] = useState(0);
+  const [CambioDolar, setCambioDolar] = useState(0);
+  const NotAgain = useRef(true)
+
+  //---------------------------------------------------------------------------------
+
+  //------------------------------------Hooks-----------------------------------------
+  useEffect(() => {
+    if(NotAgain.current){
+      NotAgain.current = false;
+      return;
+    }
+    let temp_MontoTotal = 0;
+    if(props.CotiServicio != undefined){
+      switch (CurrencyTotal) {
+        case "Dolar":
+          props.CotiServicio.map((uni_CotiServi) => {
+            switch (uni_CotiServi["Currency"] || "Dolar") {
+              case "Dolar":
+                temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
+                break;
+              case "Sol":
+                temp_MontoTotal +=
+                  parseFloat(uni_CotiServi["PrecioCotiTotal"]) / CambioDolar;
+                break;
+            }
+          });
+          break;
+        case "Sol":
+          props.CotiServicio.map((uni_CotiServi) => {
+            switch (uni_CotiServi["Currency"]) {
+              case "Dolar":
+                temp_MontoTotal +=
+                  parseFloat(uni_CotiServi["PrecioCotiTotal"]) * CambioDolar;
+                break;
+              case "Sol":
+                temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
+                break;
+            }
+          });
+          break;
+      }
+    }
+    
+    NotAgain.current = true;
+    setMontoTotal(temp_MontoTotal);
+    Actulizar_fechas();
+  }, [props.CotiServicio, CurrencyTotal]);
+  useEffect(() => {
+    let CambioDolar_temp = sessionStorage.getItem("CambioDolar");
+    if (CambioDolar_temp) {
+      setCambioDolar(CambioDolar_temp);
+    } else {
+      fetch("/api/DataSistema", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accion: "ObtenerCambioDolar",
+        }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          setCambioDolar(data.value);
+          sessionStorage.setItem("CambioDolar", data.value);
+        });
+    }
+  }, []);
+  useEffect(() => {
+    Actulizar_fechas();
+  }, [props.FechaIN]);
+  const Actulizar_fechas=()=>{
+    const fecha_inicio = new Date(props.FechaIN);
+    let temp_CotiServicio = [...props.CotiServicio];
+    temp_CotiServicio.map((item) => {
+      let temp_date = new Date(fecha_inicio);
+      if (item["Dia"]) {
+        let dt = temp_date.getDate()+parseInt(item["Dia"])
+        temp_date.setDate(dt)
+        item["FechaReserva"] = temp_date.toLocaleDateString();
+      } else {
+        let dt = temp_date.getDate()+1
+        temp_date.setDate(dt)
+        item["FechaReserva"] = temp_date.toLocaleDateString();
+      }
+      console.log(item["FechaReserva"]);
+      props.setCotiServicio(temp_CotiServicio);
+      // item['FechaReserva']= item['FechaReserva'].toString()
+    });
+  }
+  //---------------------------------------------------------------------------------
+
+  return (
+    <div>
+      <span>{props.Title}</span>
+      <div>
+        <MaterialTable
+          title={props.Title}
+          columns={[
+            {
+              field: "IdServicioProducto",
+              title: "IdServicioProducto",
+              editable: "never",
+              hidden: true,
+            },
+            {
+              field: "PrecioConfiUnitario",
+              title: "Precio Confidencial Unitario",
+              editable: "never",
+              type: "numeric",
+              hidden: true,
+            },
+            { field: "NombreServicio", title: "Nombre", editable: "never" },
+            {
+              field: "Dia",
+              title: "Dia",
+              editable: "never",
+              type: "numeric",
+            },
+            {
+              field: "FechaReserva",
+              title: "Fecha de Reserva",
+              editable: "always",
+              type: "date",
+            },
+            {
+              field: "Cantidad",
+              title: "Cantidad",
+              editable: "always",
+              type: "numeric",
+            },
+            {
+              field: "Currency",
+              title: "Moneda",
+              editable: "never",
+              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+            },
+            {
+              field: "PrecioCotiUnitario",
+              title: "Precio Cotizacion Unitario",
+              editable: "always",
+              type: "numeric",
+            },
+            {
+              field: "PrecioPublicado",
+              title: "Precio Publicado",
+              editable: "never",
+              type: "numeric",
+            },
+            {
+              field: "IGV",
+              title: "IGV incluido?",
+              editable: "always",
+              type: "boolean",
+            },
+            {
+              field: "PrecioCotiTotal",
+              title: "Precio Cotizacion Total",
+              editable: "never",
+              type: "numeric",
+            },
+            {
+              field: "PrecioConfiTotal",
+              title: "Precio Confidencial Total",
+              editable: "never",
+              type: "numeric",
+            },
+          ]}
+          data={props.CotiServicio}
+          editable={{
+            onBulkUpdate: (cambios) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  // if (typeof(cambios) === 'object') {
+                  //   cambios = [cambios]
+                  // }
+                  Object.entries(cambios).map((cambio) => {
+                    let temp_CotiServicio = [...props.CotiServicio];
+                    let temp_newData = cambio[1]["newData"];
+                    let id = temp_newData["tableData"]["id"];
+
+                    temp_CotiServicio[id]["Cantidad"] =
+                      temp_newData["Cantidad"];
+                    temp_CotiServicio[id]["IGV"] = temp_newData["IGV"];
+                    if (temp_CotiServicio[id]["IGV"]) {
+                      temp_CotiServicio[id]["PrecioCotiTotal"] = (
+                        temp_newData["Cantidad"] *
+                        temp_newData["PrecioCotiUnitario"] *
+                        1.18
+                      ).toFixed(2);
+                      temp_CotiServicio[id]["PrecioConfiTotal"] = (
+                        temp_newData["Cantidad"] *
+                        temp_newData["PrecioConfiUnitario"] *
+                        1.18
+                      ).toFixed(2);
+                    } else {
+                      temp_CotiServicio[id]["PrecioCotiTotal"] = (
+                        temp_newData["Cantidad"] *
+                        temp_newData["PrecioCotiUnitario"]
+                      ).toFixed(2);
+                      temp_CotiServicio[id]["PrecioConfiTotal"] = (
+                        temp_newData["Cantidad"] *
+                        temp_newData["PrecioConfiUnitario"]
+                      ).toFixed(2);
+                    }
+                    temp_CotiServicio[id]["PrecioCotiUnitario"] =
+                      temp_newData["PrecioCotiUnitario"];
+                    props.setCotiServicio(temp_CotiServicio);
+                    resolve();
+                  });
+                }, 1000);
+              }),
+            onRowDelete: (oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataDelete = [...props.CotiServicio];
+                  const index = oldData.tableData.id;
+                  dataDelete.splice(index, 1);
+                  props.setCotiServicio([...dataDelete]);
+                  resolve();
+                }, 1000);
+              }),
+          }}
+          actions={[
+            {
+              icon: () => {
+                return <img src="/resources/remove_red_eye-24px.svg" />;
+              },
+              tooltip: "Mostrar reserva",
+              onClick: (event, rowData) => {
+                router.push(`/reservas/servicio/${rowData.IdServicioEscogido}`);
+              },
+            },
+          ]}
+        />
+        <select
+          onChange={(event) => {
+            setCurrencyTotal(event.target.value);
+          }}
+        >
+          <option value="Dolar" selected>
+            Dolares
+          </option>
+          <option value="Sol">Soles</option>
+        </select>
+        <span>
+          El precio total es: {CurrencyTotal == "Dolar" ? "$" : "S/."}
+          {MontoTotal.toFixed(2)}
+        </span>
+      </div>
+      <div>
+        <MaterialTable
+          title={"Servicios para añadir"}
+          columns={[
+            {
+              field: "IdServicioProducto",
+              title: "IdServicioProducto",
+              editable: "never",
+              hidden: true,
+            },
+            {
+              field: "TipoServicio",
+              title: "Tipo de Servicio",
+              editable: "never",
+            },
+            { field: "Nombre", title: "Nombre", editable: "never" },
+            { title: "Nombre del Proveedor", field: "NombreProveedor" },
+            { title: "Puntaje del Proveedor", field: "PuntajeProveedor" },
+            { field: "Descripcion", title: "Descripcion", editable: "never" },
+            {
+              field: "Currency",
+              title: "Moneda",
+              editable: "never",
+              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+            },
+            {
+              field: "Precio",
+              title: "Precio Cotizacion",
+              editable: "never",
+              type: "numeric",
+            },
+            {
+              field: "Costo",
+              title: "Precio Confidencial",
+              editable: "never",
+              type: "numeric",
+            },
+            {
+              field: "PrecioPublicado",
+              title: "Precio Publicado",
+              editable: "never",
+              type: "numeric",
+            },
+          ]}
+          data={props.ListaServiciosProductos}
+          actions={[
+            {
+              icon: "add",
+              tooltip: "Añadir Servicio a Cotizacion",
+              onClick: (event, rowData) => {
+                let x = [...props.CotiServicio];
+                x.push({
+                  IdServicioProducto: rowData["IdServicioProducto"],
+                  PrecioConfiUnitario: rowData["Costo"],
+                  NombreServicio: rowData["Nombre"],
+                  Dia: 1,
+                  Cantidad: 1,
+                  PrecioCotiUnitario: rowData["Precio"],
+                  IGV: false,
+                  PrecioCotiTotal: rowData["Precio"],
+                  PrecioConfiTotal: rowData["Costo"],
+                  Currency: rowData["Currency"],
+                  PrecioPublicado: rowData["PrecioPublicado"],
+                });
+                props.setCotiServicio(x);
+                // let ActuDataTableServicios = [...DataTableServicios];
+                // ActuDataTableServicios.splice(
+                //   ActuDataTableServicios.findIndex((value) => {
+                //     return value["IdServicio"] == rowData["IdServicio"];
+                //   }),
+                //   1
+                // );
+                // setDataTableServicios(ActuDataTableServicios);
+              },
+            },
+          ]}
+        />
+      </div>
+    </div>
+  );
+};
