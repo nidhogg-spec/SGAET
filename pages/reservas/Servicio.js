@@ -140,7 +140,7 @@ function Servicio({ Columnas, Datos, APIpath, DatosProveedores }) {
     idProveedor: ["DF00001"],
     idProveedorDataCompleta: DatosProveedores,
   }));
-  const [IdDato, setIdDato] = useState();
+  const [IdDato, setIdDato] = useState("");
   const [ReiniciarData, setReiniciarData] = useState(false);
   const [Display, setDisplay] = useState(false);
   const [Formulario, setFormulario] = useState(FormularioCreacion);

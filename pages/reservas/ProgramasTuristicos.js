@@ -166,7 +166,7 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
         Servicios:[]
     })
   );
-  const [IdDato, setIdDato] = useState();
+  const [IdDato, setIdDato] = useState("");
   const [ReiniciarData, setReiniciarData] = useState(false);
   const [Display, setDisplay] = useState(false);
   const [Formulario, setFormulario] = useState(FormularioCreacion);

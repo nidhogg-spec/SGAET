@@ -183,7 +183,7 @@ function ProgramasTuristicos({
   });
   //------------------------------------------------
   //Variables
-  const [IdDato, setIdDato] = useState();
+  const [IdDato, setIdDato] = useState("");
   const [ReiniciarData, setReiniciarData] = useState(false);
   const [Formulario, setFormulario] = useState(Formulario_default);
   const [TablaDatos, setTablaDatos] = useState(Datos);
