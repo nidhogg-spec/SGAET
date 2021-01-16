@@ -106,13 +106,23 @@ export default function NavLateral() {
         },
         {
           tipo:"link",
-          subModuloName:"Cotizaciones",
+          subModuloName:"Realizar Cotizacion",
           link:"/reservas/Cotizacion"
         },
         {
           tipo:"link",
           subModuloName:"Reservas Clientes",
           link:"/reservas"
+        },
+        {
+          tipo:"link",
+          subModuloName:"Lista de Cotizaciones",
+          link:"/reservas/ListaCotizacion"
+        },
+        {
+          tipo:"link",
+          subModuloName:"Lista de Reservas",
+          link:"/reservas/ListaReserva"
         },
         {
           tipo:"link",
