@@ -1,4 +1,5 @@
 import React, { useState, useEffect,useRef } from "react";
+import Link from 'next/link'
 import { useRouter } from "next/router";
 // import styles from '..'
 
@@ -74,6 +75,7 @@ const ReservaCotizacion = ({ APIPatch }) => {
           setDarDato(true);
         }}
       />
+     
       <select value={Estado}>
         <option value={0}>Cotizacion</option>
         <option value={1}>Reserva sin confirmar</option>
@@ -148,6 +150,12 @@ const ReservaCotizacion = ({ APIPatch }) => {
         <div>
           <h3>Datos del Cotizante</h3>
           <button></button>
+
+          <h3>LLenado de Pasajeros</h3>
+          <Link href={`http://localhost:3000/LlenadoPasajeros/${IdReservaCotizacion}`}>
+            <a >Llenar Lista de Pasajeros</a>
+          </Link>
+          
           <AutoFormulario_v2
             Formulario={{
               title: "Prueba de guardado de datos",
