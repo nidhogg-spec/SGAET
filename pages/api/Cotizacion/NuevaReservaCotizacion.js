@@ -170,6 +170,6 @@ export default async (req, res) => {
         }
       }),
   ]);
-  res.redirect('/Reserva/ListaCotizacion');
+  res.redirect('/reservas/ListaCotizacion');
 
 };

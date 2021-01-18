@@ -90,7 +90,7 @@ const TablaSimple = (
         <MaterialTable
           title={props.Title}
           columns={props.columnas}
-          data={Data}
+          data={value}
         />
       </div>
     );

@@ -53,7 +53,7 @@ const Selector = (
     return (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
-        <select value={props.Dato[props.KeyDato]} disabled>
+        <select value={value} disabled>
           {props.SelectOptions.map((SelectOption, index) => {
             return (
               <Option

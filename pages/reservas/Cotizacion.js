@@ -124,42 +124,6 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
               
             });
         
-      // await Promise.all([
-      //   new Promise(async (resolve, reject) => {
-      //     await fetch(APIpath + "/api/Cotizacion/NuevoClienteProspecto",{
-      //       method:'POST',
-      //       headers:'',
-      //       body: JSON.parse()
-      //     })
-      //       .then((r) => r.json())
-      //       .then((data) => {
-      //         console.log(data.AllProgramasTuristicos);
-      //         setProgramasTuristicos(data.AllProgramasTuristicos);
-      //         resolve();
-      //       });
-      //   }),
-      //   new Promise(async (resolve, reject) => {
-      //     await fetch(APIpath + "/api/Cotizacion/NuevosServicios")
-      //       .then((r) => r.json())
-      //       .then((data) => {
-      //         setListaServiciosProductos(data.data);
-      //         resolve();
-      //       });
-      //   }),
-      //   new Promise(async (resolve, reject) => {
-      //     await fetch(APIpath + "/api/Cotizacion/NuevaReservaCotizacion",{
-      //       method:'POST',
-      //       headers: { "Content-Type": "application/json" },
-      //       body: JSON.stringify({ReservaCotizacion:ReservaCotizacion})
-      //     })
-      //       .then((r) => r.json())
-      //       .then((data) => {
-      //         console.log(data.AllProgramasTuristicos);
-      //         setProgramasTuristicos(data.AllProgramasTuristicos);
-      //         resolve();
-      //       });
-      //   }),
-      // ]);
 
       console.log(DataNuevaEdit);
       setLoading(false);
@@ -472,7 +436,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                   ModoEdicion={true}
                   DevolverDatoFunct={DarDatoFunction}
                   DarDato={DarDato}
-                  KeyDato={"Npasajeros"}
+                  KeyDato={"NpasajerosAdult"}
                   Dato={DataCotizacion.NPasajerosAdult}
                   Reiniciar={ReinciarComponentes}
                   InputStep="1"
@@ -482,7 +446,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                   ModoEdicion={true}
                   DevolverDatoFunct={DarDatoFunction}
                   DarDato={DarDato}
-                  KeyDato={"Npasajeros"}
+                  KeyDato={"NpasajerosChild"}
                   Dato={DataCotizacion.NPasajerosInfante}
                   Reiniciar={ReinciarComponentes}
                   InputStep="1"
@@ -594,6 +558,11 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                   Dato={DataCotizacion.Itinerario || []}
                   Reiniciar={ReinciarComponentes}
                   columnas={[
+                    {
+                      field: "Dia",
+                      title: "Dia",
+                      type:'numeric',
+                    },
                     { field: "Hora Inicio", title: "HoraInicio", type: "time" },
                     { field: "Hora Fin", title: "HoraFin", type: "time" },
                     { field: "Actividad", title: "Actividad" },
