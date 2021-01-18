@@ -1,6 +1,6 @@
 //Package
 import styles from "./CampoTexto.module.css";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 //Componentes
 
@@ -37,7 +37,7 @@ const CampoTexto = (
     return (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
-        <input value={props.Dato[props.KeyDato]} disabled />
+        <input value={value} disabled />
       </div>
     );
   }

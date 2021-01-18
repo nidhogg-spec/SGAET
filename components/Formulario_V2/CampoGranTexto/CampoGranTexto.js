@@ -34,7 +34,7 @@ const CampoGranTexto = (
     return (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
-        <textarea value={props.Dato[props.KeyDato]} disabled />
+        <textarea value={value} disabled />
       </div>
     );
   }

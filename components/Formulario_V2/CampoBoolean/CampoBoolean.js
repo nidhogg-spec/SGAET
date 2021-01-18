@@ -1,10 +1,10 @@
 //Package
-import styles from "./CampoNumero.module.css";
+import styles from "./CampoBoolean.module.css";
 import React, { useEffect, useState } from "react";
 
 //Componentes
 
-const CampoNumero = (
+const CampoBoolean = (
   props = {
     Title: "Nombre del Proveedor",
     ModoEdicion: true,
@@ -12,7 +12,6 @@ const CampoNumero = (
     Dato: {},
     KeyDato: "nombre",
     Reiniciar: true,
-    InputStep: "1",
   }
 ) => {
   const value = props.Dato[props.KeyDato];
@@ -22,14 +21,15 @@ const CampoNumero = (
         <span>{props.Title}</span>
         <input
           value={value}
-          type="number"
-          min="0"
-          step={props.InputStep || "1"}
-          onChange={(event) => {
+          type={'checkbox'}
+          onClick={(event) => {
             props.setDato({
               ...props.Dato,
-             [props.KeyDato]: event.target.value
+             [props.KeyDato]: event.target.checked
             })
+            // let temp_dato = props.Dato;
+            // temp_dato[props.KeyDato] = event.target.value;
+            // props.setDato(temp_dato);
           }}
         />
       </div>
@@ -38,16 +38,10 @@ const CampoNumero = (
     return (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
-        <input
-          value={value}
-          type="number"
-          min="0"
-          step={props.InputStep || "1"}
-          disabled
-        />
+        <input value={value} type={'checkbox'} disabled />
       </div>
     );
   }
 };
 
-export default CampoNumero;
+export default CampoBoolean;

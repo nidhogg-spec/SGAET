@@ -28,13 +28,15 @@ export default async (req, res) => {
       // res.status(200).json({ ReservaCotizacion: result});
     } else {
       console.log("Error - 101");
-      res.redirect("/500");
+      // res.redirect("/500");
+      res.status(500).json({ error: "Algun error"});
       return;
     }
   } catch (error) {
     console.log("Error - 102");
     console.log("error - Obtener cambios dolar => " + error);
-    res.redirect("/500");
+    // res.redirect("/500");
+      res.status(500).json({ error: "Algun error"});
     client.close()
     return;
   }
@@ -61,7 +63,8 @@ export default async (req, res) => {
   } catch (error) {
     console.log("Error - 104");
     console.log("error - Obtener cambios dolar => " + error);
-    res.redirect("/500");
+    // res.redirect("/500");
+      res.status(500).json({ error: "Algun error"});
     await client.close();
     return;
   } finally {

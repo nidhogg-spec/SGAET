@@ -28,7 +28,7 @@ const TablaServicioCotizacion = (
   const [CurrencyTotal, setCurrencyTotal] = useState("Dolar");
   const [MontoTotal, setMontoTotal] = useState(0);
   const [CambioDolar, setCambioDolar] = useState(0);
-  const NotAgain = useRef(true)
+  const NotAgain = useRef(true);
 
   //---------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ const TablaServicioCotizacion = (
     }
   }, [props.DarDato]);
   useEffect(() => {
-    if(NotAgain.current){
+    if (NotAgain.current) {
       NotAgain.current = false;
       return;
     }
@@ -119,27 +119,37 @@ const TablaServicioCotizacion = (
   }, []);
   useEffect(() => {
     Actulizar_fechas();
-    
   }, [props.FechaIN]);
-  const Actulizar_fechas=()=>{
+  const Actulizar_fechas = () => {
     const fecha_inicio = new Date(props.FechaIN);
     let temp_CotiServicio = [...CotiServicio];
     temp_CotiServicio.map((item) => {
       let temp_date = new Date(fecha_inicio);
+      let dt;
       if (item["Dia"]) {
-        let dt = temp_date.getDate()+parseInt(item["Dia"])
-        temp_date.setDate(dt)
-        item["FechaReserva"] = temp_date.toLocaleDateString();
+        dt = temp_date.getDate() + parseInt(item["Dia"]);
+        // temp_date.setDate(dt);
+        // item["FechaReserva"] = temp_date.toISOString().slice(0, 10);
       } else {
-        let dt = temp_date.getDate()+1
-        temp_date.setDate(dt)
-        item["FechaReserva"] = temp_date.toLocaleDateString();
+        dt = temp_date.getDate() + 1;
       }
+      temp_date.setDate(dt);
+      let year = temp_date.getFullYear();
+      let month = temp_date.getMonth() + 1;
+      let day = temp_date.getDate();
+
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      item["FechaReserva"] = year + "-" + month + "-" + dt;
       console.log(item["FechaReserva"]);
       setCotiServicio(temp_CotiServicio);
       // item['FechaReserva']= item['FechaReserva'].toString()
     });
-  }
+  };
   //---------------------------------------------------------------------------------
 
   return (
@@ -164,9 +174,15 @@ const TablaServicioCotizacion = (
             },
             { field: "NombreServicio", title: "Nombre", editable: "never" },
             {
+              field: "TipoServicio",
+              title: "Tipo del Servicio",
+              editable: "never",
+            },
+            { field: "Dia", title: "Dia", editable: "always", type: "numeric" },
+            {
               field: "FechaReserva",
               title: "Fecha de Reserva",
-              editable: "always",
+              editable: "never",
               type: "date",
             },
             {
@@ -220,8 +236,8 @@ const TablaServicioCotizacion = (
                   // if (typeof(cambios) === 'object') {
                   //   cambios = [cambios]
                   // }
+                  let temp_CotiServicio = [...CotiServicio];
                   Object.entries(cambios).map((cambio) => {
-                    let temp_CotiServicio = [...CotiServicio];
                     let temp_newData = cambio[1]["newData"];
                     let id = temp_newData["tableData"]["id"];
 
@@ -249,11 +265,11 @@ const TablaServicioCotizacion = (
                         temp_newData["PrecioConfiUnitario"]
                       ).toFixed(2);
                     }
-                    temp_CotiServicio[id]["PrecioCotiUnitario"] =
-                      temp_newData["PrecioCotiUnitario"];
-                    setCotiServicio(temp_CotiServicio);
-                    resolve();
+                    temp_CotiServicio[id]["PrecioCotiUnitario"] = temp_newData["PrecioCotiUnitario"];
+                    temp_CotiServicio[id]["Dia"] = temp_newData["Dia"];
                   });
+                  setCotiServicio(temp_CotiServicio);
+                  resolve();
                 }, 1000);
               }),
             onRowDelete: (oldData) =>
@@ -338,6 +354,7 @@ const TablaServicioCotizacion = (
                   IdServicioProducto: rowData["IdServicioProducto"],
                   PrecioConfiUnitario: rowData["Costo"],
                   NombreServicio: rowData["Nombre"],
+                  TipoServicio: rowData["TipoServicio"],
                   Dia: 1,
                   Cantidad: 1,
                   PrecioCotiUnitario: rowData["Precio"],
@@ -346,6 +363,7 @@ const TablaServicioCotizacion = (
                   PrecioConfiTotal: rowData["Costo"],
                   Currency: rowData["Currency"],
                   PrecioPublicado: rowData["PrecioPublicado"],
+                  IdProveedor: rowData["IdProveedor"],
                 });
                 setCotiServicio(x);
                 // let ActuDataTableServicios = [...DataTableServicios];

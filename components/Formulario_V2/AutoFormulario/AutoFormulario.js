@@ -10,6 +10,7 @@ import CampoNumero from "../CampoNumero/CampoNumero";
 import CampoMoney from "../CampoMoney/CampoMoney";
 import CampoFecha from "../CampoFecha/CampoFecha";
 import TablaSimple from "../TablaSimple/TablaSimple";
+import CampoBoolean from '../CampoBoolean/CampoBoolean'
 const AutoFormulario = (
   props = {
     Formulario: {
@@ -111,6 +112,18 @@ const AutoFormulario = (
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
             columnas={compo.columnas}
+            key={'AD'+key}
+          />
+        );
+        break;
+        case "boolean":
+        return (
+          <CampoBoolean
+            Title={compo.Title}
+            ModoEdicion={props.ModoEdicion}
+            setDato={props.setDato}
+            KeyDato={compo.KeyDato}
+            Dato={props.Dato}
             key={'AD'+key}
           />
         );

@@ -6,7 +6,7 @@ const dbName= process.env.MONGODB_DB
 
 const coleccion = "ProductoSitioTuristico";
 const keyId = "IdProductoSitioTuristico";
-const IdLetras = "PT";
+const IdLetras = "PS";
 
 let client = new MongoClient(url,{
     useNewUrlParser: true,

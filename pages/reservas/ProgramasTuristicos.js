@@ -79,6 +79,11 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
               KeyDato: "Itinerario",
               Dato: FormuData.Itinerario, //deber ser un [] - array - Sino todo explota
               columnas: [
+                {
+                  field: "Dia",
+                  title: "Dia",
+                  type:'numeric',
+                },
                 { field: "Hora Inicio", title: "HoraInicio", initialEditValue:"00:00:00" },
                 { field: "Hora Fin", title: "HoraFin", initialEditValue:"00:00:00" },
                 { field: "Actividad", title: "Actividad" },

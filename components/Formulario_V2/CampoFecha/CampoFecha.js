@@ -14,7 +14,7 @@ const CampoFecha = (
     Reiniciar: true,
   }
 ) => {
-  const value = props.Dato[props.KeyDato];
+  const value =props.Dato[props.KeyDato];
   if (props.ModoEdicion == true) {
     return (
       <div>
@@ -35,7 +35,7 @@ const CampoFecha = (
     return (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
-        <input value={props.Dato[props.KeyDato]} type={"date"} disabled />
+        <input value={value} type={"date"} disabled />
       </div>
     );
   }

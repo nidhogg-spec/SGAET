@@ -56,6 +56,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoHotel"] || null,
+            IdProveedor:x["idProveedor"] || null,
             TipoServicio: "Hotel" || null,
             Nombre: x["TipoPaxs"] + " - " + x["tipoHabitacion"] || null,
             Descripcion:
@@ -97,6 +98,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoRestaurantes"] || null,
+            IdProveedor:x["idProveedor"] || null,
             TipoServicio: "Restaurante" || null,
             Nombre:
               x["codServicio"] +
@@ -139,6 +141,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoTransportes"] || null,
+            IdProveedor:x["idProveedor"] || null,
             TipoServicio: "Transporte Terrestre" || null,
             Nombre:
               x["codServicio"] +
@@ -185,6 +188,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoGuias"] || null,
+            IdProveedor:x["idProveedor"] || null,
             TipoServicio: "Guia" || null,
             Nombre:
               x["codServicio"] + " - " + x["TipoPaxs"] + " - " + x["gremio"] ||
@@ -230,6 +234,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoHotel"] || null,
+            IdProveedor:x["idProveedor"] || null,
             TipoServicio: "Agencia" || null,
             Nombre:
               x["codServicio"] +
@@ -272,6 +277,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoTransFerroviario"] || null,
+            IdProveedor:x["idProveedor"] || null,
             TipoServicio: "Transporte Ferroviario" || null,
             Nombre:
               x["TipoPaxs"] +
@@ -318,6 +324,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoSitioTuristico"] || null,
+            IdProveedor:x["idProveedor"] || null,
             TipoServicio: "Sitio Turistico" || null,
             Nombre: x["NomServicio"] + " - " + x["Categoria"] || null,
             Descripcion: x["HoraAtencion"] || null,
@@ -355,6 +362,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoOtros"] || null,
+            IdProveedor:x["idProveedor"] || null,
             TipoServicio: "Otro" || null,
             Nombre:
               x["codServicio"] +
