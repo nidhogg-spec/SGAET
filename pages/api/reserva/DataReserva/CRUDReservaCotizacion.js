@@ -87,7 +87,7 @@ export default async (req, res) =>{
             };
             
             collection.updateOne(
-              { IdProductoAgencias: req.body.idProducto },
+              { IdReservaCotizacion: req.body.idProducto },
               dataActu,
               (err, result) => {
                 if (err) {
