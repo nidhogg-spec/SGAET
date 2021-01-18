@@ -57,6 +57,12 @@ function ProgramasTuristicos({
               Dato: FormuData.CodigoPrograma,
             },
             {
+              tipo: "texto",
+              Title: "Tipo de experiencia",
+              KeyDato: "Tipo",
+              Dato: FormuData.CodigoPrograma,
+            },
+            {
               tipo: "numero",
               Title: "Duracion Dias",
               KeyDato: "DuracionDias",
@@ -106,14 +112,20 @@ function ProgramasTuristicos({
               Dato: FormuData.Itinerario, //deber ser un [] - array - Sino todo explota
               columnas: [
                 {
+                  field: "Dia",
+                  title: "Dia",
+                  initialEditValue: 1,
+                  type:'numeric',
+                },
+                {
                   field: "Hora Inicio",
                   title: "HoraInicio",
-                  initialEditValue: "00:00:00",
+                  initialEditValue: "00:00",
                 },
                 {
                   field: "Hora Fin",
                   title: "HoraFin",
-                  initialEditValue: "00:00:00",
+                  initialEditValue: "00:00",
                 },
                 { field: "Actividad", title: "Actividad" },
               ],

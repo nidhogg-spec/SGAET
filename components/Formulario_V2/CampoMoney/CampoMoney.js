@@ -38,7 +38,7 @@ const CampoMoney = (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
         <input
-          value={props.Dato[props.KeyDato]}
+          value={value}
           type="number"
           min="0.00"
           step="0.01"

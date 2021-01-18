@@ -1,69 +1,93 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { MongoClient } from "mongodb";
 
 //Componentes
-import AutoFormulario from "@/components/AutoFormulario/AutoFormulario";
+// import AutoFormulario from "@/components/AutoFormulario/AutoFormulario";
+import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
+import Loader from "@/components/Loading/Loading";
 
 const ServicioEscogido = ({
-  URI_IdReservaCotizacion,
-  DataServicios,
-  DataProductosTodos,
-  ColumnasProductosTodos,
-  api_general
+  URL_path,
+  // URI_IdReservaCotizacion,
+  // DataServicios,
+  // DataProductosTodos,
+  // ColumnasProductosTodos,
+  // api_general
 }) => {
-  // --------------------------------------------------------------------------------------
-  // Aqui va todo lo necesario para trabajar con el autoFormulario
-  const [DarDato, setDarDato] = useState(false);
-  let DataNuevaEdit = {};
-  const DarDatoFunction = (keyDato, Dato) => {
-    DataNuevaEdit[keyDato] = Dato;
-  };
-  useEffect(() => {
-    if (DarDato == true) {
-      console.log("estas en modo creacion");
-      setDarDato(false);
-      console.log(DataNuevaEdit);
-      //   console.log(DataNuevaEdit);
-        fetch(api_general, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            coleccion: "ServicioEscogido",
-            accion: "update",
-            query:{"IdServicioEscogido":URI_IdReservaCotizacion} ,
-            data: DataNuevaEdit,
-          }),
-        })
+  const router = useRouter();
+  const { IdServicioEscogido } = router.query;
+  const [ServicioEscogido, setServicioEscogido] = useState({});
+  const [Proveedor, setProveedor] = useState();
+  const [Loading, setLoading] = useState();
+
+  useEffect(async () => {
+    setLoading(true);
+    await Promise.all([
+      new Promise(async (resolve, reject) => {
+        await fetch(
+          URL_path +
+            "/api/ServicioEscogido/DetalleServicioEscogido/" +
+            IdServicioEscogido
+        )
           .then((r) => r.json())
           .then((data) => {
-            alert(data.message);
+            let ServicioEscogido = data.ServicioEscogido;
+            if (ServicioEscogido["FechaReserva"].includes("/")) {
+              let dateParts = ServicioEscogido["FechaReserva"].split("/");
+              ServicioEscogido["FechaReserva"] =
+                +dateParts[2] + "-" + dateParts[1] + "-" + +dateParts[0];
+            }
+            if (ServicioEscogido["Estado"] == undefined) {
+              ServicioEscogido["Estado"] = 0;
+            }
+            setServicioEscogido(data.ServicioEscogido);
+            setProveedor(data.Proveedor);
+            resolve();
           });
-    }
-  }, [DarDato]);
+      }),
+    ]);
+    setLoading(false);
+  }, []);
   // --------------------------------------------------------------------------------------
-  const TipoProveedor = DataServicios["TipoServicio"];
-  //Estados
-  const [DataServicioEscogido, setDataServicioEscogido] = useState(
-    DataServicios
-  );
-  const [IdServicioEscogido, setIdServicioEscogido] = useState(
-    URI_IdReservaCotizacion
-  );
-  const [DT_DataProductosTodos, setDT_DataProductosTodos] = useState(
-    DataProductosTodos
-  );
-  const [DT_ColumnasProductosTodos, setDT_ColumnasProductosTodos] = useState(
-    ColumnasProductosTodos
-  );
+  // Aqui va todo lo necesario para trabajar con el autoFormulario
+
+  // const [DarDato, setDarDato] = useState(false);
+  // let DataNuevaEdit = {};
+  // const DarDatoFunction = (keyDato, Dato) => {
+  //   DataNuevaEdit[keyDato] = Dato;
+  // };
+  // useEffect(() => {
+  //   if (DarDato == true) {
+  //     console.log("estas en modo creacion");
+  //     setDarDato(false);
+  //     console.log(DataNuevaEdit);
+  //     //   console.log(DataNuevaEdit);
+  //       // fetch(api_general, {
+  //       //   method: "POST",
+  //       //   headers: { "Content-Type": "application/json" },
+  //       //   body: JSON.stringify({
+  //       //     coleccion: "ServicioEscogido",
+  //       //     accion: "update",
+  //       //     query:{"IdServicioEscogido":URI_IdReservaCotizacion} ,
+  //       //     data: DataNuevaEdit,
+  //       //   }),
+  //       // })
+  //       //   .then((r) => r.json())
+  //       //   .then((data) => {
+  //       //     alert(data.message);
+  //       //   });
+  //   }
+  // }, [DarDato]);
+  // --------------------------------------------------------------------------------------
   // const [OrdenServicio, setOrdenServicio] = useState(false);
-  const OrdenServicio = useBoolOrdenServicio(
-    DataServicioEscogido.OrdenServicio
-  );
-  const router = useRouter();
+  // const OrdenServicio = useBoolOrdenServicio(
+  //   DataServicioEscogido.OrdenServicio
+  // );
+
   //Efectos
   return (
     <>
+      <Loader Loading={Loading} key={"Loader_001"} />
       <div>
         <span>Servicio</span>
         <img
@@ -73,8 +97,7 @@ const ServicioEscogido = ({
             setDarDato(true);
           }}
         />
-
-        {OrdenServicio ? (
+        {/* {OrdenServicio && (
           <button
             onClick={() => {
               router.push(
@@ -84,12 +107,25 @@ const ServicioEscogido = ({
           >
             Orden de servicio
           </button>
-        ) : (
-          <></>
-        )}
+        )} */}
+        <select
+          value={ServicioEscogido["Estado"]}
+          onChange={(event) => {
+            setServicioEscogido({
+              ...ServicioEscogido,
+              Estado: parseInt(event.target.value),
+            });
+          }}
+        >
+          <option value={0}>Servicio/Producto no confirmado</option>
+          <option value={1}>Servicio/Producto Confirmado</option>
+          <option value={2}>Servicio/Producto Contratado</option>
+          <option value={3}>Servicio/Producto Pagado</option>
+          <option value={4}>Servicio/Producto Cancelado</option>
+        </select>
       </div>
       <div>
-        <AutoFormulario
+        <AutoFormulario_v2
           Formulario={{
             title: "",
             secciones: [
@@ -100,43 +136,46 @@ const ServicioEscogido = ({
                     tipo: "texto",
                     Title: "Nombre de Servicio",
                     KeyDato: "NombreServicio",
-                    Dato: DataServicioEscogido.NombreServicio || "",
                   },
                   {
                     tipo: "texto",
                     Title: "Tipo de servicio",
                     KeyDato: "TipoServicio",
-                    Dato: DataServicioEscogido.TipoServicio || "",
+                  },
+                  {
+                    tipo: "numero",
+                    Title: "Dia",
+                    KeyDato: "Dia",
+                  },
+                  {
+                    tipo: "numero",
+                    Title: "Cantidad",
+                    KeyDato: "Cantidad",
+                  },
+                  {
+                    tipo: "boolean",
+                    Title: "IGV",
+                    KeyDato: "IGV",
                   },
                   {
                     tipo: "money",
-                    Title: "Precio",
+                    Title: "Precio Confidencial Unitario",
+                    KeyDato: "PrecioConfiUnitario",
+                  },
+                  {
+                    tipo: "money",
+                    Title: "Precio Cotizacion Unitario",
+                    KeyDato: "PrecioCotiUnitario",
+                  },
+                  {
+                    tipo: "money",
+                    Title: "Precio Publico",
                     KeyDato: "PrecioPublicado",
-                    Dato: DataServicioEscogido.PrecioPublicado || "",
-                  },
-                  {
-                    tipo: "money",
-                    Title: "Costo",
-                    KeyDato: "PrecioConfidencial",
-                    Dato: DataServicioEscogido.PrecioConfidencial || "",
-                  },
-                  {
-                    tipo: "fecha",
-                    Title: "Fecha inicio",
-                    KeyDato: "FechaInicio",
-                    Dato: DataServicioEscogido.FechaInicio || "",
-                  },
-                  {
-                    tipo: "fecha",
-                    Title: "Fecha fin",
-                    KeyDato: "FechaFin",
-                    Dato: DataServicioEscogido.FechaFin || "",
                   },
                   {
                     tipo: "selector",
                     Title: "Encuesta",
                     KeyDato: "Encuesta",
-                    Dato: DataServicioEscogido.Encuesta || "",
                     SelectOptions: [
                       { value: 0, texto: "No es necesario una encuesta" },
                       { value: 1, texto: "Se necesita encuesta" },
@@ -146,7 +185,6 @@ const ServicioEscogido = ({
                     tipo: "selector",
                     Title: "Informe",
                     KeyDato: "Informe",
-                    Dato: DataServicioEscogido.Informe || "",
                     SelectOptions: [
                       { value: 0, texto: "No es necesario un informe" },
                       { value: 1, texto: "Se necesita informe" },
@@ -154,15 +192,18 @@ const ServicioEscogido = ({
                   },
                   {
                     tipo: "fecha",
+                    Title: "Fecha de Reserva",
+                    KeyDato: "FechaReserva",
+                  },
+                  {
+                    tipo: "fecha",
                     Title: "Fecha de compra real",
                     KeyDato: "FechaCompra",
-                    Dato: DataServicioEscogido.FechaCompra || "",
                   },
                   {
                     tipo: "fecha",
                     Title: "Fecha de limite de pago",
                     KeyDato: "FechaLimitePago",
-                    Dato: DataServicioEscogido.FechaLimitePago || "",
                   },
                   // {
                   //   tipo: "texto",
@@ -174,7 +215,6 @@ const ServicioEscogido = ({
                     tipo: "selector",
                     Title: "Informe de impacto medio ambiental",
                     KeyDato: "InformeAmbiental",
-                    Dato: DataServicioEscogido.InformeAmbiental || "",
                     SelectOptions: [
                       { value: 0, texto: "No es necesario" },
                       { value: 1, texto: "Es necesario" },
@@ -182,39 +222,112 @@ const ServicioEscogido = ({
                   },
                 ],
               },
+              // {
+              //   subTitle: "",
+              //   componentes: [
+              //     {
+              //         tipo: "granTexto",
+              //         Title: "Descripcion",
+              //         KeyDato: "Descripcion",
+              //         Dato: DataServicioEscogido.Descripcion || "",
+              //       },
+              //     {
+              //       tipo: "tablaSimple",
+              //       Title: "Incluye",
+              //       KeyDato: "Incluye",
+              //       columnas: [{ field: "Descripcion", title: "Actividad" }],
+              //     },
+              //   ],
+              // },
+            ],
+          }}
+          ModoEdicion={true}
+          Dato={ServicioEscogido}
+          setDato={setServicioEscogido}
+          key={"AF_ServicioEscogido"}
+        />
+      </div>
+      <div>
+        <h2>Data de Proveedor</h2>
+        <AutoFormulario_v2
+          Formulario={{
+            title: "",
+            secciones: [
               {
                 subTitle: "",
                 componentes: [
-                  // {
-                  //     tipo: "granTexto",
-                  //     Title: "Descripcion",
-                  //     KeyDato: "Descripcion",
-                  //     Dato: DataServicioEscogido.Descripcion || "",
-                  //   },
                   {
-                    tipo: "tablaSimple",
-                    Title: "Incluye",
-                    KeyDato: "Incluye",
-                    Dato: DataServicioEscogido.Incluye || "",
-                    columnas: [{ field: "Descripcion", title: "Actividad" }],
+                    tipo: "texto",
+                    Title: "Nombre Comercial",
+                    KeyDato: "nombre",
                   },
                   {
-                    tipo: "TablaProductoServicio",
-                    Title: "Producto/Servicio",
-                    KeyDato: "ProdServSeleccionados",
-                    DataProductosSeleccionados:
-                      DataServicioEscogido.ProdServSeleccionados || [],
-                    DataProductosTodos: DataProductosTodos,
-                    columnas: ColumnasProductosTodos,
-                    TipoProveedor: TipoProveedor,
+                    tipo: "texto",
+                    Title: "Razon Social",
+                    KeyDato: "RazonSocial",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Tipo de Documento",
+                    KeyDato: "TipoDocumento",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "NroDocumento",
+                    KeyDato: "NroDocumento",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Numero Principal",
+                    KeyDato: "NumeroPrincipal",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Email Principal",
+                    KeyDato: "EmailPrincipal",
+                  },
+                ],
+              },
+              {
+                subTitle: "",
+                componentes: [
+                  {
+                    tipo: "tablaSimple",
+                    Title: "Datos Bancarios",
+                    KeyDato: "DatosBancarios",
+                    columnas: [
+                      { field: "Banco", title: "Banco" },
+                      { field: "Beneficiario", title: "Beneficiario" },
+                      { field: "TipoCuenta", title: "Tipo de Cuenta Bancaria" },
+                      {
+                        field: "TipoDocumento",
+                        title: "Tipo de Documento",
+                        lookup: { RUC: "RUC", DNI: "DNI" },
+                      },
+                      { field: "NumDoc", title: "Numero de Documento" },
+                      { field: "Cuenta", title: "Numero de Cuenta" },
+                      { field: "CCI", title: "CCI" },
+                    ],
+                  },
+                  {
+                    tipo: "tablaSimple",
+                    Title: "Contacto",
+                    KeyDato: "Contacto",
+                    columnas: [
+                      { field: "NombreContac", title: "Nombre del Contacto" },
+                      { field: "Area", title: "Area de trabajo" },
+                      { field: "Numero", title: "Telefono/Celular" },
+                      { field: "Email", title: "Email" },
+                    ],
                   },
                 ],
               },
             ],
           }}
-          Modo={"verEdicion"}
-          DarDato={DarDato}
-          DarDatoFunction={DarDatoFunction}
+          ModoEdicion={false}
+          Dato={Proveedor}
+          setDato={setProveedor}
+          key={"AF_ServicioEscogido"}
         />
       </div>
     </>
@@ -224,210 +337,11 @@ export default ServicioEscogido;
 
 export async function getServerSideProps(context) {
   //-------------------------------------------------------------------------------
-  const api_general = process.env.API_DOMAIN+"/api/general"
-  const Id = context.query.IdServicioEscogido;
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  let DataServicios = {};
-  try {
-    await client.connect();
-    let collection = client.db(dbName).collection("ServicioEscogido");
-    let result = await collection.findOne({ IdServicioEscogido: Id });
-    // DatosProveedor = JSON.stringify(result);
-    // result._id = JSON.stringify(result._id);
-    // DatosProveedor = result;
-    delete result["_id"];
-    DataServicios = result;
-  } catch (error) {
-    console.log("Error cliente Mongo 1 => " + error);
-  } finally {
-    client.close();
-  }
-  /**************************************************************************** */
-  let DataProductosTodos = [];
-  let ColumnasProductosTodos = [];
-  switch (DataServicios["TipoServicio"].toLowerCase()) {
-    case "hotel":
-      ColumnasProductosTodos = [
-        // { title: "ID Producto Hotel", field: "IdProductoHotel" },
-        { title: "tipoTarifa", field: "tipoTarifa" },
-        {
-          title: "TipoHabitacion",
-          field: "tipoHabitacion",
-          lookup: {
-            Simple: "Simple",
-            Doble: "Doble",
-            Mwfamiliar: "Mw familiar",
-            Triple: "Triple",
-            Familiar: "Familiar",
-            Suit: "Suit",
-            Semisuit: "Semisuit",
-          },
-        },
-        { title: "DescripHabitacion", field: "descripcionHabitacion" },
-        {
-          title: "Cama Adicional",
-          field: "camAdic",
-          type: "boolean",
-        },
-        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
-        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
-        { title: "IGV", field: "igv" },
-      ];
-      break;
-    case "restaurante":
-      ColumnasProductosTodos = [
-        { title: "Servicio", field: "servicio" },
-        { title: "Precio", field: "precio" },
-        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
-        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
-        { title: "Caracteristicas", field: "caracte" },
-      ];
-      break;
-    case "transporteterrestre":
-      ColumnasProductosTodos = [
-        { title: "Servicio", field: "servicio" },
-        { title: "Horario", field: "horario" },
-        { title: "Tipo de Vehiculo", field: "tipvehiculo" },
-        { title: "Precio Soles", field: "PrecioSoles" },
-      ];
-      break;
-    case "guia":
-      ColumnasProductosTodos = [
-        { title: "Direccion", field: "direccion" },
-        { title: "DNI", field: "dni" },
-        { title: "Idiomas", field: "idiomas" },
-        { title: "Gremio", field: "gremio" },
-        { title: "N° Carne", field: "carne" },
-        { title: "Fecha Expedicion", field: "fecExpedi", type: "date" },
-        { title: "Fecha Caducidad", field: "fecCaduc", type: "date" },
-      ];
-      break;
-    case "agencia":
-      ColumnasProductosTodos = [
-        { title: "Nombre del Servicio", field: "servicio" },
-        { title: "codigo del Servicio", field: "codServicio" },
-        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
-        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
-        { title: "Incluye", field: "incluye" },
-        { title: "Duracion", field: "duracion" },
-        { title: "Observacion", field: "observacion" },
-      ];
-      break;
-    case "transporteferroviario":
-      ColumnasProductosTodos = [
-        { title: "Ruta", field: "ruta" },
-        { title: "Hora Salida", field: "salida" },
-        { title: "Hora Llegada", field: "llegada" },
-        {
-          title: "Tipo de Tren",
-          field: "tipoTren",
-        },
-        {
-          title: "Precio Adulto Confi",
-          field: "precioAdultoConfi",
-          type: "numeric",
-        },
-        {
-          title: "Precio Niño Confi",
-          field: "precioNiñoConfi",
-          type: "numeric",
-        },
-        {
-          title: "Precio Guia Confi",
-          field: "precioGuiaConfi",
-          type: "numeric",
-        },
-        {
-          title: "Precio Adulto Publi",
-          field: "precioAdultoPubli",
-          type: "numeric",
-        },
-        {
-          title: "Precio Niño Publi",
-          field: "precioNiñoPubli",
-          type: "numeric",
-        },
-        {
-          title: "Precio Guia Publi",
-          field: "precioGuiaPubli",
-          type: "numeric",
-        },
-      ];
-      break;
-    case "otro":
-      ColumnasProductosTodos = [
-        { title: "Nombre del Servicio o Producto", field: "servicio" },
-        { title: "codigo del Servicio o Producto", field: "codServicio" },
-        { title: "Precio Confidencial", field: "precioConfi", type: "numeric" },
-        { title: "Precio Publicado", field: "precioPubli", type: "numeric" },
-      ];
-      break;
-  }
+  const api_general = process.env.API_DOMAIN + "/api/general";
 
-  client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
-  await client.connect();
-  let collectionName = "";
-
-  switch (DataServicios["TipoServicio"].toLowerCase()) {
-    case "hotel":
-      collectionName = "ProductoHoteles";
-      break;
-    case "restaurante":
-      collectionName = "ProductoRestaurantes";
-      break;
-    case "transporteterrestre":
-      collectionName = "ProductoTransportes";
-      break;
-    case "guia":
-      collectionName = "ProductoGuias";
-      break;
-    case "agencia":
-      collectionName = "ProductoAgencias";
-      break;
-    case "transporteferroviario":
-      collectionName = "ProductoTransFerroviario";
-      break;
-    case "otro":
-      collectionName = "ProductoOtros";
-      break;
-  }
-  let collection = client.db(dbName).collection(collectionName);
-  // await collection.find().toArray((err, result) => {
-  //   if (err) {
-  //     console.log(err);
-  //     throw err;
-  //   }
-  //   console.log("El de abajo es puto");
-  //   console.log(result);
-  //   DataProductosTodos = [...result];
-  //   console.log(DataProductosTodos);
-  //   client.close();
-  // });
-  let res = await collection.find().toArray();
-  res.map((ele) => {
-    delete ele["_id"];
-  });
-  DataProductosTodos = res;
-  // console.log("El de abajo es puto")
-  // console.log(DataProductosTodos)
-  //-------------------------------------------------------------------------------
   return {
     props: {
-      // DataReservas: result,
-      URI_IdReservaCotizacion: Id,
-      DataServicios: DataServicios,
-      DataProductosTodos: DataProductosTodos,
-      ColumnasProductosTodos: ColumnasProductosTodos,
-      api_general:api_general
+      URL_path: process.env.API_DOMAIN,
     },
   };
 }

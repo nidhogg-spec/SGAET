@@ -22,7 +22,8 @@ export default async (req, res) => {
         //------------------------------------------------------
         default:
           console.log("Accion incorrecta - 101");
-          res.redirect("/500");
+          // res.redirect("/500");
+          res.status(500).json({ error: "Algun error" });
           break;
       }
       break;
@@ -31,42 +32,46 @@ export default async (req, res) => {
         // --------------------Cambio dolar---------------------
         //------------------------------------------------------
         default:
-          res.redirect("/500");
+          // res.redirect("/500");
+          res.status(500).json({ error: "Algun error" });
           break;
       }
       break;
 
     default:
       console.log("Accion incorrecta - 102");
-      res.redirect("/500");
+      // res.redirect("/500");
+      res.status(500).json({ error: "Algun error" });
       break;
   }
 };
 
 const func_ListaCotizacion = async (req, res) => {
-  const client = await MongoClient.connect(url, { 
-    useNewUrlParser: true, 
+  const client = await MongoClient.connect(url, {
+    useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  
+
   try {
     await client.connect();
     // assert.equal(err, null); // Preguntar
     let dbo = client.db(dbName);
     let collection = dbo.collection("ReservaCotizacion");
     // collection.findOne(idServicio)
-    let result = await collection.find(
-      { $or: [{ Estado: 0 }, { Estado: null }, { Estado: undefined }] },
-      {
-        projection: {
-          _id: 0,
-          IdReservaCotizacion: 1,
-          NombreGrupo: 1,
-          CodGrupo: 1,
-          FechaIN: 1,
-        },
-      }
-    ).toArray();
+    let result = await collection
+      .find(
+        { $or: [{ Estado: 0 }, { Estado: null }, { Estado: undefined }] },
+        {
+          projection: {
+            _id: 0,
+            IdReservaCotizacion: 1,
+            NombreGrupo: 1,
+            CodGrupo: 1,
+            FechaIN: 1,
+          },
+        }
+      )
+      .toArray();
 
     // let result_formateado = []
     // result.map(dt =>{
@@ -82,13 +87,14 @@ const func_ListaCotizacion = async (req, res) => {
     client.close();
     // result.toArray((err, result) => {
 
-    //     
+    //
 
     //   });
   } catch (error) {
     console.log("Error - 103");
     console.log(error);
-    res.redirect("/500").json({ error: "Problema al obtener los datos" });
+    // res.redirect("/500");
+    res.status(500).json({ error: "Algun error"});
   }
 };
 const func_ListaReserva = async (req, res) => {
@@ -135,6 +141,7 @@ const func_ListaReserva = async (req, res) => {
   } catch (error) {
     console.log("Error - 104");
     console.log(error);
-    res.redirect("/500").json({ error: "Problema al obtener los datos" });
+    // res.redirect("/500");
+    res.status(500).json({ error: "Algun error"});
   }
 };
