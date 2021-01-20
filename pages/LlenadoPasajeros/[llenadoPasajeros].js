@@ -1,14 +1,18 @@
 import { MongoClient } from "mongodb";
 import {useState,useEffect} from 'react'
+import {useRouter} from 'next/router'
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario"
 
 export default function LlenadoPasajeros({NumPasajeros}){
 
     const [Datos,setDatos] = useState({})
-    
+    const router = useRouter();
+    const  {llenadoPasajeros}  = router.query;
     // const [datoPadre,setDatoPadre] = useState([])
     // const [datoHijo,setDatoHijo]=useState(null)
-    
+    // useEffect(()=>{
+    //     console.log(llenadoPasajeros)
+    // },[])
     // useEffect(()=>{
 
     //     let tempDatoPadre = datoPadre
@@ -55,7 +59,7 @@ export default function LlenadoPasajeros({NumPasajeros}){
             method:"POST",
             headers:{"Content-Type": "application/json"},
             body: JSON.stringify({
-                idProducto: "RC00004",
+                idProducto: llenadoPasajeros,
                 data: {listaPasajeros},
                 accion: "update",
             }),
@@ -67,6 +71,7 @@ export default function LlenadoPasajeros({NumPasajeros}){
     }
 
     let item = new Array(parseInt(NumPasajeros)).fill(null)
+    
     
     return(
         <div>
@@ -130,11 +135,11 @@ export default function LlenadoPasajeros({NumPasajeros}){
         </div>
     )
 }
-export async function getServerSideProps(){
+export async function getServerSideProps(context){
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
 
-    const Idurl = "RC00001"
+    const Idurl = context.query.llenadoPasajeros
     let NumPasajeros = ""
     let client = new MongoClient(url, {
       useNewUrlParser: true,

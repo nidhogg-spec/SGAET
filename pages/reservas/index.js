@@ -41,7 +41,6 @@ const Index=({
               router.push(`/reservas/reserva/${rowData.IdReservaCotizacion}`)
             },
           },
-          
         ]}
         options={{
           actionsColumnIndex: -1,
