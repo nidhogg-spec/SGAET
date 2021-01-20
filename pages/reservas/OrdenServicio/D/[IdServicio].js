@@ -1,35 +1,22 @@
-import CampoTexto from '@/components/Formulario/CampoTexto/CampoTexto'
-import CampoGranTexto from '@/components/Formulario/CampoGranTexto/CampoGranTexto'
-import MaterialTable from "material-table";
-import Router from 'next/router'
+import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario"
 import { useEffect, useState } from 'react'
 import {useRouter} from 'next/router'
 import { MongoClient } from "mongodb";
+import {Auth, withSSRContext} from 'aws-amplify'
 
-export default function OrdenServicioTipoD ({Datos,DatosOrdenD}){
+export default function OrdenServicioTipoD ({DatosOrdenD}){
 
-    let DatosAcualizado = {}
-
-    const router = useRouter()
-    const {IdServicio} = router.query
-
-    function setData (key,data){
-      DatosAcualizado[key] = data
-    }
+    console.log(DatosOrdenD)
     
-    const [dataActualizada, setDataActualizada] = useState({})
-    const [datosTabla, setDatosTabla] = useState([{
+    const router = useRouter()
+    //const {IdServicio} = router.query
 
-        NomPasa: DatosOrdenD.NomPasa, 
-        NumPasa: DatosOrdenD.NumPasa,
-        DetalleSer: DatosOrdenD.DetalleSer,
-        Observaciones: DatosOrdenD.Observaciones,
-
-    }])
-
+    // function setData (key,data){
+    //   DatosAcualizado[key] = data
+    // }
+    
+    const [dataActualizada, setDataActualizada] = useState(DatosOrdenD)
     const [modoEdicion, setModoEdicion] = useState(false)
-    const [darDato,setDarDato]  = useState(false)
-
     /*Crear en la base de Datos del Tipo de orden que pertenezca juntando 
     DatosReservaCotizacion y ServicioSeleccionado*/
     useEffect(()=>{
@@ -37,7 +24,7 @@ export default function OrdenServicioTipoD ({Datos,DatosOrdenD}){
           method:"POST",
           headers:{"Content-Type": "application/json"},
           body: JSON.stringify({
-          data: Datos,
+          data: dataActualizada,
           accion: "create",
           }),
       })
@@ -47,289 +34,221 @@ export default function OrdenServicioTipoD ({Datos,DatosOrdenD}){
       })
     },[])
     /*Setea dar dato a los campo texto*/
-    useEffect(()=>{
-        if (darDato == true) {
-            setDataActualizada(DatosAcualizado)
-            setDarDato(false)
-        }
-    },[darDato])
+    // useEffect(()=>{
+    //     if (darDato == true) {
+    //         setDataActualizada(DatosAcualizado)
+    //         setDarDato(false)
+    //     }
+    // },[darDato])
     /*Actualiza losa datos quee se setean al guardar con el lapiz*/
-    useEffect(async () =>{
+  // useEffect(async () =>{
+  //   if (Object.keys(dataActualizada).length===0) {
+  //         console.log("Vacio")
+  //         // console.log(dataActualizada)
+  //     }else{
+  //         fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioD`,{
+  //             method:"POST",
+  //             headers:{"Content-Type": "application/json"},
+  //             body: JSON.stringify({
+  //             idProducto: DatosOrdenD.IdOrdenServTipD,
+  //             data: dataActualizada,
+  //             accion: "update",
+  //             }),
+  //         })
+  //         .then(r=>r.json())
+  //         .then(data=>{
+  //             alert(data.message);
+  //         })
+  //     }
+  // },[dataActualizada])
+    function SaveOrdenServicio(){
+      console.log(dataActualizada)
       if (Object.keys(dataActualizada).length===0) {
-            console.log("Vacio")
-            // console.log(dataActualizada)
-        }else{
-            fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioD`,{
-                method:"POST",
-                headers:{"Content-Type": "application/json"},
-                body: JSON.stringify({
-                idProducto: DatosOrdenD.IdOrdenServTipD,
-                data: dataActualizada,
-                accion: "update",
-                }),
-            })
-            .then(r=>r.json())
-            .then(data=>{
-                alert(data.message);
-            })
-        }
-  },[dataActualizada])
-
-
-    const Columnas = [
-        { title: "ID", field: "IdPasajero", hidden: true},
-        { title: "Nombre Pasajero", field: "NomPasa"},
-        { title: "Numero de Pasajeros", field: "NumPasa", type:"numeric"},
-        { title: "Detalles de Servicio", field: "DetalleSer"},
-        { title: "Observaciones", field: "Observaciones"},
-    ]
-   
-    const showtitulos = ["Orden"]
-
-    const showOrden = [
-        {
-            Title: "Codigo de Grupo",
-            ModoEdicion: modoEdicion,
-            Dato: DatosOrdenD.CodGrupo,
-            DevolverDatoFunct: setData,
-            KeyDato: "CodGrupo",// esto es igual al campo
-            DarDato: darDato,
-            Reiniciar: false
-        },
-        {
-            Title: "Codigo de Servicio",
-            ModoEdicion: modoEdicion,
-            Dato: DatosOrdenD.CodServicio,
-            DevolverDatoFunct: setData,
-            KeyDato: "CodServicio",// esto es igual al campo
-            DarDato: darDato,
-            Reiniciar: false
-        },
-        {
-            Title: "Tipo de Orden",
-            ModoEdicion: modoEdicion,
-            Dato: DatosOrdenD.OrdenServicio.TipoOrden,
-            DevolverDatoFunct: setData,
-            KeyDato: "TipOrden",// esto es igual al campo
-            DarDato: darDato,
-            Reiniciar: false
-        },
-        {
-            Title: "Direccion",
-            ModoEdicion: modoEdicion,
-            Dato: DatosOrdenD.Direccion,
-            // Dato: Datos.Nombre, //cambiar al conocer los datos que vienen.
-            DevolverDatoFunct: setData,
-            KeyDato: "Direccion",// esto es igual al campo
-            DarDato: darDato,
-            Reiniciar: false
-        },
-        {
-            Title: "Telefono",
-            ModoEdicion: modoEdicion,
-            Dato: DatosOrdenD.Telefono,
-            // Dato: Datos.Nombre, //cambiar al conocer los datos que vienen.
-            DevolverDatoFunct: setData,
-            KeyDato: "Telefono",// esto es igual al campo
-            DarDato: darDato,
-            Reiniciar: false
-        },
-        {
-            Title: "Idioma",
-            ModoEdicion: modoEdicion,
-            Dato: DatosOrdenD.Idioma,
-            // Dato: Datos.Nombre, //cambiar al conocer los datos que vienen.
-            DevolverDatoFunct: setData,
-            KeyDato: "Idioma",// esto es igual al campo
-            DarDato: darDato,
-            Reiniciar: false
-        },
-    ]
-
-    return(
-        <div>
-            <img
-                src="/resources/save-black-18dp.svg"
-                onClick={() => {
-                    setDarDato(true);
-                    setModoEdicion(false)
-                    // ReiniciarData()
-                }}
-            />
-                <img
-                src="/resources/edit-black-18dp.svg"
-                onClick={(event) => {
-                    if (modoEdicion == false) {
-                    event.target.src = "/resources/close-black-18dp.svg";
-                    setModoEdicion(true);
-                    } else {
-                    event.target.src = "/resources/edit-black-18dp.svg";
-                    setModoEdicion(false);
-                    }
-                }}
-            />
-            <div>
-                <h1>{showtitulos[0]}</h1>
-                {showOrden.map(prop =>
-                    // console.log(prop)
-                    <CampoTexto
-                        Title= {prop.Title}
-                        ModoEdicion={prop.ModoEdicion}
-                        Dato={prop.Dato}
-                        DevolverDatoFunct={prop.DevolverDatoFunct}
-                        DarDato={prop.DarDato}
-                        KeyDato={prop.KeyDato}
-                        Reiniciar={prop.Reiniciar}
-                    />
-                )}
-            </div>
-            <div>
-            </div>
-            <MaterialTable
-                title= "Datos Pasajero"
-                data= {datosTabla}
-                columns= {Columnas}
-                editable={{
-                    onRowUpdate: (newData, oldData) =>
-                      new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          const dataUpdate = [...datosTabla];
-                          const index = oldData.tableData.id;
-                          dataUpdate[index] = newData;
-                          setDatosTabla([...dataUpdate]);
-  
-                          fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioD`,{
-                            method:"POST",
-                            headers:{"Content-Type": "application/json"},
-                            body: JSON.stringify({
-                              idProducto: DatosOrdenC.IdOrdenServTipC,
-                              data: dataUpdate[index],
-                              accion: "update",
-                            }),
-                          })
-                          .then(r=>r.json())
-                          .then(data=>{
-                            alert(data.message);
-                          })
-                          
-                          resolve();
-                        }, 1000)
-                      }),
-                  }}
-                  options={{
-                    actionsColumnIndex: -1,
-                  }}
-            />
-        </div>
+          console.log("Vacio")
+      }else{
+        fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioD`,{
+            method:"POST",
+            headers:{"Content-Type": "application/json"},
+            body: JSON.stringify({
+            idProducto: DatosOrdenD.IdOrdenServTipD,
+            data: dataActualizada,
+            accion: "update",
+            }),
+        })
+        .then(r=>r.json())
+        .then(data=>{
+            alert(data.message);
+        })
+      }
+    }
+  return(
+      <div>
+        <img
+          src="/resources/save-black-18dp.svg"
+          onClick={() => {
+              setModoEdicion(false)
+              SaveOrdenServicio()
+          }}
+        />
+        <img
+          src="/resources/edit-black-18dp.svg"
+          onClick={(event) => {
+              if (modoEdicion == false) {
+              event.target.src = "/resources/close-black-18dp.svg";
+              setModoEdicion(true);
+              } else {
+              event.target.src = "/resources/edit-black-18dp.svg";
+              setModoEdicion(false);
+              }
+          }}
+        />
+        <h1>Orden de Servicio - Restaurante</h1>
+        <AutoFormulario_v2
+          Formulario={{
+          title: "Lista de Pasajeros",
+          secciones: [
+              {
+              subTitle: "",
+              componentes: [
+                  {
+                    tipo: "texto",
+                    Title: "Codigo Orden de Servicio",
+                    KeyDato: "CodOrdenServ"
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Para: ",
+                    KeyDato:  "empresa",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Direccion: ",
+                    KeyDato:  "direccion",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Telefono: ",
+                    KeyDato:  "telefono",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "N° Paxs: ",
+                    KeyDato:  "numPax",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Idioma: ",
+                    KeyDato:  "idioma",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "A Nombre de PAX: ",
+                    KeyDato:  "pax",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Detalle de Servicio: ",
+                    KeyDato:  "NombreServicio",
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Fecha: ",
+                    KeyDato:  "FechaReserva",
+                  },  
+                  {
+                    tipo: "granTexto",
+                    Title: "Observaciones: ",
+                    KeyDato:  "observaciones",
+                  },
+                ],
+              },
+          ],
+          }}
+          ModoEdicion={modoEdicion}
+          Dato={dataActualizada}
+          setDato={setDataActualizada}
+          key={'AF_ReserCoti'}
+        />
+      </div>
     )
 }
-export async function getServerSideProps(context){
+export async function getServerSideProps({params,req,res}){
 
-    const url = process.env.MONGODB_URI;
-    const dbName = process.env.MONGODB_DB;
+  // let IdServicioEscogido = context.query.IdServicio
+  const { Auth } = withSSRContext({ req })
 
-    let DatosServEscogido=[]
-    let DatosReservCotizacion=[]
+  const url = process.env.MONGODB_URI;
+  const dbName = process.env.MONGODB_DB;
 
-    let Datos = {}
-    let DatosOrdenD = {}
+  let IdReservaCotizacion = ""
+  let idServicio = params.IdServicio
 
-    let IdServicioEscogido = context.query.IdServicio
+  let Datos = {}
+  let DatosOrdenD = {}
+  let numPax = 0
 
-    // console.log(idClienteFront)
-    
-    let client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+  let client = new MongoClient(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 
-    /* Consulta para extraer los datos de Clientes */
-    try {
-      let client = new MongoClient(url, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      client = new MongoClient(url, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      await client.connect();
-      const dbo = client.db(dbName);
-      const collection = dbo.collection("ServicioEscogido");
-
-      let result = await collection.find({}).project({
-        "_id":0, 
-      }).toArray()
-      result.map(x=>{
-          if(x.IdServicioEscogido==IdServicioEscogido){
-              DatosServEscogido=x
-          }
-      })
-    } catch (error) {
-      console.log("error - " + error);
-    } 
-    finally{
-      client.close();
-    }
-    try {
-        let client = new MongoClient(url, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        });
-        client = new MongoClient(url, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        });
-        await client.connect();
-        const dbo = client.db(dbName);
-        const collection = dbo.collection("ReservaCotizacion");
-  
-        let result = await collection.find({}).project({
-          "_id":0, 
-        }).toArray()
-        result.map(x=>{
-            if(x.IdReservaCotizacion==DatosServEscogido.IdReservaCotizacion){
-                DatosReservCotizacion=x
-            }
-        })
-      } catch (error) {
-        console.log("error - " + error);
-      } 
-      finally{
-        client.close();
+  try {
+    // const user = await Auth.currentAuthenticatedUser()
+    // console.log(user)
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
+  try {
+    await client.connect();
+    const dbo = client.db(dbName);
+    const collection = dbo.collection("ServicioEscogido");
+    let result = await collection.find({}).project({
+      "_id":0,
+      "PrecioConfiTotal":0,
+      "PrecioConfiUnitario":0,
+      "PrecioCotiTotal":0,
+      "PrecioCotiUnitario":0,
+      "PrecioPublicado":0,
+    }).toArray()
+    result.map((x)=>{
+      if (x.IdServicioEscogido==idServicio) {
+        DatosOrdenD=x
+        IdReservaCotizacion=x.IdReservaCotizacion
       }
-      try {
-        let client = new MongoClient(url, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        });
-        client = new MongoClient(url, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        });
-        await client.connect();
-        const dbo = client.db(dbName);
-        const collection = dbo.collection("DatoOrdenTipoD");
-
-        let result = await collection.find({}).project({
-          "_id":0, 
-        }).toArray()
-        result.map(x=>{
-            if(x.IdServicioEscogido==IdServicioEscogido){
-                DatosOrdenD=x
-            }
-        })
-      } catch (error) {
-        console.log("error - " + error);
-      } 
-      finally{
-        client.close();
+    })
+  } catch (error) {
+    console.log(error)
+  }
+  console.log(DatosOrdenD)
+  try {
+    await client.connect();
+    const dbo = client.db(dbName);
+    const collection = dbo.collection("ReservaCotizacion");
+    let result = await collection.find({}).project({
+      "_id":0,
+      "Incluye":0,
+      "Itinerario":0,
+      "NoIncluye":0,
+      "PrecioConfiTotal":0,
+      "PrecioConfiUnitario":0,
+      "PrecioCotiTotal":0,
+      "PrecioCotiUnitario":0,
+      "PrecioPublicado":0,
+      "RecomendacionesLlevar":0,
+      "tableData":0,
+    }).toArray()
+    result.map((x)=>{
+      if (x.IdReservaCotizacion==IdReservaCotizacion) {
+        Datos=x
       }
-
-      Datos= Object.assign(DatosReservCotizacion,DatosServEscogido)
-  
-    return {
-        props:{
-            Datos:Datos, DatosOrdenD:DatosOrdenD
-    }}
+    })
+  } catch (error) {
+    console.log(error)
+  }
+  DatosOrdenD = Object.assign(DatosOrdenD,Datos)
+  return {
+      props:{
+          DatosOrdenD:DatosOrdenD
+  }}
 }
