@@ -29,7 +29,7 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
         { title: "Cuenta", field: "Cuenta"},
         { title: "Total", field: "Total", type: "numeric"},
         { title: "Comision", field: "Comision", editable: 'never'},
-        { title: "Total Neto", field: "TotalNeto", editable: 'never'},
+        { title: "Total Neto", field: "SumaTotalNeto", editable: 'never'},
         { title: "Adelanto", field: "Adelanto", type: "numeric"},
         { title: "Adelanto Neto", field: "AdelantoNeto", editable: 'never'},
         { title: "Saldo", field: "Saldo", editable: 'never'}
@@ -95,11 +95,6 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
     }
     return(
         <div>
-          <BotonAñadir
-            Accion={()=>{
-              PasarSuma()
-            }}
-          />
           <form>
             <select 
               onChange= {e => setFechaSeleccionado(e.target.value)}>
@@ -118,13 +113,32 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
               <option value="12">Diciembre</option>
             </select>
           </form>
-          
             Este es Ingreso
             <MaterialTable
                 title="Ingresos"
                 data={datoTablaIngreso}
                 columns={ColumnasIngresos}
                 editable={{
+                  onRowAdd: newData =>
+                  new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                      fetch(`http://localhost:3000/api/finanzas/ingresos`,{
+                          method:"POST",
+                          headers:{"Content-Type": "application/json"},
+                          body: JSON.stringify({
+                            data: newData,
+                            accion: "create",
+                          }),
+                        })
+                        .then(r=>r.json())
+                        .then(data=>{
+                          alert(data.message);
+                        })
+                      setData([...data, newData]);
+                      
+                      resolve();
+                    }, 1000)
+                  }),
                   onRowUpdate: (newData, oldData) =>
                     new Promise((resolve, reject) => {
                       setTimeout(() => {
@@ -179,105 +193,71 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
               data={datoTablaEgreso}
               columns={ColumnasEgresosOperativos}
               editable={{
-              onRowUpdate: (newData, oldData) =>
+                onRowAdd: newData =>
                 new Promise((resolve, reject) => {
                   setTimeout(() => {
-                    
-                    let totalDolares= (newData.Soles/newData.TasaCambio)+newData.Dolares
-                    let saldoActual= adelantoNeto-totalDolares
-                    let utilOperador = 50*nPasajeros
-                    let y = {}
-                    let x = {}
-                    console.log(totalDolares)
-
-                    let calc = {
-                      TotalDolares: totalDolares.toFixed(2),
-                      SaldoActual: saldoActual.toFixed(2),
-                      UtilOpera: utilOperador.toFixed(2),
-                      // SumaTotalDolares: sumaTotalDolares,
-                      // SumaAdelantoNeto: sumaAdelantoNeto
-                    } 
-                    const dataUpdate = [...datoTablaEgreso];
-                    const index = oldData.tableData.id;
-
-                    y = Object.assign(newData, calc)
-                    
-                    dataUpdate[index] = y;
-
-                    setDatoTablaEgreso([...dataUpdate]);
-                    
                     fetch(`http://localhost:3000/api/finanzas/egresos`,{
-                      method:"POST",
-                      headers:{"Content-Type": "application/json"},
-                      body: JSON.stringify({
-                        idProducto: dataUpdate[index].IdEgreso,
-                        data: dataUpdate[index],
-                        accion: "update",
-                      }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
-                      alert(data.message);
-                    })
+                        method:"POST",
+                        headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          data: newData,
+                          accion: "create",
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                        alert(data.message);
+                      })
+                    setData([...data, newData]);
                     
                     resolve();
                   }, 1000)
                 }),
-              }}
-              options={{
-                actionsColumnIndex: -1,
-              }}
-            />
-            <MaterialTable
-              title="Egresos Administrativos"
-              data={datoTablaEgresoAdministrativo}
-              columns={ColumnasEgresosOperativos}
-              editable={{
-              onRowUpdate: (newData, oldData) =>
-                new Promise((resolve, reject) => {
-                  setTimeout(() => {
-                    
-                    let totalDolares= (newData.Soles/newData.TasaCambio)+newData.Dolares
-                    let saldoActual= adelantoNeto-totalDolares
-                    let utilOperador = 50*nPasajeros
-                    let y = {}
-                    let x = {}
-                    console.log(totalDolares)
+                onRowUpdate: (newData, oldData) =>
+                  new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                      
+                      let totalDolares= (newData.Soles/newData.TasaCambio)+newData.Dolares
+                      let saldoActual= adelantoNeto-totalDolares
+                      let utilOperador = 50*nPasajeros
+                      let y = {}
+                      let x = {}
+                      console.log(totalDolares)
 
-                    let calc = {
-                      TotalDolares: totalDolares.toFixed(2),
-                      SaldoActual: saldoActual.toFixed(2),
-                      UtilOpera: utilOperador.toFixed(2),
-                      // SumaTotalDolares: sumaTotalDolares,
-                      // SumaAdelantoNeto: sumaAdelantoNeto
-                    } 
-                    const dataUpdate = [...datoTablaEgreso];
-                    const index = oldData.tableData.id;
+                      let calc = {
+                        TotalDolares: totalDolares.toFixed(2),
+                        SaldoActual: saldoActual.toFixed(2),
+                        UtilOpera: utilOperador.toFixed(2),
+                        // SumaTotalDolares: sumaTotalDolares,
+                        // SumaAdelantoNeto: sumaAdelantoNeto
+                      } 
+                      const dataUpdate = [...datoTablaEgreso];
+                      const index = oldData.tableData.id;
 
-                    y = Object.assign(newData, calc)
-                    
-                    dataUpdate[index] = y;
+                      y = Object.assign(newData, calc)
+                      
+                      dataUpdate[index] = y;
 
-                    setDatoTablaEgreso([...dataUpdate]);
-                    
-                    fetch(`http://localhost:3000/api/finanzas/egresos`,{
-                      method:"POST",
-                      headers:{"Content-Type": "application/json"},
-                      body: JSON.stringify({
-                        idProducto: dataUpdate[index].IdEgreso,
-                        data: dataUpdate[index],
-                        accion: "update",
-                      }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
-                      alert(data.message);
-                    })
-                    
-                    resolve();
-                  }, 1000)
-                }),
-              }}           
+                      setDatoTablaEgreso([...dataUpdate]);
+                      
+                      fetch(`http://localhost:3000/api/finanzas/egresos`,{
+                        method:"POST",
+                        headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          idProducto: dataUpdate[index].IdEgreso,
+                          data: dataUpdate[index],
+                          accion: "update",
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                        alert(data.message);
+                      })
+                      
+                      resolve();
+                    }, 1000)
+                  }),
+                }}
               options={{
                 actionsColumnIndex: -1,
               }}
