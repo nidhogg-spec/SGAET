@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 // import styles from '..'
 
 //Componentes
-import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario"
+import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import Loader from "@/components/Loading/Loading";
 import MaterialTable from "material-table";
 
@@ -75,7 +75,27 @@ const ReservaCotizacion = ({ APIPatch }) => {
           setDarDato(true);
         }}
       />
-     
+      <button
+        onClick={async (event) => {
+          setLoading(true);
+          let Binary_pdf = await fetch(
+            APIPatch + "/api/reserva/Voucher/GetVocher/" + IdReservaCotizacion
+          )
+            .then((response) => {
+              return response.text();
+            })
+            .then((data) => {
+              let link = document.createElement("a");
+              link.download = "file.pdf";
+              link.href = "data:application/octet-stream;base64," + data;
+              link.click();
+            });
+
+          setLoading(false);
+        }}
+      >
+        Descargar Voucher
+      </button>
       <select value={Estado}>
         <option value={0}>Cotizacion</option>
         <option value={1}>Reserva sin confirmar</option>
@@ -144,7 +164,7 @@ const ReservaCotizacion = ({ APIPatch }) => {
             ModoEdicion={true}
             Dato={ReservaCotizacion}
             setDato={setReservaCotizacion}
-            key={'AF_ReserCoti'}
+            key={"AF_ReserCoti"}
           />
         </div>
         <div>
@@ -201,16 +221,16 @@ const ReservaCotizacion = ({ APIPatch }) => {
             ModoEdicion={true}
             Dato={ClienteCotizacion}
             setDato={setClienteCotizacion}
-            key={'AF_ClienteCotizacion'}
+            key={"AF_ClienteCotizacion"}
           />
         </div>
         <div>
           <TablaServicioCotizacion
             Title="Servicios/Productos de la reserva"
             setCotiServicio={setServiciosEscojidos}
-            CotiServicio= {ServiciosEscojidos || []}
-            ListaServiciosProductos= {AllServiciosProductos || []}
-            FechaIN={ReservaCotizacion['FechaIN']}
+            CotiServicio={ServiciosEscojidos || []}
+            ListaServiciosProductos={AllServiciosProductos || []}
+            FechaIN={ReservaCotizacion["FechaIN"]}
           />
         </div>
       </div>
@@ -233,7 +253,7 @@ export default ReservaCotizacion;
 const TablaServicioCotizacion = (
   props = {
     Title: "Nombre del Proveedor",
-    setCotiServicio:()=>{},
+    setCotiServicio: () => {},
     CotiServicio: [],
     ListaServiciosProductos: [],
     FechaIN,
@@ -247,18 +267,18 @@ const TablaServicioCotizacion = (
   const [CurrencyTotal, setCurrencyTotal] = useState("Dolar");
   const [MontoTotal, setMontoTotal] = useState(0);
   const [CambioDolar, setCambioDolar] = useState(0);
-  const NotAgain = useRef(true)
+  const NotAgain = useRef(true);
 
   //---------------------------------------------------------------------------------
 
   //------------------------------------Hooks-----------------------------------------
   useEffect(() => {
-    if(NotAgain.current){
+    if (NotAgain.current) {
       NotAgain.current = false;
       return;
     }
     let temp_MontoTotal = 0;
-    if(props.CotiServicio != undefined){
+    if (props.CotiServicio != undefined) {
       switch (CurrencyTotal) {
         case "Dolar":
           props.CotiServicio.map((uni_CotiServi) => {
@@ -288,7 +308,7 @@ const TablaServicioCotizacion = (
           break;
       }
     }
-    
+
     NotAgain.current = true;
     setMontoTotal(temp_MontoTotal);
     Actulizar_fechas();
@@ -315,25 +335,25 @@ const TablaServicioCotizacion = (
   useEffect(() => {
     Actulizar_fechas();
   }, [props.FechaIN]);
-  const Actulizar_fechas=()=>{
+  const Actulizar_fechas = () => {
     const fecha_inicio = new Date(props.FechaIN);
     let temp_CotiServicio = [...props.CotiServicio];
     temp_CotiServicio.map((item) => {
       let temp_date = new Date(fecha_inicio);
       if (item["Dia"]) {
-        let dt = temp_date.getDate()+parseInt(item["Dia"])
-        temp_date.setDate(dt)
+        let dt = temp_date.getDate() + parseInt(item["Dia"]);
+        temp_date.setDate(dt);
         item["FechaReserva"] = temp_date.toLocaleDateString();
       } else {
-        let dt = temp_date.getDate()+1
-        temp_date.setDate(dt)
+        let dt = temp_date.getDate() + 1;
+        temp_date.setDate(dt);
         item["FechaReserva"] = temp_date.toLocaleDateString();
       }
       console.log(item["FechaReserva"]);
       props.setCotiServicio(temp_CotiServicio);
       // item['FechaReserva']= item['FechaReserva'].toString()
     });
-  }
+  };
   //---------------------------------------------------------------------------------
 
   return (
