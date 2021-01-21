@@ -134,7 +134,7 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
                         .then(data=>{
                           alert(data.message);
                         })
-                      setData([...data, newData]);
+                      setDatoTablaIngreso([...datoTablaIngreso, newData]);
                       
                       resolve();
                     }, 1000)
