@@ -28,7 +28,7 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
         { title: "Fecha Entrega", field: "FecEntrega", type: "date"},
         { title: "Cuenta", field: "Cuenta"},
         { title: "Total", field: "Total", type: "numeric"},
-        { title: "Comision", field: "Comision", editable: 'never'},
+        { title: "Comision", field: "Comision"},
         { title: "Total Neto", field: "SumaTotalNeto", editable: 'never'},
         { title: "Adelanto", field: "Adelanto", type: "numeric"},
         { title: "Adelanto Neto", field: "AdelantoNeto", editable: 'never'},
@@ -134,7 +134,7 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
                         .then(data=>{
                           alert(data.message);
                         })
-                      setData([...data, newData]);
+                      setDatoTablaIngreso([...datoTablaIngreso, newData]);
                       
                       resolve();
                     }, 1000)
@@ -208,7 +208,7 @@ export default function Ingresos({DatosIngreso, DatosEgreso, Reportes}){
                       .then(data=>{
                         alert(data.message);
                       })
-                    setData([...data, newData]);
+                    setDatoTablaEgreso([...datoTablaEgreso, newData]);
                     
                     resolve();
                   }, 1000)

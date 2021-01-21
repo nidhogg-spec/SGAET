@@ -102,13 +102,13 @@ export default function OrdenServicioTipoD ({DatosOrdenD}){
               }
           }}
         />
-        <h1>Orden de Servicio - Restaurante</h1>
+        <h1></h1>
         <AutoFormulario_v2
           Formulario={{
           title: "Lista de Pasajeros",
           secciones: [
               {
-              subTitle: "",
+              subTitle: "ORDEN DE SERVICIO D - RESTAURANTE",
               componentes: [
                   {
                     tipo: "texto",

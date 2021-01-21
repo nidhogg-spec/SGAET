@@ -57,9 +57,10 @@ export default function OrdenServicioTipoC ({Datos,DatosOrdenA}){
 
   const Columnas = [
     { title: "ID", field: "IdCliente", hidden: true},
-    { title: "Nombres Apellidos", field: "Nombre"},
+    { title: "Nombre", field: "Nombre"},
     { title: "Apellido", field: "Apellido"},
-    { title: "Hotel Cusco", field: "HotelCusco"},
+    { title: "Hotel", field: "Hotel"},
+    { title: "Ciudad", field: "Ciudad"},
     { title: "Tren Ida", field: "TrenIda"},
     { title: "Tren Retorno", field: "TrenRetor"},
     { title: "Hotel Mapi", field: "HotelMapi"},
@@ -92,10 +93,10 @@ export default function OrdenServicioTipoC ({Datos,DatosOrdenA}){
         />
         <AutoFormulario_v2
         Formulario={{
-        title: "Lista de Pasajeros",
+        title: "Orden de Servicio A Tours",
         secciones: [
             {
-            subTitle: "ORDEN DE SERVICIO A - TOURS(Camino Inca 2D/1N y Machu Picchu)",
+            subTitle: "ORDEN DE SERVICIO A - TOURS",
             componentes: [
               {
                 tipo: "texto",
@@ -189,7 +190,7 @@ export default function OrdenServicioTipoC ({Datos,DatosOrdenA}){
         ModoEdicion={modoEdicion}
         Dato={dataActualizada}
         setDato={setDataActualizada}
-        key={'AF_ReserCoti'}
+        key={'OA_Tours'}
       />
       <MaterialTable
         title= "Datos Transporte"
