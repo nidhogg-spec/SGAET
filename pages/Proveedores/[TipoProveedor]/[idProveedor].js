@@ -597,8 +597,6 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
                   delete temp_DataBase['precioConfi']
                   delete temp_DataBase['precioCoti']
                   delete temp_DataBase['tableData']
-                  console.log(temp_newData)
-                  console.log(temp_DataBase)
                   if(!deepEqual(temp_newData,temp_DataBase)){
                     setDatosEditables([...datosEditables, newData]);
                     setinitialFormData({});
