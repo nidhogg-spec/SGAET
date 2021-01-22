@@ -4,10 +4,8 @@ import {useRouter} from 'next/router'
 import { MongoClient } from "mongodb";
 import {Auth, withSSRContext} from 'aws-amplify'
 
-export default function OrdenServicioTipoD ({DatosOrdenD}){
+export default function OrdenServicioTipoD ({DatosOrdenE}){
 
-    console.log(DatosOrdenD)
-    
     const router = useRouter()
     //const {IdServicio} = router.query
 
@@ -15,24 +13,26 @@ export default function OrdenServicioTipoD ({DatosOrdenD}){
     //   DatosAcualizado[key] = data
     // }
     
-    const [dataActualizada, setDataActualizada] = useState(DatosOrdenD)
+    const [dataActualizada, setDataActualizada] = useState(DatosOrdenE)
     const [modoEdicion, setModoEdicion] = useState(false)
     /*Crear en la base de Datos del Tipo de orden que pertenezca juntando 
     DatosReservaCotizacion y ServicioSeleccionado*/
-    useEffect(()=>{
-      fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioD`,{
-          method:"POST",
-          headers:{"Content-Type": "application/json"},
-          body: JSON.stringify({
-          data: dataActualizada,
-          accion: "create",
-          }),
-      })
-      .then(r=>r.json())
-      .then(data=>{
-          alert(data.message);
-      })
-    },[])
+
+    // useEffect(()=>{
+    //   fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioE`,{
+    //       method:"POST",
+    //       headers:{"Content-Type": "application/json"},
+    //       body: JSON.stringify({
+    //       data: dataActualizada,
+    //       accion: "create",
+    //       }),
+    //   })
+    //   .then(r=>r.json())
+    //   .then(data=>{
+    //       alert(data.message);
+    //   })
+    // },[])
+
     /*Setea dar dato a los campo texto*/
     // useEffect(()=>{
     //     if (darDato == true) {
@@ -66,7 +66,7 @@ export default function OrdenServicioTipoD ({DatosOrdenD}){
       if (Object.keys(dataActualizada).length===0) {
           console.log("Vacio")
       }else{
-        fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioD`,{
+        fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioE`,{
             method:"POST",
             headers:{"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -104,10 +104,10 @@ export default function OrdenServicioTipoD ({DatosOrdenD}){
         />
         <AutoFormulario_v2
           Formulario={{
-          title: "Orden de Servicio D",
+          title: "Orden de Servicio Hoteles",
           secciones: [
               {
-              subTitle: "ORDEN DE SERVICIO D - RESTAURANTE",
+              subTitle: "ORDEN DE SERVICIO E - HOTELES",
               componentes: [
                   {
                     tipo: "texto",
@@ -136,6 +136,11 @@ export default function OrdenServicioTipoD ({DatosOrdenD}){
                   },
                   {
                     tipo: "texto",
+                    Title: "Tipo de Habitacion: ",
+                    KeyDato:  "tipHabitacion",
+                  },
+                  {
+                    tipo: "texto",
                     Title: "Idioma: ",
                     KeyDato:  "idioma",
                   },
@@ -145,7 +150,7 @@ export default function OrdenServicioTipoD ({DatosOrdenD}){
                     KeyDato:  "pax",
                   },
                   {
-                    tipo: "texto",
+                    tipo: "granTexto",
                     Title: "Detalle de Servicio: ",
                     KeyDato:  "NombreServicio",
                   },
@@ -183,7 +188,7 @@ export async function getServerSideProps({params,req,res}){
   let idServicio = params.IdServicio
 
   let Datos = {}
-  let DatosOrdenD = {}
+  let DatosOrdenE = {}
   let numPax = 0
 
   let client = new MongoClient(url, {
@@ -198,56 +203,9 @@ export async function getServerSideProps({params,req,res}){
     res.writeHead(302, { Location: '/' })
     res.end()
   }
-  try {
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("ServicioEscogido");
-    let result = await collection.find({}).project({
-      "_id":0,
-      "PrecioConfiTotal":0,
-      "PrecioConfiUnitario":0,
-      "PrecioCotiTotal":0,
-      "PrecioCotiUnitario":0,
-      "PrecioPublicado":0,
-    }).toArray()
-    result.map((x)=>{
-      if (x.IdServicioEscogido==idServicio) {
-        DatosOrdenD=x
-        IdReservaCotizacion=x.IdReservaCotizacion
-      }
-    })
-  } catch (error) {
-    console.log(error)
-  }
-  console.log(DatosOrdenD)
-  try {
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("ReservaCotizacion");
-    let result = await collection.find({}).project({
-      "_id":0,
-      "Incluye":0,
-      "Itinerario":0,
-      "NoIncluye":0,
-      "PrecioConfiTotal":0,
-      "PrecioConfiUnitario":0,
-      "PrecioCotiTotal":0,
-      "PrecioCotiUnitario":0,
-      "PrecioPublicado":0,
-      "RecomendacionesLlevar":0,
-      "tableData":0,
-    }).toArray()
-    result.map((x)=>{
-      if (x.IdReservaCotizacion==IdReservaCotizacion) {
-        Datos=x
-      }
-    })
-  } catch (error) {
-    console.log(error)
-  }
-  DatosOrdenD = Object.assign(DatosOrdenD,Datos)
+  
   return {
       props:{
-          DatosOrdenD:DatosOrdenD
+          DatosOrdenE:DatosOrdenE
   }}
 }
