@@ -8,13 +8,19 @@ import App from 'next/app'
 import { withSSRContext } from 'aws-amplify'
 import { useState,useEffect,createContext } from 'react'
 import {AppWrapper} from '@/components/Contexto'
+import AppLoader from '@/components/Loading/Loading'
 
 //this import is using the next.config,js how we see we aren't specification the exact path
 
 Amplify.configure({...config,ssr: true})
 
+
 function MyApp({ Component, pageProps }) {
-  
+  const [AppLoading, setAppLoading] = useState(false);
+  Router.events.on('routeChangeStart', () => {
+    setAppLoading(true)
+  });
+  Router.events.on('routeChangeComplete', () => setAppLoading(false));
   // const { data, revalidate } = useSWR("/api/me", async function (args) {
   //   const res = await fetch(args);
   //   return res.json();
@@ -27,6 +33,10 @@ function MyApp({ Component, pageProps }) {
     */
     <>
       <AppWrapper>
+        <AppLoader
+          Loading={AppLoading}
+          key={'AppLoader001'}
+        />
         <Header />
         <NavLateral/>
         <Component {...pageProps} />

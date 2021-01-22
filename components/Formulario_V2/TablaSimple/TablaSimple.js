@@ -16,7 +16,7 @@ const TablaSimple = (
     columnas: [],
   }
 ) => {
-  const value = props.Dato[props.KeyDato];
+  const value = props.Dato[props.KeyDato] || [];
   // const [Data, setData] = useState(props.Dato[props.KeyDato]);
   // useEffect(() => {
   //   props.setDato({

@@ -49,7 +49,6 @@ const Selector = (
       </div>
     );
   } else {
-    console.log(props.SelectOptions);
     return (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
