@@ -70,6 +70,7 @@ export default async (req, res) => {
             PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
             Currency: proveedor["TipoMoneda"] || null,
             PrecioPublicado: x["precioPubli"] || null,
+            OrdenServicio:null
           });
         }
       });
@@ -113,6 +114,10 @@ export default async (req, res) => {
             PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
             Currency: proveedor["TipoMoneda"] || null,
             PrecioPublicado: x["precioPubli"] || null,
+            OrdenServicio:{
+              TipoOrden:'D',
+              Estado: 0
+            }
           });
         }
       });
@@ -160,6 +165,10 @@ export default async (req, res) => {
             PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
             Currency: proveedor["TipoMoneda"] || null,
             PrecioPublicado: x["precioPubli"] || null,
+            OrdenServicio:{
+              TipoOrden:'C',
+              Estado: 0
+            }
           });
         }
       });
@@ -206,6 +215,7 @@ export default async (req, res) => {
             PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
             Currency: proveedor["TipoMoneda"] || null,
             PrecioPublicado: x["precioPubli"] || null,
+            OrdenServicio:null
           });
         }
       });
@@ -249,6 +259,7 @@ export default async (req, res) => {
             PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
             Currency: proveedor["TipoMoneda"] || null,
             PrecioPublicado: x["precioPubli"] || null,
+            OrdenServicio:null
           });
         }
       });
@@ -296,6 +307,7 @@ export default async (req, res) => {
             PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
             Currency: proveedor["TipoMoneda"] || null,
             PrecioPublicado: x["precioPubli"] || null,
+            OrdenServicio:null
           });
         }
       });
@@ -334,6 +346,7 @@ export default async (req, res) => {
             PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
             Currency: proveedor["TipoMoneda"] || null,
             PrecioPublicado: x["precioPubli"] || null,
+            OrdenServicio:null
           });
         }
       });
@@ -377,6 +390,7 @@ export default async (req, res) => {
             PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
             Currency: proveedor["TipoMoneda"] || null,
             PrecioPublicado: x["precioPubli"] || null,
+            OrdenServicio:null
           });
         }
       });

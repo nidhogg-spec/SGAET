@@ -136,9 +136,9 @@ const AutoFormulario = (
   return (
     <div className={styles.Modal_content}>
       {/* <h2>{props.Formulario.title}</h2> */}
-      {props.Formulario.secciones.map((seccion) => {
+      {props.Formulario.secciones.map((seccion,SeccionesIndex) => {
         return (
-          <div>
+          <div key={'Seccion_' + SeccionesIndex}>
             <h3>{seccion.subTitle}</h3>
             <div>
               {seccion.componentes.map((componente,index) => {

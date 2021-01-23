@@ -14,13 +14,13 @@ const CampoBoolean = (
     Reiniciar: true,
   }
 ) => {
-  const value = props.Dato[props.KeyDato];
+  const value = props.Dato[props.KeyDato] || false;
   if (props.ModoEdicion == true) {
     return (
       <div>
         <span>{props.Title}</span>
         <input
-          value={value}
+          checked={value}
           type={'checkbox'}
           onClick={(event) => {
             props.setDato({
@@ -38,7 +38,7 @@ const CampoBoolean = (
     return (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
-        <input value={value} type={'checkbox'} disabled />
+        <input checked={value} type={'checkbox'} disabled />
       </div>
     );
   }
