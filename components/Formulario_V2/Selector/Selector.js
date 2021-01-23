@@ -22,7 +22,7 @@ const Selector = (
   //    KeyDato - Dato como el cual se guardar
   //    SelectOptions = [value, texto]
   //---------------------------------------------------------------------------------
-  const value = props.Dato[props.KeyDato];
+  const value = props.Dato[props.KeyDato] || '';
   if (props.ModoEdicion == true) {
     return (
       <div>

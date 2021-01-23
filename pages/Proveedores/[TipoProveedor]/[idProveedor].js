@@ -235,9 +235,8 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
   };
   useEffect(() => {
     if (DevolverDato == true) {
-      console.log(APIpath);
       setDevolverDato(false);
-      fetch(APIpath, {
+      fetch(APIpath + '/api/proveedores/listaProveedores', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -568,8 +567,6 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
               tooltip: "Duplicate User",
               onClick: (event, rowData) => {
                 const materialTable = materialTableRef.current;
-                console.log(materialTable);
-                console.log(initialFormData);
                 setinitialFormData({ ...rowData });
                 materialTable.dataManager.changeRowEditing();
                 materialTable.setState({
@@ -597,8 +594,6 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
                   delete temp_DataBase['precioConfi']
                   delete temp_DataBase['precioCoti']
                   delete temp_DataBase['tableData']
-                  console.log(temp_newData)
-                  console.log(temp_DataBase)
                   if(!deepEqual(temp_newData,temp_DataBase)){
                     setDatosEditables([...datosEditables, newData]);
                     setinitialFormData({});
@@ -687,9 +682,6 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
                 setTimeout(() => {
                   const dataDelete = [...datosEditables];
                   const index = oldData.tableData.id;
-
-                  console.log(dataDelete[index]);
-                  console.log(dataDelete[index].IdProductoHotel);
 
                   let IdKey = "";
                   switch (provDinamico) {
