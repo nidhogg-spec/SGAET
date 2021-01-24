@@ -87,43 +87,40 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       let ReservaCotizacion = DataNuevaEdit;
 
       // Formateo de datos de ReservaCotizacion
-      delete ReservaCotizacion['Servicios'];
-      ReservaCotizacion['FechaIN'] = FechaIN;
-      ReservaCotizacion['Estado'] = 0;
+      delete ReservaCotizacion["Servicios"];
+      ReservaCotizacion["FechaIN"] = FechaIN;
+      ReservaCotizacion["Estado"] = 0;
       // Formateo de datos de ServiciosEscogidos
 
       //Formateo de datos de ClienteProspecto
-      ClienteProspecto['Estado'] = 'Prospecto';
+      ClienteProspecto["Estado"] = "Prospecto";
       switch (parseInt(TipoCliente)) {
-        case 1 || '1':
-          ClienteProspecto['TipoCliente'] = 'Corporativo'
+        case 1 || "1":
+          ClienteProspecto["TipoCliente"] = "Corporativo";
           break;
-          case 2 || '2':
-            ClienteProspecto['TipoCliente'] = 'Directo'
+        case 2 || "2":
+          ClienteProspecto["TipoCliente"] = "Directo";
           break;
-      
+
         default:
-          alert('Error, no hay tipo de cliente')
+          alert("Error, no hay tipo de cliente");
           return;
           break;
       }
 
       // envio dde datos a las apis
-        
-          await fetch(APIpath + "/api/Cotizacion/NuevaReservaCotizacion",{
-            method:'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ReservaCotizacion:ReservaCotizacion,
-              ServiciosEscogidos:ServiciosEscogidos,
-              ClienteProspecto:ClienteProspecto
-            })
-          })
-            .then((r) => r.json())
-            .then((data) => {
-              
-            });
-        
+
+      await fetch(APIpath + "/api/Cotizacion/NuevaReservaCotizacion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ReservaCotizacion: ReservaCotizacion,
+          ServiciosEscogidos: ServiciosEscogidos,
+          ClienteProspecto: ClienteProspecto,
+        }),
+      })
+        .then((r) => r.json())
+        .then((data) => {});
 
       console.log(DataNuevaEdit);
       setLoading(false);
@@ -261,7 +258,6 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
 
     //   router.push("/reservas");
     // }
-    
   }, [DarDato]);
   useEffect(async () => {
     if (
@@ -561,7 +557,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                     {
                       field: "Dia",
                       title: "Dia",
-                      type:'numeric',
+                      type: "numeric",
                     },
                     { field: "Hora Inicio", title: "HoraInicio", type: "time" },
                     { field: "Hora Fin", title: "HoraFin", type: "time" },

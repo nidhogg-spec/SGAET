@@ -14,7 +14,7 @@ const CampoGranTexto = (
     Reiniciar: true,
   }
 ) => {
-  const value = props.Dato[props.KeyDato];
+  const value = props.Dato[props.KeyDato] || '';
   if (props.ModoEdicion == true) {
     return (
       <div>

@@ -14,7 +14,7 @@ const CampoMoney = (
     Reiniciar: true,
   }
 ) => {
-  const value = props.Dato[props.KeyDato];
+  const value = props.Dato[props.KeyDato] || 0;
   if (props.ModoEdicion == true) {
     return (
       <div>
