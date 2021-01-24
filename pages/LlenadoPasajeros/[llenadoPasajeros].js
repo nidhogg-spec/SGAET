@@ -3,16 +3,18 @@ import {useState,useEffect} from 'react'
 import {useRouter} from 'next/router'
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario"
 
-export default function LlenadoPasajeros({NumPasajeros}){
+export default function LlenadoPasajeros({NumPasajeros,DatosPasajeros}){
 
     const [Datos,setDatos] = useState({})
     const router = useRouter();
     const  {llenadoPasajeros}  = router.query;
     // const [datoPadre,setDatoPadre] = useState([])
     // const [datoHijo,setDatoHijo]=useState(null)
-    // useEffect(()=>{
-    //     console.log(llenadoPasajeros)
-    // },[])
+    useEffect(()=>{
+        if(DatosPasajeros.length!=0){
+            setDatos(DatosPasajeros[DatosPasajeros.length-1])
+        }
+    },[])
     // useEffect(()=>{
 
     //     let tempDatoPadre = datoPadre
@@ -50,7 +52,8 @@ export default function LlenadoPasajeros({NumPasajeros}){
             }
             listaPasajeros.push(object)
         }
-        console.log(listaPasajeros)
+        listaPasajeros.push(Datos)
+        // console.log(listaPasajeros)
         // let y = []
         // y.push(dato1,dato2,dato3,dato4,dato5)
         // console.log(y)
@@ -95,8 +98,19 @@ export default function LlenadoPasajeros({NumPasajeros}){
                             KeyDato:  "apellido"+index,
                         },
                         {
+                            tipo: "selector",
+                            Title: "TipoDocumento",
+                            SelectOptions:[
+                                {value:"null", texto:"Seleccione Tipo Documento"},
+                                {value:"DNI", texto:"DNI"},
+                                {value:"Pasaporte", texto:"Pasaporte"},
+                                {value:"CarneExtranjeria", texto:"Carne de Extranjeria"},
+                            ],
+                            KeyDato:  "TipoDocumento"+index,
+                        },
+                        {
                             tipo: "texto",
-                            Title: "DNI, Carne de Extranjeria o Pasaporte",
+                            Title: "Numero de Documento",
                             KeyDato:  "docIdentidad"+index,
                         },
                         {
@@ -105,9 +119,35 @@ export default function LlenadoPasajeros({NumPasajeros}){
                             KeyDato:  "nacionalidad"+index,
                         },
                         {
-                            tipo: "texto",
+                            tipo: "selector",
                             Title: "Sexo",
+                            SelectOptions:[
+                                {value:"null", texto:"Seleccionne Sexo"},
+                                {value:"masculino", texto:"Masculino"},
+                                {value:"femenino", texto:"Femenino"},
+                                {value:"otro", texto:"Otro"},
+                            ],
                             KeyDato:  "sexo"+index,
+                        },
+                        {
+                            tipo: "texto",
+                            Title: "Regimen Alimenticio",
+                            KeyDato:  "regAlimenticio"+index,
+                        },
+                        {
+                            tipo: "texto",
+                            Title: "Numero de Celular",
+                            KeyDato:  "numCelular"+index,
+                        },
+                        {
+                            tipo: "correo",
+                            Title: "Correo",
+                            KeyDato:  "correo"+index,
+                        },
+                        {
+                            tipo: "granTexto",
+                            Title: "Alergias",
+                            KeyDato:  "alergia"+index,
                         },
                         {
                             tipo: "fecha",
@@ -139,6 +179,8 @@ export async function getServerSideProps(context){
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
 
+    let DatosPasajeros = []
+
     const Idurl = context.query.llenadoPasajeros
     let NumPasajeros = ""
     let client = new MongoClient(url, {
@@ -150,7 +192,9 @@ export async function getServerSideProps(context){
     let result = await collection.find().project({"_id":0}).toArray();
     result.map((x)=>{
         if (Idurl == x.IdReservaCotizacion) {
-            
+            if(x.listaPasajeros!=null){
+                DatosPasajeros=x.listaPasajeros
+            }
             NumPasajeros= parseInt(x.NpasajerosAdult)+parseInt(x.NpasajerosChild)
         }
     })
@@ -162,7 +206,7 @@ export async function getServerSideProps(context){
     }
     return{
         props:{
-            NumPasajeros: NumPasajeros
+            NumPasajeros: NumPasajeros, DatosPasajeros:DatosPasajeros
         }
     }
 }
