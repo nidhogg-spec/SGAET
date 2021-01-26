@@ -4,12 +4,28 @@ import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFor
 import {withSSRContext} from 'aws-amplify'
 import { useEffect, useState } from 'react'
 import {useRouter} from 'next/router'
-// import { MongoClient } from "mongodb";
+import { MongoClient } from "mongodb";
 
-export default function OrdenServicioTipoC ({}){
+export default function OrdenServicioTipoC (
+    {
+      DatosServEscogido,
+      DatosProveedor,
+      DatosProducto,
+      CodOrdenServ,
+      DatosReservaCotizacion,
+      DatosClienteProspecto
+    }
+  ){
   const router = useRouter()
 
-  const {IdServicio,TipoOrdenServicio} = router.query
+  // console.log(DatosServEscogido)
+  // console.log(DatosProveedor)
+  // console.log(DatosProducto)
+  // console.log(CodOrdenServ)
+  // console.log(DatosReservaCotizacion)
+  // console.log(DatosClienteProspecto)
+
+  const {IdServEscogido,TipoOrdenServicio} = router.query
 
   /* Datos Orden de Servicio A */
   const [datosTrasnporteTour, setDatosTrasnporteTour] = useState([])
@@ -75,11 +91,11 @@ export default function OrdenServicioTipoC ({}){
 
   /* Columnas Tabla Orden de Servicio B*/
   const ColumnasPasajeros = [
-    { title: "ID", field: "IdCliente", hidden: true},
-    { title: "Nombres Apellidos", field: "NomApelli"},
+    { title: "Nombres", field: "Nombre"},
+    { title: "Apellido", field: "Apellido"},
     { title: "Etapa Vida", field: "EtapaVida"},
     { title: "Alimentacion Extra", field: "AlimenExtra"},
-    { title: "Regimen Alimenticio", field: "RegAlimentacion"},
+    { title: "Regimen Alimenticio", field: "RegAlimenticio"},
   ]
   const ColumnasBriefing = [
     { title: "ID", field: "IdBriefing", hidden: true},
@@ -118,24 +134,106 @@ export default function OrdenServicioTipoC ({}){
 
   /* Columnas Tabla Orden de Servicio C*/
   const ColumnasPasajero = [
-    { title: "ID", field: "IdPasajero", hidden: true},
-    { title: "Nombres", field: "nombre"},
-    { title: "Apellido", field: "apellido"},
-    { title: "Ciudad", field: "ciudad"},
-    { title: "Hotel", field: "hotel"},
-    { title: "Observaciones", field: "observaciones"},
+    { title: "Nombres", field: "Nombre"},
+    { title: "Apellido", field: "Apellido"},
+    { title: "Ciudad", field: "Ciudad"},
+    { title: "Hotel", field: "Hotel"},
+    { title: "Observaciones", field: "Observaciones"},
   ]
   const ColumnasTransporte = [
-    { title: "ID", field: "IdTransporte", hidden: true},
-    { title: "Fecha", field: "fecha", type:"date"},
-    { title: "Servicio", field: "descripcionServicio"},
-    { title: "Hora Recojo", field: "horaRecojo"},
-    { title: "Tren", field: "tren"},
-    { title: "Origen", field: "origen"},
-    { title: "Destino", field: "destino"},
-    { title: "Observaciones", field: "observaciones"},
+    { title: "Fecha", field: "FechaIN", type:"date"},
+    { title: "Servicio", field: "DescripcionServicio"},
+    { title: "Hora Recojo", field: "HoraRecojo"},
+    { title: "Tren", field: "Tren"},
+    { title: "Origen", field: "Origen"},
+    { title: "Destino", field: "Destino"},
+    { title: "Observaciones", field: "Observaciones"},
   ]
-    
+  /*-----------UseEffect para setear formato de  Cada Orden de Servicio---------------------*/
+
+  useEffect(()=>{
+    if (DatosReservaCotizacion.NpasajerosChild == null) {
+      DatosReservaCotizacion.NpasajerosChild=0
+    }
+    switch(TipoOrdenServicio){
+      case "B":  
+        console.log(DatosServEscogido)    
+        let TempDatosFormularioGrupo = {
+          "CodGrupo": DatosReservaCotizacion.CodGrupo,
+          "Fecha": DatosReservaCotizacion.FechaIN,
+          "NumPax": parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild) 
+        }
+        let TempDatosFormularioNombreGrupo = {
+          "NomGrupo": DatosReservaCotizacion.NombreGrupo
+        }
+        /*Seteo de Tabla Pasajero*/
+        let numPaxOrdenB = parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild)
+        let TempDatosTablaPasajerosOrdenB = DatosReservaCotizacion.listaPasajeros
+        //Condicional para manejar el dato adicional que viene de lista pasajeros,
+        //este dato se usa para que se pueda mostrar desde la base de datos los pasajeros registrados.
+        //hasta que se encuentre otro metodo esta condicional deberia mantenerse asi.
+        if(numPaxOrdenB != TempDatosTablaPasajerosOrdenB.length){
+          TempDatosTablaPasajerosOrdenB.pop()
+        } 
+
+        setDatosFormularioGrupo(TempDatosFormularioGrupo)
+        setDatosFormularioGrupoNombre(TempDatosFormularioNombreGrupo)
+        setDatosTablaPasajeros(TempDatosTablaPasajerosOrdenB)
+        break
+      case "C":
+        //Orden de Servicio C - Transporte
+        let numPax = parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild)
+        /*Seteo de Formulario Orden de Servicio*/
+        let DatosOrdenC = {
+          "Empresa": DatosProveedor.nombre,
+          "CodGrupo": DatosReservaCotizacion.CodGrupo,
+          "Tour": DatosReservaCotizacion.Descripcion,
+          "NumPax": numPax,
+          "TipoTranporte": DatosProducto.tipvehiculo,
+          "FechaIn":DatosReservaCotizacion.FechaIN,
+          "FechaOut":DatosReservaCotizacion.FechaOUT
+        }
+        /*Seteo de Tabla Pasajero*/
+        let TempDatosTablaPasajeros = DatosReservaCotizacion.listaPasajeros
+        //Condicional para manejar el dato adicional que viene de lista pasajeros,
+        //este dato se usa para que se pueda mostrar desde la base de datos los pasajeros registrados.
+        //hasta que se encuentre otro metodo esta condicional deberia mantenerse asi.
+        if(numPax != TempDatosTablaPasajeros.length){
+          TempDatosTablaPasajeros.pop()
+        } 
+        /*Seteo de Tabla Transporte*/
+        //OriDest Almacena el servicio del producto y lo divide solo funciona si el formato es
+        //Origen - Destino no funciona si tiene mas cosas por delante o despues de
+        let OriDest = DatosProducto.servicio.split("-")
+        let tempObjetoTablaTrasnporte = {
+          "FechaIN" : DatosReservaCotizacion.FechaIN,
+          "Origen" : OriDest[0],
+          "Destino" : OriDest[1]
+        }
+        console.log()
+
+        setDatosFormularioTransporte(DatosOrdenC)
+        setDatosTablaPasajero(TempDatosTablaPasajeros)
+        setDatosTablaTransporte([tempObjetoTablaTrasnporte])
+
+        break;
+      case "D":
+      //Orden de Servicio D - Restaurantes
+        let DatosOrdenD = {
+          "CodOrdenServ": CodOrdenServ.CodigoOrdenServicio,
+          "Empresa": DatosProveedor.nombre,
+          "Direccion": DatosProveedor.direccionRegistrada,
+          "Telefono": DatosProveedor.celular,
+          "NumPax": parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild),
+          "Pax": DatosClienteProspecto.NombreCompleto,
+          "NombreServicio": DatosReservaCotizacion.Descripcion,
+          "FechaReserva": DatosReservaCotizacion.FechaIN
+        }
+        setDatosFormularioRestaurante(DatosOrdenD)
+        break;
+    }
+  },[])
+
   return(
     <div>
       <img
@@ -320,22 +418,17 @@ export default function OrdenServicioTipoC ({}){
                 {
                 tipo: "fecha",
                 Title: "Fecha: ",
-                KeyDato:  "fecha",
+                KeyDato:  "Fecha",
                 },
                 {
                 tipo: "numero",
                 Title: "N° Paxs: ",
-                KeyDato:  "numPax",
+                KeyDato:  "NumPax",
                 },
                 {
                 tipo: "texto",
                 Title: "Guia: ",
-                KeyDato:  "guia",
-                },
-                {
-                tipo: "texto",
-                Title: "Guia: ",
-                KeyDato:  "guia",
+                KeyDato:  "Guia",
                 },
                 {
                 tipo: "texto",
@@ -845,7 +938,7 @@ export default function OrdenServicioTipoC ({}){
                   {
                     tipo: "texto",
                     Title: "Empresa",
-                    KeyDato: "empresa"
+                    KeyDato: "Empresa"
                   },
                   {
                     tipo: "texto",
@@ -855,32 +948,32 @@ export default function OrdenServicioTipoC ({}){
                   {
                     tipo: "texto",
                     Title: "Tour: ",
-                    KeyDato:  "tour",
+                    KeyDato:  "Tour",
                   },
                   {
                     tipo: "numero",
                     Title: "N° Pax: ",
-                    KeyDato:  "numPax",
+                    KeyDato:  "NumPax",
                   },
                   {
                     tipo: "texto",
                     Title: "Tipo de Tranporte: ",
-                    KeyDato:  "tipTranporte",
+                    KeyDato:  "TipoTranporte",
                   },
                   {
                     tipo: "numero",
                     Title: "Capacidad: ",
-                    KeyDato:  "capacidad",
+                    KeyDato:  "Capacidad",
                   },
                   {
                     tipo: "fecha",
                     Title: "Fecha IN: ",
-                    KeyDato:  "fechaIn",
+                    KeyDato:  "FechaIn",
                   },
                   {
                     tipo: "fecha",
                     Title: "Fecha OUT: ",
-                    KeyDato:  "fechaOut",
+                    KeyDato:  "FechaOut",
                   }],
                 },
               ],
@@ -894,12 +987,56 @@ export default function OrdenServicioTipoC ({}){
             title= "Datos Pasajero"
             data={datosTablaPasajero}
             columns= {ColumnasPasajero}
+            editable={{
+              onRowAdd: newData =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    setDatosTablaPasajeros([...datosTablaPasajero, newData]);
+                    resolve();
+                  }, 1000)
+                }), 
+              onRowUpdate: (newData, oldData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    const dataUpdate = [...datosTablaPasajero];
+                    const index = oldData.tableData.id;
+                    dataUpdate[index] = newData;
+                    setDatosTablaTransporte([...dataUpdate]);
+
+                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioC`,{
+                      method:"POST",
+                      headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        idProducto: DatosOrdenC.IdOrdenServTipC,
+                        data: dataUpdate[index],
+                        accion: "update",
+                      }),
+                    })
+                    .then(r=>r.json())
+                    .then(data=>{
+                      alert(data.message);
+                    })
+                    
+                    resolve();
+                  }, 1000)
+                }),
+              }}
+              options={{
+              actionsColumnIndex: -1,
+            }}
           />
           <MaterialTable
             title= "Datos Transporte"
             data={datosTablaTransporte}
             columns= {ColumnasTransporte}
             editable={{
+              onRowAdd: newData =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    setDatosTablaTransporte([...datosTablaTransporte, newData]);
+                    resolve();
+                  }, 1000)
+                }), 
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
                   setTimeout(() => {
@@ -949,47 +1086,47 @@ export default function OrdenServicioTipoC ({}){
                     {
                       tipo: "texto",
                       Title: "Para: ",
-                      KeyDato:  "empresa",
+                      KeyDato:  "Empresa",
                     },
                     {
                       tipo: "texto",
                       Title: "Direccion: ",
-                      KeyDato:  "direccion",
+                      KeyDato:  "Direccion",
                     },
                     {
                       tipo: "texto",
                       Title: "Telefono: ",
-                      KeyDato:  "telefono",
+                      KeyDato:  "Telefono",
                     },
                     {
                       tipo: "texto",
                       Title: "N° Paxs: ",
-                      KeyDato:  "numPax",
+                      KeyDato:  "NumPax",
                     },
                     {
                       tipo: "texto",
                       Title: "Idioma: ",
-                      KeyDato:  "idioma",
+                      KeyDato:  "Idioma",
                     },
                     {
                       tipo: "texto",
                       Title: "A Nombre de PAX: ",
-                      KeyDato:  "pax",
+                      KeyDato:  "Pax",
                     },
                     {
-                      tipo: "texto",
+                      tipo: "granTexto",
                       Title: "Detalle de Servicio: ",
                       KeyDato:  "NombreServicio",
                     },
                     {
-                      tipo: "texto",
+                      tipo: "fecha",
                       Title: "Fecha: ",
                       KeyDato:  "FechaReserva",
                     },  
                     {
                       tipo: "granTexto",
                       Title: "Observaciones: ",
-                      KeyDato:  "observaciones",
+                      KeyDato:  "Observaciones",
                     },
                   ],
                 },
@@ -1082,9 +1219,273 @@ export default function OrdenServicioTipoC ({}){
 }
 
 export async function getServerSideProps({params,req,res}){
-    
-    return {
-        props:{
-           
-    }}
+  const url = process.env.MONGODB_URI;
+  const dbName = process.env.MONGODB_DB;
+  const { Auth } = withSSRContext({ req })
+
+  let IdServicioEscogido = params.IdServEscogido
+  let TipoOrdenServicio = params.TipoOrdenServicio
+
+  let DatosServEscogido = {}
+  let DatosProducto = {}
+  let DatosProveedor = {}
+  let DatosReservaCotizacion = {}
+  let CodOrdenServ = {}
+  let DatosClienteProspecto= {}
+  let coleccionProducto = null
+  let idProductoProveedor = null
+
+  /*Seccion para Asegurar la Ruta de la API*/
+  try {
+    //const user = await Auth.currentAuthenticatedUser()
+    //console.log(user)
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
+  /*------------------------------------------------------------------------------*/
+  
+  let client = new MongoClient(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  if (TipoOrdenServicio == "D" || TipoOrdenServicio == "C" || TipoOrdenServicio == "E") {
+    try {
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ServicioEscogido");
+  
+      let result = await collection.find({}).project({
+        "_id":0, 
+      }).toArray()
+      result.map(x=>{
+          if(x.IdServicioEscogido==IdServicioEscogido){
+            // console.log(x.IdServicioProducto.slice(0,2))
+            // console.log()
+              switch(x.IdServicioProducto.slice(0,2)){
+                case "PH":
+                  coleccionProducto = "ProductoHoteles"
+                  idProductoProveedor="IdProductoHotel"
+                  break;
+                case "PA":
+                  coleccionProducto = "ProductoAgencias"
+                  idProductoProveedor="IdProductoAgencias"
+                  break;
+                case "PG":
+                  coleccionProducto = "ProductoGuias"
+                  idProductoProveedor="IdProductoGuias"
+                  break;
+                case "PO":
+                  coleccionProducto = "ProductoOtros"
+                  idProductoProveedor="IdProductoOtro"
+                  break;
+                case "PR":
+                  coleccionProducto = "ProductoRestaurantes"
+                  idProductoProveedor="IdProductoRestaurantes"
+                  break;
+                case "ST":
+                  coleccionProducto = "ProductoSitioTuristicos"
+                  idProductoProveedor="IdProductoSitioTuristico"
+                  break;
+                case "PF":
+                  coleccionProducto = "ProductoSitioTransFerroviario"
+                  idProductoProveedor="IdProductoTransFerroviario"
+                  break;
+                case "PT":
+                  coleccionProducto = "ProductoTransportes"
+                  idProductoProveedor="IdProductoTransportes"
+                    break;
+              }
+              DatosServEscogido=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    } 
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection(coleccionProducto);
+      let result = await collection.find().project({
+        "_id":0, 
+      }).toArray()
+      
+      result.map(x=>{
+          if(DatosServEscogido.IdServicioProducto==x[idProductoProveedor]){
+            DatosProducto=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    } 
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("Proveedor");
+      let result = await collection.find().project({
+        "_id":0, 
+      }).toArray()
+      result.map(x=>{
+          if(x.idProveedor == DatosProducto.idProveedor){
+            DatosProveedor=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    }
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("Proveedor");
+      let result = await collection.find().project({
+        "_id":0, 
+      }).toArray()
+      result.map(x=>{
+          if(x.idProveedor == DatosProducto.idProveedor){
+            DatosProveedor=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    }  
+  
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("OrdenServicio");
+      let result = await collection.find().project({
+        "_id":0,
+        "TipoOrdenServicio":0,
+        "IdOrdenServicio":0
+      }).toArray()
+      result.map(x=>{
+          if(x.IdServicioEscogido == IdServicioEscogido){
+            console.log(x)
+            CodOrdenServ=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    }  
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ReservaCotizacion");
+      let result = await collection.find().project({
+        "_id":0,
+      }).toArray()
+      result.map(x=>{
+          if(x.IdReservaCotizacion == DatosServEscogido.IdReservaCotizacion){
+            DatosReservaCotizacion=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    }  
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ClienteProspecto");
+      let result = await collection.find().project({
+        "_id":0
+      }).toArray()
+      result.map(x=>{
+          if(x.IdClienteProspecto == DatosReservaCotizacion.IdClienteProspecto){
+            DatosClienteProspecto=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    } finally {
+      client.close
+    }  
+  } else if (TipoOrdenServicio == "A" || TipoOrdenServicio == "B") 
+    { 
+    try {
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ReservaCotizacion");
+  
+      let result = await collection.find({}).project({
+        "_id":0, 
+      }).toArray()
+      result.map(x=>{
+          if (x.IdReservaCotizacion == IdServicioEscogido) {
+            DatosReservaCotizacion=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    } 
+    try {
+      let tempArrayDatosServicioEscogido = []
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ServicioEscogido");
+  
+      let result = await collection.find({}).project({
+        "_id":0, 
+      }).toArray()
+      result.map(x=>{
+          if (x.IdReservaCotizacion == IdServicioEscogido) {
+            tempArrayDatosServicioEscogido.push(x)
+          }
+      })
+      DatosServEscogido=tempArrayDatosServicioEscogido
+    } catch (error) {
+      console.log("error - " + error);
+    }   
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("OrdenServicio");
+      let result = await collection.find().project({
+        "_id":0,
+        "TipoOrdenServicio":0,
+        "IdOrdenServicio":0
+      }).toArray()
+      result.map(x=>{
+          if(x.IdServicioEscogido == IdServicioEscogido){
+            console.log(x)
+            CodOrdenServ=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    }  
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ReservaCotizacion");
+      let result = await collection.find().project({
+        "_id":0,
+      }).toArray()
+      result.map(x=>{
+          if(x.IdReservaCotizacion == DatosServEscogido.IdReservaCotizacion){
+            DatosReservaCotizacion=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    }  
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ClienteProspecto");
+      let result = await collection.find().project({
+        "_id":0
+      }).toArray()
+      result.map(x=>{
+          if(x.IdClienteProspecto == DatosReservaCotizacion.IdClienteProspecto){
+            DatosClienteProspecto=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    } finally {
+      client.close
+    }  
+  }else{
+    res.status("Ingreso una Orden de Servicio Inexistente")
+  }
+  
+  return {
+      props:{
+        DatosServEscogido:DatosServEscogido, 
+        DatosProducto:DatosProducto, 
+        DatosProveedor:DatosProveedor, 
+        CodOrdenServ:CodOrdenServ,
+        DatosClienteProspecto:DatosClienteProspecto,
+        DatosReservaCotizacion:DatosReservaCotizacion
+  }};
 }
