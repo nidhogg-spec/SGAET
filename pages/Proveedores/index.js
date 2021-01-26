@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import fetch from "isomorphic-unfetch";
 import MaterialTable from "material-table";
 import Link from "next/link";
+import Loader from '@/components/Loading/Loading'
 
 //Componentes
 import AutoModal from "@/components/AutoModal/AutoModal";
 
-export default function Home({Datos, APIpath }) {
+export default function Home({ APIpath }) {
   //Funciones
   const AccionBoton = () => {
     setModalDisplay(true);
@@ -203,6 +204,7 @@ export default function Home({Datos, APIpath }) {
   };
 
   //Variables
+  const [Loading, setLoading] = useState(false);
   const [ModalDisplay, setModalDisplay] = useState(false);
   const [FormularioCreacion, setFormularioCreacion] = useState(
     DevolverEstructuraFormulario({
@@ -227,9 +229,31 @@ export default function Home({Datos, APIpath }) {
   const [ReiniciarData, setReiniciarData] = useState(false);
   // const [Display, setDisplay] = useState(false);
   // const [Formulario, setFormulario] = useState(FormularioCreacion);
-  const [TablaDatos, setTablaDatos] = useState(Datos);
+  const [TablaDatos, setTablaDatos] = useState([]);
 
   // Hooks
+  useEffect(async() => {
+    try {
+      setLoading(true)
+      let Datos = []
+      await fetch(APIpath)
+        .then((r) => r.json())
+        .then((data1) => {
+          data1.data.map((datosResult) => {
+            Datos.push({
+              id: datosResult.idProveedor,
+              proveedor: datosResult.nombre,
+              ubicacion: datosResult.direccionRegistrada,
+              tipo: datosResult.tipo,
+            });
+          });
+        });
+        setTablaDatos(Datos)
+        setLoading(false)
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   useEffect(async () => {
     if (ReiniciarData == true) {
       let ActuTablaDatos = [];
@@ -262,6 +286,10 @@ export default function Home({Datos, APIpath }) {
 
   return (
     <div>
+      <Loader
+      Loading={Loading}
+      key={'Loader001'}
+      />
       <div>
         <span>Proveedores de Productos/Servicios</span>
         <AutoModal
@@ -354,31 +382,8 @@ export default function Home({Datos, APIpath }) {
 }
 export async function getStaticProps() {
   const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
-  let Datos = [];
-  let errorGetData = true;
-  do {
-    try {
-      await fetch(APIpath)
-        .then((r) => r.json())
-        .then((data1) => {
-          data1.data.map((datosResult) => {
-            Datos.push({
-              id: datosResult.idProveedor,
-              proveedor: datosResult.nombre,
-              ubicacion: datosResult.direccionRegistrada,
-              tipo: datosResult.tipo,
-            });
-          });
-          errorGetData = false;
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  } while (errorGetData);
-
   return {
     props: {
-      Datos: Datos,
       APIpath: APIpath,
     },
   };

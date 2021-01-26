@@ -9,11 +9,6 @@ let client = new MongoClient(url, {
   useUnifiedTopology: true,
 });
 
-function getData2(dbo, callback) {
-  const collection = dbo.collection("Proveedor");
-  collection.find({}).toArray(callback);
-}
-
 export default async (req, res) => {
   if (req.method == "POST") {
     switch (req.body.accion) {
@@ -316,18 +311,19 @@ export default async (req, res) => {
     }
   }
   if (req.method == "GET") {
-    client.connect(function (err) {
-      console.log("Connected to MognoDB server =>");
-      const dbo = client.db(dbName);
-
-      getData2(dbo, function (err, data) {
-        if (err) {
-          res.status(500).json({ error: true, message: "un error .v" });
-          return;
-        }
-        res.status(200).json({ data });
-        client.close;
-      });
-    });
+    ObtenerListaProveedor(req,res);
   }
 };
+
+async function ObtenerListaProveedor (req,res) {
+  let client = new MongoClient(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  await client.connect()
+  const dbo = client.db(dbName);
+  const collection = dbo.collection("Proveedor");
+  let data = await collection.find({}).toArray();
+  res.status(200).json({ data });
+  client.close()
+}
