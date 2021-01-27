@@ -53,6 +53,8 @@ export default function OrdenServicioTipoC (
 
   const [datosTablaHoteles, setDatosTablaHoteles] = useState([])
 
+  const [datosTablaEntradas, setDatosTablaEntradas] = useState([])
+
   const [datosTablaBuses, setDatosTablaBuses] = useState([])
 
   /* Datos Orden de Servicio C */
@@ -74,19 +76,18 @@ export default function OrdenServicioTipoC (
 
   /* Columnas Tabla Orden de Servicio A*/
   const ColumnasTourTranporte = [
-    { title: "ID", field: "IdCliente", hidden: true},
     { title: "Nombre", field: "Nombre"},
     { title: "Apellido", field: "Apellido"},
     { title: "Hotel", field: "Hotel"},
     { title: "Ciudad", field: "Ciudad"},
     { title: "Tren Ida", field: "TrenIda"},
     { title: "Tren Retorno", field: "TrenRetor"},
-    { title: "Hotel Mapi", field: "HotelMapi"},
     { title: "BUS OW - R/T", field: "Bus"},
-    { title: "ENTRADA MP-MH-MM", field: "Entradas"},
+    // { title: "ENTRADA MP-MH-MM", field: "Entradas"},
+    { title: "ENTRADA", field: "Entradas"},
     { title: "ADT/EST", field: "EtapaVida"},
     { title: "Cena", field: "Cena"},
-    { title: "Regimen Alimenticio", field: "Regimen"},   
+    { title: "Regimen Alimenticio", field: "RegAlimenticio"},   
   ]
 
   /* Columnas Tabla Orden de Servicio B*/
@@ -98,13 +99,11 @@ export default function OrdenServicioTipoC (
     { title: "Regimen Alimenticio", field: "RegAlimenticio"},
   ]
   const ColumnasBriefing = [
-    { title: "ID", field: "IdBriefing", hidden: true},
     { title: "Fecha", field: "Fecha"},
     { title: "Hora", field: "Hora"},
     { title: "Lugar", field: "Lugar"},
   ]
   const ColumnasEquipoCamping = [
-    { title: "ID", field: "IdCamping", hidden: true},
     { title: "Carpa", field: "Carpa"},
     { title: "Sleeping", field: "Sleeping"},
     { title: "Matra", field: "Matra"},
@@ -112,24 +111,22 @@ export default function OrdenServicioTipoC (
     { title: "Baston", field: "Baston"},
   ]
   const ColumnasTrenes = [
-    { title: "ID", field: "IdTrenes", hidden: true},
-    { title: "Tipo", field: "Tipo"},
-    { title: "TrenIda", field: "TrenIda"},
-    { title: "TrenRetorno", field: "TrenRetorno"},
+    // { title: "ID", field: "IdTrenes", hidden: true},
+    // { title: "Tipo", field: "Tipo"},
+    // { title: "TrenIda", field: "TrenIda"},
+    // { title: "TrenRetorno", field: "TrenRetorno"},
+    { title: "Servicio", field: "NombreServicio"},
   ]
   const ColumnasHoteles = [
-    { title: "ID", field: "IdHotel", hidden: true},
+    { title: "Servicio", field: "NombreServicio"},
     { title: "Ciudad", field: "Ciudad"},
-    { title: "Hotel", field: "Hotel"},
-    { title: "Noche Extra", field: "NocheExtra"},
+    { title: "Noche Extra", field: "NocheExtra", type:"boolean"},
   ]
   const ColumnasBuses = [
-    { title: "ID", field: "IdBuses", hidden: true},
-    { title: "OW - R/T", field: "OWRT"},
+    { title: "OW - R/T", field: "NombreServicio"},
   ]
   const ColumnasEntrada = [
-    { title: "ID", field: "IdEntradas", hidden: true },
-    { title: "Entrada", field: "entradas" }
+    { title: "Entrada", field: "NombreServicio" }
   ]
 
   /* Columnas Tabla Orden de Servicio C*/
@@ -156,29 +153,104 @@ export default function OrdenServicioTipoC (
       DatosReservaCotizacion.NpasajerosChild=0
     }
     switch(TipoOrdenServicio){
+      case "A":
+        console.log(DatosProveedor)
+         
+        console.log(DatosProducto)
+        // console.log(DatosServEscogido) 
+        // console.log(DatosReservaCotizacion)
+        // console.log(CodOrdenServ.CodigoOrdenServicio)
+        let numPaxOrdenA = parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild)
+        
+        let tempDatosFormularioTour = {
+          "CodigoOrdenServ": CodOrdenServ.CodigoOrdenServicio,
+          "CodGrupo": DatosReservaCotizacion.CodGrupo,
+          "Tour": DatosReservaCotizacion.Descripcion,
+          "Fecha": DatosReservaCotizacion.FechaIN,
+          "NumPax": numPaxOrdenA,
+          "NomGrupo": DatosReservaCotizacion.NombreGrupo,
+        }
+        /*Seteo de Trasnportes en la tabla*/
+        let TempDatosTablaPasajerosOrdenA = DatosReservaCotizacion.listaPasajeros
+        /*Condicional para manejar el dato adicional que viene de lista pasajeros,
+        este dato se usa para que se pueda mostrar desde la base de datos los pasajeros registrados.
+        hasta que se encuentre otro metodo esta condicional deberia mantenerse asi.*/
+        if(numPaxOrdenA != TempDatosTablaPasajerosOrdenA.length){
+          TempDatosTablaPasajerosOrdenA.pop()
+        } 
+        let tempTrasnporte = ""
+        let tempEntradas = ""
+        let tempTren = ""
+
+        DatosServEscogido.map((x)=>{
+          if (x.IdServicioProducto.slice(0,2) == "PT") {
+            tempTrasnporte= x.NombreServicio
+          }else if (x.IdServicioProducto.slice(0,2) == "PF") {
+            tempTren= x.NombreServicio
+          }else if (x.IdServicioProducto.slice(0,2) == "PS") {
+            tempEntradas= x.NombreServicio
+          }
+        })
+
+        let tempObject = {
+          "Hotel": DatosProveedor.nombre, 
+          "Bus": tempTrasnporte,
+          "Entradas": tempEntradas
+        }
+
+        TempDatosTablaPasajerosOrdenA.map((x,index)=>{
+          TempDatosTablaPasajerosOrdenA[index] = Object.assign(tempObject,x)
+        })
+
+        setDatosTrasnporteTour(TempDatosTablaPasajerosOrdenA)
+        setDatosFormularioTour(tempDatosFormularioTour)
+        break
       case "B":  
-        console.log(DatosServEscogido)    
+      let numPaxOrdenB = parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild)
         let TempDatosFormularioGrupo = {
           "CodGrupo": DatosReservaCotizacion.CodGrupo,
           "Fecha": DatosReservaCotizacion.FechaIN,
-          "NumPax": parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild) 
+          "NumPax": numPaxOrdenB 
         }
         let TempDatosFormularioNombreGrupo = {
           "NomGrupo": DatosReservaCotizacion.NombreGrupo
         }
         /*Seteo de Tabla Pasajero*/
-        let numPaxOrdenB = parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild)
         let TempDatosTablaPasajerosOrdenB = DatosReservaCotizacion.listaPasajeros
-        //Condicional para manejar el dato adicional que viene de lista pasajeros,
-        //este dato se usa para que se pueda mostrar desde la base de datos los pasajeros registrados.
-        //hasta que se encuentre otro metodo esta condicional deberia mantenerse asi.
+        /*Condicional para manejar el dato adicional que viene de lista pasajeros,
+        este dato se usa para que se pueda mostrar desde la base de datos los pasajeros registrados.
+        hasta que se encuentre otro metodo esta condicional deberia mantenerse asi.*/
         if(numPaxOrdenB != TempDatosTablaPasajerosOrdenB.length){
           TempDatosTablaPasajerosOrdenB.pop()
         } 
 
+        /*Seteo de Tablas Trenes-Hoteles-Buses-SitioTuristico*/
+        let tempArrayServEscogidoTrasnporte = []
+        let tempArrayServEscogidoHotel = []
+        let tempArrayServEscogidoEntradas = []
+        let tempArrayServEscogidoTren = []
+
+        DatosServEscogido.map((x)=>{
+          if (x.IdServicioProducto.slice(0,2) == "PH") {
+            tempArrayServEscogidoHotel.push({"NombreServicio":x.NombreServicio})
+          }else if (x.IdServicioProducto.slice(0,2) == "PT") {
+            tempArrayServEscogidoTrasnporte.push({"NombreServicio":x.NombreServicio})
+          }else if (x.IdServicioProducto.slice(0,2) == "PF") {
+            tempArrayServEscogidoTren.push({"NombreServicio":x.NombreServicio})
+          }else if (x.IdServicioProducto.slice(0,2) == "PS") {
+            tempArrayServEscogidoEntradas.push({"NombreServicio":x.NombreServicio})
+          }
+        })
+
         setDatosFormularioGrupo(TempDatosFormularioGrupo)
         setDatosFormularioGrupoNombre(TempDatosFormularioNombreGrupo)
         setDatosTablaPasajeros(TempDatosTablaPasajerosOrdenB)
+
+        setDatosTablaBuses(tempArrayServEscogidoTrasnporte)
+        setDatosTablaHoteles(tempArrayServEscogidoHotel)
+        setDatosTablaTrenes(tempArrayServEscogidoTren)
+        setDatosTablaEntradas(tempArrayServEscogidoEntradas)
+
         break
       case "C":
         //Orden de Servicio C - Transporte
@@ -267,7 +339,7 @@ export default function OrdenServicioTipoC (
                   {
                     tipo: "texto",
                     Title: "Codigo Orden de Servicio",
-                    KeyDato: "CodOrdenServ"
+                    KeyDato: "CodigoOrdenServ"
                   },
                   {
                     tipo: "texto",
@@ -277,52 +349,52 @@ export default function OrdenServicioTipoC (
                   {
                     tipo: "texto",
                     Title: "Tour: ",
-                    KeyDato:  "tour",
+                    KeyDato:  "Tour",
                   },
                   {
                     tipo: "texto",
                     Title: "Guia: ",
-                    KeyDato:  "guia",
+                    KeyDato:  "Guia",
                   },
                   {
                     tipo: "texto",
                     Title: "Asistente: ",
-                    KeyDato:  "asistente",
+                    KeyDato:  "Asistente",
                   },
                   {
                     tipo: "fecha",
                     Title: "Fecha: ",
-                    KeyDato:  "fecha",
+                    KeyDato:  "Fecha",
                   },
                   {
                     tipo: "numero",
                     Title: "N° Pax: ",
-                    KeyDato:  "numPax",
+                    KeyDato:  "NumPax",
                   },
                   {
                     tipo: "numero",
                     Title: "N° Porters: ",
-                    KeyDato: "numPorte",
+                    KeyDato: "NumPorte",
                   },
                   {
                     tipo: "texto",
                     Title: "Transporte : ",
-                    KeyDato:  "trasnporte",
+                    KeyDato:  "Trasnporte",
                   },
                   {
                     tipo: "texto",
                     Title: "Nombre de Grupo: ",
-                    KeyDato:  "nomGrupo",
+                    KeyDato:  "NomGrupo",
                   },  
                   {
                     tipo: "texto",
                     Title: "Anexo: ",
-                    KeyDato:  "anexo",
+                    KeyDato:  "Anexo",
                   },
                   {
                     tipo: "texto",
                     Title: "Ingreso: ",
-                    KeyDato:  "ingreso",
+                    KeyDato:  "Ingreso",
                   },
                   {
                     tipo: "numero",
@@ -332,22 +404,22 @@ export default function OrdenServicioTipoC (
                   {
                     tipo: "numero",
                     Title: "N° Botiquin : ",
-                    KeyDato:  "botiquin",
+                    KeyDato:  "Nbotiquin",
                   },
                   {
                     tipo: "texto",
                     Title: "N° Primeros Auxilios : ",
-                    KeyDato:  "primerosAuxilios",
+                    KeyDato:  "NprimerosAuxilios",
                   },
                   {
                     tipo: "numero",
                     Title: "Imprevistos(S/.) : ",
-                    KeyDato:  "imprevistosSoles",
+                    KeyDato:  "ImprevistosSoles",
                   },
                   {
                     tipo: "numero",
                     Title: "Imprevistos(US $) : ",
-                    KeyDato:  "imprevistosDolares",
+                    KeyDato:  "ImprevistosDolares",
                   },
                 ],
               },
@@ -856,7 +928,7 @@ export default function OrdenServicioTipoC (
           />
           <MaterialTable
             title= "Entradas"
-            data={[]}
+            data={datosTablaEntradas}
             columns= {ColumnasEntrada}
             editable={{
               onRowUpdate: (newData, oldData) =>
@@ -865,7 +937,7 @@ export default function OrdenServicioTipoC (
                 const dataUpdate = [...datosTablaBuses];
                 const index = oldData.tableData.id;
                 dataUpdate[index] = newData;
-                setDatosTablaBuses([...dataUpdate]);
+                setDatosTablaEntradas([...dataUpdate]);
 
                   fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioB`,{
                       method:"POST",
@@ -1034,6 +1106,21 @@ export default function OrdenServicioTipoC (
                 new Promise((resolve, reject) => {
                   setTimeout(() => {
                     setDatosTablaTransporte([...datosTablaTransporte, newData]);
+
+                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioC`,{
+                      method:"POST",
+                      headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        idProducto: DatosOrdenC.IdOrdenServTipC,
+                        data: dataUpdate[index],
+                        accion: "update",
+                      }),
+                    })
+                    .then(r=>r.json())
+                    .then(data=>{
+                      alert(data.message);
+                    })
+                    
                     resolve();
                   }, 1000)
                 }), 
@@ -1427,7 +1514,50 @@ export async function getServerSideProps({params,req,res}){
       DatosServEscogido=tempArrayDatosServicioEscogido
     } catch (error) {
       console.log("error - " + error);
-    }   
+    } 
+    try {
+      let tempArrayDatosProductoHoteles = []
+      let tempServiciohoteles = []
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ProductoHoteles");
+      let result = await collection.find().project({
+        "_id":0,
+      }).toArray()
+      
+      DatosServEscogido.map(datos=>{
+        if (datos.IdServicioProducto.slice(0,2)=="PH") {
+          tempServiciohoteles.push(datos)
+        }
+      })
+      result.map((x)=>{
+          if(x.IdProductoHotel == tempServiciohoteles[0].IdServicioProducto){
+            tempArrayDatosProductoHoteles.push(x)
+          }
+      })
+      DatosProducto=tempArrayDatosProductoHoteles
+    } catch (error) {
+      console.log("error - " + error);
+    }
+    try {
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("Proveedor");
+      let result = await collection.find().project({
+        "_id":0,
+      }).toArray()
+      // DatosProducto.map((y)=>{
+      //   if (x.idProveedor) {
+          
+      //   }
+      // })
+      /*Validar que pase esto solo si el proveedor es igual*/
+      result.map(x=>{
+          if(x.idProveedor == DatosProducto[0].idProveedor){
+            DatosProveedor=x
+          }
+      })
+    } catch (error) {
+      console.log("error - " + error);
+    }    
     try {
       const dbo = client.db(dbName);
       const collection = dbo.collection("OrdenServicio");
@@ -1440,20 +1570,6 @@ export async function getServerSideProps({params,req,res}){
           if(x.IdServicioEscogido == IdServicioEscogido){
             console.log(x)
             CodOrdenServ=x
-          }
-      })
-    } catch (error) {
-      console.log("error - " + error);
-    }  
-    try {
-      const dbo = client.db(dbName);
-      const collection = dbo.collection("ReservaCotizacion");
-      let result = await collection.find().project({
-        "_id":0,
-      }).toArray()
-      result.map(x=>{
-          if(x.IdReservaCotizacion == DatosServEscogido.IdReservaCotizacion){
-            DatosReservaCotizacion=x
           }
       })
     } catch (error) {
