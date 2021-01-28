@@ -9,6 +9,7 @@ import Selector from "../Selector/Selector";
 import CampoNumero from "../CampoNumero/CampoNumero";
 import CampoMoney from "../CampoMoney/CampoMoney";
 import CampoFecha from "../CampoFecha/CampoFecha";
+import CampoCorreo from "../CampoCorreo/CampoCorreo";
 import TablaSimple from "../TablaSimple/TablaSimple";
 import CampoBoolean from '../CampoBoolean/CampoBoolean'
 const AutoFormulario = (
@@ -53,6 +54,18 @@ const AutoFormulario = (
           />
         );
         break;
+      case "correo":
+      return (
+        <CampoCorreo
+          Title={compo.Title}
+          ModoEdicion={props.ModoEdicion}
+          setDato={props.setDato}
+          KeyDato={compo.KeyDato}
+          Dato={props.Dato}
+          key={'AD'+key}
+        />
+      );
+      break;
       case "granTexto":
         return (
           <CampoGranTexto

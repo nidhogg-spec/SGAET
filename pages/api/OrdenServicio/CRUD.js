@@ -87,6 +87,7 @@ const func_Crear = async (req, res) => {
 const func_Eliminar = async (req, res) => {
   // ---------------- Informacion importante inicial -----------
   let IdOrdenServicio = req.body.IdOrdenServicio;
+  let dataEliminar = req.body.DataEliminar;
   let coleccion = "OrdenServicio";
   let keyId = "Id" + coleccion;
   //-------------------- Proceso ------------------------------
