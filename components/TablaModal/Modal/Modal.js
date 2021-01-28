@@ -273,7 +273,7 @@ export default function Modal(props) {
                   ModoEdicion={true}
                   DevolverDatoFunct={RegistrarDato}
                   DarDato={DevolverDato}
-                  KeyDato="direccionRegistrada"
+                  KeyDato="DireccionFiscal"
                   Dato={""}
                 />
               </div>
