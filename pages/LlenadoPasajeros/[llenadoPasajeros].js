@@ -3,16 +3,19 @@ import {useState,useEffect} from 'react'
 import {useRouter} from 'next/router'
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario"
 
-export default function LlenadoPasajeros({NumPasajeros}){
+export default function LlenadoPasajeros({NumPasajeros,DatosPasajeros}){
 
     const [Datos,setDatos] = useState({})
     const router = useRouter();
     const  {llenadoPasajeros}  = router.query;
     // const [datoPadre,setDatoPadre] = useState([])
     // const [datoHijo,setDatoHijo]=useState(null)
-    // useEffect(()=>{
-    //     console.log(llenadoPasajeros)
-    // },[])
+    useEffect(()=>{
+        console.log(Datos)
+        if(DatosPasajeros.length!=0){
+            setDatos(DatosPasajeros[DatosPasajeros.length-1])
+        }
+    },[])
     // useEffect(()=>{
 
     //     let tempDatoPadre = datoPadre
@@ -40,10 +43,11 @@ export default function LlenadoPasajeros({NumPasajeros}){
         for (let index = 0; index < NumPasajeros; index++) {
             let object={}
             for (const key in Datos) {
+                let number=key.length-1
                 // console.log(Datos[key])
                 // console.log(key.slice(-1))
                 if(key.slice(-1)==index){
-                    object= {...object, [key]:Datos[key]}
+                    object= {...object, [key.slice(0,number)]:Datos[key]}
                     // object={[key]:Datos[key]}
                     // arrayData.push(object)
                 }
@@ -51,6 +55,8 @@ export default function LlenadoPasajeros({NumPasajeros}){
             listaPasajeros.push(object)
         }
         console.log(listaPasajeros)
+        listaPasajeros.push(Datos)
+        // console.log(listaPasajeros)
         // let y = []
         // y.push(dato1,dato2,dato3,dato4,dato5)
         // console.log(y)
@@ -87,32 +93,69 @@ export default function LlenadoPasajeros({NumPasajeros}){
                         {
                             tipo: "texto",
                             Title: "Nombre del Pasajero",
-                            KeyDato: "nombre"+index,
+                            KeyDato: "Nombre"+index,
                         },
                         {
                             tipo: "texto",
                             Title: "Apellido del Pasajero",
-                            KeyDato:  "apellido"+index,
+                            KeyDato:  "Apellido"+index,
+                        },
+                        {
+                            tipo: "selector",
+                            Title: "TipoDocumento",
+                            SelectOptions:[
+                                {value:"null", texto:"Seleccione Tipo Documento"},
+                                {value:"DNI", texto:"DNI"},
+                                {value:"Pasaporte", texto:"Pasaporte"},
+                                {value:"CarneExtranjeria", texto:"Carne de Extranjeria"},
+                            ],
+                            KeyDato:  "TipoDocumento"+index,
                         },
                         {
                             tipo: "texto",
-                            Title: "DNI, Carne de Extranjeria o Pasaporte",
-                            KeyDato:  "docIdentidad"+index,
+                            Title: "Numero de Documento",
+                            KeyDato:  "DocIdentidad"+index,
                         },
                         {
                             tipo: "texto",
                             Title: "Nacionalidad",
-                            KeyDato:  "nacionalidad"+index,
+                            KeyDato:  "Nacionalidad"+index,
+                        },
+                        {
+                            tipo: "selector",
+                            Title: "Sexo",
+                            SelectOptions:[
+                                {value:"null", texto:"Seleccionne Sexo"},
+                                {value:"masculino", texto:"Masculino"},
+                                {value:"femenino", texto:"Femenino"},
+                                {value:"otro", texto:"Otro"},
+                            ],
+                            KeyDato:  "Sexo"+index,
                         },
                         {
                             tipo: "texto",
-                            Title: "Sexo",
-                            KeyDato:  "sexo"+index,
+                            Title: "Regimen Alimenticio",
+                            KeyDato:  "RegAlimenticio"+index,
+                        },
+                        {
+                            tipo: "texto",
+                            Title: "Numero de Celular",
+                            KeyDato:  "NumCelular"+index,
+                        },
+                        {
+                            tipo: "correo",
+                            Title: "Correo",
+                            KeyDato:  "Correo"+index,
+                        },
+                        {
+                            tipo: "granTexto",
+                            Title: "Alergias",
+                            KeyDato:  "Alergia"+index,
                         },
                         {
                             tipo: "fecha",
                             Title: "Fecha de Nacimiento",
-                            KeyDato:  "fecNacimiento"+index,
+                            KeyDato:  "FecNacimiento"+index,
                         },
                     ],
                     },
@@ -121,7 +164,7 @@ export default function LlenadoPasajeros({NumPasajeros}){
                 ModoEdicion={true}
                 Dato={Datos}
                 setDato={setDatos}
-                key={'AF_ReserCoti'+index}
+                key={'ListaPasajeros'+index}
                 />)
             })}
            
@@ -139,6 +182,8 @@ export async function getServerSideProps(context){
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
 
+    let DatosPasajeros = []
+
     const Idurl = context.query.llenadoPasajeros
     let NumPasajeros = ""
     let client = new MongoClient(url, {
@@ -150,19 +195,26 @@ export async function getServerSideProps(context){
     let result = await collection.find().project({"_id":0}).toArray();
     result.map((x)=>{
         if (Idurl == x.IdReservaCotizacion) {
+            if(x.listaPasajeros!=null){
+                DatosPasajeros=x.listaPasajeros
+            }
+            if (x.NpasajerosChild != null ) {
+                NumPasajeros= parseInt(x.NpasajerosAdult)+parseInt(x.NpasajerosChild)
+            }else{
+                NumPasajeros = parseInt(x.NpasajerosAdult)
+            }
             
-            NumPasajeros= parseInt(x.NpasajerosAdult)+parseInt(x.NpasajerosChild)
         }
     })
-    try {
-        await client.connect()
+    // try {
+    //     await client.connect()
         
-    } catch (error) {
+    // } catch (error) {
         
-    }
+    // }
     return{
         props:{
-            NumPasajeros: NumPasajeros
+            NumPasajeros: NumPasajeros, DatosPasajeros:DatosPasajeros
         }
     }
 }
