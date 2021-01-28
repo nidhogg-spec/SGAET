@@ -4,6 +4,7 @@ import TablaProveedores from "../../../components/ContactoProveedor/ContactoProv
 import MaterialTable from "material-table";
 import React, { useEffect, useState, useCallback } from "react";
 import { MongoClient } from "mongodb";
+import axios from "axios";
 
 //componentes
 import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
@@ -12,13 +13,19 @@ import CampoTexto from "@/components/TablaModal/Modal/CampoTexto/CampoTexto";
 import Selector from "@/components/TablaModal/Modal/Selector/Selector";
 import TablaSimple from "@/components/Formulario/TablaSimple/TablaSimple";
 
-export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpath }) {
+
+export default function TipoProveedor(
+  props = { ServicioProducto, Proveedor, APIpath }
+) {
   //Variables
   const [Edicion, setEdicion] = useState(false);
   const [DevolverDato, setDevolverDato] = useState(false);
   const [datosEditables, setDatosEditables] = useState(props.ServicioProducto);
   const [Proveedor, setProveedor] = useState(props.Proveedor);
-  const [ServicioProducto, setServicioProducto] = useState(props.ServicioProducto);
+  let UltimoIngresado = {}
+  const [ServicioProducto, setServicioProducto] = useState(
+    props.ServicioProducto
+  );
   const router = useRouter();
 
   const { idProveedor, TipoProveedor } = router.query;
@@ -236,7 +243,7 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
   useEffect(() => {
     if (DevolverDato == true) {
       setDevolverDato(false);
-      fetch(APIpath + '/api/proveedores/listaProveedores', {
+      fetch(APIpath + "/api/proveedores/listaProveedores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -251,8 +258,6 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
         });
     }
   }, [DevolverDato]);
-
-  
 
   return (
     <div>
@@ -336,7 +341,7 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
                 {
                   tipo: "texto",
                   Title: "Direccion fiscal",
-                  KeyDato: "DomicilioFiscal",
+                  KeyDato: "DireccionFiscal",
                 },
                 {
                   tipo: "selector",
@@ -580,57 +585,64 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
           editable={{
             onRowAdd: (newData) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  newData['idProveedor'] = idProveedor;
-                  let duplicados = false;
+                setTimeout(async () => {
+                  if(deepEqual(newData,UltimoIngresado)){
+                    console.log('Repetido')
+                    resolve();
+                    return;
+                  }
+                  UltimoIngresado = {...newData}
+                  newData["idProveedor"] = idProveedor;
                   //-------- Comparacion ---------------
-                  let temp_newData = {...newData}
-                  let temp_DataBase = {...initialFormData}
-                  delete temp_newData['precioPubli']
-                  delete temp_newData['precioConfi']
-                  delete temp_newData['precioCoti']
-                  delete temp_newData['tableData']
-                  delete temp_DataBase['precioPubli']
-                  delete temp_DataBase['precioConfi']
-                  delete temp_DataBase['precioCoti']
-                  delete temp_DataBase['tableData']
-                  if(!deepEqual(temp_newData,temp_DataBase)){
-                    setDatosEditables([...datosEditables, newData]);
-                    setinitialFormData({});
-                    fetch(
-                      `http://localhost:3000/api/proveedores/${provDinamico}`,
-                      {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
+                  let temp_newData = { ...newData };
+                  let temp_DataBase = { ...initialFormData };
+                  delete temp_newData["precioPubli"];
+                  delete temp_newData["precioConfi"];
+                  delete temp_newData["precioCoti"];
+                  delete temp_newData["tableData"];
+                  delete temp_DataBase["precioPubli"];
+                  delete temp_DataBase["precioConfi"];
+                  delete temp_DataBase["precioCoti"];
+                  delete temp_DataBase["tableData"];
+                  if (!deepEqual(temp_newData, temp_DataBase)) {
+                    await axios
+                      .post(
+                        `http://localhost:3000/api/proveedores/${provDinamico}`,
+                        {
                           data: newData,
                           accion: "create",
-                        }),
-                      }
-                    )
-                      .then((r) => r.json())
-                      .then((data) => {
-                        alert(data.message);
+                        }
+                      )
+                      .then(function (response) {
+                        console.log(response);
+                        // alert(response.message);
+                        alert("Creacion realizada correctamente");
+                      })
+                      .catch(function (error) {
+                        console.log(error);
                       });
-                  }else{
-                    alert("Existen Datos Duplicados: ")
+                    setDatosEditables([...datosEditables, newData]);
+                    setinitialFormData({});
+                    resolve();
+                  } else {
+                    alert("Existen Datos Duplicados");
+                    reject()
                   }
-                  resolve();
-                }, 1000);
+                  
+                }, 2000);
               }),
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
+                setTimeout(async () => {
                   const dataUpdate = [...datosEditables];
                   const index = oldData.tableData.id;
                   dataUpdate[index] = newData;
                   setDatosEditables([...dataUpdate]);
 
-
                   delete dataUpdate[index]._id;
 
                   let IdKey = "";
-                  
+
                   switch (provDinamico) {
                     case "hotel":
                       IdKey = "IdProductoHoteles";
@@ -657,21 +669,22 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
                       IdKey = "IdProductoOtros";
                       break;
                   }
-                  fetch(
-                    `http://localhost:3000/api/proveedores/${provDinamico}`,
-                    {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
+                  await axios
+                    .post(
+                      `http://localhost:3000/api/proveedores/${provDinamico}`,
+                      {
                         idProducto: dataUpdate[index][IdKey],
                         data: dataUpdate[index],
                         accion: "update",
-                      }),
-                    }
-                  )
-                    .then((r) => r.json())
-                    .then((data) => {
-                      alert(data.message);
+                      }
+                    )
+                    .then(function (response) {
+                      console.log(response);
+                      // alert(response.message);
+                      alert("Actualizacion realizada correctamente");
+                    })
+                    .catch(function (error) {
+                      console.log(error);
                     });
 
                   resolve();
@@ -679,7 +692,7 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
               }),
             onRowDelete: (oldData) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
+                setTimeout(async () => {
                   const dataDelete = [...datosEditables];
                   const index = oldData.tableData.id;
 
@@ -710,20 +723,21 @@ export default function TipoProveedor(props={ ServicioProducto, Proveedor, APIpa
                       IdKey = "IdProductoOtros";
                       break;
                   }
-                  fetch(
-                    `http://localhost:3000/api/proveedores/${provDinamico}`,
-                    {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
+                  await axios
+                    .post(
+                      `http://localhost:3000/api/proveedores/${provDinamico}`,
+                      {
                         idProducto: dataDelete[index][IdKey],
                         accion: "delete",
-                      }),
-                    }
-                  )
-                    .then((r) => r.json())
-                    .then((data) => {
-                      alert(data.message);
+                      }
+                    )
+                    .then(function (response) {
+                      console.log(response);
+                      // alert(response.message);
+                      alert("Eliminacion realizada correctamente");
+                    })
+                    .catch(function (error) {
+                      console.log(error);
                     });
 
                   dataDelete.splice(index, 1);
@@ -755,15 +769,18 @@ export async function getServerSideProps(context) {
     useUnifiedTopology: true,
   });
   await client.connect();
-  let [Proveedor,ServicioProducto] = await Promise.all([
+  let [Proveedor, ServicioProducto] = await Promise.all([
     new Promise(async (resolve, reject) => {
       try {
         let collection = client.db(dbName).collection("Proveedor");
-        let result = await collection.findOne({ idProveedor: uruId},{projection:{_id:0}});
+        let result = await collection.findOne(
+          { idProveedor: uruId },
+          { projection: { _id: 0 } }
+        );
         // Proveedor = JSON.stringify(result);
         // result._id = JSON.stringify(result._id);
         // Proveedor = result;
-        resolve(result)
+        resolve(result);
       } catch (error) {
         console.log("Error cliente Mongo 1 => " + error);
       }
@@ -804,13 +821,13 @@ export async function getServerSideProps(context) {
             _id: 0,
           })
           .toArray();
-        resolve(result)
+        resolve(result);
       } catch (error) {
         console.log("Error cliente Mongo 1 => " + error);
       }
-    })
-  ])
-  client.close()
+    }),
+  ]);
+  client.close();
   // console.log(Proveedor.idProveedor)
   // const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
   return {
@@ -821,7 +838,6 @@ export async function getServerSideProps(context) {
     },
   };
 }
-
 
 function deepEqual(object1, object2) {
   const keys1 = Object.keys(object1);
@@ -836,8 +852,8 @@ function deepEqual(object1, object2) {
     const val2 = object2[key];
     const areObjects = isObject(val1) && isObject(val2);
     if (
-      areObjects && !deepEqual(val1, val2) ||
-      !areObjects && val1 !== val2
+      (areObjects && !deepEqual(val1, val2)) ||
+      (!areObjects && val1 !== val2)
     ) {
       return false;
     }
@@ -847,5 +863,5 @@ function deepEqual(object1, object2) {
 }
 
 function isObject(object) {
-  return object != null && typeof object === 'object';
+  return object != null && typeof object === "object";
 }

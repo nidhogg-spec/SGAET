@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import fetch from "isomorphic-unfetch";
-import MaterialTable from "material-table";
 import Link from "next/link";
-import Loader from '@/components/Loading/Loading'
+import { useRouter } from "next/router";
+import { MongoClient } from "mongodb";
+
 
 //Componentes
 import AutoModal from "@/components/AutoModal/AutoModal";
+import MaterialTable from "material-table";
 
-export default function Home({ APIpath }) {
+export default function Home({ Datos, APIpath }) {
   //Funciones
   const AccionBoton = () => {
     setModalDisplay(true);
@@ -70,7 +71,7 @@ export default function Home({ APIpath }) {
             {
               tipo: "texto",
               Title: "Domicilio fiscal",
-              KeyDato: "direccionRegistrada",
+              KeyDato: "DireccionFiscal",
               Dato: FormuData.DomicilioFiscal || "",
             },
             {
@@ -204,7 +205,7 @@ export default function Home({ APIpath }) {
   };
 
   //Variables
-  const [Loading, setLoading] = useState(false);
+  const router = useRouter();
   const [ModalDisplay, setModalDisplay] = useState(false);
   const [FormularioCreacion, setFormularioCreacion] = useState(
     DevolverEstructuraFormulario({
@@ -218,7 +219,7 @@ export default function Home({ APIpath }) {
       NEstrellas: 0,
       Estado: 1,
       EnlaceDocumento: "",
-      direccionRegistrada: "",
+      DireccionFiscal: "",
       Web: "",
       NumContac: [],
       Email: [],
@@ -229,31 +230,9 @@ export default function Home({ APIpath }) {
   const [ReiniciarData, setReiniciarData] = useState(false);
   // const [Display, setDisplay] = useState(false);
   // const [Formulario, setFormulario] = useState(FormularioCreacion);
-  const [TablaDatos, setTablaDatos] = useState([]);
+  const [TablaDatos, setTablaDatos] = useState(Datos);
 
   // Hooks
-  useEffect(async() => {
-    try {
-      setLoading(true)
-      let Datos = []
-      await fetch(APIpath)
-        .then((r) => r.json())
-        .then((data1) => {
-          data1.data.map((datosResult) => {
-            Datos.push({
-              id: datosResult.idProveedor,
-              proveedor: datosResult.nombre,
-              ubicacion: datosResult.direccionRegistrada,
-              tipo: datosResult.tipo,
-            });
-          });
-        });
-        setTablaDatos(Datos)
-        setLoading(false)
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
   useEffect(async () => {
     if (ReiniciarData == true) {
       let ActuTablaDatos = [];
@@ -268,7 +247,7 @@ export default function Home({ APIpath }) {
                 ActuTablaDatos.push({
                   id: datosResult.idProveedor,
                   proveedor: datosResult.nombre,
-                  ubicacion: datosResult.direccionRegistrada,
+                  ubicacion: datosResult.DireccionFiscal,
                   tipo: datosResult.tipo,
                 });
               });
@@ -286,12 +265,8 @@ export default function Home({ APIpath }) {
 
   return (
     <div>
-      <Loader
-      Loading={Loading}
-      key={'Loader001'}
-      />
       <div>
-        <span>Proveedores de Productos/Servicios</span>
+        <h1 className="Titulo">Lista de Proveedores</h1>
         <AutoModal
           Formulario={FormularioCreacion} //debe ser diferente por lo de formulario vacio
           IdDato={IdDato}
@@ -301,17 +276,17 @@ export default function Home({ APIpath }) {
         />
       </div>
       {/* <Modal Display= {ModalDisplay} MostrarModal={MostrarModal} APIpath={APIpath} TipoModal={"Proveedores"}/> */}
-      <div>
+      <div className="">
         <MaterialTable
           columns={[
-            { title: "ID", field: "id", filtering: false },
+            { title: "ID", field: "id", filtering: false, hidden: true },
             {
-              title: "Nombre Proovedores",
+              title: "Nombre Comercial",
               field: "proveedor",
               filtering: false,
             },
             {
-              title: "Ubicacion Proovedor",
+              title: "Ubicacion",
               field: "ubicacion",
               filtering: false,
             },
@@ -329,26 +304,9 @@ export default function Home({ APIpath }) {
                 Otro: "Otro",
               },
             },
-            {
-              field: "url",
-              title: "Enlace",
-              width:'45px',
-              cellStyle:{
-                  textAlign:'center'
-              },
-              filtering: false,
-              render: (rowData) => {
-                return(<Link href={`/Proveedores/${rowData.tipo}/${rowData.id}`}>
-                  <a>
-                    <img src="/resources/remove_red_eye-24px.svg" />
-                  </a>
-                </Link>);
-              },
-            },
           ]}
           data={TablaDatos}
-          title="Lista de Proovedores"
-          title={<span>Lista de Proveedores</span>}
+          title={null}
           actions={[
             {
               icon: () => {
@@ -370,6 +328,21 @@ export default function Home({ APIpath }) {
                   });
               },
             },
+            (rowData) => ({
+              icon: () => {
+                return (
+                  <Link href={`/Proveedores/${rowData.tipo}/${rowData.id}`}>
+                    <a>
+                      <img src="/resources/remove_red_eye-24px.svg" />
+                    </a>
+                  </Link>
+                );
+              },
+              tooltip:'Ver detalle de proveedor',
+              onClick: () => {
+                router.push(`/Proveedores/${rowData.tipo}/${rowData.id}`);
+              },
+            }),
           ]}
           options={{
             actionsColumnIndex: -1,
@@ -382,8 +355,32 @@ export default function Home({ APIpath }) {
 }
 export async function getStaticProps() {
   const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
+  //----------------------Obtener datos de proveedores-------------------------------------------
+  const url = process.env.MONGODB_URI;
+  const dbName = process.env.MONGODB_DB;
+  const coleccion = "Proveedor";
+  let client = new MongoClient(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  await client.connect()
+  const dbo = client.db(dbName);
+  const collection = dbo.collection("Proveedor");
+  let data = await collection.find({}).toArray();
+  let Datos = [];
+  data.map(datosResult=>{
+    Datos.push({
+      id: datosResult.idProveedor,
+      proveedor: datosResult.nombre,
+      ubicacion: datosResult.DireccionFiscal,
+      tipo: datosResult.tipo,
+    });
+  })
+  client.close()
+  //----------------------------------------------------------------------------
   return {
     props: {
+      Datos: Datos,
       APIpath: APIpath,
     },
   };

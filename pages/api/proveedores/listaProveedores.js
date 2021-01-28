@@ -205,7 +205,7 @@ export default async (req, res) => {
             //   "celular2":0,
             //   "email":0,
             //   "email2":0,
-            //   "direccionRegistrada":0,
+            //   "DireccionFiscal":0,
             //   "DatosBancarios":0,
             //   "Destino":0,
             //   "Email":0,
@@ -310,20 +310,5 @@ export default async (req, res) => {
         break;
     }
   }
-  if (req.method == "GET") {
-    ObtenerListaProveedor(req,res);
-  }
 };
 
-async function ObtenerListaProveedor (req,res) {
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  await client.connect()
-  const dbo = client.db(dbName);
-  const collection = dbo.collection("Proveedor");
-  let data = await collection.find({}).toArray();
-  res.status(200).json({ data });
-  client.close()
-}
