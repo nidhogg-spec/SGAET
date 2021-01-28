@@ -1,4 +1,3 @@
-import CampoTexto from '@/components/Formulario/CampoTexto/CampoTexto'
 import MaterialTable from "material-table";
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario"
 import {withSSRContext} from 'aws-amplify'
@@ -13,11 +12,13 @@ export default function OrdenServicioTipoC (
       DatosProducto,
       CodOrdenServ,
       DatosReservaCotizacion,
-      DatosClienteProspecto
+      DatosClienteProspecto,
+      APIpath
     }
   ){
   const router = useRouter()
-
+  
+  const APIRoute = process.env.API_DOMAIN
   // console.log(DatosServEscogido)
   // console.log(DatosProveedor)
   // console.log(DatosProducto)
@@ -28,7 +29,7 @@ export default function OrdenServicioTipoC (
   const {IdServEscogido,TipoOrdenServicio} = router.query
 
   /* Datos Orden de Servicio A */
-  const [datosTrasnporteTour, setDatosTrasnporteTour] = useState([])
+  const [datosTablaTransporteTour, setDatosTablaTransporteTour] = useState([])
 
   const [datosFormularioTour, setDatosFormularioTour] = useState({})
 
@@ -45,9 +46,9 @@ export default function OrdenServicioTipoC (
 
   const [datosTablaPasajeros, setDatosTablaPasajeros] = useState([])
 
-  const [datosTablaBriefing, setDatosTablaBriefing] = useState([])
+  const [datosTablaBriefing, setDatosTablaBriefing] = useState(CodOrdenServ.DatosBriefing)
 
-  const [datosTablaEquipoCamping, setDatosTablaEquipoCamping] = useState([])
+  const [datosTablaEquipoCamping, setDatosTablaEquipoCamping] = useState(CodOrdenServ.DatosEquipoCamping)
 
   const [datosTablaTrenes, setDatosTablaTrenes] = useState([])
 
@@ -67,10 +68,10 @@ export default function OrdenServicioTipoC (
   /* Datos Orden de Servicio D*/
   const [datosFormularioRestaurante, setDatosFormularioRestaurante] = useState({})
 
-    /* Datos Orden de Servicio E*/
-    const [datosFormularioHoteles, setDatosFormularioHoteles] = useState({})
+  /* Datos Orden de Servicio E*/
+  const [datosFormularioHoteles, setDatosFormularioHoteles] = useState({})
 
-    const [modoEdicion, setModoEdicion] = useState(false)
+  const [modoEdicion, setModoEdicion] = useState(false)
 
   /*------------------ Datos de las Tablas en Ordenes de Servicio ---------------------------------------------*/
 
@@ -99,7 +100,7 @@ export default function OrdenServicioTipoC (
     { title: "Regimen Alimenticio", field: "RegAlimenticio"},
   ]
   const ColumnasBriefing = [
-    { title: "Fecha", field: "Fecha"},
+    { title: "Fecha", field: "Fecha", type: "date"},
     { title: "Hora", field: "Hora"},
     { title: "Lugar", field: "Lugar"},
   ]
@@ -154,12 +155,6 @@ export default function OrdenServicioTipoC (
     }
     switch(TipoOrdenServicio){
       case "A":
-        console.log(DatosProveedor)
-         
-        console.log(DatosProducto)
-        // console.log(DatosServEscogido) 
-        // console.log(DatosReservaCotizacion)
-        // console.log(CodOrdenServ.CodigoOrdenServicio)
         let numPaxOrdenA = parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild)
         
         let tempDatosFormularioTour = {
@@ -197,15 +192,15 @@ export default function OrdenServicioTipoC (
           "Bus": tempTrasnporte,
           "Entradas": tempEntradas
         }
-
-        TempDatosTablaPasajerosOrdenA.map((x,index)=>{
-          TempDatosTablaPasajerosOrdenA[index] = Object.assign(tempObject,x)
+        let tempTablaTrasnportePasajero = []
+        TempDatosTablaPasajerosOrdenA.map((x)=>{
+          tempTablaTrasnportePasajero.push(Object.assign({},tempObject,x))
         })
 
-        setDatosTrasnporteTour(TempDatosTablaPasajerosOrdenA)
+        setDatosTablaTransporteTour(tempTablaTrasnportePasajero)
         setDatosFormularioTour(tempDatosFormularioTour)
         break
-      case "B":  
+      case "B":       
       let numPaxOrdenB = parseInt(DatosReservaCotizacion.NpasajerosAdult)+parseInt(DatosReservaCotizacion.NpasajerosChild)
         let TempDatosFormularioGrupo = {
           "CodGrupo": DatosReservaCotizacion.CodGrupo,
@@ -229,6 +224,7 @@ export default function OrdenServicioTipoC (
         let tempArrayServEscogidoHotel = []
         let tempArrayServEscogidoEntradas = []
         let tempArrayServEscogidoTren = []
+        
 
         DatosServEscogido.map((x)=>{
           if (x.IdServicioProducto.slice(0,2) == "PH") {
@@ -282,7 +278,6 @@ export default function OrdenServicioTipoC (
           "Origen" : OriDest[0],
           "Destino" : OriDest[1]
         }
-        console.log()
 
         setDatosFormularioTransporte(DatosOrdenC)
         setDatosTablaPasajero(TempDatosTablaPasajeros)
@@ -311,7 +306,90 @@ export default function OrdenServicioTipoC (
       <img
         src="/resources/save-black-18dp.svg"
         onClick={() => {
-          setDarDato(true)
+          switch(TipoOrdenServicio){
+            case "A":
+              let tempObject = {
+                "DatosTour": datosTablaTransporteTour
+              }
+              let dataFetch = Object.assign({},datosFormularioTour,tempObject)
+              fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                method:"PUT",
+                headers:{"Content-Type": "application/json"},
+                body: JSON.stringify({
+                  "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                  "OrdenServicio": dataFetch
+                }),
+                })
+                .then(r=>r.json())
+                .then(data=>{
+                alert(data.message);
+              })
+              break;
+            case "B":
+              let TempArrayObject = {
+                "DatosPasajeros": datosTablaPasajeros,
+                "DatosBriefing": datosTablaBriefing,
+                "DatosEquipoCamping": datosTablaEquipoCamping,
+                "DatosTren": datosTablaTrenes,
+                "DatosHotel": datosTablaHoteles,
+                "DatosEntrada": datosTablaEntradas,
+                "DatosBuses": datosTablaBuses
+              }
+              let DataFetch = Object.assign({},
+                datosFormularioGrupo,
+                datosFormularioGrupoNombre,
+                datosFormularioExtra,
+                datosFormularioEquipoPax,
+                datosFormularioEquipoStaff,
+                TempArrayObject
+                )
+              fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                method:"PUT",
+                headers:{"Content-Type": "application/json"},
+                body: JSON.stringify({
+                  "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                  "OrdenServicio": DataFetch
+                }),
+                })
+                .then(r=>r.json())
+                .then(data=>{
+                alert(data.message);
+              })
+              break;
+            case "C":
+              let TempObjetFetch = {
+                "DatosPasajeros": datosTablaPasajero,
+                "DatosTransporte": datosTablaTransporte
+              }
+              let fetchData = Object.assign(datosFormularioTransporte,TempObjetFetch)
+              fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                method:"PUT",
+                headers:{"Content-Type": "application/json"},
+                body: JSON.stringify({
+                  "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                  "OrdenServicio": fetchData
+                }),
+                })
+                .then(r=>r.json())
+                .then(data=>{
+                alert(data.message);
+              })
+              break;
+            case "D":
+              fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                method:"PUT",
+                headers:{"Content-Type": "application/json"},
+                body: JSON.stringify({
+                  "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                  "OrdenServicio": datosFormularioRestaurante
+                }),
+                })
+                .then(r=>r.json())
+                .then(data=>{
+                alert(data.message);
+              })
+              break;
+          }
           setModoEdicion(false)
         }}
       />
@@ -432,31 +510,51 @@ export default function OrdenServicioTipoC (
           />
           <MaterialTable
             title= "Datos Transporte"
-            data={datosTrasnporteTour}
+            data={datosTablaTransporteTour}
             columns= {ColumnasTourTranporte}
             editable={{
+              // onRowAdd: newData =>
+              //   new Promise((resolve, reject) => {
+              //     setTimeout(() => {
+              //       console.log(newData)
+              //       // fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+              //       //   method:"PUT",
+              //       //   headers:{"Content-Type": "application/json"},
+              //       //   body: JSON.stringify({
+              //       //     "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+              //       //     "OrdenServicio": {"DatosTour":newData}
+              //       //   }),
+              //       //   })
+              //       //   .then(r=>r.json())
+              //       //   .then(data=>{
+              //       //   alert(data.message);
+              //       // })
+                    
+              //       setDatosTablaTransporteTour([...datosTablaTransporteTour, newData]);
+              //       resolve();
+              //     }, 1000)
+              //   }), 
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
                   setTimeout(() => {
-                    const dataUpdate = [...datosTablaTranporte];
+                    const dataUpdate = [...datosTablaTransporteTour];
                     const index = oldData.tableData.id;
                     dataUpdate[index] = newData;
-                    setDatosTrasnporteTour([...dataUpdate]);
 
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioA`,{
-                      method:"POST",
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
                       headers:{"Content-Type": "application/json"},
                       body: JSON.stringify({
-                        idProducto: DatosOrdenC.IdOrdenServTipC,
-                        data: dataUpdate[index],
-                        accion: "update",
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosTour":dataUpdate}
                       }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
                       alert(data.message);
                     })
-                    
+                    setDatosTablaTransporteTour([...dataUpdate]);
+
                     resolve();
                   }, 1000)
                 }),
@@ -467,7 +565,6 @@ export default function OrdenServicioTipoC (
           />
         </div>
       }
-      {/*Orden Tipo B */}
       {TipoOrdenServicio=="B" &&
       <div>
         <AutoFormulario_v2
@@ -762,21 +859,21 @@ export default function OrdenServicioTipoC (
                     const dataUpdate = [...datosTablaPasajeros];
                     const index = oldData.tableData.id;
                     dataUpdate[index] = newData;
-                    setDatosTablaPasajeros([...dataUpdate]);
 
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioB`,{
-                    method:"POST",
-                    headers:{"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        idProducto: DatosOrdenB.IdOrdenServTipB,
-                        data: dataUpdate[index],
-                        accion: "update",
-                    }),
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosTour":dataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
                     })
-                    .then(r=>r.json())
-                    .then(data=>{
-                    alert(data.message);
-                    })
+
+                    setDatosTablaPasajeros([...dataUpdate]);
                     
                     resolve();
                 }, 1000)
@@ -791,31 +888,80 @@ export default function OrdenServicioTipoC (
             data= {datosTablaBriefing}
             columns= {ColumnasBriefing}
             editable={{
+              onRowAdd: (newData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    let tempDataUpdate = [...datosTablaBriefing, newData]
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosBriefing": tempDataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaBriefing([...datosTablaBriefing, newData]);
+                    resolve();
+                  }, 1000)
+                }), 
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    const dataUpdate = [...datosTablaBriefing];
-                    const index = oldData.tableData.id;
-                    dataUpdate[index] = newData;
-                    setDatosTablaBriefing([...dataUpdate]);
+                  setTimeout(() => {
+                      const dataUpdate = [...datosTablaBriefing];
+                      const index = newData.tableData.id;
+                      dataUpdate[index] = newData;
 
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioB`,{
-                    method:"POST",
-                    headers:{"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        idProducto: DatosOrdenB.IdOrdenServTipB,
-                        data: dataUpdate[index],
-                        accion: "update",
-                    }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
-                    alert(data.message);
-                    })
-                    
-                    resolve();
-                }, 1000)
+                      fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                        method:"PUT",
+                        headers:{"Content-Type": "application/json"},
+                          body: JSON.stringify({
+                            "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                            "OrdenServicio": {"DatosBriefing":dataUpdate}
+                          }),
+                        })
+                        .then(r=>r.json())
+                        .then(data=>{
+                        alert(data.message);
+                      })
+
+                      setDatosTablaBriefing([...dataUpdate]);
+
+                      resolve();
+                  }, 1000)
                 }),
+                onRowDelete: oldData =>
+                  new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                      const dataDelete = [...datosTablaBriefing];
+                      const index = oldData.tableData.id;
+                      dataDelete.splice(index, 1);
+
+                      let tempDelete = [...dataDelete]
+
+                      fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                        method:"PUT",
+                        headers:{"Content-Type": "application/json"},
+                          body: JSON.stringify({
+                            "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                            "OrdenServicio": {"DatosBriefing":tempDelete}
+                          }),
+                        })
+                        .then(r=>r.json())
+                        .then(data=>{
+                        alert(data.message);
+                      })
+
+                      setDatosTablaBriefing([...dataDelete]);
+                      
+                      resolve()
+                    }, 1000)
+                  }),
               }}
               options={{
               actionsColumnIndex: -1,
@@ -826,30 +972,80 @@ export default function OrdenServicioTipoC (
             data={datosTablaEquipoCamping}
             columns= {ColumnasEquipoCamping}
             editable={{
+              onRowAdd: (newData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    
+                    let tempDataUpdate = [...datosTablaEquipoCamping, newData]
+                    
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosEquipoCamping": tempDataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaEquipoCamping([...datosTablaEquipoCamping, newData]);
+                    resolve();
+                  }, 1000)
+                }), 
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
                 setTimeout(() => {
                     const dataUpdate = [...datosTablaEquipoCamping];
                     const index = oldData.tableData.id;
                     dataUpdate[index] = newData;
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosEquipoCamping":dataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
                     setDatosTablaEquipoCamping([...dataUpdate]);
 
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioB`,{
-                    method:"POST",
-                    headers:{"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        idProducto: DatosOrdenB.IdOrdenServTipB,
-                        data: dataUpdate[index],
-                        accion: "update",
-                    }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
-                    alert(data.message);
-                    })
-                    
                     resolve();
                 }, 1000)
+                }),
+              onRowDelete: oldData =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    const dataDelete = [...datosTablaEquipoCamping];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+
+                    let tempDelete = [...dataDelete]
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosEquipoCamping":tempDelete}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaEquipoCamping([...dataDelete]);
+                    
+                    resolve()
+                  }, 1000)
                 }),
               }}
               options={{
@@ -861,30 +1057,80 @@ export default function OrdenServicioTipoC (
             data={datosTablaTrenes}
             columns= {ColumnasTrenes}
             editable={{
+              onRowAdd: (newData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    
+                    let tempDataUpdate = [...datosTablaTrenes, newData]
+                    
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosTren": tempDataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaTrenes([...datosTablaTrenes, newData]);
+                    resolve();
+                  }, 1000)
+                }), 
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
                 setTimeout(() => {
                     const dataUpdate = [...datosTablaTrenes];
                     const index = oldData.tableData.id;
                     dataUpdate[index] = newData;
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosTren":dataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
                     setDatosTablaTrenes([...dataUpdate]);
 
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioB`,{
-                    method:"POST",
-                    headers:{"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        idProducto: DatosOrdenB.IdOrdenServTipB,
-                        data: dataUpdate[index],
-                        accion: "update",
-                    }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
-                    alert(data.message);
-                    })
-                    
                     resolve();
                 }, 1000)
+                }),
+              onRowDelete: oldData =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    const dataDelete = [...datosTablaTrenes];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+
+                    let tempDelete = [...dataDelete]
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosTren":tempDelete}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaTrenes([...dataDelete]);
+                    
+                    resolve()
+                  }, 1000)
                 }),
               }}
               options={{
@@ -896,30 +1142,80 @@ export default function OrdenServicioTipoC (
             data={datosTablaHoteles}
             columns= {ColumnasHoteles}
             editable={{
+              onRowAdd: (newData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    
+                    let tempDataUpdate = [...datosTablaHoteles, newData]
+                    
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosHotel": tempDataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaTrenes([...datosTablaTrenes, newData]);
+                    resolve();
+                  }, 1000)
+                }), 
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
                 setTimeout(() => {
                     const dataUpdate = [...datosTablaHoteles];
                     const index = oldData.tableData.id;
                     dataUpdate[index] = newData;
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosHotel":dataUpdate}
+                      }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
                     setDatosTablaHoteles([...dataUpdate]);
 
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioB`,{
-                    method:"POST",
-                    headers:{"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                        idProducto: DatosOrdenB.IdOrdenServTipB,
-                        data: dataUpdate[index],
-                        accion: "update",
-                    }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
-                    alert(data.message);
-                    })
-                    
                     resolve();
                 }, 1000)
+                }),
+              onRowDelete: oldData =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    const dataDelete = [...datosTablaHoteles];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+
+                    let tempDelete = [...dataDelete]
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosHotel":tempDelete}
+                      }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaHoteles([...dataDelete]);
+                    
+                    resolve()
+                  }, 1000)
                 }),
               }}
               options={{
@@ -931,29 +1227,79 @@ export default function OrdenServicioTipoC (
             data={datosTablaEntradas}
             columns= {ColumnasEntrada}
             editable={{
+              onRowAdd: (newData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    
+                    let tempDataUpdate = [...datosTablaEntradas, newData]
+                    
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosEntrada": tempDataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaEntradas([...datosTablaEntradas, newData]);
+                    resolve();
+                  }, 1000)
+                }), 
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
                 setTimeout(() => {
-                const dataUpdate = [...datosTablaBuses];
-                const index = oldData.tableData.id;
-                dataUpdate[index] = newData;
-                setDatosTablaEntradas([...dataUpdate]);
+                    const dataUpdate = [...datosTablaEntradas];
+                    const index = oldData.tableData.id;
+                    dataUpdate[index] = newData;
 
-                  fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioB`,{
-                      method:"POST",
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
                       headers:{"Content-Type": "application/json"},
                       body: JSON.stringify({
-                      idProducto: DatosOrdenB.IdOrdenServTipB,
-                      data: dataUpdate[index],
-                      accion: "update",
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosEntrada":dataUpdate}
                       }),
-                  })
-                  .then(r=>r.json())
-                  .then(data=>{
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
                       alert(data.message);
-                  })
-                  
-                  resolve();
+                    })
+
+                    setDatosTablaEntradas([...dataUpdate]);
+
+                    resolve();
+                }, 1000)
+                }),
+              onRowDelete: oldData =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    const dataDelete = [...datosTablaEntradas];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+
+                    let tempDelete = [...dataDelete]
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosEntrada":tempDelete}
+                      }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaEntradas([...dataDelete]);
+                    
+                    resolve()
                   }, 1000)
                 }),
               }}
@@ -966,29 +1312,79 @@ export default function OrdenServicioTipoC (
             data={datosTablaBuses}
             columns= {ColumnasBuses}
             editable={{
+              onRowAdd: (newData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    
+                    let tempDataUpdate = [...datosTablaBuses, newData]
+                    
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosBuses": tempDataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaBuses([...datosTablaBuses, newData]);
+                    resolve();
+                  }, 1000)
+                }), 
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve, reject) => {
                 setTimeout(() => {
-                const dataUpdate = [...datosTablaBuses];
-                const index = oldData.tableData.id;
-                dataUpdate[index] = newData;
-                setDatosTablaBuses([...dataUpdate]);
+                    const dataUpdate = [...datosTablaBuses];
+                    const index = oldData.tableData.id;
+                    dataUpdate[index] = newData;
 
-                  fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioB`,{
-                      method:"POST",
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
                       headers:{"Content-Type": "application/json"},
                       body: JSON.stringify({
-                      idProducto: DatosOrdenB.IdOrdenServTipB,
-                      data: dataUpdate[index],
-                      accion: "update",
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosBuses":dataUpdate}
                       }),
-                  })
-                  .then(r=>r.json())
-                  .then(data=>{
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
                       alert(data.message);
-                  })
-                  
-                  resolve();
+                    })
+
+                    setDatosTablaBuses([...dataUpdate]);
+
+                    resolve();
+                }, 1000)
+                }),
+              onRowDelete: oldData =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                    const dataDelete = [...datosTablaBuses];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+
+                    let tempDelete = [...dataDelete]
+
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
+                      headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosBuses":tempDelete}
+                      }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
+                      alert(data.message);
+                    })
+
+                    setDatosTablaBuses([...dataDelete]);
+                    
+                    resolve()
                   }, 1000)
                 }),
               }}
@@ -1060,38 +1456,81 @@ export default function OrdenServicioTipoC (
             data={datosTablaPasajero}
             columns= {ColumnasPasajero}
             editable={{
-              onRowAdd: newData =>
-                new Promise((resolve, reject) => {
-                  setTimeout(() => {
-                    setDatosTablaPasajeros([...datosTablaPasajero, newData]);
-                    resolve();
-                  }, 1000)
-                }), 
-              onRowUpdate: (newData, oldData) =>
-                new Promise((resolve, reject) => {
-                  setTimeout(() => {
-                    const dataUpdate = [...datosTablaPasajero];
-                    const index = oldData.tableData.id;
-                    dataUpdate[index] = newData;
-                    setDatosTablaTransporte([...dataUpdate]);
+              // onRowAdd: (newData) =>
+              // new Promise((resolve, reject) => {
+              //   setTimeout(() => {
+                  
+              //     let tempDataUpdate = [...datosTablaPasajero, newData]
+                  
+              //     fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+              //       method:"PUT",
+              //       headers:{"Content-Type": "application/json"},
+              //         body: JSON.stringify({
+              //           "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+              //           "OrdenServicio": {"DatosPasajeros": tempDataUpdate}
+              //         }),
+              //       })
+              //       .then(r=>r.json())
+              //       .then(data=>{
+              //       alert(data.message);
+              //     })
 
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioC`,{
-                      method:"POST",
-                      headers:{"Content-Type": "application/json"},
+              //     setDatosTablaPasajero([...datosTablaPasajero, newData]);
+              //     resolve();
+              //   }, 1000)
+              // }), 
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve, reject) => {
+              setTimeout(() => {
+                  const dataUpdate = [...datosTablaPasajero];
+                  const index = oldData.tableData.id;
+                  dataUpdate[index] = newData;
+
+                  fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                    method:"PUT",
+                    headers:{"Content-Type": "application/json"},
                       body: JSON.stringify({
-                        idProducto: DatosOrdenC.IdOrdenServTipC,
-                        data: dataUpdate[index],
-                        accion: "update",
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosPasajeros":dataUpdate}
                       }),
                     })
                     .then(r=>r.json())
                     .then(data=>{
-                      alert(data.message);
+                    alert(data.message);
+                  })
+
+                  setDatosTablaPasajero([...dataUpdate]);
+
+                  resolve();
+              }, 1000)
+              }),
+            onRowDelete: oldData =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataDelete = [...datosTablaPasajero];
+                  const index = oldData.tableData.id;
+                  dataDelete.splice(index, 1);
+
+                  let tempDelete = [...dataDelete]
+
+                  fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                    method:"PUT",
+                    headers:{"Content-Type": "application/json"},
+                      body: JSON.stringify({
+                        "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                        "OrdenServicio": {"DatosPasajeros":tempDelete}
+                      }),
                     })
-                    
-                    resolve();
-                  }, 1000)
-                }),
+                    .then(r=>r.json())
+                    .then(data=>{
+                    alert(data.message);
+                  })
+
+                  setDatosTablaPasajero([...dataDelete]);
+                  
+                  resolve()
+                }, 1000)
+              }),
               }}
               options={{
               actionsColumnIndex: -1,
@@ -1102,54 +1541,82 @@ export default function OrdenServicioTipoC (
             data={datosTablaTransporte}
             columns= {ColumnasTransporte}
             editable={{
-              onRowAdd: newData =>
+                onRowAdd: (newData) =>
                 new Promise((resolve, reject) => {
                   setTimeout(() => {
-                    setDatosTablaTransporte([...datosTablaTransporte, newData]);
-
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioC`,{
-                      method:"POST",
+                    
+                    let tempDataUpdate = [...datosTablaTransporte, newData]
+                    
+                    fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                      method:"PUT",
                       headers:{"Content-Type": "application/json"},
-                      body: JSON.stringify({
-                        idProducto: DatosOrdenC.IdOrdenServTipC,
-                        data: dataUpdate[index],
-                        accion: "update",
-                      }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosTransporte": tempDataUpdate}
+                        }),
+                      })
+                      .then(r=>r.json())
+                      .then(data=>{
                       alert(data.message);
                     })
-                    
+
+                    setDatosTablaTransporte([...datosTablaTransporte, newData]);
                     resolve();
                   }, 1000)
                 }), 
-              onRowUpdate: (newData, oldData) =>
-                new Promise((resolve, reject) => {
+                onRowUpdate: (newData, oldData) =>
+                  new Promise((resolve, reject) => {
                   setTimeout(() => {
-                    const dataUpdate = [...datosTablaTranporte];
-                    const index = oldData.tableData.id;
-                    dataUpdate[index] = newData;
-                    setDatosTablaTransporte([...dataUpdate]);
+                      const dataUpdate = [...datosTablaTransporte];
+                      const index = oldData.tableData.id;
+                      dataUpdate[index] = newData;
 
-                    fetch(`http://localhost:3000/api/reserva/ordenServicio/ordenServicioC`,{
-                      method:"POST",
-                      headers:{"Content-Type": "application/json"},
-                      body: JSON.stringify({
-                        idProducto: DatosOrdenC.IdOrdenServTipC,
-                        data: dataUpdate[index],
-                        accion: "update",
-                      }),
-                    })
-                    .then(r=>r.json())
-                    .then(data=>{
-                      alert(data.message);
-                    })
-                    
-                    resolve();
+                      fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                        method:"PUT",
+                        headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosTransporte":dataUpdate}
+                        }),
+                        })
+                        .then(r=>r.json())
+                        .then(data=>{
+                        alert(data.message);
+                      })
+
+                      setDatosTablaTransporte([...dataUpdate]);
+
+                      resolve();
                   }, 1000)
-                }),
-              }}
+                  }),
+                onRowDelete: oldData =>
+                  new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                      const dataDelete = [...datosTablaTransporte];
+                      const index = oldData.tableData.id;
+                      dataDelete.splice(index, 1);
+
+                      let tempDelete = [...dataDelete]
+
+                      fetch(APIpath+`/api/OrdenServicio/CRUD`,{
+                        method:"PUT",
+                        headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({
+                          "IdOrdenServicio": CodOrdenServ.IdOrdenServicio,
+                          "OrdenServicio": {"DatosTransporte":tempDelete}
+                        }),
+                        })
+                        .then(r=>r.json())
+                        .then(data=>{
+                        alert(data.message);
+                      })
+
+                      setDatosTablaTransporte([...dataDelete]);
+                      
+                      resolve()
+                    }, 1000)
+                  }),
+                }}
               options={{
               actionsColumnIndex: -1,
             }}
@@ -1308,6 +1775,8 @@ export default function OrdenServicioTipoC (
 export async function getServerSideProps({params,req,res}){
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
+  const APIpath = process.env.API_DOMAIN;
+
   const { Auth } = withSSRContext({ req })
 
   let IdServicioEscogido = params.IdServEscogido
@@ -1438,8 +1907,6 @@ export async function getServerSideProps({params,req,res}){
       const collection = dbo.collection("OrdenServicio");
       let result = await collection.find().project({
         "_id":0,
-        "TipoOrdenServicio":0,
-        "IdOrdenServicio":0
       }).toArray()
       result.map(x=>{
           if(x.IdServicioEscogido == IdServicioEscogido){
@@ -1563,12 +2030,9 @@ export async function getServerSideProps({params,req,res}){
       const collection = dbo.collection("OrdenServicio");
       let result = await collection.find().project({
         "_id":0,
-        "TipoOrdenServicio":0,
-        "IdOrdenServicio":0
       }).toArray()
       result.map(x=>{
           if(x.IdServicioEscogido == IdServicioEscogido){
-            console.log(x)
             CodOrdenServ=x
           }
       })
@@ -1602,6 +2066,7 @@ export async function getServerSideProps({params,req,res}){
         DatosProveedor:DatosProveedor, 
         CodOrdenServ:CodOrdenServ,
         DatosClienteProspecto:DatosClienteProspecto,
-        DatosReservaCotizacion:DatosReservaCotizacion
+        DatosReservaCotizacion:DatosReservaCotizacion,
+        APIpath
   }};
 }
