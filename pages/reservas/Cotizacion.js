@@ -42,6 +42,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
   const [ProgramasTuristicos, setProgramasTuristicos] = useState([]);
   const [DataCotizacion, setDataCotizacion] = useState({});
   const [Servicios, setServicios] = useState([]);
+  const [dataGeneralProgramaTuristico, setDataGeneralProgramaTuristico] = useState({});
   const [ListaServiciosProductos, setListaServiciosProductos] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [Fase, setFase] = useState(1);
@@ -90,6 +91,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       delete ReservaCotizacion["Servicios"];
       ReservaCotizacion["FechaIN"] = FechaIN;
       ReservaCotizacion["Estado"] = 0;
+      ReservaCotizacion["NumPaxTotal"] = parseInt(ReservaCotizacion.NpasajerosAdult)+parseInt(ReservaCotizacion.NpasajerosChild)
       // Formateo de datos de ServiciosEscogidos
 
       //Formateo de datos de ClienteProspecto
@@ -283,6 +285,21 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
     setServicios(ServiciosActu);
     setLoading(false);
   }, [IdProgramaTuristico]);
+
+  useEffect(() => {
+    let tempDataGeneralProgramaTuristico = {}
+    if(Fase > 2){
+      ProgramasTuristicos.map((x)=>{
+        if (x.IdProgramaTuristico=IdProgramaTuristico) {
+          tempDataGeneralProgramaTuristico=x
+        }
+      })
+    }
+    setDataGeneralProgramaTuristico(tempDataGeneralProgramaTuristico)
+
+    console.log(tempDataGeneralProgramaTuristico)
+  },[Fase]);
+
   useEffect(() => {
     if (TipoCliente == 1) {
       setLoading(true);
@@ -361,14 +378,18 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                       </div>
                       <div>
                         <span>Tipo de documento</span>
-                        <input
-                          value={cliente["TipoDocumento"]}
+                        <select
                           onChange={(event) => {
                             let temp_cliente = cliente;
                             temp_cliente["TipoDocumento"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
-                        />
+                        >
+                          <option value= {null}>Seleccione Documento</option>
+                          <option value="DNI">DNI</option>
+                          <option value="Pasaporte">Pasaporte</option>
+                          <option value="CarneExtranjeria">Carne de Extranjeria</option>
+                        </select>
                       </div>
                       <div>
                         <span>Numero de documento</span>
@@ -526,6 +547,11 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
           {Fase >= 3 ? (
             <>
               <div className={styles.DatosContenedor} id="ContData">
+                <h2>{dataGeneralProgramaTuristico.NombrePrograma}</h2>
+                <p>{dataGeneralProgramaTuristico.Descripcion}</p>
+                <span>Duracion Dias : {dataGeneralProgramaTuristico.DuracionDias}</span><br></br>
+                <span>Duracion Noches : {dataGeneralProgramaTuristico.DuracionNoche}</span><br></br>
+                <span>Precio Estandar: {dataGeneralProgramaTuristico.PrecioEstandar}</span>
                 <TablaServicioCotizacion
                   Title={"Servicio/Productos"}
                   DevolverDatoFunct={DarDatoFunction}
