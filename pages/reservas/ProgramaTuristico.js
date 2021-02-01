@@ -3,19 +3,19 @@
 import router from "next/router";
 import React, { useEffect, useState, createContext, useRef } from "react";
 // import {Data_ProgramasTuristicos} from '../../query/query'
-import {MongoClient} from 'mongodb'
-
+import { MongoClient } from "mongodb";
 
 //css
 import CustomStyles from "../../styles/ProgramasTuristicos.module.css";
 
 //modulos
 import MaterialTable from "material-table";
-import BotonAnadir from "../../components/BotonAnadir/BotonAnadir";
 import Tabla from "../../components/TablaModal/Tabla";
 import AutoModal_v2 from "@/components/AutoModal_v2/AutoModal_v2";
-import FusionProgramas from '@/components/ComponentesUnicos/ProgramaTuristico/FusionProgramas/FusionProgramas';
-
+import FusionProgramas from "@/components/ComponentesUnicos/ProgramaTuristico/FusionProgramas/FusionProgramas";
+import Loader from "@/components/Loading/Loading";
+import axios from "axios";
+import { route } from "next/dist/next-server/server/router";
 
 function ProgramasTuristicos({
   Columnas,
@@ -23,6 +23,7 @@ function ProgramasTuristicos({
   APIpath,
   APIpathGeneral,
   ListaServiciosProductos,
+  API_DOMAIN,
 }) {
   //--------------- Acciones para que funcione el AutoMdoal --------------
   //--------------------------------------------------------------------
@@ -115,16 +116,16 @@ function ProgramasTuristicos({
                   field: "Dia",
                   title: "Dia",
                   initialEditValue: 1,
-                  type:'numeric',
+                  type: "numeric",
                 },
                 {
                   field: "Hora Inicio",
-                  title: "HoraInicio",
+                  title: "Hora de Inicio",
                   initialEditValue: "00:00",
                 },
                 {
                   field: "Hora Fin",
-                  title: "HoraFin",
+                  title: "Hora de Fin",
                   initialEditValue: "00:00",
                 },
                 { field: "Actividad", title: "Actividad" },
@@ -181,7 +182,7 @@ function ProgramasTuristicos({
   const Formulario_default = DevolverEstructuraFormulario({
     Id: null,
     NombrePrograma: "",
-    CodigoPrograma:"",
+    CodigoPrograma: "",
     DuracionDias: 0,
     DuracionNoche: 0,
     PrecioEstandar: 0.0,
@@ -199,9 +200,11 @@ function ProgramasTuristicos({
   const [ReiniciarData, setReiniciarData] = useState(false);
   const [Formulario, setFormulario] = useState(Formulario_default);
   const [TablaDatos, setTablaDatos] = useState(Datos);
+  const [Loading, setLoading] = useState(false);
 
   //hooks
   useEffect(async () => {
+    // setLoading(true);
     console.log(IdDato);
     if (IdDato != null && IdDato != "") {
       await fetch(APIpath, {
@@ -220,7 +223,7 @@ function ProgramasTuristicos({
               //cAMBIAR ESTA ZONA
               Id: IdDato,
               NombrePrograma: data.result.NombrePrograma,
-              CodigoPrograma:data.result.CodigoPrograma,
+              CodigoPrograma: data.result.CodigoPrograma,
               DuracionDias: data.result.DuracionDias,
               DuracionNoche: data.result.DuracionNoche,
               PrecioEstandar: data.result.PrecioEstandar,
@@ -235,6 +238,7 @@ function ProgramasTuristicos({
           );
         });
       setDisplay(true);
+      // setLoading(false);
     }
   }, [IdDato]);
   useEffect(async () => {
@@ -264,26 +268,22 @@ function ProgramasTuristicos({
       firstUpdate.current = false;
       return;
     }
-    if(ModalData["NombrePrograma"]== null || ModalData["NombrePrograma"]== undefined){
-      console.log('Grave error evitado')
+    if (
+      ModalData["NombrePrograma"] == null ||
+      ModalData["NombrePrograma"] == undefined
+    ) {
+      console.log("Grave error evitado");
       return;
     }
 
     if (ModalData["IdProgramaTuristico"] == null) {
-      fetch(APIpathGeneral, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          accion: "Insert",
-          coleccion: "ProgramaTuristico",
-          keyId: "IdProgramaTuristico",
-          Prefijo: "PT",
-          data: ModalData,
-        }),
-      })
-        .then((r) => r.json())
-        .then((data) => {
-          alert(data.message);
+      axios.post(API_DOMAIN + "/api/ProgramaTuristico/CRUD", {
+          ProgramaTuristico: ModalData,
+        })
+        .then((result) => {
+          console.log(result);
+          alert("Ingresado Correctamente");
+          router.reload();
         });
     } else {
       fetch(APIpathGeneral, {
@@ -304,11 +304,12 @@ function ProgramasTuristicos({
   }, [ModalData]);
   return (
     <div>
+      <Loader Loading={Loading} />
       <ModalDisplay.Provider
         value={[
           [Display, setDisplay],
           [ModalData, setModalData],
-          [Formulario, setFormulario]
+          [Formulario, setFormulario],
         ]}
       >
         <AutoModal_v2
@@ -316,88 +317,91 @@ function ProgramasTuristicos({
           ModalDisplay={ModalDisplay} //Contexto - Por si lo preguntaban
           IdDato={"IdProgramaTuristico"}
         />
-      
-      <span className={CustomStyles.titulo}>Programas turisticos</span>
-      <button
-        onClick={(event) => {
-          setIdDato(null);
-          setFormulario(Formulario_default);
-          setDisplay(true);
-        }}
-      >
-        Nuevo Programa Turistico
-      </button>
-      <div className={CustomStyles.tituloBox}>
-        <MaterialTable
-          columns={Columnas}
-          data={TablaDatos}
-          title="Programas turisticos"
-          actions={[
-            {
-              icon: () => {
-                return <img src="/resources/remove_red_eye-24px.svg" />;
-              },
-              tooltip: "Save User",
-              onClick: (event, rowData) => {
-                setIdDato(rowData.IdProgramaTuristico);
-                // setDisplay(true);
-              },
-            },
-            (rowData) => ({
-              icon: () => {
-                return <img src="/resources/delete-black-18dp.svg" />;
-              },
-              tooltip: "Delete User",
-              onClick: (event, rowData) => {
-                const dataDelete = [...TablaDatos];
-                const index = rowData.tableData.id;
-                dataDelete.splice(index, 1);
-                setTablaDatos([...dataDelete]);
 
-                fetch(APIpathGeneral, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    accion: "DeleteOne",
-                    coleccion: "ProgramaTuristico",
-                    query: {'IdProgramaTuristico':rowData['IdProgramaTuristico']}
-                  }),
-                })
-                  .then((r) => r.json())
-                  .then((data) => {
-                    alert(data.message);
-                  });
-              },
-            }),
-          ]}
-          options={{
-            actionsColumnIndex: -1,
+        <span className={CustomStyles.titulo}>Programas turisticos</span>
+        <button
+          onClick={(event) => {
+            setIdDato(null);
+            setModalData({});
+            setFormulario(Formulario_default);
+            setDisplay(true);
           }}
-        />
-      </div>
-      <div>
-        <span>Opciones Avanzadas</span>
-        <FusionProgramas 
-          TablaDatos={TablaDatos}
-          DevolverEstructuraFormulario={DevolverEstructuraFormulario}
-          ModalDisplay={ModalDisplay}
-          APIpathGeneral = {APIpathGeneral}
-        />
-      </div>
+        >
+          Nuevo Programa Turistico
+        </button>
+        <div className={CustomStyles.tituloBox}>
+          <MaterialTable
+            columns={Columnas}
+            data={TablaDatos}
+            title="Programas turisticos"
+            actions={[
+              {
+                icon: () => {
+                  return <img src="/resources/remove_red_eye-24px.svg" />;
+                },
+                tooltip: "Save User",
+                onClick: (event, rowData) => {
+                  // setIdDato();
+                  router.push(
+                    `/reservas/ProgramaTuristico/${rowData.IdProgramaTuristico}`
+                  );
+                  // setDisplay(true);
+                },
+              },
+              (rowData) => ({
+                icon: () => {
+                  return <img src="/resources/delete-black-18dp.svg" />;
+                },
+                tooltip: "Delete User",
+                onClick: (event, rowData) => {
+                  const dataDelete = [...TablaDatos];
+                  const index = rowData.tableData.id;
+                  dataDelete.splice(index, 1);
+                  setTablaDatos([...dataDelete]);
+
+                  fetch(APIpathGeneral, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      accion: "DeleteOne",
+                      coleccion: "ProgramaTuristico",
+                      query: {
+                        IdProgramaTuristico: rowData["IdProgramaTuristico"],
+                      },
+                    }),
+                  })
+                    .then((r) => r.json())
+                    .then((data) => {
+                      alert(data.message);
+                    });
+                },
+              }),
+            ]}
+            options={{
+              actionsColumnIndex: -1,
+            }}
+          />
+        </div>
+        <div>
+          <span>Opciones Avanzadas</span>
+          <FusionProgramas
+            TablaDatos={TablaDatos}
+            DevolverEstructuraFormulario={DevolverEstructuraFormulario}
+            ModalDisplay={ModalDisplay}
+            APIpathGeneral={APIpathGeneral}
+          />
+        </div>
       </ModalDisplay.Provider>
     </div>
   );
 }
-
-
-
 
 export async function getServerSideProps() {
   const APIpath = process.env.API_DOMAIN + "/api/programasTuristicos";
   const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
   let Columnas = [
-    { title: "Id", field: "IdProgramaTuristico", hidden: true},
+    { title: "Id", field: "IdProgramaTuristico", hidden: true },
     { title: "Nombre", field: "NombrePrograma" },
     { title: "Codigo", field: "CodigoPrograma" },
     { title: "Localizacion", field: "Localizacion" },
@@ -415,7 +419,7 @@ export async function getServerSideProps() {
         // console.log(datosResult)
         Datos.push({
           IdProgramaTuristico: datosResult.IdProgramaTuristico,
-          CodigoPrograma:datosResult.CodigoPrograma || null,
+          CodigoPrograma: datosResult.CodigoPrograma || null,
           NombrePrograma: datosResult.NombrePrograma,
           Localizacion: datosResult.Localizacion,
           DuracionDias: datosResult.DuracionDias,
@@ -423,7 +427,6 @@ export async function getServerSideProps() {
         });
       });
     });
-  
 
   //------------------------------------- obtencion de datos de probedores -----------------------------
   const url = process.env.MONGODB_URI;
@@ -434,13 +437,13 @@ export async function getServerSideProps() {
     useUnifiedTopology: true,
   });
   let ListaServiciosProductos = [];
+  let resultProveedores;
 
   try {
     await client.connect();
     const dbo = client.db(dbName);
-    // Proveedores
     let collection = dbo.collection("Proveedor");
-    let resultProveedores = await collection
+    resultProveedores = await collection
       .find({})
       .project({
         _id: 0,
@@ -452,220 +455,389 @@ export async function getServerSideProps() {
       })
       .toArray();
     console.log(resultProveedores);
-    // Hotel
-    collection = dbo.collection("ProductoHoteles");
-    let result = await collection
-      .find({})
-      .project({
-        _id: 0,
-      })
-      .toArray();
-    console.log(result);
-    result.map((x) => {
-      let proveedor = resultProveedores.find((value) => {
-        return value["idProveedor"] == x["idProveedor"];
-      });
-      ListaServiciosProductos.push({
-        IdServicioProducto: x["IdProductoHotel"] || null,
-        TipoServicio: "Hotel" || null,
-        Nombre: x["TipoPaxs"] + " - " + x["tipoHabitacion"] || null,
-        Descripcion:
-          "Cama Adicional: " +
-            (x["camAdic"] ? "si" : "no") +
-            " - Descripcion: " +
-            x["descripcionHabitacion"] || null,
-        Precio: x["precioCoti"] || 0.0,
-        Costo: x["precioConfi"] || 0.0,
-        NombreProveedor: proveedor["nombre"],
-        PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
-        Currency: proveedor["TipoMoneda"] || null,
-        PrecioPublicado: x["precioPubli"] || null,
-      });
-    });
-    // Restaurantes
-    collection = dbo.collection("ProductoRestaurantes");
-    result = await collection
-      .find({})
-      .project({
-        _id: 0,
-      })
-      .toArray();
-    result.map((x) => {
-      let proveedor = resultProveedores.find((value) => {
-        return value["idProveedor"] == x["idProveedor"];
-      });
-      ListaServiciosProductos.push({
-        IdServicioProducto: x["IdProductoRestaurantes"] || null,
-        TipoServicio: "Restaurante" || null,
-        Nombre:
-          x["codServicio"] + " - " + x["servicio"] + " - " + x["TipoPaxs"] ||
-          null,
-        Descripcion: "Caracteristicas: " + x["caracte"] || null,
-        Precio: x["precioCoti"] || 0.0,
-        Costo: x["precioConfi"] || 0.0,
-        NombreProveedor: proveedor["nombre"],
-        PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
-        Currency: proveedor["TipoMoneda"] || null,
-        PrecioPublicado: x["precioPubli"] || null,
-      });
-    });
-    //Transporte Terrestre
-    collection = dbo.collection("ProductoTransportes");
-    result = await collection
-      .find({})
-      .project({
-        _id: 0,
-      })
-      .toArray();
-    result.map((x) => {
-      let proveedor = resultProveedores.find((value) => {
-        return value["idProveedor"] == x["idProveedor"];
-      });
-      ListaServiciosProductos.push({
-        IdServicioProducto: x["IdProductoTransportes"] || null,
-        TipoServicio: "Transporte Terrestre" || null,
-        Nombre:
-          x["codServicio"] +
-            " / " +
-            x["EtapaPaxs"] +
-            " / " +
-            x["TipoPaxs"] +
-            " / " +
-            x["servicio"] +
-            " / Horario:" +
-            x["horario"] || null,
-        Descripcion: "Tipo de Vehiculo: " + x["tipvehiculo"] || null,
-        Precio: x["precioCoti"] || 0.0,
-        Costo: x["precioConfi"] || 0.0,
-        NombreProveedor: proveedor["nombre"],
-        PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
-        Currency: proveedor["TipoMoneda"] || null,
-        PrecioPublicado: x["precioPubli"] || null,
-      });
-    });
-    //Guia
-    collection = dbo.collection("ProductoGuias");
-    result = await collection
-      .find({})
-      .project({
-        _id: 0,
-      })
-      .toArray();
-    result.map((x) => {
-      let proveedor = resultProveedores.find((value) => {
-        return value["idProveedor"] == x["idProveedor"];
-      });
-      ListaServiciosProductos.push({
-        IdServicioProducto: x["IdProductoGuias"] || null,
-        TipoServicio: "Guias" || null,
-        Nombre:
-          x["codServicio"] + " - " + x["TipoPaxs"] + " - " + x["gremio"] ||
-          null,
-        Descripcion:
-          "N° Carne: " +
-            x["carne"] +
-            "; Idioma: " +
-            x["idiomas"] +
-            "; DNI: " +
-            x["dni"] || null,
-        Precio: x["precioCoti"] || 0.0,
-        Costo: x["precioConfi"] || 0.0,
-        NombreProveedor: proveedor["nombre"],
-        PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
-        Currency: proveedor["TipoMoneda"] || null,
-        PrecioPublicado: x["precioPubli"] || null,
-      });
-    });
-    //Agencia
-    collection = dbo.collection("ProductoAgencias");
-    result = await collection
-      .find({})
-      .project({
-        _id: 0,
-      })
-      .toArray();
-    result.map((x) => {
-      let proveedor = resultProveedores.find((value) => {
-        return value["idProveedor"] == x["idProveedor"];
-      });
-      ListaServiciosProductos.push({
-        IdServicioProducto: x["IdProductoHotel"] || null,
-        TipoServicio: "Agencia" || null,
-        Nombre:
-          x["codServicio"] + " - " + x["TipoPaxs"] + " - " + x["servicio"] ||
-          null,
-        Descripcion: "Duracion: " + x["duracion"] || null,
-        Precio: x["precioCoti"] || 0.0,
-        Costo: x["precioConfi"] || 0.0,
-        NombreProveedor: proveedor["nombre"],
-        PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
-        Currency: proveedor["TipoMoneda"] || null,
-        PrecioPublicado: x["precioPubli"] || null,
-      });
-    });
-    // Transporte Ferroviario
-    collection = dbo.collection("ProductoTransFerroviario");
-    result = await collection
-      .find({})
-      .project({
-        _id: 0,
-      })
-      .toArray();
-    result.map((x) => {
-      let proveedor = resultProveedores.find((value) => {
-        return value["idProveedor"] == x["idProveedor"];
-      });
-      ListaServiciosProductos.push({
-        IdServicioProducto: x["IdProductoTransFerroviario"] || null,
-        TipoServicio: "Transporte Ferroviario" || null,
-        Nombre:
-          x["TipoPaxs"] +
-            " / " +
-            x["EtapaPaxs"] +
-            " / " +
-            x["ruta"] +
-            "/ Horario:" +
-            x["salida"] +
-            "-" +
-            x["llegada"] || null,
-        Descripcion: "Tipo de tren: " + x["tipoTren"] || null,
-        Precio: x["precioCoti"] || 0.0,
-        Costo: x["precioConfi"] || 0.0,
-        NombreProveedor: proveedor["nombre"],
-        PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
-        Currency: proveedor["TipoMoneda"] || null,
-        PrecioPublicado: x["precioPubli"] || null,
-      });
-    });
-    // Otro
-    collection = dbo.collection("ProductoOtros");
-    result = await collection
-      .find({})
-      .project({
-        _id: 0,
-      })
-      .toArray();
-    result.map((x) => {
-      let proveedor = resultProveedores.find((value) => {
-        return value["idProveedor"] == x["idProveedor"];
-      });
-      ListaServiciosProductos.push({
-        IdServicioProducto: x["IdProductoOtros"] || null,
-        TipoServicio: "Transporte Ferroviario" || null,
-        Nombre:
-          x["codServicio"] + " - " + x["TipoPaxs"] + " - " + x["servicio"] ||
-          null,
-        Descripcion: x["Descripcion"] || null,
-        Precio: x["precioCoti"] || 0.0,
-        Costo: x["precioConfi"] || 0.0,
-        NombreProveedor: proveedor["nombre"],
-        PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
-        Currency: proveedor["TipoMoneda"] || null,
-        PrecioPublicado: x["precioPubli"] || null,
+  } catch (error) {
+    console.log("error - Obtener cambios dolar => " + error);
+  }
+  try {
+    await client.connect();
+    const dbo = client.db(dbName);
+    let DATA = await Promise.all([
+      // Hotel
+      new Promise(async (resolve, reject) => {
+        let collection = dbo.collection("ProductoHoteles");
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0,
+          })
+          .toArray();
+        let ListaServiciosProductos = [];
+        result.map((x) => {
+          let proveedor = resultProveedores.find((value) => {
+            return value["idProveedor"] == x["idProveedor"];
+          });
+          if (proveedor == undefined) {
+            console.log("Proveedor eliminado - " + x["idProveedor"]);
+            //   proveedor={};
+            //   proveedor['nombre']=null;
+            //   proveedor["porcentajeTotal"]=0;
+            //   proveedor["TipoMoneda"]="Dolar";
+          } else {
+            ListaServiciosProductos.push({
+              IdServicioProducto: x["IdProductoHotel"] || null,
+              IdProveedor: x["idProveedor"] || null,
+              TipoServicio: "Hotel" || null,
+              Nombre: x["TipoPaxs"] + " - " + x["tipoHabitacion"] || null,
+              Descripcion:
+                "Cama Adicional: " +
+                  (x["camAdic"] ? "si" : "no") +
+                  " - Descripcion: " +
+                  x["descripcionHabitacion"] || null,
+              Precio: x["precioCoti"] || 0.0,
+              Costo: x["precioConfi"] || 0.0,
+              NombreProveedor: proveedor["nombre"],
+              PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
+              Currency: proveedor["TipoMoneda"] || null,
+              PrecioPublicado: x["precioPubli"] || null,
+              OrdenServicio: null,
+            });
+          }
+        });
+        resolve(ListaServiciosProductos);
+      }),
+      // Restaurantes
+      new Promise(async (resolve, reject) => {
+        let collection = dbo.collection("ProductoRestaurantes");
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0,
+          })
+          .toArray();
+        let ListaServiciosProductos = [];
+        result.map((x) => {
+          let proveedor = resultProveedores.find((value) => {
+            return value["idProveedor"] == x["idProveedor"];
+          });
+          if (proveedor == undefined) {
+            console.log("Proveedor eliminado - " + x["idProveedor"]);
+            //   proveedor={};
+            //   proveedor['nombre']=null;
+            //   proveedor["porcentajeTotal"]=0;
+            //   proveedor["TipoMoneda"]="Dolar";
+          } else {
+            ListaServiciosProductos.push({
+              IdServicioProducto: x["IdProductoRestaurantes"] || null,
+              IdProveedor: x["idProveedor"] || null,
+              TipoServicio: "Restaurante" || null,
+              Nombre:
+                x["codServicio"] +
+                  " - " +
+                  x["servicio"] +
+                  " - " +
+                  x["TipoPaxs"] || null,
+              Descripcion: "Caracteristicas: " + x["caracte"] || null,
+              Precio: x["precioCoti"] || 0.0,
+              Costo: x["precioConfi"] || 0.0,
+              NombreProveedor: proveedor["nombre"],
+              PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
+              Currency: proveedor["TipoMoneda"] || null,
+              PrecioPublicado: x["precioPubli"] || null,
+              OrdenServicio: {
+                TipoOrden: "D",
+                Estado: 0,
+              },
+            });
+          }
+        });
+        resolve(ListaServiciosProductos);
+      }),
+      // Transporte Terrestre
+      new Promise(async (resolve, reject) => {
+        let collection = dbo.collection("ProductoTransportes");
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0,
+          })
+          .toArray();
+        let ListaServiciosProductos = [];
+        result.map((x) => {
+          let proveedor = resultProveedores.find((value) => {
+            return value["idProveedor"] == x["idProveedor"];
+          });
+          if (proveedor == undefined) {
+            console.log("Proveedor eliminado - " + x["idProveedor"]);
+            //   proveedor={};
+            //   proveedor['nombre']=null;
+            //   proveedor["porcentajeTotal"]=0;
+            //   proveedor["TipoMoneda"]="Dolar";
+          } else {
+            ListaServiciosProductos.push({
+              IdServicioProducto: x["IdProductoTransportes"] || null,
+              IdProveedor: x["idProveedor"] || null,
+              TipoServicio: "Transporte Terrestre" || null,
+              Nombre:
+                x["codServicio"] +
+                  " / " +
+                  // x["EtapaPaxs"] +
+                  // " / " +
+                  x["TipoPaxs"] +
+                  " / " +
+                  x["servicio"] +
+                  " / Horario:" +
+                  x["horario"] || null,
+              Descripcion: "Tipo de Vehiculo: " + x["tipvehiculo"] || null,
+              Precio: x["precioCoti"] || 0.0,
+              Costo: x["precioConfi"] || 0.0,
+              NombreProveedor: proveedor["nombre"],
+              PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
+              Currency: proveedor["TipoMoneda"] || null,
+              PrecioPublicado: x["precioPubli"] || null,
+              OrdenServicio: {
+                TipoOrden: "C",
+                Estado: 0,
+              },
+            });
+          }
+        });
+        resolve(ListaServiciosProductos);
+      }),
+      // Guia
+      new Promise(async (resolve, reject) => {
+        let collection = dbo.collection("ProductoGuias");
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0,
+          })
+          .toArray();
+        let ListaServiciosProductos = [];
+        result.map((x) => {
+          let proveedor = resultProveedores.find((value) => {
+            return value["idProveedor"] == x["idProveedor"];
+          });
+          if (proveedor == undefined) {
+            console.log("Proveedor eliminado - " + x["idProveedor"]);
+            //   proveedor={};
+            //   proveedor['nombre']=null;
+            //   proveedor["porcentajeTotal"]=0;
+            //   proveedor["TipoMoneda"]="Dolar";
+          } else {
+            ListaServiciosProductos.push({
+              IdServicioProducto: x["IdProductoGuias"] || null,
+              IdProveedor: x["idProveedor"] || null,
+              TipoServicio: "Guia" || null,
+              Nombre:
+                x["codServicio"] +
+                  " - " +
+                  x["TipoPaxs"] +
+                  " - " +
+                  x["gremio"] || null,
+              Descripcion:
+                "N° Carne: " +
+                  x["carne"] +
+                  "; Idioma: " +
+                  x["idiomas"] +
+                  "; DNI: " +
+                  x["dni"] || null,
+              Precio: x["precioCoti"] || 0.0,
+              Costo: x["precioConfi"] || 0.0,
+              NombreProveedor: proveedor["nombre"],
+              PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
+              Currency: proveedor["TipoMoneda"] || null,
+              PrecioPublicado: x["precioPubli"] || null,
+              OrdenServicio: null,
+            });
+          }
+        });
+        resolve(ListaServiciosProductos);
+      }),
+      // Agencia
+      new Promise(async (resolve, reject) => {
+        let collection = dbo.collection("ProductoAgencias");
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0,
+          })
+          .toArray();
+        let ListaServiciosProductos = [];
+        result.map((x) => {
+          let proveedor = resultProveedores.find((value) => {
+            return value["idProveedor"] == x["idProveedor"];
+          });
+          if (proveedor == undefined) {
+            console.log("Proveedor eliminado - " + x["idProveedor"]);
+            //   proveedor={};
+            //   proveedor['nombre']=null;
+            //   proveedor["porcentajeTotal"]=0;
+            //   proveedor["TipoMoneda"]="Dolar";
+          } else {
+            ListaServiciosProductos.push({
+              IdServicioProducto: x["IdProductoHotel"] || null,
+              IdProveedor: x["idProveedor"] || null,
+              TipoServicio: "Agencia" || null,
+              Nombre:
+                x["codServicio"] +
+                  " - " +
+                  x["TipoPaxs"] +
+                  " - " +
+                  x["servicio"] || null,
+              Descripcion: "Duracion: " + x["duracion"] || null,
+              Precio: x["precioCoti"] || 0.0,
+              Costo: x["precioConfi"] || 0.0,
+              NombreProveedor: proveedor["nombre"],
+              PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
+              Currency: proveedor["TipoMoneda"] || null,
+              PrecioPublicado: x["precioPubli"] || null,
+              OrdenServicio: null,
+            });
+          }
+        });
+        resolve(ListaServiciosProductos);
+      }),
+      // Transporte Ferroviario
+      new Promise(async (resolve, reject) => {
+        let collection = dbo.collection("ProductoTransFerroviario");
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0,
+          })
+          .toArray();
+        let ListaServiciosProductos = [];
+        result.map((x) => {
+          let proveedor = resultProveedores.find((value) => {
+            return value["idProveedor"] == x["idProveedor"];
+          });
+          if (proveedor == undefined) {
+            console.log("Proveedor eliminado - " + x["idProveedor"]);
+            //   proveedor={};
+            //   proveedor['nombre']=null;
+            //   proveedor["porcentajeTotal"]=0;
+            //   proveedor["TipoMoneda"]="Dolar";
+          } else {
+            ListaServiciosProductos.push({
+              IdServicioProducto: x["IdProductoTransFerroviario"] || null,
+              IdProveedor: x["idProveedor"] || null,
+              TipoServicio: "Transporte Ferroviario" || null,
+              Nombre:
+                x["TipoPaxs"] +
+                  " / " +
+                  x["EtapaPaxs"] +
+                  " / " +
+                  x["ruta"] +
+                  "/ Horario:" +
+                  x["salida"] +
+                  "-" +
+                  x["llegada"] || null,
+              Descripcion: "Tipo de tren: " + x["tipoTren"] || null,
+              Precio: x["precioCoti"] || 0.0,
+              Costo: x["precioConfi"] || 0.0,
+              NombreProveedor: proveedor["nombre"],
+              PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
+              Currency: proveedor["TipoMoneda"] || null,
+              PrecioPublicado: x["precioPubli"] || null,
+              OrdenServicio: null,
+            });
+          }
+        });
+        resolve(ListaServiciosProductos);
+      }),
+      // Sitio Turistico
+      new Promise(async (resolve, reject) => {
+        let collection = dbo.collection("ProductoSitioTuristico");
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0,
+          })
+          .toArray();
+        let ListaServiciosProductos = [];
+        result.map((x) => {
+          let proveedor = resultProveedores.find((value) => {
+            return value["idProveedor"] == x["idProveedor"];
+          });
+          if (proveedor == undefined) {
+            console.log("Proveedor eliminado - " + x["idProveedor"]);
+            //   proveedor={};
+            //   proveedor['nombre']=null;
+            //   proveedor["porcentajeTotal"]=0;
+            //   proveedor["TipoMoneda"]="Dolar";
+          } else {
+            ListaServiciosProductos.push({
+              IdServicioProducto: x["IdProductoSitioTuristico"] || null,
+              IdProveedor: x["idProveedor"] || null,
+              TipoServicio: "Sitio Turistico" || null,
+              Nombre: x["NomServicio"] + " - " + x["Categoria"] || null,
+              Descripcion: x["HoraAtencion"] || null,
+              Precio: x["precioCoti"] || 0.0,
+              Costo: x["precioConfi"] || 0.0,
+              NombreProveedor: proveedor["nombre"],
+              PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
+              Currency: proveedor["TipoMoneda"] || null,
+              PrecioPublicado: x["precioPubli"] || null,
+              OrdenServicio: null,
+            });
+          }
+        });
+        resolve(ListaServiciosProductos);
+      }),
+      // Otro
+      new Promise(async (resolve, reject) => {
+        let collection = dbo.collection("ProductoOtros");
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0,
+          })
+          .toArray();
+        let ListaServiciosProductos = [];
+        result.map((x) => {
+          let proveedor = resultProveedores.find((value) => {
+            return value["idProveedor"] == x["idProveedor"];
+          });
+          if (proveedor == undefined) {
+            console.log("Proveedor eliminado - " + x["idProveedor"]);
+            //   proveedor={};
+            //   proveedor['nombre']=null;
+            //   proveedor["porcentajeTotal"]=0;
+            //   proveedor["TipoMoneda"]="Dolar";
+          } else {
+            ListaServiciosProductos.push({
+              IdServicioProducto: x["IdProductoOtros"] || null,
+              IdProveedor: x["idProveedor"] || null,
+              TipoServicio: "Otro" || null,
+              Nombre:
+                x["codServicio"] +
+                  " - " +
+                  x["TipoPaxs"] +
+                  " - " +
+                  x["servicio"] || null,
+              Descripcion: x["Descripcion"] || null,
+              Precio: x["precioCoti"] || 0.0,
+              Costo: x["precioConfi"] || 0.0,
+              NombreProveedor: proveedor["nombre"],
+              PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
+              Currency: proveedor["TipoMoneda"] || null,
+              PrecioPublicado: x["precioPubli"] || null,
+              OrdenServicio: null,
+            });
+          }
+        });
+        resolve(ListaServiciosProductos);
+      }),
+    ]);
+    client.close();
+    // Transformar todo a un solo array de objetos
+    DATA.map((d) => {
+      d.map((obj) => {
+        ListaServiciosProductos.push(obj);
       });
     });
   } catch (error) {
-    console.log("error - " + error);
+    console.log(error);
   }
 
   return {
@@ -675,8 +847,8 @@ export async function getServerSideProps() {
       APIpath: APIpath,
       APIpathGeneral: APIpathGeneral,
       ListaServiciosProductos: ListaServiciosProductos,
+      API_DOMAIN: process.env.API_DOMAIN,
     },
   };
 }
 export default ProgramasTuristicos;
-
