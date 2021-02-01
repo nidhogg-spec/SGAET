@@ -288,7 +288,7 @@ export async function getStaticProps() {
         "celular2":0,
         "email":0,
         "email2":0,
-        "direccionRegistrada":0,
+        "DireccionFiscal":0,
         "DatosBancarios":0,
         "Destino":0,
         "Email":0,

@@ -1,5 +1,5 @@
 //packege
-import fetch from "isomorphic-unfetch";
+// import fetch from "isomorphic-unfetch";
 import router from "next/router";
 import React, { useEffect, useState } from "react";
 //css

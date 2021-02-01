@@ -181,6 +181,11 @@ const AutoModal = ({
 
   //Hooks
   useEffect(() => {
+    if (Object.keys(ModalData).length == 0) {
+      setModoEdicion(true);
+    }
+  }, [ModalData]);
+  useEffect(() => {
     if (ReinciarComponentes == true) {
       setReinciarComponentes(false);
     }
@@ -220,26 +225,33 @@ const AutoModal = ({
     >
       <div className={styles.Modal_content}>
         <h1>{Formulario.title}</h1>
-        <img
-          src="/resources/save-black-18dp.svg"
-          onClick={() => {
-            setDarDato(true);
-            // ReiniciarData()
-          }}
-        />
-        <img
-          src="/resources/edit-black-18dp.svg"
-          onClick={(event) => {
-            if (ModoEdicion == false) {
-              event.target.src = "/resources/close-black-18dp.svg";
-              setModoEdicion(true);
-            } else {
-              event.target.src = "/resources/edit-black-18dp.svg";
-              setReinciarComponentes(true);
-              setModoEdicion(false);
-            }
-          }}
-        />
+        {ModoEdicion ? (
+          <>
+            <img
+              src="/resources/save-black-18dp.svg"
+              onClick={() => {
+                setDarDato(true);
+                // ReiniciarData()
+              }}
+            />
+            <img
+              src="/resources/close-black-18dp.svg"
+              onClick={(event) => {
+                setReinciarComponentes(true);
+                setModoEdicion(false);
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <img
+              src="/resources/edit-black-18dp.svg"
+              onClick={(event) => {
+                setModoEdicion(true);
+              }}
+            />
+          </>
+        )}
         {Formulario.secciones.map((seccion) => {
           return (
             <div>
