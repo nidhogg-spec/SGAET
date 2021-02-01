@@ -42,7 +42,10 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
   const [ProgramasTuristicos, setProgramasTuristicos] = useState([]);
   const [DataCotizacion, setDataCotizacion] = useState({});
   const [Servicios, setServicios] = useState([]);
-  const [dataGeneralProgramaTuristico, setDataGeneralProgramaTuristico] = useState({});
+  const [
+    dataGeneralProgramaTuristico,
+    setDataGeneralProgramaTuristico,
+  ] = useState({});
   const [ListaServiciosProductos, setListaServiciosProductos] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [Fase, setFase] = useState(1);
@@ -91,7 +94,9 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       delete ReservaCotizacion["Servicios"];
       ReservaCotizacion["FechaIN"] = FechaIN;
       ReservaCotizacion["Estado"] = 0;
-      ReservaCotizacion["NumPaxTotal"] = parseInt(ReservaCotizacion.NpasajerosAdult)+parseInt(ReservaCotizacion.NpasajerosChild)
+      ReservaCotizacion["NumPaxTotal"] =
+        parseInt(ReservaCotizacion.NpasajerosAdult) +
+        parseInt(ReservaCotizacion.NpasajerosChild);
       // Formateo de datos de ServiciosEscogidos
 
       //Formateo de datos de ClienteProspecto
@@ -122,9 +127,9 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
         }),
       })
         .then((r) => r.json())
-        .then((data) => {});
-
-      console.log(DataNuevaEdit);
+        .then((data) => {
+          console.log(data.message);
+        });
       setLoading(false);
     }
 
@@ -281,24 +286,22 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       });
     // console.log(DataServicios)
     setFase(3);
-    setDataCotizacion(ProgramaTuristSeleccionado);
     setServicios(ServiciosActu);
+    setDataCotizacion(ProgramaTuristSeleccionado);
     setLoading(false);
   }, [IdProgramaTuristico]);
 
   useEffect(() => {
-    let tempDataGeneralProgramaTuristico = {}
-    if(Fase > 2){
-      ProgramasTuristicos.map((x)=>{
-        if (x.IdProgramaTuristico=IdProgramaTuristico) {
-          tempDataGeneralProgramaTuristico=x
+    let tempDataGeneralProgramaTuristico = {};
+    if (Fase > 2) {
+      ProgramasTuristicos.map((x) => {
+        if ((x.IdProgramaTuristico = IdProgramaTuristico)) {
+          tempDataGeneralProgramaTuristico = x;
         }
-      })
+      });
     }
-    setDataGeneralProgramaTuristico(tempDataGeneralProgramaTuristico)
-
-    console.log(tempDataGeneralProgramaTuristico)
-  },[Fase]);
+    setDataGeneralProgramaTuristico(tempDataGeneralProgramaTuristico);
+  }, [Fase]);
 
   useEffect(() => {
     if (TipoCliente == 1) {
@@ -385,10 +388,12 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             setcliente(temp_cliente);
                           }}
                         >
-                          <option value= {null}>Seleccione Documento</option>
+                          <option value={null}>Seleccione Documento</option>
                           <option value="DNI">DNI</option>
                           <option value="Pasaporte">Pasaporte</option>
-                          <option value="CarneExtranjeria">Carne de Extranjeria</option>
+                          <option value="CarneExtranjeria">
+                            Carne de Extranjeria
+                          </option>
                         </select>
                       </div>
                       <div>
@@ -549,9 +554,17 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
               <div className={styles.DatosContenedor} id="ContData">
                 <h2>{dataGeneralProgramaTuristico.NombrePrograma}</h2>
                 <p>{dataGeneralProgramaTuristico.Descripcion}</p>
-                <span>Duracion Dias : {dataGeneralProgramaTuristico.DuracionDias}</span><br></br>
-                <span>Duracion Noches : {dataGeneralProgramaTuristico.DuracionNoche}</span><br></br>
-                <span>Precio Estandar: {dataGeneralProgramaTuristico.PrecioEstandar}</span>
+                <span>
+                  Duracion Dias : {dataGeneralProgramaTuristico.DuracionDias}
+                </span>
+                <br></br>
+                <span>
+                  Duracion Noches : {dataGeneralProgramaTuristico.DuracionNoche}
+                </span>
+                <br></br>
+                <span>
+                  Precio Estandar: {dataGeneralProgramaTuristico.PrecioEstandar}
+                </span>
                 <TablaServicioCotizacion
                   Title={"Servicio/Productos"}
                   DevolverDatoFunct={DarDatoFunction}
