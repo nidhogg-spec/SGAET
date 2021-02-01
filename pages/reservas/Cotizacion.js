@@ -40,12 +40,10 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
   const [IdProgramaTuristico, setIdProgramaTuristico] = useState(""); // Evaluar si se va
   const [ReinciarComponentes, setReinciarComponentes] = useState(false);
   const [ProgramasTuristicos, setProgramasTuristicos] = useState([]);
+  const [MostrarClientesCorporativos, setMostrarClientesCorporativos] = useState([]);
   const [DataCotizacion, setDataCotizacion] = useState({});
   const [Servicios, setServicios] = useState([]);
-  const [
-    dataGeneralProgramaTuristico,
-    setDataGeneralProgramaTuristico,
-  ] = useState({});
+  const [dataGeneralProgramaTuristico,setDataGeneralProgramaTuristico] = useState({});
   const [ListaServiciosProductos, setListaServiciosProductos] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [Fase, setFase] = useState(1);
@@ -72,6 +70,14 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
           .then((r) => r.json())
           .then((data) => {
             setListaServiciosProductos(data.data);
+            resolve();
+          });
+      }),
+      new Promise(async (resolve, reject) => {
+        await fetch(APIpath + "/api/Cotizacion/ObtenerClientesCorporativos")
+          .then((r) => r.json())
+          .then((data) => {
+            setMostrarClientesCorporativos(data.data);
             resolve();
           });
       }),
@@ -267,6 +273,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
     // }
   }, [DarDato]);
   useEffect(async () => {
+
     if (
       IdProgramaTuristico == null ||
       IdProgramaTuristico == "" ||
@@ -357,9 +364,32 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                         <>
                           <MaterialTable
                             title="Todos los Clientes corporativos"
-                            columns={[{ field: "", title: "" }]}
-                            data={[]}
-                            actions={[]}
+                            columns={[
+                              { title: "Nombre Completo", field: "NombreCompleto" },
+                              { title: "Tipo Documento", field: "TipoDocumento" },
+                              { title: "Numero de Documento", field: "NroDocumento"},
+                              { title: "Celular", field: "Contacto[0].Numero"},
+                              { title: "Email", field: "Contacto[0].Email"},
+                              
+                            ]}
+                            data={MostrarClientesCorporativos}
+                            actions={[
+                              {
+                                icon: "check",
+                                tooltip: "Seleccione Cliente Corporativo",
+                                onClick: (event, rowData) => {
+                                  //console.log(cliente)
+                                  if (rowData.Contacto == undefined) {
+                                    rowData.Celular = ""
+                                    rowData.Email = ""
+                                  }else{
+                                    rowData.Celular = rowData.Contacto[0].Numero
+                                    rowData.Email = rowData.Contacto[0].Email
+                                  }
+                                  setcliente(rowData)
+                                },
+                              },
+                            ]}
                           />
                         </>
                       ) : (
@@ -389,11 +419,9 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                           }}
                         >
                           <option value={null}>Seleccione Documento</option>
-                          <option value="DNI">DNI</option>
-                          <option value="Pasaporte">Pasaporte</option>
-                          <option value="CarneExtranjeria">
-                            Carne de Extranjeria
-                          </option>
+                          <option value={cliente["DNI"]}>DNI</option>
+                          <option value={cliente["Pasaporte"]}>Pasaporte</option>
+                          <option value={cliente["CarneExtranjeria"]}>Carne de Extranjeria</option>
                         </select>
                       </div>
                       <div>
