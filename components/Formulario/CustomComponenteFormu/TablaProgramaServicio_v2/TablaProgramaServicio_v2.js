@@ -79,7 +79,8 @@ const TablaProgramaServicio_v2 = (
               temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
               break;
             case "Sol":
-              temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]) / CambioDolar;
+              temp_MontoTotal +=
+                parseFloat(uni_CotiServi["PrecioCotiTotal"]) / CambioDolar;
               break;
           }
         });
@@ -88,7 +89,8 @@ const TablaProgramaServicio_v2 = (
         CotiServicio.map((uni_CotiServi) => {
           switch (uni_CotiServi["Currency"]) {
             case "Dolar":
-              temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]) * CambioDolar;
+              temp_MontoTotal +=
+                parseFloat(uni_CotiServi["PrecioCotiTotal"]) * CambioDolar;
               break;
             case "Sol":
               temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
@@ -98,12 +100,12 @@ const TablaProgramaServicio_v2 = (
         break;
     }
     setMontoTotal(temp_MontoTotal);
-  }, [CotiServicio,CurrencyTotal]);
+  }, [CotiServicio, CurrencyTotal]);
   useEffect(() => {
-    let CambioDolar_temp= sessionStorage.getItem('CambioDolar')
-    if(CambioDolar_temp){
-      setCambioDolar(CambioDolar_temp)
-    }else{
+    let CambioDolar_temp = sessionStorage.getItem("CambioDolar");
+    if (CambioDolar_temp) {
+      setCambioDolar(CambioDolar_temp);
+    } else {
       fetch("/api/DataSistema", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -111,11 +113,11 @@ const TablaProgramaServicio_v2 = (
           accion: "ObtenerCambioDolar",
         }),
       })
-      .then((r) => r.json())
-      .then((data) => {
-        setCambioDolar(data.value)
-        sessionStorage.setItem('CambioDolar',data.value)
-      });
+        .then((r) => r.json())
+        .then((data) => {
+          setCambioDolar(data.value);
+          sessionStorage.setItem("CambioDolar", data.value);
+        });
     }
   }, []);
 
@@ -209,23 +211,28 @@ const TablaProgramaServicio_v2 = (
                         temp_newData["Cantidad"];
                       temp_CotiServicio[id]["IGV"] = temp_newData["IGV"];
                       if (temp_CotiServicio[id]["IGV"]) {
-                        temp_CotiServicio[id]["PrecioCotiTotal"] =
-                          (temp_newData["Cantidad"] *
+                        temp_CotiServicio[id]["PrecioCotiTotal"] = (
+                          temp_newData["Cantidad"] *
                           temp_newData["PrecioCotiUnitario"] *
-                          1.18).toFixed(2);
-                        temp_CotiServicio[id]["PrecioConfiTotal"] =
-                          (temp_newData["Cantidad"] *
+                          1.18
+                        ).toFixed(2);
+                        temp_CotiServicio[id]["PrecioConfiTotal"] = (
+                          temp_newData["Cantidad"] *
                           temp_newData["PrecioConfiUnitario"] *
-                          1.18).toFixed(2);
+                          1.18
+                        ).toFixed(2);
                       } else {
-                        temp_CotiServicio[id]["PrecioCotiTotal"] =
-                          (temp_newData["Cantidad"] *
-                          temp_newData["PrecioCotiUnitario"]).toFixed(2);
-                        temp_CotiServicio[id]["PrecioConfiTotal"] =
-                          (temp_newData["Cantidad"] *
-                          temp_newData["PrecioConfiUnitario"]).toFixed(2);
+                        temp_CotiServicio[id]["PrecioCotiTotal"] = (
+                          temp_newData["Cantidad"] *
+                          temp_newData["PrecioCotiUnitario"]
+                        ).toFixed(2);
+                        temp_CotiServicio[id]["PrecioConfiTotal"] = (
+                          temp_newData["Cantidad"] *
+                          temp_newData["PrecioConfiUnitario"]
+                        ).toFixed(2);
                       }
-                      temp_CotiServicio[id]['PrecioCotiUnitario']=temp_newData['PrecioCotiUnitario']
+                      temp_CotiServicio[id]["PrecioCotiUnitario"] =
+                        temp_newData["PrecioCotiUnitario"];
                       setCotiServicio(temp_CotiServicio);
                       resolve();
                     });
@@ -243,13 +250,20 @@ const TablaProgramaServicio_v2 = (
                 }),
             }}
           />
-          <select onChange={(event)=>{
-            setCurrencyTotal(event.target.value)
-          }}>
-            <option value='Dolar' selected>Dolares</option>
-            <option value='Sol'>Soles</option>
+          <select
+            onChange={(event) => {
+              setCurrencyTotal(event.target.value);
+            }}
+          >
+            <option value="Dolar" selected>
+              Dolares
+            </option>
+            <option value="Sol">Soles</option>
           </select>
-          <span>El precio total es: {CurrencyTotal=='Dolar'?'$':'S/.'}{MontoTotal.toFixed(2)}</span>
+          <span>
+            El precio total es: {CurrencyTotal == "Dolar" ? "$" : "S/."}
+            {MontoTotal.toFixed(2)}
+          </span>
         </div>
         <div className={styles.MasServicios}>
           <MaterialTable
@@ -276,9 +290,24 @@ const TablaProgramaServicio_v2 = (
                 editable: "never",
                 lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
               },
-              { field: "Precio", title: "Precio Cotizacion", editable: "never", type: "numeric",},
-              { field: "Costo", title: "Precio Confidencial", editable: "never", type: "numeric",},
-              { field: "PrecioPublicado", title: "Precio Publicado", editable: "never", type: "numeric",},
+              {
+                field: "Precio",
+                title: "Precio Cotizacion",
+                editable: "never",
+                type: "numeric",
+              },
+              {
+                field: "Costo",
+                title: "Precio Confidencial",
+                editable: "never",
+                type: "numeric",
+              },
+              {
+                field: "PrecioPublicado",
+                title: "Precio Publicado",
+                editable: "never",
+                type: "numeric",
+              },
             ]}
             data={props.ListaServiciosProductos}
             actions={[
@@ -298,7 +327,7 @@ const TablaProgramaServicio_v2 = (
                     PrecioCotiTotal: rowData["Precio"],
                     PrecioConfiTotal: rowData["Costo"],
                     Currency: rowData["Currency"],
-                    PrecioPublicado:rowData["PrecioPublicado"],
+                    PrecioPublicado: rowData["PrecioPublicado"],
                   });
                   setCotiServicio(x);
                   let ActuDataTableServicios = [...DataTableServicios];
@@ -321,8 +350,71 @@ const TablaProgramaServicio_v2 = (
       <div className={styles.divMadre}>
         <MaterialTable
           title={props.Title}
-          columns={props.columnas}
-          data={Data}
+          columns={[
+            {
+              field: "IdServicioProducto",
+              title: "IdServicioProducto",
+              editable: "never",
+              hidden: true,
+            },
+            {
+              field: "PrecioConfiUnitario",
+              title: "Precio Confidencial Unitario",
+              editable: "never",
+              type: "numeric",
+              hidden: true,
+            },
+            { field: "NombreServicio", title: "Nombre", editable: "never" },
+            {
+              field: "Dia",
+              title: "Numero de dia",
+              editable: "always",
+              type: "numeric",
+            },
+            {
+              field: "Cantidad",
+              title: "Cantidad",
+              editable: "always",
+              type: "numeric",
+            },
+            {
+              field: "Currency",
+              title: "Moneda",
+              editable: "never",
+              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+            },
+            {
+              field: "PrecioCotiUnitario",
+              title: "Precio Cotizacion Unitario",
+              editable: "always",
+              type: "numeric",
+            },
+            {
+              field: "PrecioPublicado",
+              title: "Precio Publicado",
+              editable: "never",
+              type: "numeric",
+            },
+            {
+              field: "IGV",
+              title: "IGV incluido?",
+              editable: "always",
+              type: "boolean",
+            },
+            {
+              field: "PrecioCotiTotal",
+              title: "Precio Cotizacion Total",
+              editable: "never",
+              type: "numeric",
+            },
+            {
+              field: "PrecioConfiTotal",
+              title: "Precio Confidencial Total",
+              editable: "never",
+              type: "numeric",
+            },
+          ]}
+          data={CotiServicio}
         />
       </div>
     );
