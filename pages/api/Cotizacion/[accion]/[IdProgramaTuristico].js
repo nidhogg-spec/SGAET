@@ -63,6 +63,10 @@ const func_ObtenerTodosPT = async (req, res) => {
               NombrePrograma: 1,
               CodigoPrograma: 1,
               Localizacion: 1,
+              Descripcion: 1,
+              DuracionDias: 1,
+              DuracionNoche: 1,
+              PrecioEstandar: 1
             },
           }
         )

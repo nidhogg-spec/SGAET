@@ -111,7 +111,7 @@ export default async (req, res) => {
   await client.connect()
 
   await Promise.all([
-      //Guardar ReservaCotizacion
+    //Guardar ReservaCotizacion
     new Promise(async (resolve, reject) => {
       try {
         let dbo = client.db(dbName);
@@ -170,6 +170,9 @@ export default async (req, res) => {
         }
       }),
   ]);
-  res.redirect('/reservas/ListaCotizacion');
+
+  res.status(200).json({message:"Insercion Satisfactoria"})
+  /*Sale el error del http header aprender como solucionalo para poder hacer el redirec*/
+  // return res.redirect('/reservas/ListaCotizacion');
 
 };

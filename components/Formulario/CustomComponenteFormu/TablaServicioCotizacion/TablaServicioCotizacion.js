@@ -1,6 +1,6 @@
 //Package
 import styles from "./TablaServicioCotizacion.module.css";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 
 //Componentes
 import MaterialTable from "material-table";
@@ -33,42 +33,60 @@ const TablaServicioCotizacion = (
   //---------------------------------------------------------------------------------
 
   //------------------------------------Hooks-----------------------------------------
-  useEffect(() => {
-    try {
-      // let ActuDataTableServicios = [...ServiciosInit];
-      // props.Dato.map((element) => {
-      //   ActuDataTableServicios.splice(
-      //     ActuDataTableServicios.find((value) => {
-      //       return value["IdServicio"] == element["IdServicio"];
-      //     }),
-      //     1
-      //   );
-      // });
-      // setDataTableServicios(ActuDataTableServicios);
-      setCotiServicio(props.Dato);
-    } catch (error) {
-      console.log("Error - Extraccion DATA - " + error);
-    }
-  }, [props.Dato]);
+  // useEffect(() => {
+  //   try {
+  //     // let ActuDataTableServicios = [...ServiciosInit];
+  //     // props.Dato.map((element) => {
+  //     //   ActuDataTableServicios.splice(
+  //     //     ActuDataTableServicios.find((value) => {
+  //     //       return value["IdServicio"] == element["IdServicio"];
+  //     //     }),
+  //     //     1
+  //     //   );
+  //     // });
+  //     // setDataTableServicios(ActuDataTableServicios);
+  //     setCotiServicio(props.Dato);
+  //   } catch (error) {
+  //     console.log("Error - Extraccion DATA - " + error);
+  //   }
+  // }, [props.Dato]);
+
   useEffect(() => {
     if (props.Reiniciar == true) {
       setData(DataInit);
     }
   }, [props.Reiniciar]);
   useEffect(() => {
+    try {
+      setCotiServicio(props.Dato);
+      console.log(CotiServicio);
+      
+    } catch (error) {
+      console.log("Error - Extraccion DATA - " + error);
+    }
+  }, [props.Dato]);
+  useEffect(() => {
     if (props.DarDato == true) {
       props.DevolverDatoFunct(props.KeyDato, CotiServicio);
     }
   }, [props.DarDato]);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (NotAgain.current) {
       NotAgain.current = false;
       return;
     }
+
     let temp_MontoTotal = 0;
+
+    // console.log(CotiServicio)
+    // console.log("/-----------------/")
+    // console.log(props.Dato)
+    // console.log("/-----------------/")
+    // console.log()
+
     switch (CurrencyTotal) {
       case "Dolar":
-        CotiServicio.map((uni_CotiServi) => {
+        props.Dato.map((uni_CotiServi) => {
           switch (uni_CotiServi["Currency"] || "Dolar") {
             case "Dolar":
               temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
@@ -81,7 +99,7 @@ const TablaServicioCotizacion = (
         });
         break;
       case "Sol":
-        CotiServicio.map((uni_CotiServi) => {
+        props.Dato.map((uni_CotiServi) => {
           switch (uni_CotiServi["Currency"]) {
             case "Dolar":
               temp_MontoTotal +=
@@ -98,6 +116,7 @@ const TablaServicioCotizacion = (
     setMontoTotal(temp_MontoTotal);
     Actulizar_fechas();
   }, [CotiServicio, CurrencyTotal]);
+
   useEffect(() => {
     let CambioDolar_temp = sessionStorage.getItem("CambioDolar");
     if (CambioDolar_temp) {
@@ -151,7 +170,8 @@ const TablaServicioCotizacion = (
     });
   };
   //---------------------------------------------------------------------------------
-
+  // console.log("mas pruebas")
+  // console.log(CotiServicio)
   return (
     <div>
       <span>{props.Title}</span>
@@ -265,7 +285,8 @@ const TablaServicioCotizacion = (
                         temp_newData["PrecioConfiUnitario"]
                       ).toFixed(2);
                     }
-                    temp_CotiServicio[id]["PrecioCotiUnitario"] = temp_newData["PrecioCotiUnitario"];
+                    temp_CotiServicio[id]["PrecioCotiUnitario"] =
+                      temp_newData["PrecioCotiUnitario"];
                     temp_CotiServicio[id]["Dia"] = temp_newData["Dia"];
                   });
                   setCotiServicio(temp_CotiServicio);
