@@ -152,7 +152,7 @@ export default async (req, res) => {
             dataActu,
             (err, result) => {
               if (err) {
-                res.status(500).json({ error: true, message: "un error .v" });
+                res.status(500).json({ error: true, message: "un error .v"+error });
                 client.close();
                 return;
               }

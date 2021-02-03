@@ -86,7 +86,7 @@ const TablaServicioCotizacion = (
 
     switch (CurrencyTotal) {
       case "Dolar":
-        props.Dato.map((uni_CotiServi) => {
+        CotiServicio.map((uni_CotiServi) => {
           switch (uni_CotiServi["Currency"] || "Dolar") {
             case "Dolar":
               temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
@@ -99,7 +99,7 @@ const TablaServicioCotizacion = (
         });
         break;
       case "Sol":
-        props.Dato.map((uni_CotiServi) => {
+        CotiServicio.map((uni_CotiServi) => {
           switch (uni_CotiServi["Currency"]) {
             case "Dolar":
               temp_MontoTotal +=
