@@ -71,7 +71,6 @@ export default function Home({ Datos, api_general }) {
       })
         .then((r) => r.json())
         .then((data) => {
-          alert(data.message);
         });
     }
   }, [ModalData]);

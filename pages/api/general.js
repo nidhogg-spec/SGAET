@@ -246,6 +246,9 @@ export default async (req, res) => {
           try {
             await client_update.connect(async (error) => {
               // assert.equal(err, null); // Preguntar
+              if (error) {
+                console.log("El error es"+error)
+              }
               let dbo = client_update.db(dbName);
 
               let collection = dbo.collection(req.body.coleccion);
@@ -257,7 +260,7 @@ export default async (req, res) => {
                   throw err;
                 }
                 console.log(
-                  "Uctualizadicimo"
+                  "Actualizado"
                 );
               })
               res.status(200).json({ result: "Insercion realizada" });

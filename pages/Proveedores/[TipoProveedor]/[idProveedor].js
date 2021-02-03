@@ -8,11 +8,6 @@ import axios from "axios";
 
 //componentes
 import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
-import TablaBanco from "@/components/TablaModal//Modal/TablaBeneficiarios/TablaBanco";
-import CampoTexto from "@/components/TablaModal/Modal/CampoTexto/CampoTexto";
-import Selector from "@/components/TablaModal/Modal/Selector/Selector";
-import TablaSimple from "@/components/Formulario/TablaSimple/TablaSimple";
-
 
 export default function TipoProveedor(
   props = { ServicioProducto, Proveedor, APIpath }
@@ -22,7 +17,9 @@ export default function TipoProveedor(
   const [DevolverDato, setDevolverDato] = useState(false);
   const [datosEditables, setDatosEditables] = useState(props.ServicioProducto);
   const [Proveedor, setProveedor] = useState(props.Proveedor);
-  let UltimoIngresado = {}
+  const [ProveedorContacto, setProveedorContacto] = useState(Proveedor.Contacto);
+  const [ProveedorBanco, setProveedorBanco] = useState(Proveedor.DatosBancarios);
+  let UltimoIngresado = {};
   const [ServicioProducto, setServicioProducto] = useState(
     props.ServicioProducto
   );
@@ -242,14 +239,18 @@ export default function TipoProveedor(
   };
   useEffect(() => {
     if (DevolverDato == true) {
+      
       setDevolverDato(false);
-      fetch(APIpath + "/api/proveedores/listaProveedores", {
+      Proveedor.Contacto = ProveedorContacto
+      Proveedor.DatosBancarios = ProveedorBanco
+
+      fetch(props.APIpath + "/api/proveedores/listaProveedores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           idProveedor: idProveedor,
           accion: "update",
-          data: DataEdit,
+          data: Proveedor,
         }),
       })
         .then((r) => r.json())
@@ -258,7 +259,11 @@ export default function TipoProveedor(
         });
     }
   }, [DevolverDato]);
-
+  // useEffect(() => {
+  //   console.log("gsdg");
+  //   console.log(Proveedor);
+  //   console.log(Proveedor);
+  // }, [Proveedor]);
   return (
     <div>
       <h1>{Proveedor.nombre}</h1>
@@ -492,72 +497,108 @@ export default function TipoProveedor(
               />
             </>
           ) : null}
-          <AutoFormulario
-            Formulario={{
-              title: "Datos de Proveedor",
-              secciones: [
-                {
-                  subTitle: "",
-                  componentes: [
-                    {
-                      tipo: "texto",
-                      Title: "Enlace a Pagina web",
-                      KeyDato: "Web",
-                    },
-                  ],
-                },
-                {
-                  subTitle: "Datos de Contacto",
-                  componentes: [
-                    {
-                      tipo: "tablaSimple",
-                      Title: "Contactos",
-                      KeyDato: "Contacto",
-                      columnas: [
-                        { field: "NombreContac", title: "Nombre del Contacto" },
-                        { field: "Area", title: "Area de trabajo" },
-                        { field: "Numero", title: "Telefono/Celular" },
-                        { field: "Email", title: "Email" },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  subTitle: "Datos de Cuentas Bancarias",
-                  componentes: [
-                    {
-                      tipo: "tablaSimple",
-                      Title: "Datos de Cuentas Bancarias",
-                      KeyDato: "DatosBancarios",
-                      columnas: [
-                        { field: "Banco", title: "Banco" },
-                        { field: "Beneficiario", title: "Beneficiario" },
-                        {
-                          field: "TipoCuenta",
-                          title: "Tipo de Cuenta Bancaria",
-                        },
-                        {
-                          field: "TipoDocumento",
-                          title: "Tipo de Documento",
-                          lookup: { RUC: "RUC", DNI: "DNI" },
-                        },
-                        { field: "NumDoc", title: "Numero de Documento" },
-                        { field: "Cuenta", title: "Numero de Cuenta" },
-                        { field: "CCI", title: "CCI" },
-                      ],
-                    },
-                  ],
-                },
-              ],
+          <MaterialTable
+            title="Datos de Contacto"
+            columns={[
+              { field: "NombreContac", title: "Nombre del Contacto" },
+              { field: "Area", title: "Area de trabajo" },
+              { field: "Numero", title: "Telefono/Celular" },
+              { field: "Email", title: "Email" },
+            ]}
+            data={ProveedorContacto}
+            editable={{
+              onRowAdd: (newData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+                   
+                    setProveedorContacto([...ProveedorContacto, newData])
+                   
+                    resolve();
+                  }, 1000);
+                }),
+              onRowUpdate: (newData, oldData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+
+                    const dataUpdate = [...ProveedorContacto];
+                    const index = oldData.tableData.id;
+                    dataUpdate[index] = newData;
+                    setProveedorContacto([...dataUpdate]);
+
+                    resolve();
+                  }, 1000);
+                }),
+              onRowDelete: (oldData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+
+                    const dataDelete = [...ProveedorContacto];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+                    setProveedorContacto([...dataDelete]);
+
+                    resolve();
+                  }, 1000);
+                }),
             }}
-            Dato={Proveedor}
-            setDato={setProveedor}
-            ModoEdicion={Edicion}
-            key={"AutoFormulario001"}
+          />
+          <MaterialTable
+            title="Datos de Cuentas Bancarias"
+            columns={[
+              { field: "Banco", title: "Banco" },
+              { field: "Beneficiario", title: "Beneficiario" },
+              {
+                field: "TipoCuenta",
+                title: "Tipo de Cuenta Bancaria",
+              },
+              {
+                field: "TipoDocumento",
+                title: "Tipo de Documento",
+                lookup: { RUC: "RUC", DNI: "DNI" },
+              },
+              { field: "NumDoc", title: "Numero de Documento" },
+              { field: "Cuenta", title: "Numero de Cuenta" },
+              { field: "CCI", title: "CCI" },
+            ]}
+            data={ProveedorBanco}
+            editable={{
+              onRowAdd: (newData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+
+                    setProveedorBanco([...ProveedorBanco, newData]);
+
+                    resolve();
+                  }, 1000);
+                }),
+              onRowUpdate: (newData, oldData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+
+                    const dataUpdate = [...ProveedorBanco];
+                    const index = oldData.tableData.id;
+                    dataUpdate[index] = newData;
+                    setProveedorBanco([...dataUpdate]);
+
+                    resolve();
+                  }, 1000);
+                }),
+              onRowDelete: (oldData) =>
+                new Promise((resolve, reject) => {
+                  setTimeout(() => {
+
+                    const dataDelete = [...ProveedorBanco];
+                    const index = oldData.tableData.id;
+                    dataDelete.splice(index, 1);
+                    setProveedorBanco([...dataDelete]);
+
+                    resolve();
+                  }, 1000);
+                }),
+            }}
           />
         </div>
       </div>
-
       <div id="ProductoServicio_area">
         <MaterialTable
           columns={Columnas}
@@ -586,12 +627,12 @@ export default function TipoProveedor(
             onRowAdd: (newData) =>
               new Promise((resolve, reject) => {
                 setTimeout(async () => {
-                  if(deepEqual(newData,UltimoIngresado)){
-                    console.log('Repetido')
+                  if (deepEqual(newData, UltimoIngresado)) {
+                    console.log("Repetido");
                     resolve();
                     return;
                   }
-                  UltimoIngresado = {...newData}
+                  UltimoIngresado = { ...newData };
                   newData["idProveedor"] = idProveedor;
                   //-------- Comparacion ---------------
                   let temp_newData = { ...newData };
@@ -626,9 +667,8 @@ export default function TipoProveedor(
                     resolve();
                   } else {
                     alert("Existen Datos Duplicados");
-                    reject()
+                    reject();
                   }
-                  
                 }, 2000);
               }),
             onRowUpdate: (newData, oldData) =>
