@@ -110,7 +110,7 @@ const func_ListaReserva = async (req, res) => {
       // collection.findOne(idServicio)
       collection
         .find(
-          { $or: [{ Estado: 1 }] },
+          { $or: [{ Estado: 2 },{ Estado: 3 }] },
           {
             projection: {
               _id: 0,

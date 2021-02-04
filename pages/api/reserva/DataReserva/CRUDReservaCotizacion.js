@@ -132,7 +132,6 @@ export default async (req, res) =>{
             );
           });
           break;
-  
         default:
           res
             .status(500)

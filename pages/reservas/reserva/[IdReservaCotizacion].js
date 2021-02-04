@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import Loader from "@/components/Loading/Loading";
 import MaterialTable from "material-table";
+import axios from "axios";
+import Cotizacion from "../Cotizacion";
 
 const ReservaCotizacion = ({ APIPatch }) => {
   const router = useRouter();
@@ -14,11 +16,17 @@ const ReservaCotizacion = ({ APIPatch }) => {
   // --------------------------------------------------------------------------------------
   // Aqui va todo lo necesario para trabajar con el autoFormulario
   const [ReservaCotizacion, setReservaCotizacion] = useState({});
-  const [ServiciosEscojidos, setServiciosEscojidos] = useState([]);
+  const [ServiciosEscogidos, setServiciosEscogidos] = useState([]);
   const [AllServiciosProductos, setAllServiciosProductos] = useState([]);
   const [ClienteCotizacion, setClienteCotizacion] = useState({});
   const [Estado, setEstado] = useState(0);
   const [Loading, setLoading] = useState(false);
+  const [ModoEdicion, setModoEdicion] = useState(false);
+  const [MontoTotal, setMontoTotal] = useState(0);
+  const [CambioDolar, setCambioDolar] = useState(0);
+
+  const refEstado = useRef(null)
+  //--------------------------------------------------------------------------------------
   useEffect(async () => {
     setLoading(true);
     await Promise.all([
@@ -44,7 +52,7 @@ const ReservaCotizacion = ({ APIPatch }) => {
         )
           .then((r) => r.json())
           .then((data) => {
-            setServiciosEscojidos(data.AllServicioEscojido);
+            setServiciosEscogidos(data.AllServicioEscogido);
             resolve();
           });
       }),
@@ -56,25 +64,125 @@ const ReservaCotizacion = ({ APIPatch }) => {
             resolve();
           });
       }),
+      new Promise(async (resolve, reject) => {
+        let temp_cambio = await axios.post(APIPatch + '/api/DataSistema',{
+          accion: "ObtenerCambioDolar",
+        });
+        setCambioDolar(temp_cambio.data['value']);
+        resolve();
+      }),
     ]);
     setLoading(false);
   }, []);
 
-  // --------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------
+  const CalcularTotal = () =>{
+    let temp_MontoTotal = 0;
+    let CurrencyTotal = 'Sol'
+    if (ServiciosEscogidos != undefined) {
+      switch (CurrencyTotal) {
+        case "Dolar":
+          ServiciosEscogidos.map((uni_CotiServi) => {
+            switch (uni_CotiServi["Currency"] || "Dolar") {
+              case "Dolar":
+                temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
+                break;
+              case "Sol":
+                temp_MontoTotal +=
+                  parseFloat(uni_CotiServi["PrecioCotiTotal"]) / CambioDolar;
+                break;
+            }
+          });
+          break;
+        case "Sol":
+          ServiciosEscogidos.map((uni_CotiServi) => {
+            switch (uni_CotiServi["Currency"]) {
+              case "Dolar":
+                temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]) * CambioDolar;
+                break;
+              case "Sol":
+                temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
+                break;
+            }
+          });
+          break;
+      }
+    }
+    return [temp_MontoTotal]
+  }
 
-  //Estados
+  //-----------------Funcionamiento de tabla devolucion --------------------
+  const [Devolucion, setDevolucion] = useState([]);
+  const callback_create = () =>{
+
+  }
+  const callback_delete = () =>{
+    
+  }
+  const callback_update = () =>{
+    
+  }
+
 
   return (
     <>
       <Loader Loading={Loading} />
       <h3>Datos de Reserva</h3>
-      <img
-        src="/resources/save-black-18dp.svg"
-        onClick={() => {
-          DataNuevaEdit = {};
-          setDarDato(true);
-        }}
-      />
+      {ModoEdicion ? (
+          <>
+          <button>
+            <img
+              src="/resources/save-black-18dp.svg"
+              onClick={async () => {
+                setLoading(true);
+                await Promise.all([
+                  new Promise(async (resolve, reject) => {
+                    let temp_ServiciosEscogidos=[...ServiciosEscogidos];
+                    temp_ServiciosEscogidos.map(Servi=>{
+                      Servi['IdReservaCotizacion'] = IdReservaCotizacion;
+                    })
+                    await axios.put(APIPatch+'/api/reserva/DataServicio/CRUD',{
+                      ServicioEscogido:temp_ServiciosEscogidos,
+                      Accion:'UpdateMany'
+                    })
+                    resolve();
+                  }),
+                  new Promise(async (resolve, reject) => {
+                    await axios.post(APIPatch+'/api/reserva/DataReserva/CRUDReservaCotizacion',{
+                      data:ReservaCotizacion,
+                      idProducto: IdReservaCotizacion,
+                      accion:'update'
+                    })
+                    resolve();
+                  }),
+                ])
+                setLoading(false);
+              }}
+            />
+          </button>
+            <button>
+              <img
+                src="/resources/close-black-18dp.svg"
+                onClick={(event) => {
+                  setModoEdicion(false)
+                  }
+                }
+              />
+            </button>
+          </>
+        ) : (
+          <>
+          <button>
+              <img
+                src="/resources/edit-black-18dp.svg"
+                onClick={(event) => {
+                  setModoEdicion(true)
+                  }
+                }
+              />
+            </button>
+          </>
+        )}
       <button
         onClick={async (event) => {
           setLoading(true);
@@ -96,7 +204,48 @@ const ReservaCotizacion = ({ APIPatch }) => {
       >
         Descargar Voucher
       </button>
-      <select value={Estado}>
+      <select value={Estado} ref={refEstado} onChange={async()=>{
+        setLoading(true)
+        let Estado_val = parseInt(refEstado.current.value)
+        if(Estado_val>Estado){
+          if(confirm('Esta seguro de cambiar de estado?')){
+            setEstado(Estado_val);
+            await axios.post(APIPatch+'/api/reserva/DataReserva/CRUDReservaCotizacion',{
+              data:{Estado:Estado_val},
+              idProducto: IdReservaCotizacion,
+              accion:'update'
+            })
+            if(Estado_val==3){
+              await Promise.all([
+                // new Promise(async (resolve, reject) => {
+                //   await axios.post(APIPatch+'/api/reserva/DataReserva/CRUDReservaCotizacion',{
+                //     data:{Estado:refEstado.current.value},
+                //     idProducto: IdReservaCotizacion,
+                //     accion:'update'
+                //   })
+                // }),
+                new Promise(async (resolve, reject) => {
+                  const [temp_MontoTotal] =CalcularTotal()
+                  await axios.post(APIPatch + '/api/finanzas/ingresos',{
+                    accion:'create',
+                    data:{
+                      Npasajeros:(ReservaCotizacion['NpasajerosAdult']||0) + (ReservaCotizacion['NpasajerosChild']||0),
+                      Total:temp_MontoTotal,
+                      TotalNeto:0,
+                      Comision:0,
+                      Adelanto:0,
+                      AdelantoNeto:0
+                    },
+                  })
+                  resolve();
+                }),
+              ])
+              
+            }
+          }
+        }
+        setLoading(false)
+      }}>
         <option value={0}>Cotizacion</option>
         <option value={1}>Reserva sin confirmar</option>
         <option value={2}>Reserva confirmada</option>
@@ -161,27 +310,30 @@ const ReservaCotizacion = ({ APIPatch }) => {
                 },
               ],
             }}
-            ModoEdicion={true}
+            ModoEdicion={ModoEdicion}
             Dato={ReservaCotizacion}
             setDato={setReservaCotizacion}
             key={"AF_ReserCoti"}
           />
         </div>
         <div>
-          <h3>Datos del Cotizante</h3>
-          <button></button>
-
           <h3>LLenado de Pasajeros</h3>
-          <Link href={`http://localhost:3000/LlenadoPasajeros/${IdReservaCotizacion}`}>
-            <a >Llenar Lista de Pasajeros</a>
-          </Link>
-          
+          <div>
+            <input
+              value={`http://localhost:3000/LlenadoPasajeros/${IdReservaCotizacion}`}
+              disabled
+            />
+            <Link href={`http://localhost:3000/LlenadoPasajeros/${IdReservaCotizacion}`}>
+              <button><a >Llenar Lista de Pasajeros</a></button> 
+            </Link>
+          </div>
+          <h3>Datos del Cotizante</h3>
           <AutoFormulario_v2
             Formulario={{
               title: "Prueba de guardado de datos",
               secciones: [
                 {
-                  subTitle: "Datos",
+                  subTitle: "",
                   componentes: [
                     {
                       tipo: "texto",
@@ -218,19 +370,29 @@ const ReservaCotizacion = ({ APIPatch }) => {
                 },
               ],
             }}
-            ModoEdicion={true}
+            ModoEdicion={ModoEdicion}
             Dato={ClienteCotizacion}
             setDato={setClienteCotizacion}
             key={"AF_ClienteCotizacion"}
           />
         </div>
         <div>
+        {/* <TablaDevolucion
+          Data={Devolucion}
+          setData={setDevolucion}
+          callback_create={null}
+          callback_delete={null}
+          callback_update={null}
+        /> */}
+      </div>
+        <div>
           <TablaServicioCotizacion
             Title="Servicios/Productos de la reserva"
-            setCotiServicio={setServiciosEscojidos}
-            CotiServicio={ServiciosEscojidos || []}
+            setCotiServicio={setServiciosEscogidos}
+            CotiServicio={ServiciosEscogidos || []}
             ListaServiciosProductos={AllServiciosProductos || []}
             FechaIN={ReservaCotizacion["FechaIN"]}
+            setMontoTotal={setMontoTotal}
           />
         </div>
       </div>
@@ -257,6 +419,7 @@ const TablaServicioCotizacion = (
     CotiServicio: [],
     ListaServiciosProductos: [],
     FechaIN,
+    setMontoTotal,
     // columnas:[]
   }
 ) => {
@@ -297,8 +460,7 @@ const TablaServicioCotizacion = (
           props.CotiServicio.map((uni_CotiServi) => {
             switch (uni_CotiServi["Currency"]) {
               case "Dolar":
-                temp_MontoTotal +=
-                  parseFloat(uni_CotiServi["PrecioCotiTotal"]) * CambioDolar;
+                temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]) * CambioDolar;
                 break;
               case "Sol":
                 temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
@@ -311,6 +473,7 @@ const TablaServicioCotizacion = (
 
     NotAgain.current = true;
     setMontoTotal(temp_MontoTotal);
+    props.setMontoTotal(temp_MontoTotal);
     Actulizar_fechas();
   }, [props.CotiServicio, CurrencyTotal]);
   useEffect(() => {
@@ -380,13 +543,13 @@ const TablaServicioCotizacion = (
             {
               field: "Dia",
               title: "Dia",
-              editable: "never",
+              editable: "always",
               type: "numeric",
             },
             {
               field: "FechaReserva",
               title: "Fecha de Reserva",
-              editable: "always",
+              editable: "never",
               type: "date",
             },
             {
@@ -437,16 +600,18 @@ const TablaServicioCotizacion = (
             onBulkUpdate: (cambios) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
+                  //--------Improtante / Si solo se edito un objeto, el cambios se da como un objeto, pero todo el proceso esta hecho para trabajar con arrays
                   // if (typeof(cambios) === 'object') {
                   //   cambios = [cambios]
                   // }
+                  //--------------------------------------------------------------------------------------------
                   Object.entries(cambios).map((cambio) => {
                     let temp_CotiServicio = [...props.CotiServicio];
                     let temp_newData = cambio[1]["newData"];
                     let id = temp_newData["tableData"]["id"];
 
-                    temp_CotiServicio[id]["Cantidad"] =
-                      temp_newData["Cantidad"];
+                    temp_CotiServicio[id]["Cantidad"] = temp_newData["Cantidad"];
+                    temp_CotiServicio[id]["Dia"] = temp_newData["Dia"];
                     temp_CotiServicio[id]["IGV"] = temp_newData["IGV"];
                     if (temp_CotiServicio[id]["IGV"]) {
                       temp_CotiServicio[id]["PrecioCotiTotal"] = (
