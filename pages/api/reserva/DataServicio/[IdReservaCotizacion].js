@@ -29,7 +29,7 @@ export default async (req, res) => {
             // res.redirect("/500");
             res.status(500).json({ error: "Algun error" });
           }
-          res.status(200).json({ AllServicioEscojido: result });
+          res.status(200).json({ AllServicioEscogido: result });
         });
     });
   } catch (error) {
