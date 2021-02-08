@@ -1,5 +1,7 @@
 import styles from "./BotonAnadir.module.css"
-const BotonAnadir = (props) => {
+const BotonAnadir = (props={
+    Accion
+}) => {
 //Los siguientes datos deberian de estar en props para su correcto funcionamiento:
 //     Accion = Accion que debe de realizar el boton
 //     

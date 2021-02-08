@@ -22,7 +22,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
     let Columnas=[
           { 
             title: "Id", 
-            field: "idProveedor",
+            field: "IdProveedor",
             hidden: true
           },
           { 
@@ -54,7 +54,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
         }
       })
       datosProv.map((x)=>{
-        objetoDatos = {evaperiodo:actividadesActivas, idProveedor: x.idProveedor, periodo: datoPeriodo}
+        objetoDatos = {evaperiodo:actividadesActivas, IdProveedor: x.IdProveedor, periodo: datoPeriodo}
         arrayEvaluacion.push(objetoDatos)
       })
       fetch(`http://localhost:3000/api/proveedores/mep`,{
@@ -73,9 +73,9 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
 
     function compare (a,b){
       let comp = 0
-      if(a.idProveedor>b.idProveedor){
+      if(a.IdProveedor>b.IdProveedor){
         comp = 1;
-      }else if(a.idProveedor<b.idProveedor){
+      }else if(a.IdProveedor<b.IdProveedor){
         comp= -1
       }
       return comp
@@ -87,9 +87,9 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
       let objetoPocentajeProvEvaProv = {}
 
       datosTablaShow.map(x=>{
-        objetoIdProvEvaProv.push(x.idProveedor)
+        objetoIdProvEvaProv.push(x.IdProveedor)
         // objetoPocentajeProvEvaProv[porcentajeTotal,periodoActual] = x.porcentajeTotal,datoPeriodoSeleccionado
-        objetoPocentajeProvEvaProv= {proveedor:x.idProveedor,porcentajeTotal: x.porcentajeTotal, periodoActual: datoPeriodoSeleccionado}
+        objetoPocentajeProvEvaProv= {proveedor:x.IdProveedor,porcentajeTotal: x.porcentajeTotal, periodoActual: datoPeriodoSeleccionado}
         if(objetoPocentajeProvEvaProv.porcentajeTotal==undefined){
           objetoPocentajeProvEvaProv.porcentajeTotal=null
         }
@@ -104,7 +104,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
           method:"POST",
           headers:{"Content-Type": "application/json"},
           body: JSON.stringify({
-            idProveedor: x.proveedor,
+            IdProveedor: x.proveedor,
             data: y,
             accion: "update",
           }),
@@ -129,9 +129,9 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
 
       datosProvOrdenado.map((x)=>{
         filtroPeriodoOrdenado.map((y)=>{
-          if(x.idProveedor == y.idProveedor){
+          if(x.IdProveedor == y.IdProveedor){
             datosTabla.push({
-              idProveedor: y.idProveedor,
+              IdProveedor: y.IdProveedor,
               nombre: x.nombre,
               tipo: x.tipo,
               puntosTotales: y.puntosTotales,
@@ -230,11 +230,11 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
                 },
                 tooltip: "Mostrar Evaluacion",
                 onClick: (event, rowData,) => {
-                  let y = rowData.idProveedor.concat('', datoPeriodoSeleccionado)
+                  let y = rowData.IdProveedor.concat('', datoPeriodoSeleccionado)
                   Router.push({
                     pathname: `/MatrizEvaProv/${y}`,
                   })
-                  // setUrlProv(rowData.idProveedor)
+                  // setUrlProv(rowData.IdProveedor)
                   // setUrlPeriodo(datoPeriodoSeleccionado)
                 }
               }

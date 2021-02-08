@@ -44,7 +44,7 @@ export default function Evaluacion({Datos}){
     si falla algo añadir el [] en el use effect*/
     useEffect(()=>{
       for (let index = 0; index < datosEditables.length; index++) {
-        if (idprov==datosEditables[index].idProveedor && periodo==datosEditables[index].periodo) {
+        if (idprov==datosEditables[index].IdProveedor && periodo==datosEditables[index].periodo) {
           console.log("Existe we")
           dataEvaluProv=datosEditables[index]
         }

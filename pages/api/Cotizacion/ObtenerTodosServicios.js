@@ -21,7 +21,7 @@ export default async (req, res) => {
         _id: 0,
         nombre: 1,
         tipo: 1,
-        idProveedor: 1,
+        IdProveedor: 1,
         porcentajeTotal: 1,
         TipoMoneda: 1,
       })
@@ -45,10 +45,10 @@ export default async (req, res) => {
       let ListaServiciosProductos = [];
       result.map((x) => {
         let proveedor = resultProveedores.find((value) => {
-          return value["idProveedor"] == x["idProveedor"];
+          return value["IdProveedor"] == x["IdProveedor"];
         });
         if (proveedor == undefined) {
-          console.log("Proveedor eliminado - " + x["idProveedor"]);
+          console.log("Proveedor eliminado - " + x["IdProveedor"]);
           //   proveedor={};
           //   proveedor['nombre']=null;
           //   proveedor["porcentajeTotal"]=0;
@@ -56,7 +56,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoHotel"] || null,
-            IdProveedor:x["idProveedor"] || null,
+            IdProveedor:x["IdProveedor"] || null,
             TipoServicio: "Hotel" || null,
             Nombre: x["TipoPaxs"] + " - " + x["tipoHabitacion"] || null,
             Descripcion:
@@ -88,18 +88,18 @@ export default async (req, res) => {
       let ListaServiciosProductos = [];
       result.map((x) => {
         let proveedor = resultProveedores.find((value) => {
-          return value["idProveedor"] == x["idProveedor"];
+          return value["IdProveedor"] == x["IdProveedor"];
         });
         if (proveedor == undefined) {
-          console.log("Proveedor eliminado - " + x["idProveedor"]);
+          console.log("Proveedor eliminado - " + x["IdProveedor"]);
           //   proveedor={};
           //   proveedor['nombre']=null;
           //   proveedor["porcentajeTotal"]=0;
           //   proveedor["TipoMoneda"]="Dolar";
         } else {
           ListaServiciosProductos.push({
-            IdServicioProducto: x["IdProductoRestaurantes"] || null,
-            IdProveedor:x["idProveedor"] || null,
+            IdServicioProducto: x["IdProductoRestaurante"] || null,
+            IdProveedor:x["IdProveedor"] || null,
             TipoServicio: "Restaurante" || null,
             Nombre:
               x["codServicio"] +
@@ -135,18 +135,18 @@ export default async (req, res) => {
       let ListaServiciosProductos = [];
       result.map((x) => {
         let proveedor = resultProveedores.find((value) => {
-          return value["idProveedor"] == x["idProveedor"];
+          return value["IdProveedor"] == x["IdProveedor"];
         });
         if (proveedor == undefined) {
-          console.log("Proveedor eliminado - " + x["idProveedor"]);
+          console.log("Proveedor eliminado - " + x["IdProveedor"]);
           //   proveedor={};
           //   proveedor['nombre']=null;
           //   proveedor["porcentajeTotal"]=0;
           //   proveedor["TipoMoneda"]="Dolar";
         } else {
           ListaServiciosProductos.push({
-            IdServicioProducto: x["IdProductoTransportes"] || null,
-            IdProveedor:x["idProveedor"] || null,
+            IdServicioProducto: x["IdProductoTransporte"] || null,
+            IdProveedor:x["IdProveedor"] || null,
             TipoServicio: "Transporte Terrestre" || null,
             Nombre:
               x["codServicio"] +
@@ -186,18 +186,18 @@ export default async (req, res) => {
       let ListaServiciosProductos = [];
       result.map((x) => {
         let proveedor = resultProveedores.find((value) => {
-          return value["idProveedor"] == x["idProveedor"];
+          return value["IdProveedor"] == x["IdProveedor"];
         });
         if (proveedor == undefined) {
-          console.log("Proveedor eliminado - " + x["idProveedor"]);
+          console.log("Proveedor eliminado - " + x["IdProveedor"]);
           //   proveedor={};
           //   proveedor['nombre']=null;
           //   proveedor["porcentajeTotal"]=0;
           //   proveedor["TipoMoneda"]="Dolar";
         } else {
           ListaServiciosProductos.push({
-            IdServicioProducto: x["IdProductoGuias"] || null,
-            IdProveedor:x["idProveedor"] || null,
+            IdServicioProducto: x["IdProductoGuia"] || null,
+            IdProveedor:x["IdProveedor"] || null,
             TipoServicio: "Guia" || null,
             Nombre:
               x["codServicio"] + " - " + x["TipoPaxs"] + " - " + x["gremio"] ||
@@ -233,10 +233,10 @@ export default async (req, res) => {
       let ListaServiciosProductos = [];
       result.map((x) => {
         let proveedor = resultProveedores.find((value) => {
-          return value["idProveedor"] == x["idProveedor"];
+          return value["IdProveedor"] == x["IdProveedor"];
         });
         if (proveedor == undefined) {
-          console.log("Proveedor eliminado - " + x["idProveedor"]);
+          console.log("Proveedor eliminado - " + x["IdProveedor"]);
           //   proveedor={};
           //   proveedor['nombre']=null;
           //   proveedor["porcentajeTotal"]=0;
@@ -244,7 +244,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoHotel"] || null,
-            IdProveedor:x["idProveedor"] || null,
+            IdProveedor:x["IdProveedor"] || null,
             TipoServicio: "Agencia" || null,
             Nombre:
               x["codServicio"] +
@@ -277,10 +277,10 @@ export default async (req, res) => {
       let ListaServiciosProductos = [];
       result.map((x) => {
         let proveedor = resultProveedores.find((value) => {
-          return value["idProveedor"] == x["idProveedor"];
+          return value["IdProveedor"] == x["IdProveedor"];
         });
         if (proveedor == undefined) {
-          console.log("Proveedor eliminado - " + x["idProveedor"]);
+          console.log("Proveedor eliminado - " + x["IdProveedor"]);
           //   proveedor={};
           //   proveedor['nombre']=null;
           //   proveedor["porcentajeTotal"]=0;
@@ -288,7 +288,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoTransFerroviario"] || null,
-            IdProveedor:x["idProveedor"] || null,
+            IdProveedor:x["IdProveedor"] || null,
             TipoServicio: "Transporte Ferroviario" || null,
             Nombre:
               x["TipoPaxs"] +
@@ -325,10 +325,10 @@ export default async (req, res) => {
       let ListaServiciosProductos = [];
       result.map((x) => {
         let proveedor = resultProveedores.find((value) => {
-          return value["idProveedor"] == x["idProveedor"];
+          return value["IdProveedor"] == x["IdProveedor"];
         });
         if (proveedor == undefined) {
-          console.log("Proveedor eliminado - " + x["idProveedor"]);
+          console.log("Proveedor eliminado - " + x["IdProveedor"]);
           //   proveedor={};
           //   proveedor['nombre']=null;
           //   proveedor["porcentajeTotal"]=0;
@@ -336,7 +336,7 @@ export default async (req, res) => {
         } else {
           ListaServiciosProductos.push({
             IdServicioProducto: x["IdProductoSitioTuristico"] || null,
-            IdProveedor:x["idProveedor"] || null,
+            IdProveedor:x["IdProveedor"] || null,
             TipoServicio: "Sitio Turistico" || null,
             Nombre: x["NomServicio"] + " - " + x["Categoria"] || null,
             Descripcion: x["HoraAtencion"] || null,
@@ -364,18 +364,18 @@ export default async (req, res) => {
       let ListaServiciosProductos = [];
       result.map((x) => {
         let proveedor = resultProveedores.find((value) => {
-          return value["idProveedor"] == x["idProveedor"];
+          return value["IdProveedor"] == x["IdProveedor"];
         });
         if (proveedor == undefined) {
-          console.log("Proveedor eliminado - " + x["idProveedor"]);
+          console.log("Proveedor eliminado - " + x["IdProveedor"]);
           //   proveedor={};
           //   proveedor['nombre']=null;
           //   proveedor["porcentajeTotal"]=0;
           //   proveedor["TipoMoneda"]="Dolar";
         } else {
           ListaServiciosProductos.push({
-            IdServicioProducto: x["IdProductoOtros"] || null,
-            IdProveedor:x["idProveedor"] || null,
+            IdServicioProducto: x["IdProductoOtro"] || null,
+            IdProveedor:x["IdProveedor"] || null,
             TipoServicio: "Otro" || null,
             Nombre:
               x["codServicio"] +

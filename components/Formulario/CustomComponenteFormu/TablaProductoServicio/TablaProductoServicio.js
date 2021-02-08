@@ -152,7 +152,7 @@ const TablaProductoServicio = (
                     x.push({
                       //Segun esquema de columnas
                       // IdProductoServicio: rowData["NombreServicio"],
-                      IdProductoOriginal: rowData["idProveedor"],
+                      IdProductoOriginal: rowData["IdProveedor"],
                       NombreProducto: rowData["nombreServicio"],
                       DescripcionProducto: rowData["descripcionServicio"],
                       Precio: rowData["precioDolares"],
@@ -163,7 +163,7 @@ const TablaProductoServicio = (
                     x.push({
                       //Segun esquema de columnas
                       // IdProductoServicio: rowData["NombreServicio"],
-                      IdProductoOriginal: rowData["IdProductoTransportes"],
+                      IdProductoOriginal: rowData["IdProductoTransporte"],
                       NombreProducto: rowData["servicio"],
                       DescripcionProducto:
                         rowData["servicio"] +
@@ -179,7 +179,7 @@ const TablaProductoServicio = (
                     x.push({
                       //Segun esquema de columnas
                       // IdProductoServicio: rowData["NombreServicio"],
-                      IdProductoOriginal: rowData["IdProductoGuias"],
+                      IdProductoOriginal: rowData["IdProductoGuia"],
                       NombreProducto: rowData["tipoHabitacion"],
                       DescripcionProducto: rowData["descripcionHabitacion"],
                       Precio: rowData["precioPubli"],
@@ -190,7 +190,7 @@ const TablaProductoServicio = (
                     x.push({
                       //Segun esquema de columnas
                       // IdProductoServicio: rowData["NombreServicio"],
-                      IdProductoOriginal: rowData["IdProductoAgencias"],
+                      IdProductoOriginal: rowData["IdProductoAgencia"],
                       NombreProducto: rowData["servicio"],
                       DescripcionProducto:
                         rowData["codServicio"] +
