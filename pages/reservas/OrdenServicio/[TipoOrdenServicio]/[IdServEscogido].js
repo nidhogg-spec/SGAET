@@ -1825,11 +1825,11 @@ export async function getServerSideProps({params,req,res}){
                   break;
                 case "PA":
                   coleccionProducto = "ProductoAgencias"
-                  idProductoProveedor="IdProductoAgencias"
+                  idProductoProveedor="IdProductoAgencia"
                   break;
                 case "PG":
                   coleccionProducto = "ProductoGuias"
-                  idProductoProveedor="IdProductoGuias"
+                  idProductoProveedor="IdProductoGuia"
                   break;
                 case "PO":
                   coleccionProducto = "ProductoOtros"
@@ -1837,7 +1837,7 @@ export async function getServerSideProps({params,req,res}){
                   break;
                 case "PR":
                   coleccionProducto = "ProductoRestaurantes"
-                  idProductoProveedor="IdProductoRestaurantes"
+                  idProductoProveedor="IdProductoRestaurante"
                   break;
                 case "ST":
                   coleccionProducto = "ProductoSitioTuristicos"
@@ -1849,7 +1849,7 @@ export async function getServerSideProps({params,req,res}){
                   break;
                 case "PT":
                   coleccionProducto = "ProductoTransportes"
-                  idProductoProveedor="IdProductoTransportes"
+                  idProductoProveedor="IdProductoTransporte"
                     break;
               }
               DatosServEscogido=x
@@ -1880,7 +1880,7 @@ export async function getServerSideProps({params,req,res}){
         "_id":0, 
       }).toArray()
       result.map(x=>{
-          if(x.idProveedor == DatosProducto.idProveedor){
+          if(x.IdProveedor == DatosProducto.IdProveedor){
             DatosProveedor=x
           }
       })
@@ -1894,7 +1894,7 @@ export async function getServerSideProps({params,req,res}){
         "_id":0, 
       }).toArray()
       result.map(x=>{
-          if(x.idProveedor == DatosProducto.idProveedor){
+          if(x.IdProveedor == DatosProducto.IdProveedor){
             DatosProveedor=x
           }
       })
@@ -2012,13 +2012,13 @@ export async function getServerSideProps({params,req,res}){
         "_id":0,
       }).toArray()
       // DatosProducto.map((y)=>{
-      //   if (x.idProveedor) {
+      //   if (x.IdProveedor) {
           
       //   }
       // })
       /*Validar que pase esto solo si el proveedor es igual*/
       result.map(x=>{
-          if(x.idProveedor == DatosProducto[0].idProveedor){
+          if(x.IdProveedor == DatosProducto[0].IdProveedor){
             DatosProveedor=x
           }
       })

@@ -219,7 +219,9 @@ const AutoModal = ({
       onClick={(event) => {
         let modal = document.getElementById("MiModalVerEdicion");
         if (event.target == modal) {
-          setDisplay(false);
+          if(confirm('Esta seguro que quiere cerrar?')){
+            setDisplay(false);
+          }
         }
       }}
     >

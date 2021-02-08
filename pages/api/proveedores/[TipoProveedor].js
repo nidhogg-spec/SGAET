@@ -12,38 +12,31 @@ let IdLetras = "PF";
 export default async (req, res) => {
   const {
     query: { TipoProveedor },
-  } = req;
-  
-  
-  
-  
-  
-  
-  
+  } = req; 
   switch (TipoProveedor) {
     case "hotel":
       coleccion = "ProductoHoteles";
-      keyId = "IdProductoHoteles";
+      keyId = "IdProductoHotel";
       IdLetras = "PH";
       break;
     case "restaurante":
       coleccion = "ProductoRestaurantes";
-      keyId = "IdProductoRestaurantes";
+      keyId = "IdProductoRestaurante";
       IdLetras = "PR";
       break;
     case "transporteterrestre":
       coleccion = "ProductoTransportes";
-      keyId = "IdProductoTransportes";
+      keyId = "IdProductoTransporte";
       IdLetras = "PT";
       break;
     case "guia":
       coleccion = "ProductoGuias";
-      keyId = "IdProductoGuias";
+      keyId = "IdProductoGuia";
       IdLetras = "PG";
       break;
     case "agencia":
       coleccion = "ProductoAgencias";
-      keyId = "IdProductoAgencias";
+      keyId = "IdProductoAgencia";
       IdLetras = "PA";
       break;
     case "transporteferroviario":
@@ -58,7 +51,7 @@ export default async (req, res) => {
       break;
     case "otro":
       coleccion = "ProductoOtros";
-      keyId = "IdProductoOtros";
+      keyId = "IdProductoOtro";
       IdLetras = "PO";
       break;
   }
@@ -93,6 +86,7 @@ async function Crear(req, res) {
     options.sort[keyId] = -1;
 
     const result = await collection.findOne({}, options);
+    console.log(result);
     if (result) {
       IdNumero = parseInt(result[keyId].slice(2), 10);
       IdNumero++;

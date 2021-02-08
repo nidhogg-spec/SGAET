@@ -32,7 +32,7 @@ export default function TipoProveedor(
   );
   const router = useRouter();
 
-  const { idProveedor, TipoProveedor } = router.query;
+  const { IdProveedor, TipoProveedor } = router.query;
   const provDinamico = TipoProveedor.toLowerCase();
 
   /* Para la funcion de duplicar un columna */
@@ -255,7 +255,7 @@ export default function TipoProveedor(
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          idProveedor: idProveedor,
+          IdProveedor: IdProveedor,
           accion: "update",
           data: Proveedor,
         }),
@@ -640,7 +640,7 @@ export default function TipoProveedor(
                     return;
                   }
                   UltimoIngresado = { ...newData };
-                  newData["idProveedor"] = idProveedor;
+                  newData["IdProveedor"] = IdProveedor;
                   //-------- Comparacion ---------------
                   let temp_newData = { ...newData };
                   let temp_DataBase = { ...initialFormData };
@@ -692,13 +692,13 @@ export default function TipoProveedor(
 
                   switch (provDinamico) {
                     case "hotel":
-                      IdKey = "IdProductoHoteles";
+                      IdKey = "IdProductoHotel";
                       break;
                     case "restaurante":
-                      IdKey = "IdProductoRestaurantes";
+                      IdKey = "IdProductoRestaurante";
                       break;
                     case "transporteterrestre":
-                      IdKey = "IdProductoTransportes";
+                      IdKey = "IdProductoTransporte";
                       break;
                     case "transporteferroviario":
                       IdKey = "IdProductoTransFerroviario";
@@ -707,13 +707,13 @@ export default function TipoProveedor(
                       IdKey = "IdProductoSitioTuristico";
                       break;
                     case "guia":
-                      IdKey = "IdProductoGuias";
+                      IdKey = "IdProductoGuia";
                       break;
                     case "agencia":
-                      IdKey = "IdProductoAgencias";
+                      IdKey = "IdProductoAgencia";
                       break;
                     default:
-                      IdKey = "IdProductoOtros";
+                      IdKey = "IdProductoOtro";
                       break;
                   }
                   await axios
@@ -746,13 +746,13 @@ export default function TipoProveedor(
                   let IdKey = "";
                   switch (provDinamico) {
                     case "hotel":
-                      IdKey = "IdProductoHoteles";
+                      IdKey = "IdProductoHotel";
                       break;
                     case "restaurante":
-                      IdKey = "IdProductoRestaurantes";
+                      IdKey = "IdProductoRestaurante";
                       break;
                     case "transporteterrestre":
-                      IdKey = "IdProductoTransportes";
+                      IdKey = "IdProductoTransporte";
                       break;
                     case "transporteferroviario":
                       IdKey = "IdProductoTransFerroviario";
@@ -761,13 +761,13 @@ export default function TipoProveedor(
                       IdKey = "IdProductoSitioTuristico";
                       break;
                     case "guia":
-                      IdKey = "IdProductoGuias";
+                      IdKey = "IdProductoGuia";
                       break;
                     case "agencia":
-                      IdKey = "IdProductoAgencias";
+                      IdKey = "IdProductoAgencia";
                       break;
                     default:
-                      IdKey = "IdProductoOtros";
+                      IdKey = "IdProductoOtro";
                       break;
                   }
                   await axios
@@ -805,7 +805,7 @@ export default function TipoProveedor(
 }
 
 export async function getServerSideProps(context) {
-  const uruId = context.query.idProveedor;
+  const uruId = context.query.IdProveedor;
   const provDinamico = context.query.TipoProveedor.toLowerCase();
 
   /*---------------------------------------------------------------------------------*/
@@ -821,7 +821,7 @@ export async function getServerSideProps(context) {
       try {
         let collection = client.db(dbName).collection("Proveedor");
         let result = await collection.findOne(
-          { idProveedor: uruId },
+          { IdProveedor: uruId },
           { projection: { _id: 0 } }
         );
         // Proveedor = JSON.stringify(result);
@@ -863,7 +863,7 @@ export async function getServerSideProps(context) {
       try {
         let collection = client.db(dbName).collection(collectionName);
         let result = await collection
-          .find({ idProveedor: uruId })
+          .find({ IdProveedor: uruId })
           .project({
             _id: 0,
           })
@@ -875,7 +875,7 @@ export async function getServerSideProps(context) {
     }),
   ]);
   client.close();
-  // console.log(Proveedor.idProveedor)
+  // console.log(Proveedor.IdProveedor)
   // const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
   return {
     props: {

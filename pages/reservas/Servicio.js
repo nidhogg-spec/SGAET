@@ -101,18 +101,18 @@ function Servicio({ Columnas, Datos, APIpath, DatosProveedores }) {
             {
               tipo: "tablaRelacionMulti",
               Title: "Provedores que brindan este servicio",
-              KeyDato: "idProveedor",
-              Dato: FormuData.idProveedor, //deber ser un [] - array - Sino todo explota
+              KeyDato: "IdProveedor",
+              Dato: FormuData.IdProveedor, //deber ser un [] - array - Sino todo explota
               columnas: [
                 {
-                  field: "idProveedor",
+                  field: "IdProveedor",
                   title: "Id del proveedor",
                   editable: "never",
                 },
                 { field: "nombre", title: "Nombre", editable: "never" },
                 { field: "tipo", title: "Tipo", editable: "never" },
                 {
-                  field: "idProveedor?",
+                  field: "IdProveedor?",
                   title: "Cumple con el servicio?",
                   type: "boolean",
                   default: "false",
@@ -137,7 +137,7 @@ function Servicio({ Columnas, Datos, APIpath, DatosProveedores }) {
     Informe: 0,
     Encuesta: 1,
     Incluye: [],
-    idProveedor: ["DF00001"],
+    IdProveedor: ["DF00001"],
     idProveedorDataCompleta: DatosProveedores,
   }));
   const [IdDato, setIdDato] = useState("");
@@ -172,7 +172,7 @@ function Servicio({ Columnas, Datos, APIpath, DatosProveedores }) {
               Informe: data.result.Informe,
               Encuesta: data.result.Encuesta,
               Incluye: data.result.Incluye,
-              idProveedor: data.result.idProveedor,
+              IdProveedor: data.result.IdProveedor,
               idProveedorDataCompleta: DatosProveedores,
             })
           );
@@ -250,7 +250,7 @@ function Servicio({ Columnas, Datos, APIpath, DatosProveedores }) {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                      idProveedor: rowData.id,
+                      IdProveedor: rowData.id,
                       accion: "delete",
                     }),
                   })
@@ -307,7 +307,7 @@ export async function getStaticProps() {
       accion: "FindAll",
       projection: {
         _id: 0,
-        idProveedor: 1,
+        IdProveedor: 1,
         nombre: 1,
         tipo: 1,
       },

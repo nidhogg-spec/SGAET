@@ -89,6 +89,12 @@ function ProgramasTuristicos({ Columnas, Datos, APIpath, APIpathGeneral }) {
                 { field: "Actividad", title: "Actividad" },
               ],
             },
+            {
+              tipo: "granTexto",
+              Title: "Descripcion de Itinerario",
+              KeyDato: "ItinerarioDescripcion",
+              Dato: FormuData.ItinerarioDescripcion,
+            },
           ],
         },
         {
@@ -326,7 +332,7 @@ export async function getStaticProps() {
 //       accion: "FindAll",
 //       projection: {
 //         _id: 0,
-//         idProveedor: 1,
+//         IdProveedor: 1,
 //         nombre: 1,
 //         tipo: 1,
 //       },

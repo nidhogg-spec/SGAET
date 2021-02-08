@@ -419,11 +419,11 @@ export async function getServerSideProps(context) {
     switch (ServicioEscogido["IdServicioProducto"].slice(0, 2)) {
       case "PA":
         coleccion_producto = "ProductoAgencias";
-        Id_coleccion_producto = "IdProductoAgencias";
+        Id_coleccion_producto = "IdProductoAgencia";
         break;
       case "PG":
         coleccion_producto = "ProductoGuias";
-        Id_coleccion_producto = "IdProductoGuias";
+        Id_coleccion_producto = "IdProductoGuia";
         break;
       case "PH":
         coleccion_producto = "ProductoHoteles";
@@ -435,7 +435,7 @@ export async function getServerSideProps(context) {
         break;
       case "PR":
         coleccion_producto = "ProductoRestaurantes";
-        Id_coleccion_producto = "IdProductoRestaurantes";
+        Id_coleccion_producto = "IdProductoRestaurante";
         break;
       case "PS":
         coleccion_producto = "ProductoSitioTuristico";
@@ -447,7 +447,7 @@ export async function getServerSideProps(context) {
         break;
       case "PT":
         coleccion_producto = "ProductoTransportes";
-        Id_coleccion_producto = "IdProductoTransportes";
+        Id_coleccion_producto = "IdProductoTransporte";
         break;
       default:
         coleccion_producto = "Error";
@@ -460,7 +460,7 @@ export async function getServerSideProps(context) {
         {
           [Id_coleccion_producto]: ServicioEscogido["IdServicioProducto"],
         },
-        { projection: { _id: 0, idProveedor: 1 } }
+        { projection: { _id: 0, IdProveedor: 1 } }
       );
       console.log(Producto);
     } catch (error) {
@@ -471,7 +471,7 @@ export async function getServerSideProps(context) {
       Proveedor = await dbo
         .collection("Proveedor")
         .findOne(
-          { idProveedor: Producto["idProveedor"] },
+          { IdProveedor: Producto["IdProveedor"] },
           { projection: { _id: 0 } }
         );
     } catch (error) {

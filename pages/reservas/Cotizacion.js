@@ -136,141 +136,9 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
         .then((data) => {
           console.log(data.message);
         });
+      router.push('/reservas/ListaCotizacion');
       setLoading(false);
     }
-
-    // if (DarDato == true && Fase >= 4) {
-    //   let Id = "";
-    //   setDarDato(false);
-    //   console.log(DataNuevaEdit);
-    //   await fetch(APIpathGeneral, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       coleccion: "ReservaCotizacion",
-    //       accion: "IdGenerator",
-    //       keyId: "IdReservaCotizacion",
-    //       Prefijo: "RC",
-    //     }),
-    //   })
-    //     .then((r) => r.json())
-    //     .then((data) => {
-    //       Id = data.result;
-    //     });
-    //   console.log(Id);
-    //   let servicios = [];
-    //   await fetch(APIpathGeneral, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       coleccion: "Servicio",
-    //       accion: "FindSome",
-    //       keyId: "IdServicio",
-    //       dataFound: DataNuevaEdit["Servicios"],
-    //       projection: {},
-    //     }),
-    //   })
-    //     .then((r) => r.json())
-    //     .then((data) => {
-    //       servicios = data.result;
-    //     });
-    //   servicios.map((element) => {
-    //     delete element["_id"];
-    //     element["IdServicioBase"] = element["IdServicio"];
-    //     delete element["IdServicio"];
-    //     element["IdReservaCotizacion"] = Id;
-    //     element["FechaInicio"] = null;
-    //     element["FechaFin"] = null;
-    //     element["Estado"] = 0;
-    //     // Datos para la reserva con los proveedores
-    //     element["IdProducto"] = null;
-    //     element["FechaCompra"] = null;
-    //     element["FechaCompraReal"] = null;
-    //     element["FechaLimitePago"] = null;
-    //     switch (element["TipoServicio"]) {
-    //       // case 'Hotel':
-    //       //   element['OrdenServicio']={
-    //       //     TipoOrden:'A',
-    //       //     Observaciones:null,
-    //       //     CodigoOrdenServicio:'',
-    //       //     Estado:0
-    //       //   }
-    //       // break;
-    //       case "Agencia":
-    //         element["OrdenServicio"] = {
-    //           TipoOrden: "A",
-    //           Observaciones: null,
-    //           CodigoOrdenServicio: "",
-    //           Estado: 0,
-    //         };
-    //         break;
-    //       case "Guia":
-    //         element["OrdenServicio"] = {
-    //           TipoOrden: "A",
-    //           Observaciones: null,
-    //           CodigoOrdenServicio: "",
-    //           Estado: 0,
-    //         };
-    //         break;
-    //       case "TransporteTerrestre":
-    //         element["OrdenServicio"] = {
-    //           TipoOrden: "C",
-    //           Observaciones: null,
-    //           CodigoOrdenServicio: "",
-    //           Estado: 0,
-    //         };
-    //         break;
-    //       case "Restaurante":
-    //         element["OrdenServicio"] = {
-    //           TipoOrden: "D",
-    //           Observaciones: null,
-    //           CodigoOrdenServicio: "",
-    //           Estado: 0,
-    //         };
-    //         break;
-    //       default:
-    //         element["OrdenServicio"] = null;
-    //         break;
-    //     }
-    //   });
-    //   console.log(servicios);
-
-    //   await fetch(APIpathGeneral, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       coleccion: "ServicioEscogido",
-    //       accion: "InsertMany",
-    //       keyId: "IdServicioEscogido",
-    //       data: servicios,
-    //       Prefijo: "SE",
-    //     }),
-    //   })
-    //     .then((r) => r.json())
-    //     .then((data) => {
-    //       console.log(data.result);
-    //     });
-    //   let dataGuardar = DataNuevaEdit;
-    //   delete dataGuardar["Servicios"];
-    //   dataGuardar["Estado"] = 0;
-    //   await fetch(APIpathGeneral, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       coleccion: "ReservaCotizacion",
-    //       accion: "Insert",
-    //       keyId: "IdReservaCotizacion",
-    //       data: dataGuardar,
-    //       Prefijo: "RC",
-    //     }),
-    //   })
-    //     .then((r) => r.json())
-    //     .then((data) => {
-    //       console.log(data.result);
-    //     });
-
-    //   router.push("/reservas");
-    // }
   }, [DarDato]);
   useEffect(async () => {
 
@@ -630,6 +498,15 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                     { field: "Hora Fin", title: "HoraFin", type: "time" },
                     { field: "Actividad", title: "Actividad" },
                   ]}
+                />
+                <CampoGranTexto
+                  Title={"Descripcion de Itinerario"}
+                  ModoEdicion={true}
+                  DevolverDatoFunct={DarDatoFunction}
+                  DarDato={DarDato}
+                  KeyDato={"ItinerarioDescripcion"}
+                  Dato={DataCotizacion.ItinerarioDescripcion}
+                  Reiniciar={ReinciarComponentes}
                 />
                 <TablaSimple
                   Title={"Incluye"}
