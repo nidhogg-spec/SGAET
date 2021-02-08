@@ -112,9 +112,15 @@ const ServicioEscogido = (props={
           <>
             <button
               onClick={() => {
-                router.push(
-                  `/reservas/OrdenServicio/${OrdenServicio["TipoOrden"]}/${IdServicioEscogido}`
-                );
+                if (OrdenServicio.TipoOrden == "A" || OrdenServicio.TipoOrden == "B") {
+                  router.push(
+                    `/reservas/OrdenServicio/${OrdenServicio["TipoOrden"]}/${ServicioEscogido.IdReservaCotizacion}`
+                  );
+                }else {
+                  router.push(
+                    `/reservas/OrdenServicio/${OrdenServicio["TipoOrden"]}/${IdServicioEscogido}`
+                  );
+                }
               }}
             >
               Orden de servicio
@@ -462,6 +468,7 @@ export async function getServerSideProps(context) {
         },
         { projection: { _id: 0, idProveedor: 1 } }
       );
+      console.log("sgfsdf");
       console.log(Producto);
     } catch (error) {
       console.log("Error - 103");

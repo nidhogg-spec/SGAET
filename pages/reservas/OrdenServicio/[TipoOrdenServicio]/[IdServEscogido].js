@@ -170,7 +170,10 @@ export default function OrdenServicioTipoC (
         /*Condicional para manejar el dato adicional que viene de lista pasajeros,
         este dato se usa para que se pueda mostrar desde la base de datos los pasajeros registrados.
         hasta que se encuentre otro metodo esta condicional deberia mantenerse asi.*/
-        if(numPaxOrdenA != TempDatosTablaPasajerosOrdenA.length){
+        if (!TempDatosTablaPasajerosOrdenA) {
+          alert("Ingrese Pasajeros")
+        }
+        if(numPaxOrdenA != TempDatosTablaPasajerosOrdenA.lenght){
           TempDatosTablaPasajerosOrdenA.pop()
         } 
         let tempTrasnporte = ""
@@ -303,6 +306,22 @@ export default function OrdenServicioTipoC (
 
   return(
     <div>
+      <button
+        onClick={async (event) => {
+          await fetch( APIpath + "/api/reserva/Voucher/GetOrdenServicio/OS00004")
+            .then((response) => {
+              return response.text();
+            })
+            .then((data) => {
+              let link = document.createElement("a");
+              link.download = "file.pdf";
+              link.href = "data:application/octet-stream;base64," + data;
+              link.click();
+            });
+        }}
+      >
+        Descargar Orden Servicio
+      </button>   
       <img
         src="/resources/save-black-18dp.svg"
         onClick={() => {
@@ -477,7 +496,7 @@ export default function OrdenServicioTipoC (
                   {
                     tipo: "numero",
                     Title: "Nº Box Lunch :",
-                    KeyDato:  "boxLunch",
+                    KeyDato:  "BoxLunch",
                   },
                   {
                     tipo: "numero",
@@ -602,17 +621,17 @@ export default function OrdenServicioTipoC (
                 {
                 tipo: "texto",
                 Title: "Asistente: ",
-                KeyDato: "asistente",
+                KeyDato: "Asistente",
                 },
                 {
                 tipo: "texto",
                 Title: "Cocinero : ",
-                KeyDato:  "cocinero",
+                KeyDato:  "Cocinero",
                 },
                 {
                 tipo: "texto",
                 Title: "Transporte : ",
-                KeyDato:  "trasnporte",
+                KeyDato:  "Trasnporte",
                 }],
             },
           ],
@@ -637,32 +656,32 @@ export default function OrdenServicioTipoC (
                   {
                   tipo: "texto",
                   Title: "Anexo: ",
-                  KeyDato:  "anexo",
+                  KeyDato:  "Anexo",
                   },
                   {
                   tipo: "texto",
                   Title: "PTO. de Ingreso: ",
-                  KeyDato:  "puntoIngreso",
+                  KeyDato:  "PuntoIngreso",
                   },
                   {
                   tipo: "texto",
                   Title: "Oxigeno: ",
-                  KeyDato:  "oxigeno",
+                  KeyDato:  "Oxigeno",
                   },
                   {
                   tipo: "numero",
                   Title: "N° Botiquin: ",
-                  KeyDato:  "numBotiquin",
+                  KeyDato:  "NumBotiquin",
                   },
                   {
                   tipo: "numero",
                   Title: "Imprevistos(S/.): ",
-                  KeyDato:  "imprevistosSoles",
+                  KeyDato:  "ImprevistosSoles",
                   },
                   {
                   tipo: "numero",
                   Title: "Imprevistos(US $): ",
-                  KeyDato:  "imprevistosDolares",
+                  KeyDato:  "ImprevistosDolares",
                 }],
               },
             ],
@@ -682,47 +701,47 @@ export default function OrdenServicioTipoC (
                   {
                   tipo: "numero",
                   Title: "N° Porters:",
-                  KeyDato: "numPorters"
+                  KeyDato: "NumPorters"
                   },
                   {
                   tipo: "numero",
                   Title: "N° Porters Extra:",
-                  KeyDato: "numPortersExtra"
+                  KeyDato: "NumPortersExtra"
                   },
                   {
                   tipo: "numero",
                   Title: "N° Arrieros:",
-                  KeyDato: "numaArrieros"
+                  KeyDato: "NumaArrieros"
                   },
                   {
                   tipo: "numero",
                   Title: "N° Caballos Carga:",
-                  KeyDato: "numCaballoCarga"
+                  KeyDato: "NumCaballoCarga"
                   },
                   {
                   tipo: "numero",
                   Title: "N° Caballos Silla: ",
-                  KeyDato: "numCaballoSilla"
+                  KeyDato: "NumCaballoSilla"
                   },
                   {
                   tipo: "texto",
                   Title: "Campamento 1er Dia",
-                  KeyDato: "campoPrimerDia"
+                  KeyDato: "CampoPrimerDia"
                   },
                   {
                   tipo: "texto",
                   Title: "Campamento 2do Dia",
-                  KeyDato: "campoSegunDia"
+                  KeyDato: "CampoSegunDia"
                   },
                   {
                   tipo: "texto",
                   Title: "Campamento 3er Dia",
-                  KeyDato: "campoTercerDia"
+                  KeyDato: "CampoTercerDia"
                   },
                   {
                   tipo: "texto",
                   Title: "Campamento 4to Dia",
-                  KeyDato: "campoCuartoDia"
+                  KeyDato: "CampoCuartoDia"
                 }],
               },
             ],
@@ -742,47 +761,47 @@ export default function OrdenServicioTipoC (
                 {
                     tipo: "numero",
                     Title: "Carpas Dobles:",
-                    KeyDato: "numCarpaDobles"
+                    KeyDato: "NumCarpaDobles"
                 },
                 {
                     tipo: "numero",
                     Title: "Carpas Simples:",
-                    KeyDato: "numCarpaSimples"
+                    KeyDato: "NumCarpaSimples"
                 },
                 {
                     tipo: "numero",
                     Title: "Carpas Triple:",
-                    KeyDato: "numCarpaTriple"
+                    KeyDato: "NumCarpaTriple"
                 },
                 {
                     tipo: "numero",
                     Title: "Matras Simples:",
-                    KeyDato: "numMatrasSimples"
+                    KeyDato: "NumMatrasSimples"
                 },
                 {
                     tipo: "numero",
                     Title: "Matras Infables:",
-                    KeyDato: "numMatrasInfables"
+                    KeyDato: "NumMatrasInfables"
                 },
                 {
                     tipo: "numero",
                     Title: "Sleeping Sinteticos",
-                    KeyDato: "numSleepingSinteticos"
+                    KeyDato: "NumSleepingSinteticos"
                 },
                 {
                     tipo: "numero",
                     Title: "Sleeping Plumas:",
-                    KeyDato: "numSleepingPlumas"
+                    KeyDato: "NumSleepingPlumas"
                 },
                 {
                     tipo: "numero",
                     Title: "Bastones:",
-                    KeyDato: "numBastones"
+                    KeyDato: "NumBastones"
                 },
                 {
                     tipo: "numero",
                     Title: "Duffel:",
-                    KeyDato: "numDuffel"
+                    KeyDato: "NumDuffel"
                 }],
               },
             ],
@@ -802,42 +821,42 @@ export default function OrdenServicioTipoC (
                   {
                   tipo: "texto",
                   Title: "Carpa Guia:",
-                  KeyDato: "carpaGuia"
+                  KeyDato: "CarpaGuia"
                   },
                   {
                   tipo: "texto",
                   Title: "Carpa Comedor:",
-                  KeyDato: "carpaComedor"
+                  KeyDato: "CarpaComedor"
                   },
                   {
                   tipo: "texto",
                   Title: "Carpa Cocina:",
-                  KeyDato: "carpaCocina"
+                  KeyDato: "CarpaCocina"
                   },
                   {
                   tipo: "texto",
                   Title: "Carpa Baño:",
-                  KeyDato: "carpaBaño"
+                  KeyDato: "CarpaBaño"
                   },
                   {
                   tipo: "texto",
                   Title: "Bolsas Biodegradables:",
-                  KeyDato: "bolsasBiodegradables"
+                  KeyDato: "BolsasBiodegradables"
                   },
                   {
                   tipo: "texto",
                   Title: "Oxigeno",
-                  KeyDato: "oxigeno"
+                  KeyDato: "Oxigeno"
                   },
                   {
                   tipo: "texto",
                   Title: "Botiquin:",
-                  KeyDato: "botiquin"
+                  KeyDato: "Botiquin"
                   },
                   {
                   tipo: "texto",
                   Title: "Otros:",
-                  KeyDato: "otros"
+                  KeyDato: "Otros"
                   },
               ],
             },
@@ -1767,7 +1786,8 @@ export default function OrdenServicioTipoC (
             key={'OE_Formulario'}
           />
         </div>
-      }        
+      } 
+      
   </div>
   )
 }
@@ -1992,8 +2012,11 @@ export async function getServerSideProps({params,req,res}){
       }).toArray()
       
       DatosServEscogido.map(datos=>{
+        console.log(datos)
         if (datos.IdServicioProducto.slice(0,2)=="PH") {
           tempServiciohoteles.push(datos)
+        }else{
+          console.log(" no existe servicio Hotel")
         }
       })
       result.map((x)=>{
