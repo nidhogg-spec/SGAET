@@ -8,6 +8,8 @@ import axios from "axios";
 
 //componentes
 import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
+<<<<<<< HEAD
+=======
 
 import TablaBanco from "@/components/TablaModal//Modal/TablaBeneficiarios/TablaBanco";
 import CampoTexto from "@/components/TablaModal/Modal/CampoTexto/CampoTexto";
@@ -15,6 +17,7 @@ import Selector from "@/components/TablaModal/Modal/Selector/Selector";
 import TablaSimple from "@/components/Formulario/TablaSimple/TablaSimple";
 import TablaDevolucion from "@/components/TablaDevolucion/TablaDevolucion";
 
+>>>>>>> main
 
 export default function TipoProveedor(
   props = { ServicioProducto, Proveedor, APIpath }
