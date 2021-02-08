@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { MongoClient } from "mongodb";
-
+import { resetServerContext } from "react-beautiful-dnd";
 
 //Componentes
 import AutoModal from "@/components/AutoModal/AutoModal";
 import MaterialTable from "material-table";
+import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
+resetServerContext();
 
 export default function Home({ Datos, APIpath }) {
   //Funciones
@@ -245,7 +247,7 @@ export default function Home({ Datos, APIpath }) {
               // console.log(data)
               data.data.map((datosResult) => {
                 ActuTablaDatos.push({
-                  id: datosResult.idProveedor,
+                  id: datosResult.IdProveedor,
                   proveedor: datosResult.nombre,
                   ubicacion: datosResult.DireccionFiscal,
                   tipo: datosResult.tipo,
@@ -262,18 +264,21 @@ export default function Home({ Datos, APIpath }) {
       setReiniciarData(false);
     }
   }, [ReiniciarData]);
-
+  const HandleAnadir = ()=>{
+    router.push('/Proveedores/NuevoProveedor')
+  }
   return (
     <div>
       <div>
         <h1 className="Titulo">Lista de Proveedores</h1>
-        <AutoModal
+        {/* <AutoModal
           Formulario={FormularioCreacion} //debe ser diferente por lo de formulario vacio
           IdDato={IdDato}
           APIpath={APIpath}
           ReiniciarData={ReiniciarDataFunction}
           Modo={"creacion"}
-        />
+        /> */}
+        <BotonAnadir Accion={HandleAnadir}/>
       </div>
       {/* <Modal Display= {ModalDisplay} MostrarModal={MostrarModal} APIpath={APIpath} TipoModal={"Proveedores"}/> */}
       <div className="">
@@ -318,7 +323,7 @@ export default function Home({ Datos, APIpath }) {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    idProveedor: rowData.id,
+                    IdProveedor: rowData.id,
                     accion: "delete",
                   }),
                 })
@@ -370,7 +375,7 @@ export async function getStaticProps() {
   let Datos = [];
   data.map(datosResult=>{
     Datos.push({
-      id: datosResult.idProveedor,
+      id: datosResult.IdProveedor,
       proveedor: datosResult.nombre,
       ubicacion: datosResult.DireccionFiscal,
       tipo: datosResult.tipo,

@@ -5,7 +5,7 @@ import { MongoClient } from "mongodb";
 export default function Home({Datos, EvaluacionActividad}){
 
 const ListaProveedoresColumnas = [
-    {title: "ID Proveedeor", field:"idProveedor", hidden:"true"},
+    {title: "ID Proveedeor", field:"IdProveedor", hidden:"true"},
     {title: "Nombre de Proveedor", field:"nombre", filtering: false},
     {title: "Tipo de Proveedor", field:"tipo", lookup:{
         Hotel: 'Hotel', 
@@ -19,7 +19,7 @@ const ListaProveedoresColumnas = [
     }},
 ]  
 const EvaluarProveedoresColumnas = [
-    {title: "ID Proveedeor", field:"idProveedor"},
+    {title: "ID Proveedeor", field:"IdProveedor"},
     {title: "Nombre de Proveedor", field:"nombre"},
 ] 
 const ComparacionProveedoresColumnas = [
@@ -57,7 +57,7 @@ useEffect(() => {
 
     proveedorEvaluado.map((x)=>{
         EvaluacionActividad.map(y=>{
-            if(x.idProveedor==y.idProveedor){
+            if(x.IdProveedor==y.IdProveedor){
                 EvaActividadSeleccionado.push(y)
             }
         })
@@ -117,7 +117,7 @@ useEffect(() => {
                         onClick: (event, rowData) =>{
                             let x = [...proveedorEvaluado]
                             x.push({
-                                idProveedor: rowData["idProveedor"],
+                                IdProveedor: rowData["IdProveedor"],
                                 nombre: rowData["nombre"]
                             })
                             // console.log(x)
@@ -125,7 +125,7 @@ useEffect(() => {
                             let ActuaDataTablaEvaluados = [...listaProveedores]
                             ActuaDataTablaEvaluados.splice(
                                 ActuaDataTablaEvaluados.findIndex((value)=>{
-                                    return value["idProveedor"] == rowData["idProveedor"]
+                                    return value["IdProveedor"] == rowData["IdProveedor"]
                                 }),
                                 1
                             )
