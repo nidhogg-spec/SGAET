@@ -5,7 +5,6 @@ export default function Prueba() {
   useEffect(async() => {
     await fetch('http://localhost:3000/api/prueba');
   }, []);
-  const [Prueba_array, setPrueba_array] = useState({texto7:[]});
   return (
     <div>
 
