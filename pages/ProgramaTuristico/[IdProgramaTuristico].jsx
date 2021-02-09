@@ -6,6 +6,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import TablaProgramaServicio_v2 from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio_v2/TablaProgramaServicio_v2";
 import MaterialTable from "material-table";
+import { resetServerContext } from "react-beautiful-dnd";
+resetServerContext();
 
 const DetalleProgramaTuristico = (
   props = {
@@ -140,6 +142,16 @@ const DetalleProgramaTuristico = (
         Formulario={{
           title: "Detalle de Programa Turistico",
           secciones: [
+            {
+              subTitle: "Descripcion de Itinerario",
+              componentes: [
+                {
+                  tipo: "granTexto",
+                  Title: "",
+                  KeyDato: "ItinerarioDescripcion",
+                },
+              ],
+            },
             {
               subTitle: "",
               componentes: [
@@ -689,10 +701,8 @@ const TablaServicioCotizacion = (
           break;
       }
     }
-
     NotAgain.current = true;
     setMontoTotal(temp_MontoTotal);
-    Actulizar_fechas();
   }, [props.CotiServicio, CurrencyTotal]);
   useEffect(() => {
     let CambioDolar_temp = sessionStorage.getItem("CambioDolar");
@@ -920,6 +930,7 @@ const TablaServicioCotizacion = (
                 let x = [...props.CotiServicio];
                 x.push({
                   IdServicioProducto: rowData["IdServicioProducto"],
+                  TipoServicio:rowData['TipoServicio'],
                   PrecioConfiUnitario: rowData["Costo"],
                   NombreServicio: rowData["Nombre"],
                   Dia: 1,
