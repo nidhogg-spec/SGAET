@@ -46,7 +46,7 @@ export default async (req, res) => {
       break;
     case "sitioturistico":
       coleccion = "ProductoSitioTuristico";
-      keyId = "IdProductoTransFerroviario";
+      keyId = "IdProductoSitioTuristico";
       IdLetras = "PS";
       break;
     case "otro":
@@ -124,6 +124,7 @@ async function Eliminar(req, res) {
     [keyId]: req.body.idProducto,
   });
   console.log(result.deletedCount);
+  console.log(keyId);
   if (result.deletedCount == 1) {
     res.status(200).send("Todo bien, todo correcto, Deleteacion satifactoria ");
   } else {
