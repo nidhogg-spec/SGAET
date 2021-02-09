@@ -6,7 +6,7 @@ import React, { useEffect, useState, createContext, useRef } from "react";
 import { MongoClient } from "mongodb";
 
 //css
-import CustomStyles from "../../styles/ProgramasTuristicos.module.css";
+import CustomStyles from '@/globalStyles/ProgramasTuristicos.module.css';
 
 //modulos
 import MaterialTable from "material-table";
@@ -349,7 +349,7 @@ function ProgramasTuristicos({
                 onClick: (event, rowData) => {
                   // setIdDato();
                   router.push(
-                    `/reservas/ProgramaTuristico/${rowData.IdProgramaTuristico}`
+                    `/ProgramaTuristico/${rowData.IdProgramaTuristico}`
                   );
                   // setDisplay(true);
                 },
