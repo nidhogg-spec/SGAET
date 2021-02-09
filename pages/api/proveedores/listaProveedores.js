@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { CRUD_log } from "../../../src/FuncionalidadInterna/Log/CRUD";
 require("dotenv").config();
 
 const url = process.env.MONGODB_URI;
@@ -132,6 +133,7 @@ export default async (req, res) => {
             return;
           }
           console.log("Insercion satifactoria");
+          CRUD_log(req,{Message:`Proveedor ${req.body.data["nombre"]} creado`,Action:'Create'});
           res.status(200).json({
             message: "Todo bien, todo correcto, Insercion satifactoria",
             IdProveedor:req.body.data["IdProveedor"]
