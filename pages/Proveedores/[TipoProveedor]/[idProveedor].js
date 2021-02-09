@@ -763,6 +763,7 @@ export default function TipoProveedor(
                       IdKey = "IdProductoOtro";
                       break;
                   }
+                  console.log(dataDelete[index][IdKey])
                   await axios
                     .post(
                       `http://localhost:3000/api/proveedores/${provDinamico}`,
