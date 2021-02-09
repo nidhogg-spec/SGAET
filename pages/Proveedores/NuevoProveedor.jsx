@@ -10,7 +10,11 @@ import LoadingComp from "@/components/Loading/Loading";
 resetServerContext();
 export default function TipoProveedor(props = { APIpath }) {
   //Variables
-  const [Proveedor, setProveedor] = useState({});
+  const [Proveedor, setProveedor] = useState({
+    Estado:"1",
+    tipo:"Hotel",
+    TipoMoneda:"Dolar"
+  });
   const [ProveedorContacto, setProveedorContacto] = useState([]);
   const [ProveedorBanco, setProveedorBanco] = useState([]);
   const [provDinamico, setprovDinamico] = useState("hotel");
@@ -259,6 +263,10 @@ export default function TipoProveedor(props = { APIpath }) {
   //       }
   //   }, [Proveedor['tipo']]);
 
+  useEffect(() => {
+    if (Proveedor["tipo"] == undefined) return;
+    setprovDinamico(Proveedor["tipo"].toLowerCase());
+  }, [Proveedor["tipo"]]);
   //Acciones de botones
   const HandleGuardar = async () => {
     setLoading(true);
@@ -280,7 +288,9 @@ export default function TipoProveedor(props = { APIpath }) {
         data: Proveedor,
       }
     );
-    router.push(`/Proveedores/${Proveedor['tipo']}/${result.data['IdProveedor']}`);
+    router.push(
+      `/Proveedores/${Proveedor["tipo"]}/${result.data["IdProveedor"]}`
+    );
   };
 
   return (

@@ -155,17 +155,10 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       const dataUpdate = [...datosActEditables];
                       const index = oldData.tableData.id;
                       dataUpdate[index] = newData;
-<<<<<<< HEAD
                       setDatosCritEditables([...dataUpdate]);
 
                       delete dataUpdate[index]._id
 
-=======
-                      setDatosActEditables([...dataUpdate]);
-                      
-                      // delete dataUpdate[index]._id
-                      
->>>>>>> main
                       fetch(`http://localhost:3000/api/proveedores/criterio`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
