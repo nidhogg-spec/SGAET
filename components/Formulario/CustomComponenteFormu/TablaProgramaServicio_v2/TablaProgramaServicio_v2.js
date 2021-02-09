@@ -318,6 +318,7 @@ const TablaProgramaServicio_v2 = (
                   let x = [...CotiServicio];
                   x.push({
                     IdServicioProducto: rowData["IdServicioProducto"],
+                    TipoServicio:rowData['TipoServicio'],
                     PrecioConfiUnitario: rowData["Costo"],
                     NombreServicio: rowData["Nombre"],
                     Dia: 1,
