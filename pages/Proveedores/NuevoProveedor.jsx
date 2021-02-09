@@ -10,7 +10,11 @@ import LoadingComp from "@/components/Loading/Loading";
 resetServerContext();
 export default function TipoProveedor(props = { APIpath }) {
   //Variables
-  const [Proveedor, setProveedor] = useState({});
+  const [Proveedor, setProveedor] = useState({
+    Estado:"1",
+    tipo:"Hotel",
+    TipoMoneda:"Dolar"
+  });
   const [ProveedorContacto, setProveedorContacto] = useState([]);
   const [ProveedorBanco, setProveedorBanco] = useState([]);
   const [provDinamico, setprovDinamico] = useState("hotel");
