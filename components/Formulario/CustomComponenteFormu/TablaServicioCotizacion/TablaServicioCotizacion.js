@@ -373,6 +373,7 @@ const TablaServicioCotizacion = (
                 let x = [...CotiServicio];
                 x.push({
                   IdServicioProducto: rowData["IdServicioProducto"],
+                  TipoServicio:rowData['TipoServicio'],
                   PrecioConfiUnitario: rowData["Costo"],
                   NombreServicio: rowData["Nombre"],
                   TipoServicio: rowData["TipoServicio"],

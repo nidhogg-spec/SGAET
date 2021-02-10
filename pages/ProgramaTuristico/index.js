@@ -4,9 +4,10 @@ import router from "next/router";
 import React, { useEffect, useState, createContext, useRef } from "react";
 // import {Data_ProgramasTuristicos} from '../../query/query'
 import { MongoClient } from "mongodb";
+import { resetServerContext } from "react-beautiful-dnd";
 
 //css
-import CustomStyles from "../../styles/ProgramasTuristicos.module.css";
+import CustomStyles from '@/globalStyles/ProgramasTuristicos.module.css';
 
 //modulos
 import MaterialTable from "material-table";
@@ -17,6 +18,7 @@ import Loader from "@/components/Loading/Loading";
 import axios from "axios";
 import { route } from "next/dist/next-server/server/router";
 
+resetServerContext();
 function ProgramasTuristicos({
   Columnas,
   Datos,
@@ -53,7 +55,7 @@ function ProgramasTuristicos({
             },
             {
               tipo: "texto",
-              Title: "Condigo",
+              Title: "Codigo",
               KeyDato: "CodigoPrograma",
               Dato: FormuData.CodigoPrograma,
             },
@@ -76,12 +78,6 @@ function ProgramasTuristicos({
               KeyDato: "DuracionNoche",
               Dato: FormuData.DuracionNoche,
               InputStep: "1",
-            },
-            {
-              tipo: "money",
-              Title: "Precio estandar",
-              KeyDato: "PrecioEstandar",
-              Dato: FormuData.PrecioEstandar,
             },
             {
               tipo: "texto",
@@ -349,7 +345,7 @@ function ProgramasTuristicos({
                 onClick: (event, rowData) => {
                   // setIdDato();
                   router.push(
-                    `/reservas/ProgramaTuristico/${rowData.IdProgramaTuristico}`
+                    `/ProgramaTuristico/${rowData.IdProgramaTuristico}`
                   );
                   // setDisplay(true);
                 },
@@ -378,7 +374,7 @@ function ProgramasTuristicos({
                   })
                     .then((r) => r.json())
                     .then((data) => {
-                      alert(data.message);
+                      alert('Eliminacion realizada');
                     });
                 },
               }),

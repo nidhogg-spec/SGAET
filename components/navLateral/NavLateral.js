@@ -102,7 +102,7 @@ export default function NavLateral() {
         {
             tipo:"link",
             subModuloName:"Programa Turistico",
-            link:"/reservas/ProgramaTuristico"
+            link:"/ProgramaTuristico"
         },
         {
           tipo:"link",
@@ -144,7 +144,7 @@ export default function NavLateral() {
         {
           tipo:"link",
           subModuloName:"Programa Turistico",
-          link:"/reservas/ProgramaTuristico"
+          link:"/ProgramaTuristico"
         },
         //En este caso solo puede ver mas no editar
         {

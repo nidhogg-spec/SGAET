@@ -1,3 +1,4 @@
+import { CRUD_log } from "@/src/FuncionalidadInterna/Log/CRUD";
 import { MongoClient } from "mongodb";
 
 require("dotenv").config();
@@ -52,12 +53,14 @@ const func_Crear = async (req, res) => {
     const options = { sort: {} };
     options.sort[keyId] = -1;
     const result = await collection.findOne({}, options);
-    if (result[keyId] != null && result[keyId] != undefined) {
-      IdNumero = parseInt(
-        result[keyId].slice(Prefijo.length),
-        Prefijo.length + 8
-      );
-      IdNumero++;
+    if (result!=null) {
+      if (result[keyId] != null && result[keyId] != undefined) {
+        IdNumero = parseInt(
+          result[keyId].slice(Prefijo.length),
+          Prefijo.length + 8
+        );
+        IdNumero++;
+      }
     }
     ProgramaTuristico[keyId] =
       Prefijo +
@@ -71,6 +74,7 @@ const func_Crear = async (req, res) => {
   try {
     let result = await collection.insertOne(ProgramaTuristico);
     console.log("Insercion realizada");
+    CRUD_log(req,{Action:'Create',Message:`Programa ${ProgramaTuristico[keyId]} creado`})
     res.status(200).send("Insercion realizada");
   } catch (error) {
     res.status(500);
