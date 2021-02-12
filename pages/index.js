@@ -1,45 +1,46 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/login.module.css";
-import {Auth, API} from 'aws-amplify'
-import {useRouter} from "next/router";
-import {useAppContext} from '@/components/Contexto'
+import { Auth, API } from "aws-amplify";
+import { useRouter } from "next/router";
+import { useAppContext } from "@/components/Contexto";
+import Notificaciones from '../components/Notificaciones/Notificaciones'
 
-export default function loginPrincipal(props) {
-  const [userName, setUserName] = useState("")
-  const [password, setPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [nombre, setNewNombre] = useState("")
-  const [nuevoUsuario, setNuevoUsuario] = useState(false)
-  const [[loged,setLogged]] = useAppContext()
+export default function loginPrincipal({APIpath}) {
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [nombre, setNewNombre] = useState("");
+  const [nuevoUsuario, setNuevoUsuario] = useState(false);
+  const [[loged, setLogged]] = useAppContext();
 
-  const Router = useRouter()
+  const Router = useRouter();
   async function signIn(e) {
     try {
-      e.preventDefault()
-      await Auth.signIn(userName,password)
-        .then(user=>{
-          if(user.challengeName  === 'NEW_PASSWORD_REQUIRED'){
-            setNuevoUsuario(true)
-            const { requiredAttributes } = user.challengeParam
+      e.preventDefault();
+      await Auth.signIn(userName, password)
+        .then((user) => {
+          if (user.challengeName === "NEW_PASSWORD_REQUIRED") {
+            setNuevoUsuario(true);
+            const { requiredAttributes } = user.challengeParam;
             // console.log(userName)
             // console.log(newPassword)
-            Auth.completeNewPassword(user, newPassword,{name:nombre})
-            .then(user=>{
-              setLogged(true)
-              console.log(user)
-            })
-            .catch(err=>console.log(err))
+            Auth.completeNewPassword(user, newPassword, { name: nombre })
+              .then((user) => {
+                setLogged(true);
+                console.log(user);
+              })
+              .catch((err) => console.log(err));
           }
-          setLogged(true)
-          console.log('signing in');
+          setLogged(true);
+          console.log("signing in");
         })
-        .catch(err=>console.log(err))
+        .catch((err) => console.log(err));
     } catch (error) {
-        setLogged(false)
-        console.log('error signing in', error);
+      setLogged(false);
+      console.log("error signing in", error);
     }
   }
-  // useEffect(()=>{   
+  // useEffect(()=>{
   //   //Acceder a la sesion del usuario en el cliente
   //   Auth.currentAuthenticatedUser()
   //       .then(user =>{
@@ -48,7 +49,7 @@ export default function loginPrincipal(props) {
   //       })
   //       .catch(err=> setUser(null))
   // } ,[])
-  return(
+  return (
     <div>
       <h1 className={styles.loginHeader}>
         Sistema de Gestion Administrativa de Empresas Turisticas
@@ -56,12 +57,18 @@ export default function loginPrincipal(props) {
 
       {loged && (
         <>
+          <Notificaciones APIpath = {APIpath}/>
           <CambioDolar />
+          
         </>
       )}
       {!loged && (
         <>
-          <form className={styles.formularioLogin} onSubmit={signIn} method="post">
+          <form
+            className={styles.formularioLogin}
+            onSubmit={signIn}
+            method="post"
+          >
             <div className={styles.formularioLogin_correo}>
               <label className={styles.formularioLogin_label}>Correo</label>
               <input
@@ -80,10 +87,12 @@ export default function loginPrincipal(props) {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {nuevoUsuario&&(
+            {nuevoUsuario && (
               <div>
                 <div className={styles.formularioLogin_correo}>
-                  <label className={styles.formularioLogin_label}>Ingrese su Nombre</label>
+                  <label className={styles.formularioLogin_label}>
+                    Ingrese su Nombre
+                  </label>
                   <input
                     className={styles.formularioLogin_input}
                     name="nombre"
@@ -92,7 +101,9 @@ export default function loginPrincipal(props) {
                   />
                 </div>
                 <div className={styles.formularioLogin_password}>
-                  <label className={styles.formularioLogin_label}>Nueva Contraseña</label>
+                  <label className={styles.formularioLogin_label}>
+                    Nueva Contraseña
+                  </label>
                   <input
                     className={styles.formularioLogin_input}
                     name="password"
@@ -101,8 +112,7 @@ export default function loginPrincipal(props) {
                   />
                 </div>
               </div>
-            )
-            }
+            )}
             <input
               className={styles.formularioLogin_button}
               type="submit"
@@ -112,7 +122,18 @@ export default function loginPrincipal(props) {
         </>
       )}
     </div>
-  )
+  );
+}
+export async function getStaticProps() {
+  const APIpath = process.env.API_DOMAIN;
+  // const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
+
+  return {
+    props: {
+      APIpath: APIpath,
+      // APIpathGeneral: APIpathGeneral,
+    },
+  };
 }
 // export async function getServerSideProps({ req, res }) {
 //   const { Auth } = withSSRContext({ req })
@@ -137,8 +158,8 @@ const CambioDolar = () => {
   const [Loading, setLoading] = useState(false);
 
   useEffect(async () => {
-    setLoading(true)
-    let DolarSol = 0
+    setLoading(true);
+    let DolarSol = 0;
     await fetch("/api/DataSistema", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -146,15 +167,15 @@ const CambioDolar = () => {
         accion: "ObtenerCambioDolar",
       }),
     })
-    .then((r) => r.json())
-    .then((data) => {
-      DolarSol = data.value;
-    });
-    console.log(DolarSol)
-    sessionStorage.setItem('CambioDolar',DolarSol)
+      .then((r) => r.json())
+      .then((data) => {
+        DolarSol = data.value;
+      });
+    console.log(DolarSol);
+    sessionStorage.setItem("CambioDolar", DolarSol);
     setValueDolarSolInit(DolarSol);
     setValueDolartoSol(DolarSol);
-    setLoading(false)
+    setLoading(false);
   }, []);
 
   return (
@@ -165,55 +186,54 @@ const CambioDolar = () => {
           <span>Cambio soles a dolares</span>
           {EstadoEditado ? (
             <>
-              { Loading ? (
+              {Loading ? (
                 <>
                   <span>Guardando ...</span>
                 </>
               ) : (
                 <>
                   <img
-                  src="/resources/save-black-18dp.svg"
-                  onClick={async() => {
-                    setLoading(true)
-                    await fetch("/api/DataSistema", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        accion: "CambiarCambioDolar",
-                        value: ValueDolartoSol,
-                      }),
-                    });
-                    setValueDolarSolInit(ValueDolartoSol)
-                    setEstadoEditado(false);
-                    setLoading(false)
-                    // ReiniciarData()
-                  }}
-                />
-                <img
-                  src="/resources/close-black-18dp.svg"
-                  onClick={(event) => {
-                    setEstadoEditado(false);
-                    setValueDolartoSol(ValueDolarSolInit)
-                  }}
-                />
+                    src="/resources/save-black-18dp.svg"
+                    onClick={async () => {
+                      setLoading(true);
+                      await fetch("/api/DataSistema", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          accion: "CambiarCambioDolar",
+                          value: ValueDolartoSol,
+                        }),
+                      });
+                      setValueDolarSolInit(ValueDolartoSol);
+                      setEstadoEditado(false);
+                      setLoading(false);
+                      // ReiniciarData()
+                    }}
+                  />
+                  <img
+                    src="/resources/close-black-18dp.svg"
+                    onClick={(event) => {
+                      setEstadoEditado(false);
+                      setValueDolartoSol(ValueDolarSolInit);
+                    }}
+                  />
                 </>
               )}
-              
             </>
           ) : (
             <>
-            { Loading ? (
+              {Loading ? (
                 <>
                   <span> Cargando ...</span>
                 </>
               ) : (
                 <>
                   <img
-                  src="/resources/edit-black-18dp.svg"
-                  onClick={(event) => {
-                    setEstadoEditado(true);
-                  }}
-                />
+                    src="/resources/edit-black-18dp.svg"
+                    onClick={(event) => {
+                      setEstadoEditado(true);
+                    }}
+                  />
                 </>
               )}
             </>
