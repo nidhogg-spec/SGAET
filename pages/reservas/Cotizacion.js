@@ -3,20 +3,24 @@ import React, { useEffect, useState, useContext, createContext } from "react";
 import { useRouter } from "next/router";
 
 //Componentes
-import CampoTexto from "@/components/Formulario/CampoTexto/CampoTexto";
-import CampoFecha from "@/components/Formulario/CampoFecha/CampoFecha";
-import CampoGranTexto from "@/components/Formulario/CampoGranTexto/CampoGranTexto";
-import Selector from "@/components/Formulario/Selector/Selector";
-import CampoNumero from "@/components/Formulario/CampoNumero/CampoNumero";
-import CampoMoney from "@/components/Formulario/CampoMoney/CampoMoney";
-import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
-import TablaSimple from "@/components/Formulario/TablaSimple/TablaSimple";
-import TablaServicioCotizacion from "@/components/Formulario/CustomComponenteFormu/TablaServicioCotizacion/TablaServicioCotizacion";
-import Loader from "@/components/Loading/Loading";
 
+import CampoTexto from "@/components/Formulario_V2/CampoTexto/CampoTexto";
+import CampoFecha from "@/components/Formulario_V2/CampoFecha/CampoFecha";
+import CampoGranTexto from "@/components/Formulario_V2/CampoGranTexto/CampoGranTexto";
+// import Selector from "@/components/Formulario/Selector/Selector";
+import CampoNumero from "@/components/Formulario_V2/CampoNumero/CampoNumero";
+// import CampoMoney from "@/components/Formulario/CampoMoney/CampoMoney";
+// import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
+import TablaSimple from "@/components/Formulario_V2/TablaSimple/TablaSimple";
+import TablaServicioCotizacion from "@/components/Formulario/CustomComponenteFormu/TablaServicioCotizacion/TablaServicioCotizacion";
+
+
+
+import Loader from "@/components/Loading/Loading";
 //Style
 import styles from "../../styles/Cotizacion.module.css";
 import MaterialTable from "material-table";
+import axios from "axios";
 
 const Contexto = createContext([
   [{}, () => {}],
@@ -25,32 +29,22 @@ const Contexto = createContext([
 ]);
 
 const Cotizacion = ({ APIpath, APIpathGeneral }) => {
-  //Funciones
-  let DataNuevaEdit = {};
-  const DarDatoFunction = (keyDato, Dato) => {
-    DataNuevaEdit[keyDato] = Dato;
-  };
-  const DarDatoFunction_FechaIN = (keyDato, Dato) => {
-    setFechaIN(Dato);
-  };
-
   //State y variables
   const router = useRouter();
-  const [DarDato, setDarDato] = useState(false);
   const [IdProgramaTuristico, setIdProgramaTuristico] = useState(""); // Evaluar si se va
   const [ReinciarComponentes, setReinciarComponentes] = useState(false);
   const [ProgramasTuristicos, setProgramasTuristicos] = useState([]);
   const [MostrarClientesCorporativos, setMostrarClientesCorporativos] = useState([]);
-  const [DataCotizacion, setDataCotizacion] = useState({});
   const [Servicios, setServicios] = useState([]);
   const [dataGeneralProgramaTuristico,setDataGeneralProgramaTuristico] = useState({});
   const [ListaServiciosProductos, setListaServiciosProductos] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [Fase, setFase] = useState(1);
   const [FechaIN, setFechaIN] = useState("");
-
   const [TipoCliente, setTipoCliente] = useState(0);
   const [cliente, setcliente] = useState({});
+
+  const [Cotizacion, setCotizacion] = useState({});
 
   //Hooks
   useEffect(async () => {
@@ -89,12 +83,15 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       setReinciarComponentes(false);
     }
   }, [ReinciarComponentes]);
-  useEffect(async () => {
-    if (DarDato == true && Fase >= 3) {
+  const HandleSave = async () => {
+    if (Fase >= 3) {
       setLoading(true);
       let ClienteProspecto = cliente;
-      let ServiciosEscogidos = [...DataNuevaEdit["Servicios"]];
-      let ReservaCotizacion = DataNuevaEdit;
+      // let ServiciosEscogidos = [...DataNuevaEdit["Servicios"]];
+      // let ReservaCotizacion = DataNuevaEdit;
+
+      let ServiciosEscogidos = [...Servicios]
+      let ReservaCotizacion = {...Cotizacion};
 
       // Formateo de datos de ReservaCotizacion
       delete ReservaCotizacion["Servicios"];
@@ -110,6 +107,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       switch (parseInt(TipoCliente)) {
         case 1 || "1":
           ClienteProspecto["TipoCliente"] = "Corporativo";
+          ReservaCotizacion['IdClienteProspecto']= ClienteProspecto['IdClienteProspecto']
           break;
         case 2 || "2":
           ClienteProspecto["TipoCliente"] = "Directo";
@@ -122,26 +120,17 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       }
 
       // envio dde datos a las apis
-
-      await fetch(APIpath + "/api/Cotizacion/NuevaReservaCotizacion", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ReservaCotizacion: ReservaCotizacion,
-          ServiciosEscogidos: ServiciosEscogidos,
-          ClienteProspecto: ClienteProspecto,
-        }),
+      let result = await axios.post(APIpath + "/api/Cotizacion/NuevaReservaCotizacion",{
+        ReservaCotizacion: ReservaCotizacion,
+        ServiciosEscogidos: ServiciosEscogidos,
+        ClienteProspecto: ClienteProspecto,
       })
-        .then((r) => r.json())
-        .then((data) => {
-          console.log(data.message);
-        });
+      console.log(result.data.message);
       router.push('/reservas/ListaCotizacion');
       setLoading(false);
     }
-  }, [DarDato]);
+  };
   useEffect(async () => {
-
     if (
       IdProgramaTuristico == null ||
       IdProgramaTuristico == "" ||
@@ -150,41 +139,17 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       return;
     }
     setLoading(true);
-    // let DataProgramasTuristicos = [...ProgramasTuristicos]
-    let ProgramaTuristSeleccionado = {};
-    let ServiciosActu = [];
-    await fetch(APIpath + "/api/Cotizacion/ObtenerUnPT/" + IdProgramaTuristico)
-      .then((r) => r.json())
-      .then((data) => {
-        ProgramaTuristSeleccionado = data.result;
-        ServiciosActu = data.result["ServicioProducto"];
-      });
-    // console.log(DataServicios)
+    console.log(IdProgramaTuristico);
+    let result = await axios.get(APIpath + "/api/Cotizacion/ObtenerUnPT/" + IdProgramaTuristico)
+    let ProgramaTuristSeleccionado = result.data.result;
+    let ServiciosActu = result.data.result["ServicioProducto"];
+
     setFase(3);
     setServicios(ServiciosActu);
-    setDataCotizacion(ProgramaTuristSeleccionado);
+    setCotizacion({...Cotizacion,...ProgramaTuristSeleccionado})
+    setDataGeneralProgramaTuristico(ProgramaTuristSeleccionado);
     setLoading(false);
   }, [IdProgramaTuristico]);
-
-  useEffect(() => {
-    let tempDataGeneralProgramaTuristico = {};
-    if (Fase > 2) {
-      ProgramasTuristicos.map((x) => {
-        if ((x.IdProgramaTuristico = IdProgramaTuristico)) {
-          tempDataGeneralProgramaTuristico = x;
-        }
-      });
-    }
-    setDataGeneralProgramaTuristico(tempDataGeneralProgramaTuristico);
-  }, [Fase]);
-
-  useEffect(() => {
-    if (TipoCliente == 1) {
-      setLoading(true);
-
-      setLoading(false);
-    }
-  }, [TipoCliente]);
 
   return (
     <div className={styles.ContenedorPrincipal}>
@@ -197,11 +162,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
               <>
                 <img
                   src="/resources/save-black-18dp.svg"
-                  onClick={() => {
-                    DataNuevaEdit = {};
-                    setDarDato(true);
-                    // ReiniciarData()
-                  }}
+                  onClick={HandleSave}
                 />
               </>
             ) : (
@@ -219,6 +180,8 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                       value={TipoCliente}
                       onChange={(event) => {
                         setTipoCliente(event.target.value);
+                        if(event.target.value == 2)
+                          setcliente({});
                       }}
                     >
                       <option value={1}>Corporativo</option>
@@ -334,39 +297,31 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                 <CampoTexto
                   Title={"Nombre de Grupo"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"NombreGrupo"}
-                  Dato={DataCotizacion.NombreGrupo}
-                  Reiniciar={ReinciarComponentes}
                 />
                 <CampoTexto
                   Title={"Codigo de Grupo"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"CodGrupo"}
-                  Dato={DataCotizacion.CodGrupo}
-                  Reiniciar={ReinciarComponentes}
                 />
                 <CampoNumero
                   Title={"Numero de Pasajeros Adultos"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"NpasajerosAdult"}
-                  Dato={DataCotizacion.NPasajerosAdult}
-                  Reiniciar={ReinciarComponentes}
                   InputStep="1"
                 />
                 <CampoNumero
                   Title={"Numero de Pasajeros Niños o Infantes"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"NpasajerosChild"}
-                  Dato={DataCotizacion.NPasajerosInfante}
-                  Reiniciar={ReinciarComponentes}
                   InputStep="1"
                 />
                 <div>
@@ -381,13 +336,10 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                 </div>
                 <CampoFecha
                   Title={"Fecha de Fin"}
-                  ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  ModoEdicion={false}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"FechaOUT"}
-                  // Dato={DataCotizacion.FechaOUT}
-                  Dato={DataCotizacion.FechaOUT}
-                  Reiniciar={ReinciarComponentes}
                 />
                 {Fase == 1 ? (
                   <>
@@ -400,7 +352,6 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                           );
                           event.currentTarget.disabled = false;
                         } else {
-                          // setDarDato(true);
                           setFase(2);
                         }
                       }}
@@ -458,15 +409,14 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                   Duracion Noches : {dataGeneralProgramaTuristico.DuracionNoche}
                 </span>
                 <br></br>
-                <span>
+                {/* <span>
                   Precio Estandar: {dataGeneralProgramaTuristico.PrecioEstandar}
-                </span>
+                </span> */}
                 <TablaServicioCotizacion
                   Title={"Servicio/Productos"}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
-                  KeyDato={"Servicios"}
+                  // KeyDato={"Servicios"}
                   Dato={Servicios}
+                  setDato={setServicios}
                   ListaServiciosProductos={ListaServiciosProductos}
                   Reiniciar={ReinciarComponentes}
                   FechaIN={FechaIN}
@@ -474,20 +424,16 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                 <CampoGranTexto
                   Title={"Descripcion del Programa turistico"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"Descripcion"}
-                  Dato={DataCotizacion.Descripcion}
-                  Reiniciar={ReinciarComponentes}
                 />
                 <TablaSimple
                   Title={"Itinierario"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"Itinerario"}
-                  Dato={DataCotizacion.Itinerario || []}
-                  Reiniciar={ReinciarComponentes}
                   columnas={[
                     {
                       field: "Dia",
@@ -502,40 +448,33 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                 <CampoGranTexto
                   Title={"Descripcion de Itinerario"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"ItinerarioDescripcion"}
-                  Dato={DataCotizacion.ItinerarioDescripcion}
                   Reiniciar={ReinciarComponentes}
                 />
                 <TablaSimple
                   Title={"Incluye"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"Incluye"}
-                  Dato={DataCotizacion.Incluye || []}
-                  Reiniciar={ReinciarComponentes}
                   columnas={[{ field: "Actividad", title: "Actividad" }]}
                 />
                 <TablaSimple
                   Title={"No Incluye"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"NoIncluye"}
-                  Dato={DataCotizacion.NoIncluye || []}
-                  Reiniciar={ReinciarComponentes}
                   columnas={[{ field: "Actividad", title: "Actividad" }]}
                 />
                 <TablaSimple
                   Title={"Recomendaciones para llevar"}
                   ModoEdicion={true}
-                  DevolverDatoFunct={DarDatoFunction}
-                  DarDato={DarDato}
+                  setDato={setCotizacion}
+                  Dato={Cotizacion}
                   KeyDato={"RecomendacionesLlevar"}
-                  Dato={DataCotizacion.RecomendacionesLlevar || []}
-                  Reiniciar={ReinciarComponentes}
                   columnas={[
                     { field: "Recomendacion", title: "Recomendacion" },
                   ]}

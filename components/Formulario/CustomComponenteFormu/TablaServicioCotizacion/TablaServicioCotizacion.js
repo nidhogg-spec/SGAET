@@ -1,28 +1,20 @@
 //Package
 import styles from "./TablaServicioCotizacion.module.css";
 import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
-
+import deepEqual from "fast-deep-equal";
 //Componentes
 import MaterialTable from "material-table";
-
 const TablaServicioCotizacion = (
   props = {
     Title: "Nombre del Proveedor",
-    DevolverDatoFunct: { RegistrarDato },
-    DarDato: { DevolverDato },
-    KeyDato: "nombre",
     Dato: [],
+    setDato:()=>{},
     ListaServiciosProductos: [],
     Reiniciar: true,
     FechaIN,
-    // columnas:[]
   }
 ) => {
   // -------------------------------Variables---------------------------------
-
-  //Datos obtenidos de servicio en PromasTuristicos
-  const [Data, setData] = useState([]);
-  const [DataInit, setDataInit] = useState([]);
   //Datos q se guardaran en la cotizacion
   const [CotiServicio, setCotiServicio] = useState([]);
   const [CurrencyTotal, setCurrencyTotal] = useState("Dolar");
@@ -30,46 +22,20 @@ const TablaServicioCotizacion = (
   const [CambioDolar, setCambioDolar] = useState(0);
   const NotAgain = useRef(true);
 
-  //---------------------------------------------------------------------------------
-
   //------------------------------------Hooks-----------------------------------------
-  // useEffect(() => {
-  //   try {
-  //     // let ActuDataTableServicios = [...ServiciosInit];
-  //     // props.Dato.map((element) => {
-  //     //   ActuDataTableServicios.splice(
-  //     //     ActuDataTableServicios.find((value) => {
-  //     //       return value["IdServicio"] == element["IdServicio"];
-  //     //     }),
-  //     //     1
-  //     //   );
-  //     // });
-  //     // setDataTableServicios(ActuDataTableServicios);
-  //     setCotiServicio(props.Dato);
-  //   } catch (error) {
-  //     console.log("Error - Extraccion DATA - " + error);
-  //   }
-  // }, [props.Dato]);
-
   useEffect(() => {
-    if (props.Reiniciar == true) {
-      setData(DataInit);
-    }
-  }, [props.Reiniciar]);
+    if(props.Dato!= undefined)
+      if (!deepEqual(CotiServicio,props.Dato)) {
+        props.setDato(CotiServicio);
+      }
+  }, [CotiServicio]);
   useEffect(() => {
-    try {
-      setCotiServicio(props.Dato);
-      console.log(CotiServicio);
-      
-    } catch (error) {
-      console.log("Error - Extraccion DATA - " + error);
-    }
+    if(props.Dato!= undefined)
+      if (!deepEqual(CotiServicio,props.Dato)) {
+        setCotiServicio(props.Dato)
+      }
   }, [props.Dato]);
-  useEffect(() => {
-    if (props.DarDato == true) {
-      props.DevolverDatoFunct(props.KeyDato, CotiServicio);
-    }
-  }, [props.DarDato]);
+
   useLayoutEffect(() => {
     if (NotAgain.current) {
       NotAgain.current = false;
@@ -77,12 +43,6 @@ const TablaServicioCotizacion = (
     }
 
     let temp_MontoTotal = 0;
-
-    // console.log(CotiServicio)
-    // console.log("/-----------------/")
-    // console.log(props.Dato)
-    // console.log("/-----------------/")
-    // console.log()
 
     switch (CurrencyTotal) {
       case "Dolar":

@@ -1,3 +1,4 @@
+import { remove } from "js-cookie";
 import { MongoClient } from "mongodb";
 require("dotenv").config();
 
@@ -15,6 +16,7 @@ export default async (req, res) => {
   let ClienteProspecto = req.body.ClienteProspecto;
   let ServiciosEscogidos = req.body.ServiciosEscogidos;
   let ReservaCotizacion = req.body.ReservaCotizacion;
+
   if (
     ReservaCotizacion == undefined ||
     ClienteProspecto == undefined ||
@@ -23,35 +25,40 @@ export default async (req, res) => {
     res.status(500).send("Envie bien los datos");
     return;
   }
-
-  // -----------------------Ingreso de ClienteProspecto---------------------
   let IdNumero = 1;
   let Prefijo = "CP";
-  try {
-    await client.connect();
-    let collection = client.db(dbName).collection("ClienteProspecto");
-    const options = { sort: {} };
-    options.sort["IdClienteProspecto"] = -1;
-    const result = await collection.findOne({}, options);
-    if (result) {
-      IdNumero = parseInt(
-        result["IdClienteProspecto"].slice(Prefijo.length),
-        Prefijo.length + 8
-      );
-      IdNumero++;
+  await client.connect();
+  if (
+    ClienteProspecto["IdClienteProspecto"] == undefined ||
+    ClienteProspecto["IdClienteProspecto"] == null
+  ) {
+    // -----------------------Ingreso de ClienteProspecto---------------------
+    try {
+      let collection = client.db(dbName).collection("ClienteProspecto");
+      const options = { sort: {} };
+      options.sort["IdClienteProspecto"] = -1;
+      const result = await collection.findOne({}, options);
+      if (result) {
+        IdNumero = parseInt(
+          result["IdClienteProspecto"].slice(Prefijo.length),
+          Prefijo.length + 8
+        );
+        IdNumero++;
+      }
+      ClienteProspecto["IdClienteProspecto"] =
+        Prefijo +
+        ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
+    } catch (error) {
+      console.log("error al Devolver ID - " + error);
     }
-    ClienteProspecto["IdClienteProspecto"] =
-      Prefijo +
-      ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
-  } catch (error) {
-    console.log("error al Devolver ID - " + error);
+    ReservaCotizacion["IdClienteProspecto"] =
+      ClienteProspecto["IdClienteProspecto"];
   }
 
   /* -----------------------Ingreso de reserva Cotizacion -------------------------------*/
   IdNumero = 1;
   Prefijo = "RC";
-  ReservaCotizacion["IdClienteProspecto"] =
-    ClienteProspecto["IdClienteProspecto"];
+
   try {
     let collection = client.db(dbName).collection("ReservaCotizacion");
     const options = { sort: {} };
@@ -108,11 +115,12 @@ export default async (req, res) => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  await client.connect()
+  await client.connect();
 
   await Promise.all([
     //Guardar ReservaCotizacion
     new Promise(async (resolve, reject) => {
+      delete ReservaCotizacion['_id'];
       try {
         let dbo = client.db(dbName);
         let collection = dbo.collection("ReservaCotizacion");
@@ -132,6 +140,7 @@ export default async (req, res) => {
     }),
     //Guardar ClienteProspecto
     new Promise(async (resolve, reject) => {
+      if (ClienteProspecto["TipoCliente"] == "Directo") {
         try {
           let dbo = client.db(dbName);
           let collection = dbo.collection("ClienteProspecto");
@@ -148,31 +157,33 @@ export default async (req, res) => {
           console.log(error);
           reject();
         }
-      }),
-      //Guardar ClienteProspecto
-      new Promise(async (resolve, reject) => {
-        try {
-            let dbo = client.db(dbName);
-            let collection = dbo.collection('ServicioEscogido');
-            collection.insertMany(ServiciosEscogidos, function (err, res) {
-              if (err) {
-                console.log(err);
-                throw err;
-              }
-              console.log(
-                "Number of documents inserted: " + res.insertedCount
-              );
-            });
-          resolve();
-        } catch (error) {
-          console.log(error);
-          reject();
-        }
-      }),
+      }else{
+        console.log('No es necesario ingresar cliente corporativo')
+        resolve();
+      }
+      
+    }),
+    //Guardar ServiciosEscogidos
+    new Promise(async (resolve, reject) => {
+      try {
+        let dbo = client.db(dbName);
+        let collection = dbo.collection("ServicioEscogido");
+        collection.insertMany(ServiciosEscogidos, function (err, res) {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          console.log("Number of documents inserted: " + res.insertedCount);
+        });
+        resolve();
+      } catch (error) {
+        console.log(error);
+        reject();
+      }
+    }),
   ]);
 
-  res.status(200).json({message:"Insercion Satisfactoria"})
+  res.status(200).json({ message: "Insercion Satisfactoria" });
   /*Sale el error del http header aprender como solucionalo para poder hacer el redirec*/
   // return res.redirect('/reservas/ListaCotizacion');
-
 };
