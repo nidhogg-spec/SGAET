@@ -3,18 +3,17 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 export default function Notificaciones(
-    props = {
-        APIpath,
-      }
+  props = {
+    APIpath
+  }
 ) {
   const [show, setShow] = useState(false);
   const [DataServicioEscogido, setDataServicioEscogido] = useState();
   const [DataReservaCotizacion, setDataReservaCotizacion] = useState();
   const [FechasPorVencer, setFechasPorVencer] = useState();
+  const [FechasVencidas, setFechasVencidas] = useState();
   const [ReservasProximas, setReservasProximas] = useState();
-  const [Revisado, setRevisado] = useState(false);
-  const Router = useRouter();
-  
+
   function handleClick() {
     setShow(true);
     if (show == true) {
@@ -22,18 +21,18 @@ export default function Notificaciones(
     }
   }
   function handleClickRedirecionar(id) {
-    if (id.slice(0,2)=="RC") {
-        window.open('/reservas/reserva/'+id)
-        // Router.push('/reservas/reserva/'+id)
-    }else if (id.slice(0,2)=="SE") {
-        window.open('/reservas/servicio/'+id)
-        // Router.push('/reservas/servicio/'+id)
+    if (id.slice(0, 2) == "RC") {
+      window.open("/reservas/reserva/" + id);
+      // Router.push('/reservas/reserva/'+id)
+    } else if (id.slice(0, 2) == "SE") {
+      window.open("/reservas/servicio/" + id);
+      // Router.push('/reservas/servicio/'+id)
     }
   }
   /*Obtencion de Datos*/
   useEffect(async () => {
     new Promise(async (resolv, reject) => {
-      await fetch(props.APIpath+"/api/ServicioEscogido/CRUD", {
+      await fetch(props.APIpath + "/api/ServicioEscogido/CRUD", {
         method: "GET",
         headers: { "Content-Type": "application/json" }
       })
@@ -44,7 +43,8 @@ export default function Notificaciones(
       resolv();
     });
     new Promise(async (resolv, reject) => {
-      await fetch(props.APIpath+"/api/reserva/DataReserva/CRUDReservaCotizacion",
+      await fetch(
+        props.APIpath + "/api/reserva/DataReserva/CRUDReservaCotizacion",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -64,7 +64,10 @@ export default function Notificaciones(
   /*Comparacion de Fechas y Obtencion de Fechas que estan por Vencer*/
   useEffect(() => {
     let arrayFechasporVencer = [];
+    let arrayFechasVencidas = [];
     let arrayReservasPorLlegar = [];
+    let DiasVencidas = 0
+    let DiasPorVencer = 0
     let actualDate = new Date();
 
     if (
@@ -83,10 +86,10 @@ export default function Notificaciones(
           dateReserva.getFullYear() == actualDate.getFullYear() &&
           dateReserva.getMonth() == actualDate.getMonth()
         ) {
-          if (
-            actualDate.getDate() - 2 == dateReserva.getDate() ||
-            actualDate.getDate() - 1 == dateReserva.getDate()
-          ) {
+
+          if (actualDate.getDate() <= dateReserva.getDate()) {
+            DiasPorVencer=dateReserva.getDate()-actualDate.getDate()
+            datosCotizacion.DiasPorVencer = DiasPorVencer
             arrayReservasPorLlegar.push(datosCotizacion);
           }
         }
@@ -103,22 +106,27 @@ export default function Notificaciones(
             dateServicio.getFullYear() == actualDate.getFullYear() &&
             dateServicio.getMonth() == actualDate.getMonth()
           ) {
-            if (
-              actualDate.getDate() - 2 == dateServicio.getDate() ||
-              actualDate.getDate() - 1 == dateServicio.getDate()
-            ) {
+            
+            if (actualDate.getDate() <= dateServicio.getDate()) {
+              DiasPorVencer=dateServicio.getDate()-actualDate.getDate()
+              datosServicio.DiasPorVencer= DiasPorVencer
               arrayFechasporVencer.push(datosServicio);
+            } else if (actualDate.getDate() > dateServicio.getDate()) {
+              DiasVencidas=actualDate.getDate()-dateServicio.getDate()
+              datosServicio.DiasVencidas= DiasVencidas
+              arrayFechasVencidas.push(datosServicio);
             }
           }
         }
       });
     }
     setFechasPorVencer(arrayFechasporVencer);
+    setFechasVencidas(arrayFechasVencidas);
     setReservasProximas(arrayReservasPorLlegar);
   }, [show]);
   /*---------------------------------------------------------------------------------------*/
-//   console.log(FechasPorVencer)
-//   console.log(ReservasProximas)
+  //   console.log(FechasPorVencer)
+  //   console.log(ReservasProximas)
 
   return (
     <div>
@@ -132,26 +140,74 @@ export default function Notificaciones(
         <div>
           <h2>Notificaciones</h2>
           <h3>Servicio Escogidos por Vencer</h3>
-          <span>Los Servicios Siguientes estan por Vencer Reviselos:</span><br/>
-          {
-              FechasPorVencer.map(datosServEscogido =>(
-                <div>
-                    <input onClick value={datosServEscogido.NombreServicio} disabled></input>
-                    <button onClick={()=>handleClickRedirecionar(datosServEscogido.IdServicioEscogido)} >Revisar</button>
-                    {/* <input type="checkbox" checked={Revisado}></input> */}
-                </div>
-              ))
-          }
+          <span>Los Siguientes Servicios estan por Vencer Reviselos:</span>
+          <br />
+          {FechasPorVencer.map((datosServEscogido) => (
+            <div>
+              <span>Quedan {datosServEscogido.DiasPorVencer} dias para que llegue la fecha limite de este servicio </span> <br/>
+              <input
+                onClick
+                value={datosServEscogido.NombreServicio}
+                disabled
+              ></input>
+              <button
+                onClick={() =>
+                  handleClickRedirecionar(datosServEscogido.IdServicioEscogido)
+                }
+              >
+                Revisar
+              </button>
+              {datosServEscogido.Estado == 3 ? (
+                <input type="checkbox" checked={true}></input>
+              ) : (
+                <input type="checkbox" checked={false}></input>
+              )}
+            </div>
+          ))}
+          <h3>Servicio Escogidos Vencidos</h3>
+          <span>Los Servicios Siguientes estan Vencidos:</span>
+          <br />
+          {FechasVencidas.map((datosServEscogido) => (
+            <div>
+              <span>Han pasado {datosServEscogido.DiasVencidas} Dias desde que vencio este Servicio</span> <br/>
+              <input
+                onClick
+                value={datosServEscogido.NombreServicio}
+                disabled
+              ></input>
+              <button
+                onClick={() =>
+                  handleClickRedirecionar(datosServEscogido.IdServicioEscogido)
+                }
+              >
+                Revisar
+              </button>
+              {datosServEscogido.Estado == 3 ? (
+                <input type="checkbox" checked={true}></input>
+              ) : (
+                <input type="checkbox" checked={false}></input>
+              )}
+            </div>
+          ))}
           <h3>Reservas/Cotizaciones con Fecha Proxima </h3>
-          {
-              ReservasProximas.map(datosreserva =>(
-                <div>
-                    <input value={datosreserva.NombrePrograma} disabled></input>
-                    <button onClick={()=>handleClickRedirecionar(datosreserva.IdReservaCotizacion)} >Revisar</button>
-                    {/* <input type="checkbox" checked={Revisado}></input> */}
-                </div>
-              ))
-          }
+          {ReservasProximas.map((datosreserva) => (
+            <div>
+              <span>Quedan {datosreserva.DiasPorVencer} dias para que llegue la fecha limite de este servicio </span> <br/>
+              <input value={datosreserva.NombrePrograma} disabled></input>
+              <button
+                onClick={() =>
+                  handleClickRedirecionar(datosreserva.IdReservaCotizacion)
+                }
+              >
+                Revisar
+              </button>
+              {datosreserva.Estado == 3 ? (
+                <input type="checkbox" checked={true}></input>
+              ) : (
+                <input type="checkbox" checked={false}></input>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>
