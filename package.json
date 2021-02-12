@@ -21,6 +21,7 @@
     "material-table": "^1.69.2",
     "mongodb": "^3.6.3",
     "next": "10.0.5",
+    "next-images": "^1.7.0",
     "pdfmake": "^0.1.70",
     "react": "17.0.1",
     "react-beautiful-dnd": "^13.0.0",
