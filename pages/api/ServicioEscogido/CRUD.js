@@ -11,7 +11,8 @@ export default async (req, res) => {
   } = req;
   switch (req.method) {
     case "GET":
-      res.status(500);
+      func_Obtener(req,res)
+      // res.status(500);
       break;
     case "POST":
       func_Crear(req, res);
@@ -27,6 +28,28 @@ export default async (req, res) => {
       break;
   }
 };
+const func_Obtener = async (req, res) => {
+  // ---------------- Informacion importante inicial -----------
+  let coleccion = "ServicioEscogido";
+  //-------------------- Proceso ------------------------------
+  let client = new MongoClient(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  await client.connect();
+  try {
+    let dbo = client.db(dbName);
+    let collection = dbo.collection(coleccion);
+    let data = await collection.find({}).project({"_id":0}).toArray()
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(500);
+    console.log(error);
+  } finally {
+    client.close();
+  }
+};
+
 const func_Crear = async (req, res) => {
   // ---------------- Informacion importante inicial -----------
   let ServicioEscogido = req.body.ServicioEscogido;
