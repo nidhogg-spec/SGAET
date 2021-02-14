@@ -3,9 +3,9 @@ import styles from "../styles/login.module.css";
 import { Auth, API } from "aws-amplify";
 import { useRouter } from "next/router";
 import { useAppContext } from "@/components/Contexto";
-import Notificaciones from "../components/Notificaciones/Notificaciones";
+import Notificaciones from '../components/Notificaciones/Notificaciones'
 
-export default function loginPrincipal({ APIpath }) {
+export default function loginPrincipal({APIpath}) {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
