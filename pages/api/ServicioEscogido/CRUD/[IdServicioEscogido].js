@@ -63,8 +63,8 @@ const func_Crear = async (req, res) => {
   });
   let IdNumero = 1;
   await client.connect();
-  try {
-    let collection = client.db(dbName).collection(coleccion);
+  let collection = client.db(dbName).collection(coleccion);
+  try {    
     const options = { sort: {} };
     options.sort[keyId] = -1;
     const result = await collection.findOne({}, options);
@@ -85,16 +85,9 @@ const func_Crear = async (req, res) => {
     return;
   }
   try {
-    let dbo = client.db(dbName);
-    let collection = dbo.collection(coleccion);
-    await collection.insertOne(ServicioEscogido, function (err, res) {
-      if (err) {
-        console.log(err);
-        throw err;
-      }
-      console.log("Insercion realizada");
-      res.status(200).send("Insercion realizada");
-    });
+    let result = await collection.insertOne(ServicioEscogido);
+    res.status(200).send(result);
+    console.log('Insercion realizada');
   } catch (error) {
     res.status(500);
     console.log(error);
@@ -105,7 +98,7 @@ const func_Crear = async (req, res) => {
 
 const func_Eliminar = async (req, res) => {
   // ---------------- Informacion importante inicial -----------
-  let IdServicioEscogido = req.body.IdServicioEscogido;
+  let {IdServicioEscogido} = req.query
   let coleccion = "ServicioEscogido";
   let keyId = "Id" + coleccion;
   //-------------------- Proceso ------------------------------
@@ -117,9 +110,10 @@ const func_Eliminar = async (req, res) => {
   try {
     let dbo = client.db(dbName);
     let collection = dbo.collection(coleccion);
-    await collection.deleteOne({ [keyId]: IdServicioEscogido });
+    console.log(IdServicioEscogido);
+    let result = await collection.deleteOne({ [keyId]: IdServicioEscogido });
     console.log("Eliminacion realizada");
-    res.status(200).send("Eliminacion realizada");
+    res.status(200).send(result);
   } catch (error) {
     res.status(500);
     console.log(error);
@@ -131,7 +125,7 @@ const func_Eliminar = async (req, res) => {
 const func_Actualizar = async (req, res) => {
   // ---------------- Informacion importante inicial -----------
   let ServicioEscogido = req.body.ServicioEscogido;
-  let IdServicioEscogido = req.body.IdServicioEscogido;
+  let {IdServicioEscogido} = req.query
   let coleccion = "ServicioEscogido";
   let keyId = "Id" + coleccion;
   //-------------------- Proceso ------------------------------

@@ -22,7 +22,7 @@ const CampoBoolean = (
         <input
           checked={value}
           type={'checkbox'}
-          onClick={(event) => {
+          onChange={(event) => {
             props.setDato({
               ...props.Dato,
              [props.KeyDato]: event.target.checked
