@@ -16,6 +16,23 @@ let client = new MongoClient(url,{
 export default async (req, res) =>{
   if (req.method == "POST") {
       switch (req.body.accion) {
+        case "obtener":
+          try {
+            client = new MongoClient(url, {
+              useNewUrlParser: true,
+              useUnifiedTopology: true,
+            });
+            await client.connect();
+            let collection = client.db(dbName).collection(coleccion);
+  
+            const result = await collection.find({}).project({"_id":0}).toArray();
+
+            res.status(200).send(result)
+            
+          } catch (error) {
+            res.status(500).json(error)
+          }
+          break
         case "create":
           // Intentando generar id
         let IdNumero = 1;
