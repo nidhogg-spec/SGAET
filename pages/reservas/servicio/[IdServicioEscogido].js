@@ -1,26 +1,74 @@
-import React, { useState, useEffect, useDebugValue } from "react";
+import React, { useState, useEffect, useDebugValue, useRef } from "react";
 import { useRouter } from "next/router";
 import { MongoClient } from "mongodb";
+import { resetServerContext } from "react-beautiful-dnd";
 
 //Componentes
 // import AutoFormulario from "@/components/AutoFormulario/AutoFormulario";
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import Loader from "@/components/Loading/Loading";
-
-const ServicioEscogido = (props={
-  URL_path,
-  OrdenServicio,
-  ServicioEscogido,
-  Proveedor,
-}) => {
+import axios from "axios";
+resetServerContext();
+const ServicioEscogido = (
+  props = {
+    URL_path,
+    OrdenServicio,
+    ServicioEscogido,
+    Proveedor,
+  }
+) => {
   const router = useRouter();
   const { IdServicioEscogido } = router.query;
-  const [ServicioEscogido, setServicioEscogido] = useState(props.ServicioEscogido);
+  const [ServicioEscogido, setServicioEscogido] = useState(
+    props.ServicioEscogido
+  );
   const [OrdenServicio, setOrdenServicio] = useState(props.OrdenServicio);
   const [Proveedor, setProveedor] = useState(props.Proveedor);
   const [Loading, setLoading] = useState(false);
+  const refEstado = useRef(null);
   let Exits_OrdenServicio = useBoolOrdenServicio(OrdenServicio);
-  useDebugValue(Exits_OrdenServicio? "Si":'No')
+  useDebugValue(Exits_OrdenServicio ? "Si" : "No");
+
+  const handleChangeEstado = async () => {
+    if (parseInt(Estado) == 3) {
+    }
+
+    setLoading(true);
+    let Estado_val = parseInt(refEstado.current.value);
+    let Estado = ServicioEscogido["Estado"] ? ServicioEscogido["Estado"] : 0;
+    if (Estado_val > Estado) {
+      if (confirm("Esta seguro de cambiar de estado?")) {
+        setServicioEscogido({
+          ...ServicioEscogido,
+          Estado: parseInt(Estado_val),
+        });
+        await axios.put(
+          `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
+          { ServicioEscogido: { Estado: Estado_val } }
+        );
+        if (Estado_val == 3) {
+          await Promise.all([
+            new Promise(async (resolve, reject) => {
+              await axios.post(props.URL_path + "/api/finanzas/egresos", {
+                accion: "create",
+                data: {
+                  Total:
+                    ServicioEscogido["PrecioCotiUnitario"] *
+                    ServicioEscogido["Cantidad"],
+                  TotalNeto: 0,
+                  Comision: 0,
+                  Adelanto: 0,
+                  AdelantoNeto: 0,
+                },
+              });
+              resolve();
+            }),
+          ]);
+        }
+      }
+    }
+    setLoading(false);
+  };
 
   //Efectos
   return (
@@ -33,7 +81,7 @@ const ServicioEscogido = (props={
           onClick={async () => {
             await Promise.all([
               new Promise(async (resolve, reject) => {
-                await fetch(props.URL_path + "/api/ServicioEscogido/CRUD", {
+                await fetch(props.URL_path + "/api/ServicioEscogido/CRUD/0", {
                   method: "PUT",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -44,7 +92,7 @@ const ServicioEscogido = (props={
                 resolve();
               }),
               new Promise(async (resolve, reject) => {
-                if(Object.entries(OrdenServicio).length!=0){
+                if (Object.entries(OrdenServicio).length != 0) {
                   if (
                     OrdenServicio["IdOrdenServicio"] != null &&
                     OrdenServicio["IdOrdenServicio"] != undefined
@@ -58,8 +106,9 @@ const ServicioEscogido = (props={
                       }),
                     });
                   } else {
-                    let temp_OrdenServicio = OrdenServicio
-                    temp_OrdenServicio['IdServicioEscogido'] = ServicioEscogido['IdServicioEscogido']
+                    let temp_OrdenServicio = OrdenServicio;
+                    temp_OrdenServicio["IdServicioEscogido"] =
+                      ServicioEscogido["IdServicioEscogido"];
                     await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
@@ -72,35 +121,51 @@ const ServicioEscogido = (props={
                 resolve();
               }),
             ]);
-            router.reload()
+            router.reload();
           }}
         />
+        <div>
+          <select
+            value={ServicioEscogido["Estado"]}
+            ref={refEstado}
+            onChange={handleChangeEstado}
+          >
+            <option value={0}>Servicio/Producto no confirmado</option>
+            <option value={1}>Servicio/Producto Confirmado</option>
+            <option value={2}>Servicio/Producto Contratado</option>
+            <option value={3}>Servicio/Producto Pagado</option>
+            <option value={4}>Servicio/Producto Cancelado</option>
+          </select>
+        </div>
         <div>
           <span>Tiene orden de servicio?</span>
           <input
             type="checkbox"
             checked={Exits_OrdenServicio}
-            onClick={async(event) => {
+            onChange={async (event) => {
               if (event.target.checked) {
                 setOrdenServicio({
-                  TipoOrden:'A',
-                  Estado:0
+                  TipoOrden: "A",
+                  Estado: 0,
                 });
               } else {
                 let confirmar = confirm(
                   "Esta seguro que quiere elimnar la orden de servicio? (Esta accion sera permanente, y tendra q volver a generar la orden de servicio)"
                 );
                 if (confirmar) {
-                  if(OrdenServicio['IdOrdenServicio']!=null && OrdenServicio['IdOrdenServicio']!=undefined){
+                  if (
+                    OrdenServicio["IdOrdenServicio"] != null &&
+                    OrdenServicio["IdOrdenServicio"] != undefined
+                  ) {
                     await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
                       method: "DELETE",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
-                        IdOrdenServicio: OrdenServicio['IdOrdenServicio'],
+                        IdOrdenServicio: OrdenServicio["IdOrdenServicio"],
                       }),
                     });
                   }
-                  
+
                   setOrdenServicio({});
                 }
               }
@@ -112,11 +177,14 @@ const ServicioEscogido = (props={
           <>
             <button
               onClick={() => {
-                if (OrdenServicio.TipoOrden == "A" || OrdenServicio.TipoOrden == "B") {
+                if (
+                  OrdenServicio.TipoOrden == "A" ||
+                  OrdenServicio.TipoOrden == "B"
+                ) {
                   router.push(
                     `/reservas/OrdenServicio/${OrdenServicio["TipoOrden"]}/${ServicioEscogido.IdReservaCotizacion}`
                   );
-                }else {
+                } else {
                   router.push(
                     `/reservas/OrdenServicio/${OrdenServicio["TipoOrden"]}/${IdServicioEscogido}`
                   );
@@ -171,21 +239,6 @@ const ServicioEscogido = (props={
             </div>
           </>
         )}
-        <select
-          value={ServicioEscogido["Estado"]}
-          onChange={(event) => {
-            setServicioEscogido({
-              ...ServicioEscogido,
-              Estado: parseInt(event.target.value),
-            });
-          }}
-        >
-          <option value={0}>Servicio/Producto no confirmado</option>
-          <option value={1}>Servicio/Producto Confirmado</option>
-          <option value={2}>Servicio/Producto Contratado</option>
-          <option value={3}>Servicio/Producto Pagado</option>
-          <option value={4}>Servicio/Producto Cancelado</option>
-        </select>
       </div>
 
       <div>
@@ -492,7 +545,7 @@ export async function getServerSideProps(context) {
           { IdServicioEscogido: IdServicioEscogido },
           { projection: { _id: 0 } }
         );
-        console.log(OrdenServicio)
+      console.log(OrdenServicio);
       if (OrdenServicio == null) {
         OrdenServicio = {};
       }
@@ -522,7 +575,7 @@ function useBoolOrdenServicio(OrdenServicio) {
   const [Existe, setExiste] = useState(false);
 
   useEffect(() => {
-    if (Object.entries(OrdenServicio).length==0) {
+    if (Object.entries(OrdenServicio).length == 0) {
       setExiste(false);
     } else {
       setExiste(true);
