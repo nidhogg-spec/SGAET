@@ -1,15 +1,12 @@
-import ServicioEscogido from "pages/reservas/servicio/[IdServicioEscogido]";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 
 export default function Notificaciones(
   props = {
-    APIpath
+    DataReservaCotizacion,
+    DataServicioEscogido
   }
 ) {
   const [show, setShow] = useState(false);
-  const [DataServicioEscogido, setDataServicioEscogido] = useState();
-  const [DataReservaCotizacion, setDataReservaCotizacion] = useState();
   const [FechasPorVencer, setFechasPorVencer] = useState();
   const [FechasVencidas, setFechasVencidas] = useState();
   const [ReservasProximas, setReservasProximas] = useState();
@@ -29,53 +26,22 @@ export default function Notificaciones(
       // Router.push('/reservas/servicio/'+id)
     }
   }
-  /*Obtencion de Datos*/
-  useEffect(async () => {
-    new Promise(async (resolv, reject) => {
-      await fetch(props.APIpath + "/api/ServicioEscogido/CRUD", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" }
-      })
-        .then((r) => r.json())
-        .then((data) => {
-          setDataServicioEscogido(data);
-        });
-      resolv();
-    });
-    new Promise(async (resolv, reject) => {
-      await fetch(
-        props.APIpath + "/api/reserva/DataReserva/CRUDReservaCotizacion",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            accion: "obtener"
-          })
-        }
-      )
-        .then((r) => r.json())
-        .then((data) => {
-          setDataReservaCotizacion(data);
-        });
-      resolv();
-    });
-  }, []);
-  /*--------------------------------------------------------------------------------*/
+  
   /*Comparacion de Fechas y Obtencion de Fechas que estan por Vencer*/
   useEffect(() => {
     let arrayFechasporVencer = [];
     let arrayFechasVencidas = [];
     let arrayReservasPorLlegar = [];
-    let DiasVencidas = 0
-    let DiasPorVencer = 0
+    let DiasVencidas = 0;
+    let DiasPorVencer = 0;
     let actualDate = new Date();
 
     if (
-      DataReservaCotizacion != undefined &&
-      DataServicioEscogido != undefined
+      props.DataReservaCotizacion != undefined &&
+      props.DataServicioEscogido != undefined
     ) {
       /*Obtiene y mete en un array las reservas de */
-      DataReservaCotizacion.map((datosCotizacion) => {
+      props.DataReservaCotizacion.map((datosCotizacion) => {
         let datePart = datosCotizacion.FechaIN.split("-");
         let dateReserva = new Date(
           datePart[0],
@@ -86,15 +52,14 @@ export default function Notificaciones(
           dateReserva.getFullYear() == actualDate.getFullYear() &&
           dateReserva.getMonth() == actualDate.getMonth()
         ) {
-
           if (actualDate.getDate() <= dateReserva.getDate()) {
-            DiasPorVencer=dateReserva.getDate()-actualDate.getDate()
-            datosCotizacion.DiasPorVencer = DiasPorVencer
+            DiasPorVencer = dateReserva.getDate() - actualDate.getDate();
+            datosCotizacion.DiasPorVencer = DiasPorVencer;
             arrayReservasPorLlegar.push(datosCotizacion);
           }
         }
       });
-      DataServicioEscogido.map((datosServicio) => {
+      props.DataServicioEscogido.map((datosServicio) => {
         if (datosServicio.FechaLimitePago != undefined) {
           let datePart = datosServicio.FechaLimitePago.split("-");
           let dateServicio = new Date(
@@ -106,14 +71,13 @@ export default function Notificaciones(
             dateServicio.getFullYear() == actualDate.getFullYear() &&
             dateServicio.getMonth() == actualDate.getMonth()
           ) {
-            
             if (actualDate.getDate() <= dateServicio.getDate()) {
-              DiasPorVencer=dateServicio.getDate()-actualDate.getDate()
-              datosServicio.DiasPorVencer= DiasPorVencer
+              DiasPorVencer = dateServicio.getDate() - actualDate.getDate();
+              datosServicio.DiasPorVencer = DiasPorVencer;
               arrayFechasporVencer.push(datosServicio);
             } else if (actualDate.getDate() > dateServicio.getDate()) {
-              DiasVencidas=actualDate.getDate()-dateServicio.getDate()
-              datosServicio.DiasVencidas= DiasVencidas
+              DiasVencidas = actualDate.getDate() - dateServicio.getDate();
+              datosServicio.DiasVencidas = DiasVencidas;
               arrayFechasVencidas.push(datosServicio);
             }
           }
@@ -144,7 +108,11 @@ export default function Notificaciones(
           <br />
           {FechasPorVencer.map((datosServEscogido) => (
             <div>
-              <span>Quedan {datosServEscogido.DiasPorVencer} dias para que llegue la fecha limite de este servicio </span> <br/>
+              <span>
+                Quedan {datosServEscogido.DiasPorVencer} dias para que llegue la
+                fecha limite de este servicio{" "}
+              </span>{" "}
+              <br />
               <input
                 onClick
                 value={datosServEscogido.NombreServicio}
@@ -169,7 +137,11 @@ export default function Notificaciones(
           <br />
           {FechasVencidas.map((datosServEscogido) => (
             <div>
-              <span>Han pasado {datosServEscogido.DiasVencidas} Dias desde que vencio este Servicio</span> <br/>
+              <span>
+                Han pasado {datosServEscogido.DiasVencidas} Dias desde que
+                vencio este Servicio
+              </span>{" "}
+              <br />
               <input
                 onClick
                 value={datosServEscogido.NombreServicio}
@@ -192,7 +164,11 @@ export default function Notificaciones(
           <h3>Reservas/Cotizaciones con Fecha Proxima </h3>
           {ReservasProximas.map((datosreserva) => (
             <div>
-              <span>Quedan {datosreserva.DiasPorVencer} dias para que llegue la fecha limite de este servicio </span> <br/>
+              <span>
+                Quedan {datosreserva.DiasPorVencer} dias para que llegue la
+                fecha limite de este servicio{" "}
+              </span>{" "}
+              <br />
               <input value={datosreserva.NombrePrograma} disabled></input>
               <button
                 onClick={() =>
