@@ -52,13 +52,15 @@ const func_Crear = async (req, res) => {
     const options = { sort: {} };
     options.sort[keyId] = -1;
     const result = await collection.findOne({}, options);
-    if (result[keyId] != null && result[keyId] != undefined) {
-      IdNumero = parseInt(
-        result[keyId].slice(Prefijo.length),
-        Prefijo.length + 8
-      );
-      IdNumero++;
-    }
+    if(result){
+      if (result[keyId] != null && result[keyId] != undefined) {
+        IdNumero = parseInt(
+          result[keyId].slice(Prefijo.length),
+          Prefijo.length + 8
+        );
+        IdNumero++;
+      }
+    }    
     OrdenServicio[keyId] =
       Prefijo +
       ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);

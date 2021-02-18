@@ -14,7 +14,7 @@ const ServicioEscogido = (
     URL_path,
     OrdenServicio,
     ServicioEscogido,
-    Proveedor,
+    Proveedor
   }
 ) => {
   const router = useRouter();
@@ -40,7 +40,7 @@ const ServicioEscogido = (
       if (confirm("Esta seguro de cambiar de estado?")) {
         setServicioEscogido({
           ...ServicioEscogido,
-          Estado: parseInt(Estado_val),
+          Estado: parseInt(Estado_val)
         });
         await axios.put(
           `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
@@ -58,16 +58,60 @@ const ServicioEscogido = (
                   TotalNeto: 0,
                   Comision: 0,
                   Adelanto: 0,
-                  AdelantoNeto: 0,
-                },
+                  AdelantoNeto: 0
+                }
               });
               resolve();
-            }),
+            })
           ]);
         }
       }
     }
     setLoading(false);
+  };
+
+  const handleSave = async () => {
+    await Promise.all([
+      new Promise(async (resolve, reject) => {
+        await fetch(props.URL_path + "/api/ServicioEscogido/CRUD/0", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ServicioEscogido: ServicioEscogido,
+            IdServicioEscogido: IdServicioEscogido
+          })
+        });
+        resolve();
+      })
+    ]);
+    router.reload();
+  };
+  const handleOrdenSave = async () => {
+    if (Object.entries(OrdenServicio).length != 0) {
+      if (
+        OrdenServicio["IdOrdenServicio"] != null &&
+        OrdenServicio["IdOrdenServicio"] != undefined
+      ) {
+        await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            OrdenServicio: OrdenServicio,
+            IdOrdenServicio: OrdenServicio["IdOrdenServicio"]
+          })
+        });
+      } else {
+        let temp_OrdenServicio = OrdenServicio;
+        temp_OrdenServicio["IdServicioEscogido"] = IdServicioEscogido;
+        await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            OrdenServicio: temp_OrdenServicio
+          })
+        });
+      }
+    }
   };
 
   //Efectos
@@ -76,54 +120,7 @@ const ServicioEscogido = (
       <Loader Loading={Loading} key={"Loader_001"} />
       <div>
         <h2>{ServicioEscogido["NombreServicio"]}</h2>
-        <img
-          src="/resources/save-black-18dp.svg"
-          onClick={async () => {
-            await Promise.all([
-              new Promise(async (resolve, reject) => {
-                await fetch(props.URL_path + "/api/ServicioEscogido/CRUD/0", {
-                  method: "PUT",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    ServicioEscogido: ServicioEscogido,
-                    IdServicioEscogido: IdServicioEscogido,
-                  }),
-                });
-                resolve();
-              }),
-              new Promise(async (resolve, reject) => {
-                if (Object.entries(OrdenServicio).length != 0) {
-                  if (
-                    OrdenServicio["IdOrdenServicio"] != null &&
-                    OrdenServicio["IdOrdenServicio"] != undefined
-                  ) {
-                    await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
-                      method: "PUT",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        OrdenServicio: OrdenServicio,
-                        IdOrdenServicio: OrdenServicio["IdOrdenServicio"],
-                      }),
-                    });
-                  } else {
-                    let temp_OrdenServicio = OrdenServicio;
-                    temp_OrdenServicio["IdServicioEscogido"] =
-                      ServicioEscogido["IdServicioEscogido"];
-                    await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        OrdenServicio: temp_OrdenServicio,
-                      }),
-                    });
-                  }
-                }
-                resolve();
-              }),
-            ]);
-            router.reload();
-          }}
-        />
+        <img src="/resources/save-black-18dp.svg" onClick={handleSave} />
         <div>
           <select
             value={ServicioEscogido["Estado"]}
@@ -146,7 +143,7 @@ const ServicioEscogido = (
               if (event.target.checked) {
                 setOrdenServicio({
                   TipoOrden: "A",
-                  Estado: 0,
+                  Estado: 0
                 });
               } else {
                 let confirmar = confirm(
@@ -161,8 +158,8 @@ const ServicioEscogido = (
                       method: "DELETE",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({
-                        IdOrdenServicio: OrdenServicio["IdOrdenServicio"],
-                      }),
+                        IdOrdenServicio: OrdenServicio["IdOrdenServicio"]
+                      })
                     });
                   }
 
@@ -193,6 +190,10 @@ const ServicioEscogido = (
             >
               Orden de servicio
             </button>
+            <button onClick={handleOrdenSave}>
+              <img src="/resources/save-black-18dp.svg" />
+            </button>
+
             <div>
               <AutoFormulario_v2
                 Formulario={{
@@ -204,18 +205,18 @@ const ServicioEscogido = (
                         {
                           tipo: "texto",
                           Title: "Codigo de Orden de Servicio",
-                          KeyDato: "CodigoOrdenServicio",
+                          KeyDato: "CodigoOrdenServicio"
                         },
                         {
                           tipo: "selector",
                           Title: "Tipo de Orden de Servicio",
                           KeyDato: "TipoOrden",
                           SelectOptions: [
-                            { value: "A", texto: "A" },
-                            { value: "B", texto: "B" },
-                            { value: "C", texto: "C" },
-                            { value: "D", texto: "D" },
-                          ],
+                            { value: "A", texto: "A - Tours" },
+                            { value: "B", texto: "B - Trekking" },
+                            { value: "C", texto: "C - Transporte" },
+                            { value: "D", texto: "D - Restaurantes" }
+                          ]
                         },
                         {
                           tipo: "selector",
@@ -224,15 +225,15 @@ const ServicioEscogido = (
                           SelectOptions: [
                             { value: 0, texto: "En proceso" },
                             { value: 1, texto: "Terminado" },
-                            { value: 2, texto: "Entregado" },
-                          ],
-                        },
-                      ],
-                    },
-                  ],
+                            { value: 2, texto: "Entregado" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 }}
                 ModoEdicion={true}
-                Dato={OrdenServicio || {}}
+                Dato={OrdenServicio}
                 setDato={setOrdenServicio}
                 key={"AF_OrdenServicio001"}
               />
@@ -252,42 +253,42 @@ const ServicioEscogido = (
                   {
                     tipo: "texto",
                     Title: "Nombre de Servicio",
-                    KeyDato: "NombreServicio",
+                    KeyDato: "NombreServicio"
                   },
                   {
                     tipo: "texto",
                     Title: "Tipo de servicio",
-                    KeyDato: "TipoServicio",
+                    KeyDato: "TipoServicio"
                   },
                   {
                     tipo: "numero",
                     Title: "Dia",
-                    KeyDato: "Dia",
+                    KeyDato: "Dia"
                   },
                   {
                     tipo: "numero",
                     Title: "Cantidad",
-                    KeyDato: "Cantidad",
+                    KeyDato: "Cantidad"
                   },
                   {
                     tipo: "boolean",
                     Title: "IGV",
-                    KeyDato: "IGV",
+                    KeyDato: "IGV"
                   },
                   {
                     tipo: "money",
                     Title: "Precio Confidencial Unitario",
-                    KeyDato: "PrecioConfiUnitario",
+                    KeyDato: "PrecioConfiUnitario"
                   },
                   {
                     tipo: "money",
                     Title: "Precio Cotizacion Unitario",
-                    KeyDato: "PrecioCotiUnitario",
+                    KeyDato: "PrecioCotiUnitario"
                   },
                   {
                     tipo: "money",
                     Title: "Precio Publico",
-                    KeyDato: "PrecioPublicado",
+                    KeyDato: "PrecioPublicado"
                   },
                   {
                     tipo: "selector",
@@ -295,8 +296,8 @@ const ServicioEscogido = (
                     KeyDato: "Encuesta",
                     SelectOptions: [
                       { value: 0, texto: "No es necesario una encuesta" },
-                      { value: 1, texto: "Se necesita encuesta" },
-                    ],
+                      { value: 1, texto: "Se necesita encuesta" }
+                    ]
                   },
                   {
                     tipo: "selector",
@@ -304,23 +305,23 @@ const ServicioEscogido = (
                     KeyDato: "Informe",
                     SelectOptions: [
                       { value: 0, texto: "No es necesario un informe" },
-                      { value: 1, texto: "Se necesita informe" },
-                    ],
+                      { value: 1, texto: "Se necesita informe" }
+                    ]
                   },
                   {
                     tipo: "fecha",
                     Title: "Fecha de Reserva",
-                    KeyDato: "FechaReserva",
+                    KeyDato: "FechaReserva"
                   },
                   {
                     tipo: "fecha",
                     Title: "Fecha de compra real",
-                    KeyDato: "FechaCompra",
+                    KeyDato: "FechaCompra"
                   },
                   {
                     tipo: "fecha",
                     Title: "Fecha de limite de pago",
-                    KeyDato: "FechaLimitePago",
+                    KeyDato: "FechaLimitePago"
                   },
                   // {
                   //   tipo: "texto",
@@ -334,11 +335,11 @@ const ServicioEscogido = (
                     KeyDato: "InformeAmbiental",
                     SelectOptions: [
                       { value: 0, texto: "No es necesario" },
-                      { value: 1, texto: "Es necesario" },
-                    ],
-                  },
-                ],
-              },
+                      { value: 1, texto: "Es necesario" }
+                    ]
+                  }
+                ]
+              }
               // {
               //   subTitle: "",
               //   componentes: [
@@ -356,7 +357,7 @@ const ServicioEscogido = (
               //     },
               //   ],
               // },
-            ],
+            ]
           }}
           ModoEdicion={true}
           Dato={ServicioEscogido}
@@ -376,34 +377,34 @@ const ServicioEscogido = (
                   {
                     tipo: "texto",
                     Title: "Nombre Comercial",
-                    KeyDato: "nombre",
+                    KeyDato: "nombre"
                   },
                   {
                     tipo: "texto",
                     Title: "Razon Social",
-                    KeyDato: "RazonSocial",
+                    KeyDato: "RazonSocial"
                   },
                   {
                     tipo: "texto",
                     Title: "Tipo de Documento",
-                    KeyDato: "TipoDocumento",
+                    KeyDato: "TipoDocumento"
                   },
                   {
                     tipo: "texto",
                     Title: "NroDocumento",
-                    KeyDato: "NroDocumento",
+                    KeyDato: "NroDocumento"
                   },
                   {
                     tipo: "texto",
                     Title: "Numero Principal",
-                    KeyDato: "NumeroPrincipal",
+                    KeyDato: "NumeroPrincipal"
                   },
                   {
                     tipo: "texto",
                     Title: "Email Principal",
-                    KeyDato: "EmailPrincipal",
-                  },
-                ],
+                    KeyDato: "EmailPrincipal"
+                  }
+                ]
               },
               {
                 subTitle: "",
@@ -419,12 +420,12 @@ const ServicioEscogido = (
                       {
                         field: "TipoDocumento",
                         title: "Tipo de Documento",
-                        lookup: { RUC: "RUC", DNI: "DNI" },
+                        lookup: { RUC: "RUC", DNI: "DNI" }
                       },
                       { field: "NumDoc", title: "Numero de Documento" },
                       { field: "Cuenta", title: "Numero de Cuenta" },
-                      { field: "CCI", title: "CCI" },
-                    ],
+                      { field: "CCI", title: "CCI" }
+                    ]
                   },
                   {
                     tipo: "tablaSimple",
@@ -434,12 +435,12 @@ const ServicioEscogido = (
                       { field: "NombreContac", title: "Nombre del Contacto" },
                       { field: "Area", title: "Area de trabajo" },
                       { field: "Numero", title: "Telefono/Celular" },
-                      { field: "Email", title: "Email" },
-                    ],
-                  },
-                ],
-              },
-            ],
+                      { field: "Email", title: "Email" }
+                    ]
+                  }
+                ]
+              }
+            ]
           }}
           ModoEdicion={false}
           Dato={Proveedor}
@@ -459,7 +460,7 @@ export async function getServerSideProps(context) {
   const IdServicioEscogido = context.query.IdServicioEscogido;
   let client = new MongoClient(url, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
   });
   let OrdenServicio;
   let ServicioEscogido;
@@ -517,7 +518,7 @@ export async function getServerSideProps(context) {
     try {
       Producto = await dbo.collection(coleccion_producto).findOne(
         {
-          [Id_coleccion_producto]: ServicioEscogido["IdServicioProducto"],
+          [Id_coleccion_producto]: ServicioEscogido["IdServicioProducto"]
         },
         { projection: { _id: 0, IdProveedor: 1 } }
       );
@@ -566,8 +567,8 @@ export async function getServerSideProps(context) {
       URL_path: process.env.API_DOMAIN,
       OrdenServicio: OrdenServicio,
       ServicioEscogido: ServicioEscogido,
-      Proveedor: Proveedor,
-    },
+      Proveedor: Proveedor
+    }
   };
 }
 
