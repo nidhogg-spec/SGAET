@@ -25,7 +25,7 @@ const Index = ({ APIPath }) => {
       <h1>Lista de Cotizaciones</h1>
       <MaterialTable
         columns={[
-          { title: "Id", field: "IdReservaCotizacion" },
+          { title: "Id", field: "IdReservaCotizacion", hidden: true},
           { title: "NombreGrupo", field: "NombreGrupo" },
           { title: "CodGrupo", field: "CodGrupo" },
           {
