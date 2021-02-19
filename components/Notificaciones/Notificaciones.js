@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function Notificaciones(
   props = {
-    DataReservaCotizacion,
-    DataServicioEscogido
+    APIpath,
   }
 ) {
   const [show, setShow] = useState(false);
@@ -69,11 +68,11 @@ export default function Notificaciones(
     let actualDate = new Date();
 
     if (
-      props.DataReservaCotizacion != undefined &&
-      props.DataServicioEscogido != undefined
+      DataReservaCotizacion != undefined &&
+      DataServicioEscogido != undefined
     ) {
       /*Obtiene y mete en un array las reservas de */
-      props.DataReservaCotizacion.map((datosCotizacion) => {
+      DataReservaCotizacion.map((datosCotizacion) => {
         let datePart = datosCotizacion.FechaIN.split("-");
         let dateReserva = new Date(
           datePart[0],
@@ -91,7 +90,7 @@ export default function Notificaciones(
           }
         }
       });
-      props.DataServicioEscogido.map((datosServicio) => {
+      DataServicioEscogido.map((datosServicio) => {
         if (datosServicio.FechaLimitePago != undefined) {
           let datePart = datosServicio.FechaLimitePago.split("-");
           let dateServicio = new Date(

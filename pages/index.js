@@ -52,8 +52,6 @@ export default function loginPrincipal({APIpath}) {
           .then((r) => r.json())
           .then((data) => {
             setDataServicioEscogido(data);
-            console.log("Serv Escogidos")
-            console.log(data)
           });
           resolv()
       }),
@@ -70,8 +68,6 @@ export default function loginPrincipal({APIpath}) {
         .then((r) => r.json())
         .then((data) => {
           setDataReservaCotizacion(data);
-          console.log("Reserv Cotizacion")
-          console.log(data)
         });
         resolv()
       })
