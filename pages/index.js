@@ -15,7 +15,6 @@ export default function loginPrincipal({APIpath}) {
   const [nuevoUsuario, setNuevoUsuario] = useState(false);
   const [[loged, setLogged]] = useAppContext();
 
-  const Router = useRouter();
   async function signIn(e) {
     try {
       e.preventDefault();
@@ -97,7 +96,7 @@ export default function loginPrincipal({APIpath}) {
 
       {loged && (
         <>
-          <Notificaciones DataReservaCotizacion={DataReservaCotizacion}  DataServicioEscogido={DataServicioEscogido}/>
+          <Notificaciones APIpath={APIpath}/>
           <CambioDolar />
           <button
             onClick={async (event) => {
