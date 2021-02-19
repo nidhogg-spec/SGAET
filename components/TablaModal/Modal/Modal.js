@@ -3,116 +3,120 @@ import styles from "./Modal.module.css";
 import React, { useEffect, useState } from "react";
 
 //Componentes
-import CampoTexto from './CampoTexto/CampoTexto'
-import TablaBanco from './TablaBeneficiarios/TablaBanco'
-import Selector from './Selector/Selector'
-
+import CampoTexto from "./CampoTexto/CampoTexto";
+import TablaBanco from "./TablaBeneficiarios/TablaBanco";
+import Selector from "./Selector/Selector";
 
 export default function Modal(props) {
-//Los siguientes datos deberian de estar en props para su correcto funcionamiento:
-//     TipoModal
-//     Id
-//     APIpath
-//     Display
-//     MostrarModal
-//El desarrollador no se hace responsable de su mal uso :v  
+  //Los siguientes datos deberian de estar en props para su correcto funcionamiento:
+  //     TipoModal
+  //     Id
+  //     APIpath
+  //     Display
+  //     MostrarModal
+  //El desarrollador no se hace responsable de su mal uso :v
   //hooks
 
- 
   const [TipoModal, setTipoModal] = useState(props.TipoModal);
-  const [Data, setData] = useState({NombreServicio:""});
+  const [Data, setData] = useState({ NombreServicio: "" });
   const [APIpath, setAPIpath] = useState(props.APIpath);
   const [Accion, setAccion] = useState("ver");
-  console.log(APIpath)
+  console.log(APIpath);
 
-  useEffect(async ()=>{   
+  useEffect(async () => {
     // setId(props.Id)
     // setTipoModal(props.ModalType)
     // setDisplay(props.ModalDisplay)
-    if(props.Id){
-      console.log(APIpath)
-      let result = await fetch(APIpath,{
-        method:'POST',
-        mode:'cors',
-        headers: {'Content-Type':'application/json'},
-        body:JSON.stringify({
-          "idServicio":props.Id,
-          "type":'modalFindOne'
+    if (props.Id) {
+      console.log(APIpath);
+      let result = await fetch(APIpath, {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idServicio: props.Id,
+          type: "modalFindOne"
         })
-      }).catch(()=>{
+      }).catch(() => {
         alert("error al obtener datos del servicio escogido");
-        
-      })
-      result.json().then(data=>{
-        if(data.result){
-          setData(data.result)
-        }else{
-          setData({NombreServicio:""})
+      });
+      result.json().then((data) => {
+        if (data.result) {
+          setData(data.result);
+        } else {
+          setData({ NombreServicio: "" });
         }
-        
-      })
+      });
     }
-  },[props.Id])
-  useEffect(()=>{
+  }, [props.Id]);
+  useEffect(() => {
     let modal = document.getElementById("myModalXD");
     // setDisplay(props.Display)
-    if(props.Display==true){
+    if (props.Display == true) {
       modal.style.display = "block";
-    }else{
+    } else {
       modal.style.display = "none";
     }
-  },[props.Display])
-    
+  }, [props.Display]);
+
   switch (TipoModal) {
     case "Proveedores":
       //Variables por version
       const [DevolverDato, setDevolverDato] = useState(false);
       const [TipoProveedor, setTipoProveedor] = useState("Hotel");
       //Funciones por version
-      let DataRegist={}
-      const RegistrarDato = (keyDato, Dato) =>{
-        DataRegist[keyDato]=Dato;
-      }
+      let DataRegist = {};
+      const RegistrarDato = (keyDato, Dato) => {
+        DataRegist[keyDato] = Dato;
+      };
       //hooks
-      useEffect(()=>{
-        if(DevolverDato==true){
-          console.log(DataRegist)
-          setDevolverDato(false)
-            console.log(DataRegist)
-            fetch(APIpath,{
-                    method:"POST",
-                    headers:{"Content-Type": "application/json"},
-                    body: JSON.stringify({
-                      tipoProveedor: DataRegist.tipo,
-                      accion: "create",
-                      data: DataRegist
-                    }),
-                  })
-                  .then(r=>r.json())
-                  .then(data=>{
-                    alert(data.message);
-                  })
-                  props.MostrarModal(false)
+      useEffect(() => {
+        if (DevolverDato == true) {
+          console.log(DataRegist);
+          setDevolverDato(false);
+          console.log(DataRegist);
+          fetch(APIpath, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              tipoProveedor: DataRegist.tipo,
+              accion: "create",
+              data: DataRegist
+            })
+          })
+            .then((r) => r.json())
+            .then((data) => {
+              alert(data.message);
+            });
+          props.MostrarModal(false);
         }
-      },[DevolverDato])
+      }, [DevolverDato]);
 
+      return (
+        <div
+          id="myModalXD"
+          className={styles.Modal}
+          onClick={(event) => {
+            let modal = document.getElementById("myModalXD");
+            if (event.target == modal) {
+              props.MostrarModal(false);
+            }
+          }}
+        >
+          <div className={styles.Modal_content}>
+            <button>
+              <img
+                src="/resources/save-black-18dp.svg"
+                onClick={() => {
+                  setDevolverDato(true);
+                }}
+              />
+            </button>
+            <button>
+              <img src="/resources/close-black-18dp.svg" />
+            </button>
 
-      return(
-      <div id="myModalXD"
-        className={styles.Modal}
-        onClick={(event) => {
-        let modal = document.getElementById("myModalXD");
-        if (event.target == modal) {
-          props.MostrarModal(false)
-        }
-      }}>
-        <div className={styles.Modal_content}>
-          
-          <img src="/resources/save-black-18dp.svg" onClick={()=>{
-            setDevolverDato(true)
-          }} />
-          <img src="/resources/close-black-18dp.svg"/>
-        <div className={styles.divContacto}>
+            <div className={styles.divContacto}>
               <span>Datos de Contacto</span>
               <div className={styles.DatosProveedor}>
                 <CampoTexto
@@ -131,13 +135,19 @@ export default function Modal(props) {
                   KeyDato="tipo"
                   Dato={"Hotel"}
                   SelectOptions={[
-                    {value:'Hotel',texto:'Hotel'},
-                    {value:'Agencia',texto:'Agencia'},
-                    {value:'Guia',texto:'Guia'},
-                    {value:'Transporteterrestre',texto:'Transporte Terrestre'},
-                    {value:'Restaurante',texto:'Restaurante'},
-                    {value:'Transporteferroviario',texto:'Transporte Ferroviario'},
-                    {value:'Otro',texto:'Otro'},
+                    { value: "Hotel", texto: "Hotel" },
+                    { value: "Agencia", texto: "Agencia" },
+                    { value: "Guia", texto: "Guia" },
+                    {
+                      value: "Transporteterrestre",
+                      texto: "Transporte Terrestre"
+                    },
+                    { value: "Restaurante", texto: "Restaurante" },
+                    {
+                      value: "Transporteferroviario",
+                      texto: "Transporte Ferroviario"
+                    },
+                    { value: "Otro", texto: "Otro" }
                   ]}
                 />
                 <Selector
@@ -148,8 +158,8 @@ export default function Modal(props) {
                   KeyDato="TipoDocumento"
                   Dato={"RUC"}
                   SelectOptions={[
-                    {value:'DNI',texto:'DNI'},
-                    {value:'RUC',texto:'RUC'}
+                    { value: "DNI", texto: "DNI" },
+                    { value: "RUC", texto: "RUC" }
                   ]}
                 />
                 <CampoTexto
@@ -168,8 +178,8 @@ export default function Modal(props) {
                   KeyDato="TipoMoneda"
                   Dato={"Dolar"}
                   SelectOptions={[
-                    {value:'Sol',texto:'Soles'},
-                    {value:'Dolar',texto:'Dolares'}
+                    { value: "Sol", texto: "Soles" },
+                    { value: "Dolar", texto: "Dolares" }
                   ]}
                 />
                 <CampoTexto
@@ -220,13 +230,12 @@ export default function Modal(props) {
                   KeyDato="Estado"
                   Dato={1}
                   SelectOptions={[
-                    {value:0,texto:'Inactivo'},
-                    {value:1,texto:'Activo'}
+                    { value: 0, texto: "Inactivo" },
+                    { value: 1, texto: "Activo" }
                   ]}
                 />
               </div>
-              
-              
+
               <div className={styles.DataContacto}>
                 <CampoTexto
                   Title="Razon Social"
@@ -278,36 +287,42 @@ export default function Modal(props) {
                 />
               </div>
               <TablaBanco
-                  datosbanc={{}}
-                  ModoEdicion={true}                  
-                  KeyDato="DatosBancarios"
-                  DevolverDatoFunct={RegistrarDato}
-                  DarDato={DevolverDato}
-                />
+                datosbanc={{}}
+                ModoEdicion={true}
+                KeyDato="DatosBancarios"
+                DevolverDatoFunct={RegistrarDato}
+                DarDato={DevolverDato}
+              />
             </div>
+          </div>
         </div>
-      </div>);
-      break;
-    case "Servicio":
-      return(<div
-        id="myModalXD"
-        className={styles.Modal}
-        onClick={(event) => {
-          let modal = document.getElementById("myModalXD");
-          if (event.target == modal) {
-            props.MostrarModal(false)
-          }
-        }}
-      >
-        <div className={styles.Modal_content}>
-          <CampoTexto Title="Nombre del Servicio" ModoEdicion={false} Dato={Data.NombreServicio} />
-        </div>
-      </div>
       );
       break;
-  
+    case "Servicio":
+      return (
+        <div
+          id="myModalXD"
+          className={styles.Modal}
+          onClick={(event) => {
+            let modal = document.getElementById("myModalXD");
+            if (event.target == modal) {
+              props.MostrarModal(false);
+            }
+          }}
+        >
+          <div className={styles.Modal_content}>
+            <CampoTexto
+              Title="Nombre del Servicio"
+              ModoEdicion={false}
+              Dato={Data.NombreServicio}
+            />
+          </div>
+        </div>
+      );
+      break;
+
     default:
-      return <div>Alguio salio mal :V</div>
+      return <div>Alguio salio mal :V</div>;
       break;
   }
   // return (

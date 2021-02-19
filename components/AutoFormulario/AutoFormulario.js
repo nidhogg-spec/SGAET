@@ -22,16 +22,16 @@ const AutoFormulario = ({
     secciones: [
       {
         subTitle: "",
-        componentes: [],
-      },
-    ],
+        componentes: []
+      }
+    ]
   },
   // APIpath,
   Modo,
   DarDato = false,
   DarDatoFunction = () => {
     alert("Falta mandar DarDatoFunction");
-  },
+  }
 }) => {
   //   const [DataInicial, setDataInicial] = useState(Formulario);
   let ed;
@@ -193,7 +193,7 @@ const AutoFormulario = ({
             DevolverDatoFunct={DarDatoFunction}
             DarDato={DarDato}
             KeyDato={compo.KeyDato}
-            DataProductosSeleccionados= {compo.DataProductosSeleccionados}
+            DataProductosSeleccionados={compo.DataProductosSeleccionados}
             DataProductosTodos={compo.DataProductosTodos}
             TipoProveedor={compo.TipoProveedor}
             Reiniciar={ReinciarComponentes}
@@ -259,26 +259,30 @@ const AutoFormulario = ({
         <>
           <div className={styles.FormuContent}>
             <span>{Formulario.title}</span>
-            <img
-              src="/resources/save-black-18dp.svg"
-              onClick={() => {
-                setDarDato(true);
-                // ReiniciarData();
-              }}
-            />
-            <img
-              src="/resources/edit-black-18dp.svg"
-              onClick={(event) => {
-                if (ModoEdicion == false) {
-                  event.target.src = "/resources/close-black-18dp.svg";
-                  setModoEdicion(true);
-                } else {
-                  event.target.src = "/resources/edit-black-18dp.svg";
-                  setReinciarComponentes(true);
-                  setModoEdicion(false);
-                }
-              }}
-            />
+            <button>
+              <img
+                src="/resources/save-black-18dp.svg"
+                onClick={() => {
+                  setDarDato(true);
+                  // ReiniciarData();
+                }}
+              />
+            </button>
+            <button>
+              <img
+                src="/resources/edit-black-18dp.svg"
+                onClick={(event) => {
+                  if (ModoEdicion == false) {
+                    event.target.src = "/resources/close-black-18dp.svg";
+                    setModoEdicion(true);
+                  } else {
+                    event.target.src = "/resources/edit-black-18dp.svg";
+                    setReinciarComponentes(true);
+                    setModoEdicion(false);
+                  }
+                }}
+              />
+            </button>
             {Formulario.secciones.map((seccion) => {
               return (
                 <div>

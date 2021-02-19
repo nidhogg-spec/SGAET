@@ -3,9 +3,9 @@ import styles from "../styles/login.module.css";
 import { Auth, API } from "aws-amplify";
 import { useRouter } from "next/router";
 import { useAppContext } from "@/components/Contexto";
-import Notificaciones from '../components/Notificaciones/Notificaciones'
+import Notificaciones from "../components/Notificaciones/Notificaciones";
 
-export default function loginPrincipal({APIpath}) {
+export default function loginPrincipal({ APIpath }) {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -56,13 +56,11 @@ export default function loginPrincipal({APIpath}) {
 
       {loged && (
         <>
-          <Notificaciones APIpath={APIpath}/>
+          <Notificaciones APIpath={APIpath} />
           <CambioDolar />
           <button
             onClick={async (event) => {
-              await fetch(
-                APIpath + "/api/Log/getPdfLog"
-              )
+              await fetch(APIpath + "/api/Log/getPdfLog")
                 .then((response) => {
                   return response.text();
                 })
@@ -208,31 +206,35 @@ const CambioDolar = () => {
                 </>
               ) : (
                 <>
-                  <img
-                    src="/resources/save-black-18dp.svg"
-                    onClick={async () => {
-                      setLoading(true);
-                      await fetch("/api/DataSistema", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          accion: "CambiarCambioDolar",
-                          value: ValueDolartoSol
-                        })
-                      });
-                      setValueDolarSolInit(ValueDolartoSol);
-                      setEstadoEditado(false);
-                      setLoading(false);
-                      // ReiniciarData()
-                    }}
-                  />
-                  <img
-                    src="/resources/close-black-18dp.svg"
-                    onClick={(event) => {
-                      setEstadoEditado(false);
-                      setValueDolartoSol(ValueDolarSolInit);
-                    }}
-                  />
+                  <button>
+                    <img
+                      src="/resources/save-black-18dp.svg"
+                      onClick={async () => {
+                        setLoading(true);
+                        await fetch("/api/DataSistema", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            accion: "CambiarCambioDolar",
+                            value: ValueDolartoSol
+                          })
+                        });
+                        setValueDolarSolInit(ValueDolartoSol);
+                        setEstadoEditado(false);
+                        setLoading(false);
+                        // ReiniciarData()
+                      }}
+                    />
+                  </button>
+                  <button>
+                    <img
+                      src="/resources/close-black-18dp.svg"
+                      onClick={(event) => {
+                        setEstadoEditado(false);
+                        setValueDolartoSol(ValueDolarSolInit);
+                      }}
+                    />
+                  </button>
                 </>
               )}
             </>

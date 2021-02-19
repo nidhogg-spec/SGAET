@@ -11,7 +11,7 @@ import CampoMoney from "@/components/Formulario/CampoMoney/CampoMoney";
 import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
 import TablaSimple from "../Formulario/TablaSimple/TablaSimple";
 import TablaRelacionMulti from "../Formulario/TablaRelacionMulti/TablaRelacionMulti";
-import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio/TablaProgramaServicio"
+import TablaProgramaServicio from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio/TablaProgramaServicio";
 
 const AutoModal = ({
   Formulario = {
@@ -19,24 +19,22 @@ const AutoModal = ({
     secciones: [
       {
         subTitle: "",
-        componentes: [],
-      },
-    ],
+        componentes: []
+      }
+    ]
   },
   IdDato = "",
   APIpath,
   ReiniciarData,
   Modo,
-  Display=false, //Solo en modoVerEdicions
-  MostrarModal=()=>{} //Solo en modoVerEdicions
+  Display = false, //Solo en modoVerEdicions
+  MostrarModal = () => {} //Solo en modoVerEdicions
 }) => {
   //   const [DataInicial, setDataInicial] = useState(Formulario);
   let ed;
-  if (Modo=="creacion") 
-    ed=true
-  else
-    ed=false
-  
+  if (Modo == "creacion") ed = true;
+  else ed = false;
+
   const [ModoEdicion, setModoEdicion] = useState(ed);
   const [APIpath_i, setAPIpath_i] = useState(APIpath);
   const [DarDato, setDarDato] = useState(false);
@@ -131,7 +129,7 @@ const AutoModal = ({
           />
         );
         break;
-        case "tablaRelacionMulti":
+      case "tablaRelacionMulti":
         return (
           <TablaRelacionMulti
             Title={compo.Title}
@@ -146,7 +144,7 @@ const AutoModal = ({
           />
         );
         break;
-        case "CustomTablaProgramaServicio":
+      case "CustomTablaProgramaServicio":
         return (
           <TablaProgramaServicio
             Title={compo.Title}
@@ -182,22 +180,21 @@ const AutoModal = ({
           setDarDato(false);
           console.log(DataNuevaEdit);
 
-        //   editar fetch
-            fetch(APIpath_i, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                idDato: IdDato,
-                data: DataNuevaEdit,
-              }),
+          //   editar fetch
+          fetch(APIpath_i, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              idDato: IdDato,
+              data: DataNuevaEdit
             })
-              .then((r) => r.json())
-              .then((data) => {
-                alert(data.message);
-              });
-            MostrarModal(false);
+          })
+            .then((r) => r.json())
+            .then((data) => {
+              alert(data.message);
+            });
+          MostrarModal(false);
           setModoEdicion(false);
-
         }
       }, [DarDato]);
       useEffect(() => {
@@ -209,7 +206,7 @@ const AutoModal = ({
           modal.style.display = "none";
         }
       }, [Display]);
-    //   console.log(Formulario)
+      //   console.log(Formulario)
       return (
         <div
           id="MiModalVerEdicion"
@@ -223,26 +220,30 @@ const AutoModal = ({
         >
           <div className={styles.Modal_content}>
             <span>{Formulario.title}</span>
-            <img
-              src="/resources/save-black-18dp.svg"
-              onClick={() => {
-                setDarDato(true);
-                // ReiniciarData()
-              }}
-            />
-            <img
-              src="/resources/edit-black-18dp.svg"
-              onClick={(event) => {
-                if (ModoEdicion == false) {
-                  event.target.src = "/resources/close-black-18dp.svg";
-                  setModoEdicion(true);
-                } else {
-                  event.target.src = "/resources/edit-black-18dp.svg";
-                  setReinciarComponentes(true);
-                  setModoEdicion(false);
-                }
-              }}
-            />
+            <button>
+              <img
+                src="/resources/save-black-18dp.svg"
+                onClick={() => {
+                  setDarDato(true);
+                  // ReiniciarData()
+                }}
+              />
+            </button>
+            <button>
+              <img
+                src="/resources/edit-black-18dp.svg"
+                onClick={(event) => {
+                  if (ModoEdicion == false) {
+                    event.target.src = "/resources/close-black-18dp.svg";
+                    setModoEdicion(true);
+                  } else {
+                    event.target.src = "/resources/edit-black-18dp.svg";
+                    setReinciarComponentes(true);
+                    setModoEdicion(false);
+                  }
+                }}
+              />
+            </button>
             {Formulario.secciones.map((seccion) => {
               return (
                 <div>
@@ -265,21 +266,21 @@ const AutoModal = ({
         if (DarDato == true) {
           console.log("estas en modo creacion");
           setDarDato(false);
-        //   console.log(DataNuevaEdit);
+          //   console.log(DataNuevaEdit);
           fetch(APIpath_i, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               accion: "Create",
-              data: DataNuevaEdit,
-            }),
+              data: DataNuevaEdit
+            })
           })
             .then((r) => r.json())
             .then((data) => {
               alert(data.message);
             });
           setReinciarComponentes(true);
-          ReiniciarData()
+          ReiniciarData();
           setDisplay_in(false);
         }
       }, [DarDato]);
@@ -291,7 +292,7 @@ const AutoModal = ({
           modal.style.display = "none";
         }
       }, [Display_in]);
-      
+
       return (
         <>
           <BotonAnadir
@@ -315,7 +316,7 @@ const AutoModal = ({
                 src="/resources/save-black-18dp.svg"
                 onClick={() => {
                   setDarDato(true);
-                  ReiniciarData()
+                  ReiniciarData();
                 }}
               />
               {/* <img

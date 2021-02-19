@@ -267,25 +267,29 @@ export default function TipoProveedor(
   return (
     <div>
       <h1>{Proveedor.nombre}</h1>
-      <img
-        src="/resources/save-black-18dp.svg"
-        onClick={() => {
-          setEdicion(false);
-          setDevolverDato(true);
-        }}
-      />
-      <img
-        src="/resources/edit-black-18dp.svg"
-        onClick={(event) => {
-          if (Edicion == false) {
-            event.target.src = "/resources/close-black-18dp.svg";
-            setEdicion(true);
-          } else {
-            event.target.src = "/resources/edit-black-18dp.svg";
+      <button>
+        <img
+          src="/resources/save-black-18dp.svg"
+          onClick={() => {
             setEdicion(false);
-          }
-        }}
-      />
+            setDevolverDato(true);
+          }}
+        />
+      </button>
+      <button>
+        <img
+          src="/resources/edit-black-18dp.svg"
+          onClick={(event) => {
+            if (Edicion == false) {
+              event.target.src = "/resources/close-black-18dp.svg";
+              setEdicion(true);
+            } else {
+              event.target.src = "/resources/edit-black-18dp.svg";
+              setEdicion(false);
+            }
+          }}
+        />
+      </button>
       <a href="#ProductoServicio_area">Productos/Servicios</a>
       <AutoFormulario
         Formulario={{

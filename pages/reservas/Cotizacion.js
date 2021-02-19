@@ -14,8 +14,6 @@ import CampoNumero from "@/components/Formulario_V2/CampoNumero/CampoNumero";
 import TablaSimple from "@/components/Formulario_V2/TablaSimple/TablaSimple";
 import TablaServicioCotizacion from "@/components/Formulario/CustomComponenteFormu/TablaServicioCotizacion/TablaServicioCotizacion";
 
-
-
 import Loader from "@/components/Loading/Loading";
 //Style
 import styles from "../../styles/Cotizacion.module.css";
@@ -25,7 +23,7 @@ import axios from "axios";
 const Contexto = createContext([
   [{}, () => {}],
   [{}, () => {}],
-  [{}, () => {}],
+  [{}, () => {}]
 ]);
 
 const Cotizacion = ({ APIpath, APIpathGeneral }) => {
@@ -34,9 +32,15 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
   const [IdProgramaTuristico, setIdProgramaTuristico] = useState(""); // Evaluar si se va
   const [ReinciarComponentes, setReinciarComponentes] = useState(false);
   const [ProgramasTuristicos, setProgramasTuristicos] = useState([]);
-  const [MostrarClientesCorporativos, setMostrarClientesCorporativos] = useState([]);
+  const [
+    MostrarClientesCorporativos,
+    setMostrarClientesCorporativos
+  ] = useState([]);
   const [Servicios, setServicios] = useState([]);
-  const [dataGeneralProgramaTuristico,setDataGeneralProgramaTuristico] = useState({});
+  const [
+    dataGeneralProgramaTuristico,
+    setDataGeneralProgramaTuristico
+  ] = useState({});
   const [ListaServiciosProductos, setListaServiciosProductos] = useState([]);
   const [Loading, setLoading] = useState(false);
   const [Fase, setFase] = useState(1);
@@ -74,7 +78,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
             setMostrarClientesCorporativos(data.data);
             resolve();
           });
-      }),
+      })
     ]);
     setLoading(false);
   }, []);
@@ -90,8 +94,8 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       // let ServiciosEscogidos = [...DataNuevaEdit["Servicios"]];
       // let ReservaCotizacion = DataNuevaEdit;
 
-      let ServiciosEscogidos = [...Servicios]
-      let ReservaCotizacion = {...Cotizacion};
+      let ServiciosEscogidos = [...Servicios];
+      let ReservaCotizacion = { ...Cotizacion };
 
       // Formateo de datos de ReservaCotizacion
       delete ReservaCotizacion["Servicios"];
@@ -107,7 +111,8 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       switch (parseInt(TipoCliente)) {
         case 1 || "1":
           ClienteProspecto["TipoCliente"] = "Corporativo";
-          ReservaCotizacion['IdClienteProspecto']= ClienteProspecto['IdClienteProspecto']
+          ReservaCotizacion["IdClienteProspecto"] =
+            ClienteProspecto["IdClienteProspecto"];
           break;
         case 2 || "2":
           ClienteProspecto["TipoCliente"] = "Directo";
@@ -120,13 +125,16 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
       }
 
       // envio dde datos a las apis
-      let result = await axios.post(APIpath + "/api/Cotizacion/NuevaReservaCotizacion",{
-        ReservaCotizacion: ReservaCotizacion,
-        ServiciosEscogidos: ServiciosEscogidos,
-        ClienteProspecto: ClienteProspecto,
-      })
+      let result = await axios.post(
+        APIpath + "/api/Cotizacion/NuevaReservaCotizacion",
+        {
+          ReservaCotizacion: ReservaCotizacion,
+          ServiciosEscogidos: ServiciosEscogidos,
+          ClienteProspecto: ClienteProspecto
+        }
+      );
       console.log(result.data.message);
-      router.push('/reservas/ListaCotizacion');
+      router.push("/reservas/ListaCotizacion");
       setLoading(false);
     }
   };
@@ -140,13 +148,15 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
     }
     setLoading(true);
     console.log(IdProgramaTuristico);
-    let result = await axios.get(APIpath + "/api/Cotizacion/ObtenerUnPT/" + IdProgramaTuristico)
+    let result = await axios.get(
+      APIpath + "/api/Cotizacion/ObtenerUnPT/" + IdProgramaTuristico
+    );
     let ProgramaTuristSeleccionado = result.data.result;
     let ServiciosActu = result.data.result["ServicioProducto"];
 
     setFase(3);
     setServicios(ServiciosActu);
-    setCotizacion({...Cotizacion,...ProgramaTuristSeleccionado})
+    setCotizacion({ ...Cotizacion, ...ProgramaTuristSeleccionado });
     setDataGeneralProgramaTuristico(ProgramaTuristSeleccionado);
     setLoading(false);
   }, [IdProgramaTuristico]);
@@ -160,10 +170,12 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
             <h2>Cotizacion</h2>
             {Fase >= 3 ? (
               <>
-                <img
-                  src="/resources/save-black-18dp.svg"
-                  onClick={HandleSave}
-                />
+                <button>
+                  <img
+                    src="/resources/save-black-18dp.svg"
+                    onClick={HandleSave}
+                  />
+                </button>
               </>
             ) : (
               <></>
@@ -180,8 +192,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                       value={TipoCliente}
                       onChange={(event) => {
                         setTipoCliente(event.target.value);
-                        if(event.target.value == 2)
-                          setcliente({});
+                        if (event.target.value == 2) setcliente({});
                       }}
                     >
                       <option value={1}>Corporativo</option>
@@ -196,12 +207,20 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                           <MaterialTable
                             title="Todos los Clientes corporativos"
                             columns={[
-                              { title: "Nombre Completo", field: "NombreCompleto" },
-                              { title: "Tipo Documento", field: "TipoDocumento" },
-                              { title: "Numero de Documento", field: "NroDocumento"},
-                              { title: "Celular", field: "Contacto[0].Numero"},
-                              { title: "Email", field: "Contacto[0].Email"},
-                              
+                              {
+                                title: "Nombre Completo",
+                                field: "NombreCompleto"
+                              },
+                              {
+                                title: "Tipo Documento",
+                                field: "TipoDocumento"
+                              },
+                              {
+                                title: "Numero de Documento",
+                                field: "NroDocumento"
+                              },
+                              { title: "Celular", field: "Contacto[0].Numero" },
+                              { title: "Email", field: "Contacto[0].Email" }
                             ]}
                             data={MostrarClientesCorporativos}
                             actions={[
@@ -211,15 +230,16 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                                 onClick: (event, rowData) => {
                                   //console.log(cliente)
                                   if (rowData.Contacto == undefined) {
-                                    rowData.Celular = ""
-                                    rowData.Email = ""
-                                  }else{
-                                    rowData.Celular = rowData.Contacto[0].Numero
-                                    rowData.Email = rowData.Contacto[0].Email
+                                    rowData.Celular = "";
+                                    rowData.Email = "";
+                                  } else {
+                                    rowData.Celular =
+                                      rowData.Contacto[0].Numero;
+                                    rowData.Email = rowData.Contacto[0].Email;
                                   }
-                                  setcliente(rowData)
-                                },
-                              },
+                                  setcliente(rowData);
+                                }
+                              }
                             ]}
                           />
                         </>
@@ -251,8 +271,12 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                         >
                           <option value={null}>Seleccione Documento</option>
                           <option value={cliente["DNI"]}>DNI</option>
-                          <option value={cliente["Pasaporte"]}>Pasaporte</option>
-                          <option value={cliente["CarneExtranjeria"]}>Carne de Extranjeria</option>
+                          <option value={cliente["Pasaporte"]}>
+                            Pasaporte
+                          </option>
+                          <option value={cliente["CarneExtranjeria"]}>
+                            Carne de Extranjeria
+                          </option>
                         </select>
                       </div>
                       <div>
@@ -374,11 +398,11 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                     {
                       field: "IdProgramaTuristico",
                       title: "IdProgramaTuristico",
-                      hidden: true,
+                      hidden: true
                     },
                     { field: "NombrePrograma", title: "Nombre" },
                     { field: "CodigoPrograma", title: "Codigo" },
-                    { field: "Localizacion", title: "Localizacion" },
+                    { field: "Localizacion", title: "Localizacion" }
                   ]}
                   data={ProgramasTuristicos}
                   actions={[
@@ -387,8 +411,8 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                       tooltip: "Seleccion programa turistico",
                       onClick: (event, rowData) => {
                         setIdProgramaTuristico(rowData["IdProgramaTuristico"]);
-                      },
-                    },
+                      }
+                    }
                   ]}
                 />
               </>
@@ -438,11 +462,11 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                     {
                       field: "Dia",
                       title: "Dia",
-                      type: "numeric",
+                      type: "numeric"
                     },
                     { field: "Hora Inicio", title: "HoraInicio", type: "time" },
                     { field: "Hora Fin", title: "HoraFin", type: "time" },
-                    { field: "Actividad", title: "Actividad" },
+                    { field: "Actividad", title: "Actividad" }
                   ]}
                 />
                 <CampoGranTexto
@@ -476,7 +500,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                   Dato={Cotizacion}
                   KeyDato={"RecomendacionesLlevar"}
                   columnas={[
-                    { field: "Recomendacion", title: "Recomendacion" },
+                    { field: "Recomendacion", title: "Recomendacion" }
                   ]}
                 />
               </div>
@@ -496,9 +520,9 @@ export async function getStaticProps() {
 
   return {
     props: {
-      APIpath: APIpath,
+      APIpath: APIpath
       // APIpathGeneral: APIpathGeneral,
-    },
+    }
   };
 }
 export default Cotizacion;
@@ -507,7 +531,7 @@ export default Cotizacion;
 
 const CampoFecha_custom = (
   props = {
-    Title: "Nombre del Proveedor",
+    Title: "Nombre del Proveedor"
   }
 ) => {
   const [[FechaIN, setFechaIN]] = useContext(Contexto);
