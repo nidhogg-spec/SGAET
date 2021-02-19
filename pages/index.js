@@ -8,14 +8,11 @@ import Notificaciones from '../components/Notificaciones/Notificaciones'
 export default function loginPrincipal({APIpath}) {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [DataServicioEscogido, setDataServicioEscogido] = useState();
-  const [DataReservaCotizacion, setDataReservaCotizacion] = useState();
   const [newPassword, setNewPassword] = useState("");
   const [nombre, setNewNombre] = useState("");
   const [nuevoUsuario, setNuevoUsuario] = useState(false);
   const [[loged, setLogged]] = useAppContext();
 
-  const Router = useRouter();
   async function signIn(e) {
     try {
       e.preventDefault();
@@ -42,44 +39,6 @@ export default function loginPrincipal({APIpath}) {
       console.log("error signing in", error);
     }
   }
-  /*Obtencion de Datos*/
-  useEffect(() => {
-    Promise.all([
-      new Promise ((resolv,reject)=>{
-        fetch(APIpath + "/api/ServicioEscogido/CRUD/dd", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" }
-        })
-          .then((r) => r.json())
-          .then((data) => {
-            setDataServicioEscogido(data);
-            console.log("Serv Escogidos")
-            console.log(data)
-          });
-          resolv()
-      }),
-      new Promise((resolv,reject)=>{
-        fetch(APIpath + "/api/reserva/DataReserva/CRUDReservaCotizacion",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            accion: "obtener"
-          })
-        }
-      )
-        .then((r) => r.json())
-        .then((data) => {
-          setDataReservaCotizacion(data);
-          console.log("Reserv Cotizacion")
-          console.log(data)
-        });
-        resolv()
-      })
-    ])
-    
-  }, []);
-  /*--------------------------------------------------------------------------------*/
   // useEffect(()=>{
   //   //Acceder a la sesion del usuario en el cliente
   //   Auth.currentAuthenticatedUser()
@@ -97,7 +56,7 @@ export default function loginPrincipal({APIpath}) {
 
       {loged && (
         <>
-          <Notificaciones DataReservaCotizacion={DataReservaCotizacion}  DataServicioEscogido={DataServicioEscogido}/>
+          <Notificaciones APIpath={APIpath}/>
           <CambioDolar />
           <button
             onClick={async (event) => {
