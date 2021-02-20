@@ -173,6 +173,11 @@ export default function NavLateral() {
           subModuloName:"Lista de Pasajeros",
           link:"/Clientes/ListPasajeros"
         },
+        {
+          tipo:"link",
+          subModuloName:"Matriz de Evaluacion de Proveedores",
+          link:"/MatrizEvaProv"
+        },
         //En este caso solo puede ver mas no editar
       ] 
     },

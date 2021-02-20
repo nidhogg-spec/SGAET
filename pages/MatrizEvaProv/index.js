@@ -111,7 +111,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
         })
         .then(r=>r.json())
         .then(data=>{
-          alert(data.message);
+          console.log(data.message);
         })
       })
      
