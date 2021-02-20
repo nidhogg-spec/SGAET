@@ -127,7 +127,7 @@ export default function NavLateral() {
         {
           tipo:"link",
           subModuloName:"Finanzas",
-          link:"#"
+          link:"/#"
         },
         
       ] 
