@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function Notificaciones(
   props = {
-    APIpath
+    APIpath,
   }
 ) {
   const [show, setShow] = useState(false);

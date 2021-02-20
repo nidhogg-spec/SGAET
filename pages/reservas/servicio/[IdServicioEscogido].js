@@ -70,12 +70,57 @@ const ServicioEscogido = (
     setLoading(false);
   };
 
+  const handleSave = async () => {
+    await Promise.all([
+      new Promise(async (resolve, reject) => {
+        await fetch(props.URL_path + "/api/ServicioEscogido/CRUD/0", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ServicioEscogido: ServicioEscogido,
+            IdServicioEscogido: IdServicioEscogido
+          })
+        });
+        resolve();
+      })
+    ]);
+    router.reload();
+  };
+  const handleOrdenSave = async () => {
+    if (Object.entries(OrdenServicio).length != 0) {
+      if (
+        OrdenServicio["IdOrdenServicio"] != null &&
+        OrdenServicio["IdOrdenServicio"] != undefined
+      ) {
+        await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            OrdenServicio: OrdenServicio,
+            IdOrdenServicio: OrdenServicio["IdOrdenServicio"]
+          })
+        });
+      } else {
+        let temp_OrdenServicio = OrdenServicio;
+        temp_OrdenServicio["IdServicioEscogido"] = IdServicioEscogido;
+        await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            OrdenServicio: temp_OrdenServicio
+          })
+        });
+      }
+    }
+  };
+
   //Efectos
   return (
     <>
       <Loader Loading={Loading} key={"Loader_001"} />
       <div>
         <h2>{ServicioEscogido["NombreServicio"]}</h2>
+<<<<<<< HEAD
         <button>
           <img
             src="/resources/save-black-18dp.svg"
@@ -126,6 +171,9 @@ const ServicioEscogido = (
             }}
           />
         </button>
+=======
+        <img src="/resources/save-black-18dp.svg" onClick={handleSave} />
+>>>>>>> main
         <div>
           <select
             value={ServicioEscogido["Estado"]}
@@ -195,6 +243,10 @@ const ServicioEscogido = (
             >
               Orden de servicio
             </button>
+            <button onClick={handleOrdenSave}>
+              <img src="/resources/save-black-18dp.svg" />
+            </button>
+
             <div>
               <AutoFormulario_v2
                 Formulario={{
@@ -213,10 +265,17 @@ const ServicioEscogido = (
                           Title: "Tipo de Orden de Servicio",
                           KeyDato: "TipoOrden",
                           SelectOptions: [
+<<<<<<< HEAD
                             { value: "A", texto: "A" },
                             { value: "B", texto: "B" },
                             { value: "C", texto: "C" },
                             { value: "D", texto: "D" }
+=======
+                            { value: "A", texto: "A - Tours" },
+                            { value: "B", texto: "B - Trekking" },
+                            { value: "C", texto: "C - Transporte" },
+                            { value: "D", texto: "D - Restaurantes" }
+>>>>>>> main
                           ]
                         },
                         {
@@ -234,7 +293,7 @@ const ServicioEscogido = (
                   ]
                 }}
                 ModoEdicion={true}
-                Dato={OrdenServicio || {}}
+                Dato={OrdenServicio}
                 setDato={setOrdenServicio}
                 key={"AF_OrdenServicio001"}
               />
