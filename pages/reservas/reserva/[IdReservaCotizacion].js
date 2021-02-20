@@ -228,7 +228,7 @@ const ReservaCotizacion = ({ APIPatch }) => {
                   accion: "update",
                 }
               );
-              if (Estado_val == 3) {
+              if (Estado_val == 2) {
                 await Promise.all([
                   // new Promise(async (resolve, reject) => {
                   //   await axios.post(APIPatch+'/api/reserva/DataReserva/CRUDReservaCotizacion',{
@@ -261,10 +261,10 @@ const ReservaCotizacion = ({ APIPatch }) => {
           setLoading(false);
         }}
       >
-        <option value={0}>Cotizacion</option>
-        <option value={1}>Reserva sin confirmar</option>
-        <option value={2}>Reserva confirmada</option>
-        <option value={3}>Reserva pagada</option>
+        <option value={0}>Cotizacion Proveedores sin confirmar</option>
+        <option value={1}>Cotizacion Proveedores confirmados</option>
+        <option value={2}>Reserva Pagada</option>
+        <option value={3}>Cotizacion Cancelada</option>
       </select>
       <div>
         <div>

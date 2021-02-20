@@ -138,9 +138,10 @@ const func_Actualizar = async (req, res) => {
     let dbo = client.db(dbName);
     let collection = dbo.collection(coleccion);
     let query = { $set: ServicioEscogido };
-    await collection.updateOne({[keyId]:IdServicioEscogido},query);
+    console.log(ServicioEscogido)
+    let result = await collection.updateOne({[keyId]:IdServicioEscogido},query);
     console.log("Actualizacion realizada");
-    res.status(200).send("Actualizacion realizada");
+    res.status(200).send(result);
   } catch (error) {
     res.status(500);
     console.log(error);
