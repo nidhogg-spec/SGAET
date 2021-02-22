@@ -11,44 +11,48 @@ resetServerContext();
 export default function TipoProveedor(props = { APIpath }) {
   //Variables
   const [Proveedor, setProveedor] = useState({
-    Estado:"1",
-    tipo:"Hotel",
-    TipoMoneda:"Dolar"
+    Estado: "1",
+    tipo: "Hotel",
+    TipoMoneda: "Dolar"
   });
   const [ProveedorContacto, setProveedorContacto] = useState([]);
   const [ProveedorBanco, setProveedorBanco] = useState([]);
   const [provDinamico, setprovDinamico] = useState("hotel");
   const [Loading, setLoading] = useState(false);
   const router = useRouter();
-  
+
   useEffect(() => {
     if (Proveedor["tipo"] == undefined) return;
     setprovDinamico(Proveedor["tipo"].toLowerCase());
   }, [Proveedor["tipo"]]);
   //Acciones de botones
   const HandleGuardar = async () => {
-    setLoading(true);
-    Proveedor.Contacto = ProveedorContacto;
-    Proveedor.DatosBancarios = ProveedorBanco;
     //Validar que tipo es correcto
-    if (
-      !confirm(
-        `El tipo de proveedor actual es ${Proveedor["tipo"]}, ¿Es correcto? (Este dato no se podra cambiar despues)`
-      )
-    ) {
-      setLoading(false);
-      return;
-    }
-    let result = await axios.post(
-      props.APIpath + "/api/proveedores/listaProveedores",
-      {
-        accion: "Create",
-        data: Proveedor,
+    if (Proveedor.nombre == null) {
+      alert("Llene el Campo Nombre Comercial");
+    } else {
+      setLoading(true);
+      Proveedor.Contacto = ProveedorContacto;
+      Proveedor.DatosBancarios = ProveedorBanco;
+      if (
+        !confirm(
+          `El tipo de proveedor actual es ${Proveedor["tipo"]}, ¿Es correcto? (Este dato no se podra cambiar despues)`
+        )
+      ) {
+        setLoading(false);
+        return;
       }
-    );
-    router.push(
-      `/Proveedores/${Proveedor["tipo"]}/${result.data["IdProveedor"]}`
-    );
+      let result = await axios.post(
+        props.APIpath + "/api/proveedores/listaProveedores",
+        {
+          accion: "Create",
+          data: Proveedor
+        }
+      );
+      router.push(
+        `/Proveedores/${Proveedor["tipo"]}/${result.data["IdProveedor"]}`
+      );
+    }
   };
 
   return (
@@ -77,26 +81,26 @@ export default function TipoProveedor(props = { APIpath }) {
                     { value: "Guia", texto: "Guia" },
                     {
                       value: "TransporteTerrestre",
-                      texto: "Transporte Terrestre",
+                      texto: "Transporte Terrestre"
                     },
                     { value: "Restaurante", texto: "Restaurante" },
                     { value: "SitioTuristico", texto: "Sitio Turistico" },
                     {
                       value: "TransporteFerroviario",
-                      texto: "Transporte Ferroviario",
+                      texto: "Transporte Ferroviario"
                     },
-                    { value: "Otro", texto: "Otro" },
-                  ],
+                    { value: "Otro", texto: "Otro" }
+                  ]
                 },
                 {
                   tipo: "texto",
                   Title: "Razon Social",
-                  KeyDato: "RazonSocial",
+                  KeyDato: "RazonSocial"
                 },
                 {
                   tipo: "texto",
                   Title: "Nombre Comercial",
-                  KeyDato: "nombre",
+                  KeyDato: "nombre"
                 },
                 {
                   tipo: "selector",
@@ -107,19 +111,19 @@ export default function TipoProveedor(props = { APIpath }) {
                     { value: "RUC", texto: "RUC" },
                     {
                       value: "CarnetExtranjeria",
-                      texto: "Carnet de Extranjeria",
-                    },
-                  ],
+                      texto: "Carnet de Extranjeria"
+                    }
+                  ]
                 },
                 {
                   tipo: "texto",
                   Title: "Numero de Documento",
-                  KeyDato: "NroDocumento",
+                  KeyDato: "NroDocumento"
                 },
                 {
                   tipo: "texto",
                   Title: "Direccion fiscal",
-                  KeyDato: "DireccionFiscal",
+                  KeyDato: "DireccionFiscal"
                 },
                 {
                   tipo: "selector",
@@ -127,23 +131,23 @@ export default function TipoProveedor(props = { APIpath }) {
                   KeyDato: "TipoMoneda",
                   SelectOptions: [
                     { value: "Sol", texto: "Soles" },
-                    { value: "Dolar", texto: "Dolares" },
-                  ],
+                    { value: "Dolar", texto: "Dolares" }
+                  ]
                 },
                 {
                   tipo: "texto",
                   Title: "Enlace al Documento",
-                  KeyDato: "EnlaceDocumento",
+                  KeyDato: "EnlaceDocumento"
                 },
                 {
                   tipo: "texto",
                   Title: "Numero de telefono o celular principal",
-                  KeyDato: "NumeroPrincipal",
+                  KeyDato: "NumeroPrincipal"
                 },
                 {
                   tipo: "texto",
                   Title: "Email principal",
-                  KeyDato: "EmailPrincipal",
+                  KeyDato: "EmailPrincipal"
                 },
                 {
                   tipo: "selector",
@@ -151,10 +155,10 @@ export default function TipoProveedor(props = { APIpath }) {
                   KeyDato: "Estado",
                   SelectOptions: [
                     { value: 0, texto: "Inactivo" },
-                    { value: 1, texto: "Activo" },
-                  ],
-                },
-              ],
+                    { value: 1, texto: "Activo" }
+                  ]
+                }
+              ]
             },
             {
               subTitle: "Representantante Legal",
@@ -162,15 +166,15 @@ export default function TipoProveedor(props = { APIpath }) {
                 {
                   tipo: "texto",
                   Title: "Nombre del Gerente General",
-                  KeyDato: "NombreRepresentanteLegal",
+                  KeyDato: "NombreRepresentanteLegal"
                 },
                 {
                   tipo: "texto",
                   Title: "Numero del documento de identidad",
-                  KeyDato: "NroDocIdentRepresentanteLegal",
-                },
-              ],
-            },
+                  KeyDato: "NroDocIdentRepresentanteLegal"
+                }
+              ]
+            }
             // {
             //   subTitle: "Representantante Legal",
             //   componentes: [
@@ -194,7 +198,7 @@ export default function TipoProveedor(props = { APIpath }) {
             //     },
             //   ],
             // }
-          ],
+          ]
         }}
         Dato={Proveedor}
         setDato={setProveedor}
@@ -224,12 +228,12 @@ export default function TipoProveedor(props = { APIpath }) {
                             { value: 2, texto: "2" },
                             { value: 3, texto: "3" },
                             { value: 4, texto: "4" },
-                            { value: 5, texto: "5" },
-                          ],
-                        },
-                      ],
-                    },
-                  ],
+                            { value: 5, texto: "5" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 }}
                 Dato={Proveedor}
                 setDato={setProveedor}
@@ -256,12 +260,12 @@ export default function TipoProveedor(props = { APIpath }) {
                             { value: 2, texto: "2" },
                             { value: 3, texto: "3" },
                             { value: 4, texto: "4" },
-                            { value: 5, texto: "5" },
-                          ],
-                        },
-                      ],
-                    },
-                  ],
+                            { value: 5, texto: "5" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 }}
                 Dato={Proveedor}
                 setDato={setProveedor}
@@ -276,7 +280,7 @@ export default function TipoProveedor(props = { APIpath }) {
               { field: "NombreContac", title: "Nombre del Contacto" },
               { field: "Area", title: "Area de trabajo" },
               { field: "Numero", title: "Telefono/Celular" },
-              { field: "Email", title: "Email" },
+              { field: "Email", title: "Email" }
             ]}
             data={ProveedorContacto}
             editable={{
@@ -309,7 +313,7 @@ export default function TipoProveedor(props = { APIpath }) {
 
                     resolve();
                   }, 1000);
-                }),
+                })
             }}
           />
           <MaterialTable
@@ -319,16 +323,16 @@ export default function TipoProveedor(props = { APIpath }) {
               { field: "Beneficiario", title: "Beneficiario" },
               {
                 field: "TipoCuenta",
-                title: "Tipo de Cuenta Bancaria",
+                title: "Tipo de Cuenta Bancaria"
               },
               {
                 field: "TipoDocumento",
                 title: "Tipo de Documento",
-                lookup: { RUC: "RUC", DNI: "DNI" },
+                lookup: { RUC: "RUC", DNI: "DNI" }
               },
               { field: "NumDoc", title: "Numero de Documento" },
               { field: "Cuenta", title: "Numero de Cuenta" },
-              { field: "CCI", title: "CCI" },
+              { field: "CCI", title: "CCI" }
             ]}
             data={ProveedorBanco}
             editable={{
@@ -361,7 +365,7 @@ export default function TipoProveedor(props = { APIpath }) {
 
                     resolve();
                   }, 1000);
-                }),
+                })
             }}
           />
         </div>
@@ -373,8 +377,8 @@ export default function TipoProveedor(props = { APIpath }) {
 export async function getServerSideProps(context) {
   return {
     props: {
-      APIpath: process.env.API_DOMAIN,
-    },
+      APIpath: process.env.API_DOMAIN
+    }
   };
 }
 
