@@ -64,6 +64,7 @@ let client = new MongoClient(url, {
               } 
               console.log("Insercion completada");
             });
+            res.status(200).send('Ingresado')
           } catch (error) {
             console.log("error - " + error);
           } 

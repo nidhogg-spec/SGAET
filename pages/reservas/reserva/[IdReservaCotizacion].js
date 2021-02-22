@@ -4,12 +4,15 @@ import { useRouter } from "next/router";
 // import styles from '..'
 
 //Componentes
+import styles from "@/globalStyles/DetalleReservaCotizacion.module.css";
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import Loader from "@/components/Loading/Loading";
 import MaterialTable from "material-table";
 import axios from "axios";
 import Cotizacion from "../Cotizacion";
-import {resetServerContext} from "react-beautiful-dnd";
+import { resetServerContext } from "react-beautiful-dnd";
+
+import { Modal } from "@material-ui/core";
 
 resetServerContext();
 
@@ -25,6 +28,8 @@ const ReservaCotizacion = ({ APIPatch }) => {
   const [Estado, setEstado] = useState(0);
   const [Loading, setLoading] = useState(false);
   const [ModoEdicion, setModoEdicion] = useState(false);
+  const [ModalOpen, setModalOpen] = useState(false);
+  const RefPago = useRef(null);
 
   const [Currency, setCurrency] = useState("Dolar");
   const [MontoTotal, setMontoTotal] = useState(0);
@@ -71,15 +76,14 @@ const ReservaCotizacion = ({ APIPatch }) => {
       }),
       new Promise(async (resolve, reject) => {
         let temp_cambio = await axios.post(APIPatch + "/api/DataSistema", {
-          accion: "ObtenerCambioDolar",
+          accion: "ObtenerCambioDolar"
         });
         setCambioDolar(temp_cambio.data["value"]);
         resolve();
-      }),
+      })
     ]);
     setLoading(false);
   }, []);
-
   // -----------------------------------------------------------------------
   const CalcularTotal = () => {
     let temp_MontoTotal = 0;
@@ -117,8 +121,8 @@ const ReservaCotizacion = ({ APIPatch }) => {
     return temp_MontoTotal;
   };
   useEffect(() => {
-    setMontoTotal(CalcularTotal())
-  }, [ServiciosEscogidos,Currency]);
+    setMontoTotal(CalcularTotal());
+  }, [ServiciosEscogidos, Currency]);
 
   //-----------------Funcionamiento de tabla devolucion --------------------
   const [Devolucion, setDevolucion] = useState([]);
@@ -126,10 +130,80 @@ const ReservaCotizacion = ({ APIPatch }) => {
   const callback_delete = () => {};
   const callback_update = () => {};
 
+  const handlePagadoSubmit = async () => {
+    const formData = new FormData(RefPago.current);
+    const data = {
+      Adelanto: parseFloat(parseFloat(formData.get("Adelanto")).toFixed(2)),
+      MetodoPago: formData.get("MetodoPago")
+    };
+    let array_data = Object.values(data);
+    if (
+      array_data.includes("") ||
+      array_data.includes(null) ||
+      array_data.includes(undefined) ||
+      array_data.includes(NaN)
+    ) {
+      alert("Faltan datos");
+    } else {
+      const temp_MontoTotal = CalcularTotal();
+      setModalOpen(false);
+      setLoading(true);
+      let Estado_val = parseInt(refEstado.current.value);
+      await Promise.all([
+        new Promise(async (resolve,reject)=>{
+          await axios.post(
+            APIPatch + "/api/reserva/DataReserva/CRUDReservaCotizacion",
+            {
+              data: { Estado: Estado_val },
+              idProducto: IdReservaCotizacion,
+              accion: "update"
+            }
+          );
+          resolve()
+        }),
+        new Promise(async (resolve,reject)=>{
+          await axios.post(APIPatch + "/api/finanzas/ingresos", {
+            accion: "create",
+            data: {
+              Npasajeros:
+                (ReservaCotizacion["NpasajerosAdult"] || 0) +
+                (ReservaCotizacion["NpasajerosChild"] || 0),
+              Total: temp_MontoTotal,
+              TotalNeto: 0,
+              Comision: 0,
+              IdReservaCotizacion:IdReservaCotizacion,
+              ...data
+            }
+          });
+          resolve()
+        }),
+      ])
+      setLoading(false);      
+    }
+  };
+
   return (
     <>
       <Loader Loading={Loading} />
       <h3>Datos de Reserva</h3>
+      <Modal open={ModalOpen} className={styles.modal}>
+        <div className={styles.ModalMainContainer}>
+          <form ref={RefPago}>
+            <input
+              type="number"
+              min="0.00"
+              step="0.10"
+              placeholder="Adelanto"
+              name="Adelanto"
+            />
+            <input placeholder="Metodo de Pago" name="MetodoPago" />
+            <button type="button" onClick={handlePagadoSubmit}>
+              Continuar
+            </button>
+          </form>
+        </div>
+      </Modal>
+
       {ModoEdicion ? (
         <>
           <button>
@@ -147,7 +221,7 @@ const ReservaCotizacion = ({ APIPatch }) => {
                       APIPatch + "/api/reserva/DataServicio/CRUD",
                       {
                         ServicioEscogido: temp_ServiciosEscogidos,
-                        Accion: "UpdateMany",
+                        Accion: "UpdateMany"
                       }
                     );
                     resolve();
@@ -159,11 +233,11 @@ const ReservaCotizacion = ({ APIPatch }) => {
                       {
                         data: ReservaCotizacion,
                         idProducto: IdReservaCotizacion,
-                        accion: "update",
+                        accion: "update"
                       }
                     );
                     resolve();
-                  }),
+                  })
                 ]);
                 setLoading(false);
               }}
@@ -220,41 +294,17 @@ const ReservaCotizacion = ({ APIPatch }) => {
           if (Estado_val > Estado) {
             if (confirm("Esta seguro de cambiar de estado?")) {
               setEstado(Estado_val);
-              await axios.post(
-                APIPatch + "/api/reserva/DataReserva/CRUDReservaCotizacion",
-                {
-                  data: { Estado: Estado_val },
-                  idProducto: IdReservaCotizacion,
-                  accion: "update",
-                }
-              );
               if (Estado_val == 2) {
-                await Promise.all([
-                  // new Promise(async (resolve, reject) => {
-                  //   await axios.post(APIPatch+'/api/reserva/DataReserva/CRUDReservaCotizacion',{
-                  //     data:{Estado:refEstado.current.value},
-                  //     idProducto: IdReservaCotizacion,
-                  //     accion:'update'
-                  //   })
-                  // }),
-                  new Promise(async (resolve, reject) => {
-                    const [temp_MontoTotal] = CalcularTotal();
-                    await axios.post(APIPatch + "/api/finanzas/ingresos", {
-                      accion: "create",
-                      data: {
-                        Npasajeros:
-                          (ReservaCotizacion["NpasajerosAdult"] || 0) +
-                          (ReservaCotizacion["NpasajerosChild"] || 0),
-                        Total: temp_MontoTotal,
-                        TotalNeto: 0,
-                        Comision: 0,
-                        Adelanto: 0,
-                        AdelantoNeto: 0,
-                      },
-                    });
-                    resolve();
-                  }),
-                ]);
+                setModalOpen(true);
+              }else{
+                await axios.post(
+                  APIPatch + "/api/reserva/DataReserva/CRUDReservaCotizacion",
+                  {
+                    data: { Estado: Estado_val },
+                    idProducto: IdReservaCotizacion,
+                    accion: "update"
+                  }
+                );
               }
             }
           }
@@ -279,51 +329,51 @@ const ReservaCotizacion = ({ APIPatch }) => {
                     {
                       tipo: "texto",
                       Title: "Codigo de Grupo",
-                      KeyDato: "CodGrupo",
+                      KeyDato: "CodGrupo"
                     },
                     {
                       tipo: "texto",
                       Title: "Nombre de Grupo",
-                      KeyDato: "NombreGrupo",
+                      KeyDato: "NombreGrupo"
                     },
                     {
                       tipo: "numero",
                       Title: "Numero de pasajeros adultos",
-                      KeyDato: "NpasajerosAdult",
+                      KeyDato: "NpasajerosAdult"
                     },
                     {
                       tipo: "numero",
                       Title: "Numero de pasajeros niños",
-                      KeyDato: "NpasajerosChild",
+                      KeyDato: "NpasajerosChild"
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha IN",
-                      KeyDato: "FechaIN",
+                      KeyDato: "FechaIN"
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha OUT",
-                      KeyDato: "FechaOUT",
+                      KeyDato: "FechaOUT"
                     },
                     {
                       tipo: "texto",
                       Title: "Voucher",
-                      KeyDato: "Voucher",
+                      KeyDato: "Voucher"
                     },
                     {
                       tipo: "texto",
                       Title: "Idioma",
-                      KeyDato: "Idioma",
+                      KeyDato: "Idioma"
                     },
                     {
                       tipo: "fecha",
                       Title: "Fecha de entrega voucher",
-                      KeyDato: "FechaEntrega",
-                    },
-                  ],
-                },
-              ],
+                      KeyDato: "FechaEntrega"
+                    }
+                  ]
+                }
+              ]
             }}
             ModoEdicion={ModoEdicion}
             Dato={ReservaCotizacion}
@@ -337,17 +387,15 @@ const ReservaCotizacion = ({ APIPatch }) => {
                 setCurrency(event.target.value);
               }}
             >
-              <option value="Dolar" selected>Dolares</option>
+              <option value="Dolar" selected>
+                Dolares
+              </option>
               <option value="Sol">Soles</option>
             </select>
           </div>
           <div>
             <span>Precio</span>
-            <input
-              value={'$ '+ MontoTotal.toFixed(2)}
-              type="text"
-              disabled
-            />
+            <input value={"$ " + MontoTotal.toFixed(2)} type="text" disabled />
           </div>
         </div>
         <div>
@@ -376,7 +424,7 @@ const ReservaCotizacion = ({ APIPatch }) => {
                     {
                       tipo: "texto",
                       Title: "Nombre Completo",
-                      KeyDato: "NombreCompleto",
+                      KeyDato: "NombreCompleto"
                     },
                     {
                       tipo: "selector",
@@ -386,27 +434,27 @@ const ReservaCotizacion = ({ APIPatch }) => {
                         { value: 0, texto: "DNI" },
                         { value: 1, texto: "RUC" },
                         { value: 2, texto: "Pasaporte" },
-                        { value: 3, texto: "Carné de Extranjería" },
-                      ],
+                        { value: 3, texto: "Carné de Extranjería" }
+                      ]
                     },
                     {
                       tipo: "texto",
                       Title: "Nro de Documento",
-                      KeyDato: "NroDocumento",
+                      KeyDato: "NroDocumento"
                     },
                     {
                       tipo: "texto",
                       Title: "Celular Principal",
-                      KeyDato: "Celular",
+                      KeyDato: "Celular"
                     },
                     {
                       tipo: "texto",
                       Title: "Email Principal",
-                      KeyDato: "Email",
-                    },
-                  ],
-                },
-              ],
+                      KeyDato: "Email"
+                    }
+                  ]
+                }
+              ]
             }}
             ModoEdicion={ModoEdicion}
             Dato={ClienteCotizacion}
@@ -445,8 +493,8 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      APIPatch: APIPatch,
-    },
+      APIPatch: APIPatch
+    }
   };
 }
 
@@ -529,8 +577,8 @@ const TablaServicioCotizacion = (
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          accion: "ObtenerCambioDolar",
-        }),
+          accion: "ObtenerCambioDolar"
+        })
       })
         .then((r) => r.json())
         .then((data) => {
@@ -574,70 +622,70 @@ const TablaServicioCotizacion = (
               field: "IdServicioProducto",
               title: "IdServicioProducto",
               editable: "never",
-              hidden: true,
+              hidden: true
             },
             {
               field: "PrecioConfiUnitario",
               title: "Precio Confidencial Unitario",
               editable: "never",
               type: "numeric",
-              hidden: true,
+              hidden: true
             },
             { field: "NombreServicio", title: "Nombre", editable: "never" },
             {
               field: "Dia",
               title: "Dia",
               editable: "always",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "FechaReserva",
               title: "Fecha de Reserva",
               editable: "never",
-              type: "date",
+              type: "date"
             },
             {
               field: "Cantidad",
               title: "Cantidad",
               editable: "always",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "Currency",
               title: "Moneda",
               editable: "never",
-              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" }
             },
             {
               field: "PrecioCotiUnitario",
               title: "Precio Cotizacion Unitario",
               editable: "always",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "PrecioPublicado",
               title: "Precio Publicado",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "IGV",
               title: "IGV incluido?",
               editable: "always",
-              type: "boolean",
+              type: "boolean"
             },
             {
               field: "PrecioCotiTotal",
               title: "Precio Cotizacion Total",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "PrecioConfiTotal",
               title: "Precio Confidencial Total",
               editable: "never",
-              type: "numeric",
-            },
+              type: "numeric"
+            }
           ]}
           data={props.CotiServicio}
           editable={{
@@ -682,8 +730,12 @@ const TablaServicioCotizacion = (
                     temp_CotiServicio[id]["PrecioCotiUnitario"] =
                       temp_newData["PrecioCotiUnitario"];
                     //--------------------------------------------------
-                    axios.put(props.APIPatch + `/api/ServicioEscogido/CRUD/${temp_CotiServicio[id]['IdServicioEscogido']}`,{ServicioEscogido:temp_CotiServicio[id]})
-                    //--------------------------------------------------    
+                    axios.put(
+                      props.APIPatch +
+                        `/api/ServicioEscogido/CRUD/${temp_CotiServicio[id]["IdServicioEscogido"]}`,
+                      { ServicioEscogido: temp_CotiServicio[id] }
+                    );
+                    //--------------------------------------------------
                   });
                   props.setCotiServicio(temp_CotiServicio);
                   resolve();
@@ -691,20 +743,23 @@ const TablaServicioCotizacion = (
               }),
             onRowDelete: (oldData) =>
               new Promise((resolve, reject) => {
-                setTimeout(async() => {
+                setTimeout(async () => {
                   const dataDelete = [...props.CotiServicio];
                   const index = oldData.tableData.id;
-                    dataDelete.splice(index, 1);
+                  dataDelete.splice(index, 1);
                   props.setCotiServicio([...dataDelete]);
                   //--------------------------------------------------
-                  console.log(oldData)
-                  let result = await axios.delete(props.APIPatch + `/api/ServicioEscogido/CRUD/${oldData['IdServicioEscogido']}`)
+                  console.log(oldData);
+                  let result = await axios.delete(
+                    props.APIPatch +
+                      `/api/ServicioEscogido/CRUD/${oldData["IdServicioEscogido"]}`
+                  );
                   console.log(result);
-                  //--------------------------------------------------    
+                  //--------------------------------------------------
 
                   resolve();
                 }, 1000);
-              }),
+              })
           }}
           actions={[
             {
@@ -714,8 +769,8 @@ const TablaServicioCotizacion = (
               tooltip: "Mostrar reserva",
               onClick: (event, rowData) => {
                 router.push(`/reservas/servicio/${rowData.IdServicioEscogido}`);
-              },
-            },
+              }
+            }
           ]}
         />
         <select
@@ -741,12 +796,12 @@ const TablaServicioCotizacion = (
               field: "IdServicioProducto",
               title: "IdServicioProducto",
               editable: "never",
-              hidden: true,
+              hidden: true
             },
             {
               field: "TipoServicio",
               title: "Tipo de Servicio",
-              editable: "never",
+              editable: "never"
             },
             { field: "Nombre", title: "Nombre", editable: "never" },
             { title: "Nombre del Proveedor", field: "NombreProveedor" },
@@ -756,33 +811,33 @@ const TablaServicioCotizacion = (
               field: "Currency",
               title: "Moneda",
               editable: "never",
-              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" }
             },
             {
               field: "Precio",
               title: "Precio Cotizacion",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "Costo",
               title: "Precio Confidencial",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "PrecioPublicado",
               title: "Precio Publicado",
               editable: "never",
-              type: "numeric",
-            },
+              type: "numeric"
+            }
           ]}
           data={props.ListaServiciosProductos}
           actions={[
             {
               icon: "add",
               tooltip: "Añadir Servicio a Cotizacion",
-              onClick:async (event, rowData) => {
+              onClick: async (event, rowData) => {
                 let x = [...props.CotiServicio];
                 x.push({
                   IdServicioProducto: rowData["IdServicioProducto"],
@@ -796,27 +851,35 @@ const TablaServicioCotizacion = (
                   PrecioCotiTotal: rowData["Precio"],
                   PrecioConfiTotal: rowData["Costo"],
                   Currency: rowData["Currency"],
-                  PrecioPublicado: rowData["PrecioPublicado"],
+                  PrecioPublicado: rowData["PrecioPublicado"]
                 });
-                await axios.post(props.APIPatch + `/api/ServicioEscogido/CRUD/0`,{
-                  ServicioEscogido:{
-                    IdServicioProducto: rowData["IdServicioProducto"],
-                    TipoServicio: rowData["TipoServicio"],
-                    PrecioConfiUnitario: rowData["Costo"],
-                    NombreServicio: rowData["Nombre"],
-                    Dia: 1,
-                    Cantidad: 1,
-                    PrecioCotiUnitario: rowData["Precio"],
-                    IGV: false,
-                    PrecioCotiTotal: rowData["Precio"],
-                    PrecioConfiTotal: rowData["Costo"],
-                    Currency: rowData["Currency"],
-                    PrecioPublicado: rowData["PrecioPublicado"],
-                    IdReservaCotizacion:props.IdReservaCotizacion
+                await axios.post(
+                  props.APIPatch + `/api/ServicioEscogido/CRUD/0`,
+                  {
+                    ServicioEscogido: {
+                      IdServicioProducto: rowData["IdServicioProducto"],
+                      TipoServicio: rowData["TipoServicio"],
+                      PrecioConfiUnitario: rowData["Costo"],
+                      NombreServicio: rowData["Nombre"],
+                      Dia: 1,
+                      Cantidad: 1,
+                      PrecioCotiUnitario: rowData["Precio"],
+                      IGV: false,
+                      PrecioCotiTotal: rowData["Precio"],
+                      PrecioConfiTotal: rowData["Costo"],
+                      Currency: rowData["Currency"],
+                      PrecioPublicado: rowData["PrecioPublicado"],
+                      IdReservaCotizacion: props.IdReservaCotizacion
+                    }
                   }
-                })
-                let get_allServiciosEscogidos = await axios.get(props.APIPatch + `/api/reserva/DataServicio/${props.IdReservaCotizacion}`)
-                props.setCotiServicio(get_allServiciosEscogidos.data.AllServicioEscogido)
+                );
+                let get_allServiciosEscogidos = await axios.get(
+                  props.APIPatch +
+                    `/api/reserva/DataServicio/${props.IdReservaCotizacion}`
+                );
+                props.setCotiServicio(
+                  get_allServiciosEscogidos.data.AllServicioEscogido
+                );
                 // props.setCotiServicio(x);
                 // let ActuDataTableServicios = [...DataTableServicios];
                 // ActuDataTableServicios.splice(
@@ -826,8 +889,8 @@ const TablaServicioCotizacion = (
                 //   1
                 // );
                 // setDataTableServicios(ActuDataTableServicios);
-              },
-            },
+              }
+            }
           ]}
         />
       </div>

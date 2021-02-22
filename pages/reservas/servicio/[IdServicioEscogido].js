@@ -2,12 +2,14 @@ import React, { useState, useEffect, useDebugValue, useRef } from "react";
 import { useRouter } from "next/router";
 import { MongoClient } from "mongodb";
 import { resetServerContext } from "react-beautiful-dnd";
+import styles from '@/globalStyles/DetalleServicioEscogido.module.css'
 
 //Componentes
 // import AutoFormulario from "@/components/AutoFormulario/AutoFormulario";
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import Loader from "@/components/Loading/Loading";
 import axios from "axios";
+import { Modal } from "@material-ui/core";
 resetServerContext();
 const ServicioEscogido = (
   props = {
@@ -27,12 +29,11 @@ const ServicioEscogido = (
   const [Loading, setLoading] = useState(false);
   const refEstado = useRef(null);
   let Exits_OrdenServicio = useBoolOrdenServicio(OrdenServicio);
+  const [ModalOpen, setModalOpen] = useState(false);
+  const RefPago = useRef(null);
   useDebugValue(Exits_OrdenServicio ? "Si" : "No");
 
   const handleChangeEstado = async () => {
-    if (parseInt(Estado) == 3) {
-    }
-
     setLoading(true);
     let Estado_val = parseInt(refEstado.current.value);
     let Estado = ServicioEscogido["Estado"] ? ServicioEscogido["Estado"] : 0;
@@ -42,28 +43,43 @@ const ServicioEscogido = (
           ...ServicioEscogido,
           Estado: parseInt(Estado_val)
         });
-        await axios.put(
-          `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
-          { ServicioEscogido: { Estado: Estado_val } }
-        );
         if (Estado_val == 3) {
-          await Promise.all([
-            new Promise(async (resolve, reject) => {
-              await axios.post(props.URL_path + "/api/finanzas/egresos", {
-                accion: "create",
-                data: {
-                  Total:
-                    ServicioEscogido["PrecioCotiUnitario"] *
-                    ServicioEscogido["Cantidad"],
-                  TotalNeto: 0,
-                  Comision: 0,
-                  Adelanto: 0,
-                  AdelantoNeto: 0
-                }
-              });
-              resolve();
-            })
-          ]);
+          setModalOpen(true)
+        }else if(Estado_val == 4){
+          if (ServicioEscogido["Estado"]==3) {
+            await Promise.all([
+              new Promise(async(resolve,reject)=>{
+                await axios.put(
+                  `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
+                  { ServicioEscogido: { Estado: Estado_val } }
+                );
+                resolve();
+              }),
+              new Promise(async(resolve,reject)=>{
+                await axios.post(props.URL_path + "/api/finanzas/ingresos", {
+                  accion: "create",
+                  data: {
+                    Total: ServicioEscogido["PrecioCotiUnitario"] * ServicioEscogido["Cantidad"],
+                    TotalNeto: 0,
+                    Comision: 0,
+                    IdServicioEscogido:IdServicioEscogido,
+                  }
+                });
+                resolve();
+              }),
+            ])
+          }else{
+            await axios.put(
+              `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
+              { ServicioEscogido: { Estado: Estado_val } }
+            );
+          }          
+        }
+        else{
+          await axios.put(
+            `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
+            { ServicioEscogido: { Estado: Estado_val } }
+          );
         }
       }
     }
@@ -113,10 +129,72 @@ const ServicioEscogido = (
     }
   };
 
-  //Efectos
+  const handlePagadoSubmit = async () => {
+    const formData = new FormData(RefPago.current);
+    const data = {
+      Adelanto: parseFloat(parseFloat(formData.get("Adelanto")).toFixed(2)),
+      MetodoPago: formData.get("MetodoPago")
+    };
+    let array_data = Object.values(data);
+    if (
+      array_data.includes("") ||
+      array_data.includes(null) ||
+      array_data.includes(undefined) ||
+      array_data.includes(NaN)
+    ) {
+      alert("Faltan datos");
+    } else {
+      setModalOpen(false);
+      setLoading(true);
+      let Estado_val = parseInt(refEstado.current.value);
+      
+      await Promise.all([
+        new Promise(async (resolve, reject) => {
+          await axios.put(
+            `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
+            { ServicioEscogido: { Estado: Estado_val } }
+          );
+          resolve();
+        }),
+        new Promise(async (resolve, reject) => {
+          await axios.post(props.URL_path + "/api/finanzas/egresos", {
+            accion: "create",
+            data: {
+              Total:
+                ServicioEscogido["PrecioCotiUnitario"] *
+                ServicioEscogido["Cantidad"],
+              TotalNeto: 0,
+              Comision: 0,
+              IdServicioEscogido:IdServicioEscogido,
+              ...data
+            }
+          });
+          resolve();
+        })
+      ]);
+      setLoading(false);      
+    }
+  };
   return (
     <>
       <Loader Loading={Loading} key={"Loader_001"} />
+      <Modal open={ModalOpen} className={styles.modal}>
+        <div className={styles.ModalMainContainer}>
+          <form ref={RefPago}>
+            <input
+              type="number"
+              min="0.00"
+              step="0.10"
+              placeholder="Adelanto"
+              name="Adelanto"
+            />
+            <input placeholder="Metodo de Pago" name="MetodoPago" />
+            <button type="button" onClick={handlePagadoSubmit}>
+              Continuar
+            </button>
+          </form>
+        </div>
+      </Modal>
       <div>
         <h2>{ServicioEscogido["NombreServicio"]}</h2>
         <button onClick={handleSave}><img src="/resources/save-black-18dp.svg"/></button>
