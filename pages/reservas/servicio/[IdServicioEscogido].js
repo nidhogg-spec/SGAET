@@ -73,12 +73,11 @@ const ServicioEscogido = (
   const handleSave = async () => {
     await Promise.all([
       new Promise(async (resolve, reject) => {
-        await fetch(props.URL_path + "/api/ServicioEscogido/CRUD/0", {
+        await fetch(`${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            ServicioEscogido: ServicioEscogido,
-            IdServicioEscogido: IdServicioEscogido
+            ServicioEscogido: ServicioEscogido
           })
         });
         resolve();
@@ -120,7 +119,8 @@ const ServicioEscogido = (
       <Loader Loading={Loading} key={"Loader_001"} />
       <div>
         <h2>{ServicioEscogido["NombreServicio"]}</h2>
-        <img src="/resources/save-black-18dp.svg" onClick={handleSave} />
+        <button onClick={handleSave}><img src="/resources/save-black-18dp.svg"/></button>
+        
         <div>
           <select
             value={ServicioEscogido["Estado"]}

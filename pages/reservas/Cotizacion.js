@@ -258,6 +258,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["NombreCompleto"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
+                          disabled={TipoCliente==1?true:false}                          
                         />
                       </div>
                       <div>
@@ -268,6 +269,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["TipoDocumento"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
+                          disabled={TipoCliente==1?true:false}
                         >
                           <option value={null}>Seleccione Documento</option>
                           <option value={cliente["DNI"]}>DNI</option>
@@ -288,6 +290,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["NroDocumento"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
+                          disabled={TipoCliente==1?true:false}
                         />
                       </div>
                       <div>
@@ -299,6 +302,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["Celular"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
+                          disabled={TipoCliente==1?true:false}
                         />
                       </div>
                       <div>
@@ -310,6 +314,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["Email"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
+                          disabled={TipoCliente==1?true:false}
                         />
                       </div>
                     </>
