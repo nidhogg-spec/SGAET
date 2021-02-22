@@ -1,0 +1,15 @@
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal input, .modal button{
+    display: flex;
+    margin: 20px 20px 20px 20px;
+}
+.ModalMainContainer{
+    background-color: white;
+    border-radius: 15px;
+    border-color: black;
+    border: 2px solid;
+}
