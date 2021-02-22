@@ -7,7 +7,7 @@ import { MongoClient } from "mongodb";
 import { resetServerContext } from "react-beautiful-dnd";
 
 //css
-import CustomStyles from '@/globalStyles/ProgramasTuristicos.module.css';
+import CustomStyles from "@/globalStyles/ProgramasTuristicos.module.css";
 
 //modulos
 import MaterialTable from "material-table";
@@ -25,7 +25,7 @@ function ProgramasTuristicos({
   APIpath,
   APIpathGeneral,
   ListaServiciosProductos,
-  API_DOMAIN,
+  API_DOMAIN
 }) {
   //--------------- Acciones para que funcione el AutoMdoal --------------
   //--------------------------------------------------------------------
@@ -34,7 +34,7 @@ function ProgramasTuristicos({
   const ModalDisplay = createContext([
     [{}, () => {}],
     [{}, () => {}],
-    [{}, () => {}],
+    [{}, () => {}]
   ]);
 
   const firstUpdate = useRef(true);
@@ -51,42 +51,42 @@ function ProgramasTuristicos({
               tipo: "texto",
               Title: "Nombre",
               KeyDato: "NombrePrograma",
-              Dato: FormuData.NombrePrograma,
+              Dato: FormuData.NombrePrograma
             },
             {
               tipo: "texto",
               Title: "Codigo",
               KeyDato: "CodigoPrograma",
-              Dato: FormuData.CodigoPrograma,
+              Dato: FormuData.CodigoPrograma
             },
             {
               tipo: "texto",
               Title: "Tipo de experiencia",
               KeyDato: "Tipo",
-              Dato: FormuData.CodigoPrograma,
+              Dato: FormuData.CodigoPrograma
             },
             {
               tipo: "numero",
               Title: "Duracion Dias",
               KeyDato: "DuracionDias",
               Dato: FormuData.DuracionDias,
-              InputStep: "1",
+              InputStep: "1"
             },
             {
               tipo: "numero",
               Title: "Duracion Noches",
               KeyDato: "DuracionNoche",
               Dato: FormuData.DuracionNoche,
-              InputStep: "1",
+              InputStep: "1"
             },
             {
               tipo: "texto",
               Title: "Localizacion",
               KeyDato: "Localizacion",
               Dato: FormuData.Localizacion,
-              InputStep: "1",
-            },
-          ],
+              InputStep: "1"
+            }
+          ]
         },
         {
           subTitle: "Descripcion",
@@ -95,9 +95,9 @@ function ProgramasTuristicos({
               tipo: "granTexto",
               Title: "",
               KeyDato: "Descripcion",
-              Dato: FormuData.Descripcion,
-            },
-          ],
+              Dato: FormuData.Descripcion
+            }
+          ]
         },
         {
           subTitle: "Itinerario",
@@ -112,28 +112,28 @@ function ProgramasTuristicos({
                   field: "Dia",
                   title: "Dia",
                   initialEditValue: 1,
-                  type: "numeric",
+                  type: "numeric"
                 },
                 {
                   field: "Hora Inicio",
                   title: "Hora de Inicio",
-                  initialEditValue: "00:00",
+                  initialEditValue: "00:00"
                 },
                 {
                   field: "Hora Fin",
                   title: "Hora de Fin",
-                  initialEditValue: "00:00",
+                  initialEditValue: "00:00"
                 },
-                { field: "Actividad", title: "Actividad" },
-              ],
+                { field: "Actividad", title: "Actividad" }
+              ]
             },
             {
               tipo: "granTexto",
               Title: "Descripcion de Itinerario",
               KeyDato: "ItinerarioDescripcion",
-              Dato: FormuData.ItinerarioDescripcion,
-            },
-          ],
+              Dato: FormuData.ItinerarioDescripcion
+            }
+          ]
         },
         {
           subTitle: "",
@@ -143,16 +143,16 @@ function ProgramasTuristicos({
               Title: "Incluye",
               KeyDato: "Incluye",
               Dato: FormuData.Incluye, //deber ser un [] - array - Sino todo explota
-              columnas: [{ field: "Actividad", title: "Actividad" }],
+              columnas: [{ field: "Actividad", title: "Actividad" }]
             },
             {
               tipo: "tablaSimple",
               Title: "No Incluye",
               KeyDato: "NoIncluye",
               Dato: FormuData.NoIncluye, //deber ser un [] - array - Sino todo explota
-              columnas: [{ field: "Actividad", title: "Actividad" }],
-            },
-          ],
+              columnas: [{ field: "Actividad", title: "Actividad" }]
+            }
+          ]
         },
         {
           subTitle: "Recomendaciones para llevar",
@@ -162,9 +162,9 @@ function ProgramasTuristicos({
               Title: "",
               KeyDato: "RecomendacionesLlevar",
               Dato: FormuData.RecomendacionesLlevar, //deber ser un [] - array - Sino todo explota
-              columnas: [{ field: "Recomendacion", title: "Recomendacion" }],
-            },
-          ],
+              columnas: [{ field: "Recomendacion", title: "Recomendacion" }]
+            }
+          ]
         },
         {
           subTitle: "Servicios/Productos base del Programa Turistico",
@@ -174,11 +174,11 @@ function ProgramasTuristicos({
               Title: "",
               KeyDato: "ServicioProducto",
               Dato: FormuData.ServicioProducto, //deber ser un [] - array - Sino todo explota
-              ListaServiciosProductos: ListaServiciosProductos,
-            },
-          ],
-        },
-      ],
+              ListaServiciosProductos: ListaServiciosProductos
+            }
+          ]
+        }
+      ]
     };
   };
   const Formulario_default = DevolverEstructuraFormulario({
@@ -194,7 +194,7 @@ function ProgramasTuristicos({
     Incluye: [],
     NoIncluye: [],
     RecomendacionesLlevar: [],
-    ServicioProducto: [],
+    ServicioProducto: []
   });
   //------------------------------------------------
   //Variables
@@ -214,8 +214,8 @@ function ProgramasTuristicos({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           idDato: IdDato,
-          accion: "FindOne",
-        }),
+          accion: "FindOne"
+        })
       })
         .then((r) => r.json())
         .then((data) => {
@@ -235,7 +235,7 @@ function ProgramasTuristicos({
               Incluye: data.result.Incluye,
               NoIncluye: data.result.NoIncluye,
               RecomendacionesLlevar: data.result.RecomendacionesLlevar,
-              ServicioProducto: data.result.ServicioProducto || [],
+              ServicioProducto: data.result.ServicioProducto || []
             })
           );
         });
@@ -256,7 +256,7 @@ function ProgramasTuristicos({
               NombrePrograma: datosResult.NombrePrograma,
               Localizacion: datosResult.Localizacion,
               DuracionDias: datosResult.DuracionDias,
-              DuracionNoche: datosResult.DuracionNoche,
+              DuracionNoche: datosResult.DuracionNoche
             });
           });
           setTablaDatos(ActuTablaDatos);
@@ -279,14 +279,20 @@ function ProgramasTuristicos({
     }
 
     if (ModalData["IdProgramaTuristico"] == null) {
-      axios.post(API_DOMAIN + "/api/ProgramaTuristico/CRUD", {
-          ProgramaTuristico: ModalData,
+      // if (ModalData.Nombre == null) {
+      //   alert("Ingrese Datos");
+      // }
+      //else {
+      axios
+        .post(API_DOMAIN + "/api/ProgramaTuristico/CRUD", {
+          ProgramaTuristico: ModalData
         })
         .then((result) => {
           console.log(result);
           alert("Ingresado Correctamente");
           router.reload();
         });
+      //}
     } else {
       fetch(APIpathGeneral, {
         method: "POST",
@@ -295,8 +301,8 @@ function ProgramasTuristicos({
           accion: "update",
           coleccion: "ProgramaTuristico",
           query: { IdProgramaTuristico: ModalData["IdProgramaTuristico"] },
-          data: ModalData,
-        }),
+          data: ModalData
+        })
       })
         .then((r) => r.json())
         .then((data) => {
@@ -311,7 +317,7 @@ function ProgramasTuristicos({
         value={[
           [Display, setDisplay],
           [ModalData, setModalData],
-          [Formulario, setFormulario],
+          [Formulario, setFormulario]
         ]}
       >
         <AutoModal_v2
@@ -348,7 +354,7 @@ function ProgramasTuristicos({
                     `/ProgramaTuristico/${rowData.IdProgramaTuristico}`
                   );
                   // setDisplay(true);
-                },
+                }
               },
               (rowData) => ({
                 icon: () => {
@@ -368,19 +374,19 @@ function ProgramasTuristicos({
                       accion: "DeleteOne",
                       coleccion: "ProgramaTuristico",
                       query: {
-                        IdProgramaTuristico: rowData["IdProgramaTuristico"],
-                      },
-                    }),
+                        IdProgramaTuristico: rowData["IdProgramaTuristico"]
+                      }
+                    })
                   })
                     .then((r) => r.json())
                     .then((data) => {
-                      alert('Eliminacion realizada');
+                      alert("Eliminacion realizada");
                     });
-                },
-              }),
+                }
+              })
             ]}
             options={{
-              actionsColumnIndex: -1,
+              actionsColumnIndex: -1
             }}
           />
         </div>
@@ -408,7 +414,7 @@ export async function getServerSideProps() {
     { title: "Codigo", field: "CodigoPrograma" },
     { title: "Localizacion", field: "Localizacion" },
     { title: "Duracion Dias", field: "DuracionDias" },
-    { title: "Duracion Noches", field: "DuracionNoche" },
+    { title: "Duracion Noches", field: "DuracionNoche" }
   ];
   let Datos = [];
   console.log(process.env.API_DOMAIN);
@@ -425,7 +431,7 @@ export async function getServerSideProps() {
           NombrePrograma: datosResult.NombrePrograma,
           Localizacion: datosResult.Localizacion,
           DuracionDias: datosResult.DuracionDias,
-          DuracionNoche: datosResult.DuracionNoche,
+          DuracionNoche: datosResult.DuracionNoche
         });
       });
     });
@@ -436,7 +442,7 @@ export async function getServerSideProps() {
 
   const client = new MongoClient(url, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
   });
   let ListaServiciosProductos = [];
   let resultProveedores;
@@ -453,7 +459,7 @@ export async function getServerSideProps() {
         tipo: 1,
         IdProveedor: 1,
         porcentajeTotal: 1,
-        TipoMoneda: 1,
+        TipoMoneda: 1
       })
       .toArray();
     console.log(resultProveedores);
@@ -470,7 +476,7 @@ export async function getServerSideProps() {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -501,7 +507,7 @@ export async function getServerSideProps() {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -513,7 +519,7 @@ export async function getServerSideProps() {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -547,8 +553,8 @@ export async function getServerSideProps() {
               PrecioPublicado: x["precioPubli"] || null,
               OrdenServicio: {
                 TipoOrden: "D",
-                Estado: 0,
-              },
+                Estado: 0
+              }
             });
           }
         });
@@ -560,7 +566,7 @@ export async function getServerSideProps() {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -598,8 +604,8 @@ export async function getServerSideProps() {
               PrecioPublicado: x["precioPubli"] || null,
               OrdenServicio: {
                 TipoOrden: "C",
-                Estado: 0,
-              },
+                Estado: 0
+              }
             });
           }
         });
@@ -611,7 +617,7 @@ export async function getServerSideProps() {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -649,7 +655,7 @@ export async function getServerSideProps() {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -661,7 +667,7 @@ export async function getServerSideProps() {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -693,7 +699,7 @@ export async function getServerSideProps() {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -705,7 +711,7 @@ export async function getServerSideProps() {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -741,7 +747,7 @@ export async function getServerSideProps() {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -753,7 +759,7 @@ export async function getServerSideProps() {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -780,7 +786,7 @@ export async function getServerSideProps() {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -792,7 +798,7 @@ export async function getServerSideProps() {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -824,12 +830,12 @@ export async function getServerSideProps() {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
         resolve(ListaServiciosProductos);
-      }),
+      })
     ]);
     client.close();
     // Transformar todo a un solo array de objetos
@@ -849,8 +855,8 @@ export async function getServerSideProps() {
       APIpath: APIpath,
       APIpathGeneral: APIpathGeneral,
       ListaServiciosProductos: ListaServiciosProductos,
-      API_DOMAIN: process.env.API_DOMAIN,
-    },
+      API_DOMAIN: process.env.API_DOMAIN
+    }
   };
 }
 export default ProgramasTuristicos;

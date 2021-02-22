@@ -21,12 +21,12 @@ const AutoModal = ({
     secciones: [
       {
         subTitle: "",
-        componentes: [],
-      },
-    ],
+        componentes: []
+      }
+    ]
   },
   ModalDisplay,
-  IdDato = "",
+  IdDato = ""
   // APIpath,
   // ReiniciarData,
   // Display, //Solo en modoVerEdicions
@@ -219,7 +219,7 @@ const AutoModal = ({
       onClick={(event) => {
         let modal = document.getElementById("MiModalVerEdicion");
         if (event.target == modal) {
-          if(confirm('Esta seguro que quiere cerrar?')){
+          if (confirm("Esta seguro que quiere cerrar?")) {
             setDisplay(false);
           }
         }
@@ -229,29 +229,35 @@ const AutoModal = ({
         <h1>{Formulario.title}</h1>
         {ModoEdicion ? (
           <>
-            <img
-              src="/resources/save-black-18dp.svg"
-              onClick={() => {
-                setDarDato(true);
-                // ReiniciarData()
-              }}
-            />
-            <img
-              src="/resources/close-black-18dp.svg"
-              onClick={(event) => {
-                setReinciarComponentes(true);
-                setModoEdicion(false);
-              }}
-            />
+            <button>
+              <img
+                src="/resources/save-black-18dp.svg"
+                onClick={() => {
+                  setDarDato(true);
+                  // ReiniciarData()
+                }}
+              />
+            </button>
+            <button>
+              <img
+                src="/resources/close-black-18dp.svg"
+                onClick={(event) => {
+                  setReinciarComponentes(true);
+                  setModoEdicion(false);
+                }}
+              />
+            </button>
           </>
         ) : (
           <>
-            <img
-              src="/resources/edit-black-18dp.svg"
-              onClick={(event) => {
-                setModoEdicion(true);
-              }}
-            />
+            <button>
+              <img
+                src="/resources/edit-black-18dp.svg"
+                onClick={(event) => {
+                  setModoEdicion(true);
+                }}
+              />
+            </button>
           </>
         )}
         {Formulario.secciones.map((seccion) => {
