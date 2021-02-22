@@ -120,60 +120,7 @@ const ServicioEscogido = (
       <Loader Loading={Loading} key={"Loader_001"} />
       <div>
         <h2>{ServicioEscogido["NombreServicio"]}</h2>
-<<<<<<< HEAD
-        <button>
-          <img
-            src="/resources/save-black-18dp.svg"
-            onClick={async () => {
-              await Promise.all([
-                new Promise(async (resolve, reject) => {
-                  await fetch(props.URL_path + "/api/ServicioEscogido/CRUD/0", {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      ServicioEscogido: ServicioEscogido,
-                      IdServicioEscogido: IdServicioEscogido
-                    })
-                  });
-                  resolve();
-                }),
-                new Promise(async (resolve, reject) => {
-                  if (Object.entries(OrdenServicio).length != 0) {
-                    if (
-                      OrdenServicio["IdOrdenServicio"] != null &&
-                      OrdenServicio["IdOrdenServicio"] != undefined
-                    ) {
-                      await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          OrdenServicio: OrdenServicio,
-                          IdOrdenServicio: OrdenServicio["IdOrdenServicio"]
-                        })
-                      });
-                    } else {
-                      let temp_OrdenServicio = OrdenServicio;
-                      temp_OrdenServicio["IdServicioEscogido"] =
-                        ServicioEscogido["IdServicioEscogido"];
-                      await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          OrdenServicio: temp_OrdenServicio
-                        })
-                      });
-                    }
-                  }
-                  resolve();
-                })
-              ]);
-              router.reload();
-            }}
-          />
-        </button>
-=======
         <img src="/resources/save-black-18dp.svg" onClick={handleSave} />
->>>>>>> main
         <div>
           <select
             value={ServicioEscogido["Estado"]}
@@ -265,17 +212,10 @@ const ServicioEscogido = (
                           Title: "Tipo de Orden de Servicio",
                           KeyDato: "TipoOrden",
                           SelectOptions: [
-<<<<<<< HEAD
-                            { value: "A", texto: "A" },
-                            { value: "B", texto: "B" },
-                            { value: "C", texto: "C" },
-                            { value: "D", texto: "D" }
-=======
                             { value: "A", texto: "A - Tours" },
                             { value: "B", texto: "B - Trekking" },
                             { value: "C", texto: "C - Transporte" },
                             { value: "D", texto: "D - Restaurantes" }
->>>>>>> main
                           ]
                         },
                         {
