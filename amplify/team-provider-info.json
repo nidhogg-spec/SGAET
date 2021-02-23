@@ -1,15 +1,20 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-sgaet-dev-101245-authRole",
-      "UnauthRoleArn": "arn:aws:iam::752655624004:role/amplify-sgaet-dev-101245-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::752655624004:role/amplify-sgaet-dev-101245-authRole",
+      "AuthRoleName": "amplify-sgaet-dev-91924-authRole",
+      "UnauthRoleArn": "arn:aws:iam::414431727276:role/amplify-sgaet-dev-91924-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::414431727276:role/amplify-sgaet-dev-91924-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-sgaet-dev-101245-deployment",
-      "UnauthRoleName": "amplify-sgaet-dev-101245-unauthRole",
-      "StackName": "amplify-sgaet-dev-101245",
-      "StackId": "arn:aws:cloudformation:us-east-1:752655624004:stack/amplify-sgaet-dev-101245/48c77040-6632-11eb-97d6-12936a84a87d",
-      "AmplifyAppId": "d3stavz9rso609"
+      "DeploymentBucketName": "amplify-sgaet-dev-91924-deployment",
+      "UnauthRoleName": "amplify-sgaet-dev-91924-unauthRole",
+      "StackName": "amplify-sgaet-dev-91924",
+      "StackId": "arn:aws:cloudformation:us-east-1:414431727276:stack/amplify-sgaet-dev-91924/2387e7a0-75e2-11eb-a400-0e1250125733",
+      "AmplifyAppId": "d3vyf1rohba3ff"
+    },
+    "categories": {
+      "auth": {
+        "sgaet0294c36c": {}
+      }
     }
   }
 }
