@@ -39,43 +39,6 @@ export default function loginPrincipal({ APIpath }) {
       console.log("error signing in", error);
     }
   }
-<<<<<<< HEAD
-=======
-  /*Obtencion de Datos*/
-  useEffect(() => {
-    Promise.all([
-      new Promise ((resolv,reject)=>{
-        fetch(APIpath + "/api/ServicioEscogido/CRUD/dd", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" }
-        })
-          .then((r) => r.json())
-          .then((data) => {
-            setDataServicioEscogido(data);
-          });
-          resolv()
-      }),
-      new Promise((resolv,reject)=>{
-        fetch(APIpath + "/api/reserva/DataReserva/CRUDReservaCotizacion",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            accion: "obtener"
-          })
-        }
-      )
-        .then((r) => r.json())
-        .then((data) => {
-          setDataReservaCotizacion(data);
-        });
-        resolv()
-      })
-    ])
-    
-  }, []);
-  /*--------------------------------------------------------------------------------*/
->>>>>>> main
   // useEffect(()=>{
   //   //Acceder a la sesion del usuario en el cliente
   //   Auth.currentAuthenticatedUser()
@@ -93,11 +56,7 @@ export default function loginPrincipal({ APIpath }) {
 
       {loged && (
         <>
-<<<<<<< HEAD
           <Notificaciones APIpath={APIpath} />
-=======
-          <Notificaciones APIpath={APIpath}/>
->>>>>>> main
           <CambioDolar />
           <button
             onClick={async (event) => {
