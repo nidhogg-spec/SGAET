@@ -1,6 +1,7 @@
 import MaterialTable from "material-table";
 import { MongoClient } from "mongodb";
 import  Router  from "next/router";
+import { withSSRContext } from 'aws-amplify'
 import { useState } from "react";
 
 export default function Home({Datos}){
@@ -126,7 +127,7 @@ const [datosEditables, setDatosEditables] = useState(Datos);
         </div>
     )
 }
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
     var Datos = [];
   
     /*---------------------------------------------------------------------------------*/
@@ -136,6 +137,14 @@ export async function getStaticProps() {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+
+    const { Auth } = withSSRContext({ req })
+    try {
+      const user = await Auth.currentAuthenticatedUser()
+    } catch (err) {
+      res.writeHead(302, { Location: '/' })
+      res.end()
+    }
 
     try {
       console.log("mongo xdxdxdxd");

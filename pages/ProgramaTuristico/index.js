@@ -6,6 +6,9 @@ import React, { useEffect, useState, createContext, useRef } from "react";
 import { MongoClient } from "mongodb";
 import { resetServerContext } from "react-beautiful-dnd";
 
+//Seguidad para routing Backend si no esta logueado
+import { withSSRContext } from 'aws-amplify'
+
 //css
 import CustomStyles from "@/globalStyles/ProgramasTuristicos.module.css";
 
@@ -404,9 +407,18 @@ function ProgramasTuristicos({
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ req, res }) {
   const APIpath = process.env.API_DOMAIN + "/api/programasTuristicos";
   const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
+
+  const { Auth } = withSSRContext({ req })
+
+  try {
+    const user = await Auth.currentAuthenticatedUser()
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
 
   let Columnas = [
     { title: "Id", field: "IdProgramaTuristico", hidden: true },

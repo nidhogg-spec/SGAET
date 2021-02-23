@@ -1,7 +1,7 @@
 import MaterialTable,{ MTableToolbar } from "material-table";
 import Router from 'next/router'
 import BotonAnadir from 'components/BotonAnadir/BotonAnadir'
-
+import { withSSRContext } from 'aws-amplify'
 import { MongoClient } from "mongodb";
 
 import { useEffect, useState } from "react";
@@ -249,7 +249,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
         </div>
     )
 }
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
 
     let datosPeriodo=[]
     let datosProv = []
@@ -258,6 +258,14 @@ export async function getStaticProps() {
 
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
+
+    const { Auth } = withSSRContext({ req })
+    try {
+      const user = await Auth.currentAuthenticatedUser()
+    } catch (err) {
+      res.writeHead(302, { Location: '/' })
+      res.end()
+    }
 
     let client = new MongoClient(url, {
       useNewUrlParser: true,

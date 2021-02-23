@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { withSSRContext } from 'aws-amplify'
 import { MongoClient } from "mongodb";
 import { resetServerContext } from "react-beautiful-dnd";
 
@@ -358,8 +359,16 @@ export default function Home({ Datos, APIpath }) {
     </div>
   );
 }
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
   const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
+  //---------------------------Validacion del Login-----------------------------//
+  const { Auth } = withSSRContext({ req })
+  try {
+    const user = await Auth.currentAuthenticatedUser()
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
   //----------------------Obtener datos de proveedores-------------------------------------------
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
