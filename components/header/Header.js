@@ -24,7 +24,7 @@ export default function Header(){
       })
       .catch(err => {
         setLogged(false)
-        // router.push('/')
+        router.push('/')
         setData(null)
       })      
   },[Logged])

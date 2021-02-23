@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/login.module.css";
 import { Auth, API } from "aws-amplify";
-import { useRouter } from "next/router";
 import { useAppContext } from "@/components/Contexto";
 import Notificaciones from "../components/Notificaciones/Notificaciones";
 
@@ -138,7 +137,7 @@ export default function loginPrincipal({ APIpath }) {
     </div>
   );
 }
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const APIpath = process.env.API_DOMAIN;
   // const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
