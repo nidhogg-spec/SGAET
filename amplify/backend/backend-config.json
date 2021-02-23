@@ -1,1 +1,10 @@
-{}
+{
+  "auth": {
+    "sgaet0294c36c": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}
