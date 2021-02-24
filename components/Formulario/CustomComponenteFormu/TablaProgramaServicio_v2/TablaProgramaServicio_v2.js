@@ -209,6 +209,8 @@ const TablaProgramaServicio_v2 = (
 
                       temp_CotiServicio[id]["Cantidad"] =
                         temp_newData["Cantidad"];
+                      temp_CotiServicio[id]["Dia"] =
+                        temp_newData["Dia"];
                       temp_CotiServicio[id]["IGV"] = temp_newData["IGV"];
                       if (temp_CotiServicio[id]["IGV"]) {
                         temp_CotiServicio[id]["PrecioCotiTotal"] = (
