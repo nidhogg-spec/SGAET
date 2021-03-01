@@ -1,8 +1,8 @@
 {
-    "resourceNameTruncated": "sgaetc50a56c8",
-    "userPoolName": "InkaPeruTravelUsers",
+    "resourceNameTruncated": "sgaetea8e2c88",
+    "userPoolName": "InkaPeruTravel",
     "autoVerifiedAttributes": [
-        "email"
+        "phone_number"
     ],
     "mfaConfiguration": "OFF",
     "mfaTypes": [
@@ -26,10 +26,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "InkaPec50a56c8_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "InkaPeea8e2c88_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "c50a56c8",
-    "resourceName": "InkaPeruTravelSystem",
+    "sharedId": "ea8e2c88",
+    "resourceName": "InkaPeruTravel",
     "authSelections": "userPoolOnly",
     "authRoleArn": {
         "Fn::GetAtt": [

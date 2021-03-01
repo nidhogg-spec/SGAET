@@ -1,24 +1,24 @@
 {
     "dev": {
         "awscloudformation": {
-            "AuthRoleName": "amplify-sgaet-dev-92718-authRole",
-            "UnauthRoleArn": "arn:aws:iam::414431727276:role/amplify-sgaet-dev-92718-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::414431727276:role/amplify-sgaet-dev-92718-authRole",
+            "AuthRoleName": "amplify-sgaet-dev-114621-authRole",
+            "UnauthRoleArn": "arn:aws:iam::414431727276:role/amplify-sgaet-dev-114621-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::414431727276:role/amplify-sgaet-dev-114621-authRole",
             "Region": "us-east-1",
-            "DeploymentBucketName": "amplify-sgaet-dev-92718-deployment",
-            "UnauthRoleName": "amplify-sgaet-dev-92718-unauthRole",
-            "StackName": "amplify-sgaet-dev-92718",
-            "StackId": "arn:aws:cloudformation:us-east-1:414431727276:stack/amplify-sgaet-dev-92718/3d56c0e0-7a9a-11eb-be06-12f8925a37c4",
-            "AmplifyAppId": "do4shd3dc9umw"
+            "DeploymentBucketName": "amplify-sgaet-dev-114621-deployment",
+            "UnauthRoleName": "amplify-sgaet-dev-114621-unauthRole",
+            "StackName": "amplify-sgaet-dev-114621",
+            "StackId": "arn:aws:cloudformation:us-east-1:414431727276:stack/amplify-sgaet-dev-114621/a9edffd0-7aad-11eb-8592-0e89be41520b",
+            "AmplifyAppId": "dv4p1muyvrvll"
         },
         "categories": {
             "auth": {
-                "InkaPeruTravelSystem": {}
+                "InkaPeruTravel": {}
             },
             "hosting": {
                 "amplifyhosting": {
-                    "appId": "do4shd3dc9umw",
-                    "type": "cicd"
+                    "appId": "dv4p1muyvrvll",
+                    "type": "manual"
                 }
             }
         }
