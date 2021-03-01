@@ -11,14 +11,6 @@ Parameters:
   
 
     
-  identityPoolName:
-    Type: String
-  
-            
-  
-  allowUnauthenticatedIdentities:
-    Type: String
-            
   resourceNameTruncated:
     Type: String
   
@@ -113,9 +105,21 @@ Parameters:
     Type: String
   
             
+  
+  userPoolGroups:
+    Type: String
+            
+  
+  adminQueries:
+    Type: String
+            
   triggers:
     Type: String
   
+            
+  
+  hostedUI:
+    Type: String
             
         
   userPoolGroupList:
@@ -156,7 +160,7 @@ Resources:
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, 'sgaet0294c36c_sns-role', !Join ['',[ 'sns', '0294c36c', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, 'sgaetc50a56c8_sns-role', !Join ['',[ 'sns', 'c50a56c8', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -168,10 +172,10 @@ Resources:
               - "sts:AssumeRole"
             Condition:
               StringEquals:
-                sts:ExternalId: sgaet0294c36c_role_external_id
+                sts:ExternalId: sgaetc50a56c8_role_external_id
       Policies:
         -
-          PolicyName: sgaet0294c36c-sns-policy
+          PolicyName: sgaetc50a56c8-sns-policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -221,7 +225,7 @@ Resources:
       SmsVerificationMessage: !Ref smsVerificationMessage
       SmsConfiguration:
         SnsCallerArn: !GetAtt SNSRole.Arn
-        ExternalId: sgaet0294c36c_role_external_id
+        ExternalId: sgaetc50a56c8_role_external_id
     
   
   
@@ -241,7 +245,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: sgaet0294c36c_app_clientWeb
+      ClientName: sgaetc50a56c8_app_clientWeb
       
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -251,7 +255,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: sgaet0294c36c_app_client
+      ClientName: sgaetc50a56c8_app_client
       
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
@@ -262,7 +266,7 @@ Resources:
   # Created to execute Lambda which gets userpool app client config values
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', '0294c36c', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', 'c50a56c8', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -316,7 +320,7 @@ Resources:
   # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: sgaet0294c36c_userpoolclient_lambda_iam_policy
+      PolicyName: sgaetc50a56c8_userpoolclient_lambda_iam_policy
       Roles:
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -333,7 +337,7 @@ Resources:
   # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: sgaet0294c36c_userpoolclient_lambda_log_policy
+      PolicyName: sgaetc50a56c8_userpoolclient_lambda_log_policy
       Roles:
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -366,50 +370,8 @@ Resources:
 
   
     
-  # BEGIN IDENTITY POOL RESOURCES
-  
-
-  IdentityPool:
-  # Always created
-    Type: AWS::Cognito::IdentityPool
-    Properties:
-      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'sgaet0294c36c_identitypool_0294c36c', !Join ['',['sgaet0294c36c_identitypool_0294c36c', '__', !Ref env]]]
-      
-      CognitoIdentityProviders:
-        - ClientId:  !Ref UserPoolClient
-          ProviderName: !Sub
-            - cognito-idp.${region}.amazonaws.com/${client}
-            - { region: !Ref "AWS::Region",  client: !Ref UserPool}
-        - ClientId:  !Ref UserPoolClientWeb
-          ProviderName: !Sub
-            - cognito-idp.${region}.amazonaws.com/${client}
-            - { region: !Ref "AWS::Region",  client: !Ref UserPool}
-            
-      AllowUnauthenticatedIdentities: !Ref allowUnauthenticatedIdentities
-      
-    
-    DependsOn: UserPoolClientInputs
-    
-
-  IdentityPoolRoleMap:
-  # Created to map Auth and Unauth roles to the identity pool
-  # Depends on Identity Pool for ID ref
-    Type: AWS::Cognito::IdentityPoolRoleAttachment
-    Properties:
-      IdentityPoolId: !Ref IdentityPool
-      Roles:
-          unauthenticated: !Ref unauthRoleArn
-          authenticated: !Ref authRoleArn
-    DependsOn: IdentityPool
-  
 
 Outputs :
-  
-  IdentityPoolId:
-    Value: !Ref 'IdentityPool'
-    Description:  Id for the identity pool
-  IdentityPoolName:
-    Value: !GetAtt IdentityPool.Name
   
   
   

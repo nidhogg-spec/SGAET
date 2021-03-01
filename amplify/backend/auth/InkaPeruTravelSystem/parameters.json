@@ -1,8 +1,6 @@
 {
-    "identityPoolName": "sgaet0294c36c_identitypool_0294c36c",
-    "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "sgaet0294c36c",
-    "userPoolName": "sgaet0294c36c_userpool_0294c36c",
+    "resourceNameTruncated": "sgaetc50a56c8",
+    "userPoolName": "InkaPeruTravelUsers",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,11 +26,11 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "sgaet00294c36c_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "InkaPec50a56c8_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "0294c36c",
-    "resourceName": "sgaet0294c36c",
-    "authSelections": "identityPoolAndUserPool",
+    "sharedId": "c50a56c8",
+    "resourceName": "InkaPeruTravelSystem",
+    "authSelections": "userPoolOnly",
     "authRoleArn": {
         "Fn::GetAtt": [
             "AuthRole",
@@ -45,8 +43,11 @@
             "Arn"
         ]
     },
-    "useDefault": "default",
+    "useDefault": "manual",
+    "userPoolGroups": false,
+    "adminQueries": false,
     "triggers": "{}",
+    "hostedUI": false,
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
