@@ -1,5 +1,5 @@
 {
-    "resourceNameTruncated": "sgaetea8e2c88",
+    "resourceNameTruncated": "sgaetcb0716aa",
     "userPoolName": "InkaPeruTravel",
     "autoVerifiedAttributes": [
         "phone_number"
@@ -26,9 +26,9 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "InkaPeea8e2c88_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "InkaPecb0716aa_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "ea8e2c88",
+    "sharedId": "cb0716aa",
     "resourceName": "InkaPeruTravel",
     "authSelections": "userPoolOnly",
     "authRoleArn": {
