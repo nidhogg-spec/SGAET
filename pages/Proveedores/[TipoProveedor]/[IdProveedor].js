@@ -672,7 +672,7 @@ export default function TipoProveedor(
                     if (!deepEqual(temp_newData, temp_DataBase)) {
                       await axios
                         .post(
-                          `http://localhost:3000/api/proveedores/${provDinamico}`,
+                          props.APIpath+`/api/proveedores/${provDinamico}`,
                           {
                             data: newData,
                             accion: "create"
@@ -736,7 +736,7 @@ export default function TipoProveedor(
                   }
                   await axios
                     .post(
-                      `http://localhost:3000/api/proveedores/${provDinamico}`,
+                      props.APIpath+`/api/proveedores/${provDinamico}`,
                       {
                         idProducto: dataUpdate[index][IdKey],
                         data: dataUpdate[index],
@@ -791,7 +791,7 @@ export default function TipoProveedor(
                   console.log(dataDelete[index][IdKey]);
                   await axios
                     .post(
-                      `http://localhost:3000/api/proveedores/${provDinamico}`,
+                      props.APIpath+`/api/proveedores/${provDinamico}`,
                       {
                         idProducto: dataDelete[index][IdKey],
                         accion: "delete"

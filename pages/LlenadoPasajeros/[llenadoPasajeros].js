@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 
-export default function LlenadoPasajeros({ NumPasajeros, DatosPasajeros }) {
+export default function LlenadoPasajeros({ NumPasajeros, DatosPasajeros, APIpath:APIpath }) {
   const [Datos, setDatos] = useState({});
   const router = useRouter();
   const { llenadoPasajeros } = router.query;
@@ -60,7 +60,7 @@ export default function LlenadoPasajeros({ NumPasajeros, DatosPasajeros }) {
     // console.log(y)
     // console.log(y)
     fetch(
-      `http://localhost:3000/api/reserva/DataReserva/CRUDReservaCotizacion`,
+      APIpath+`/api/reserva/DataReserva/CRUDReservaCotizacion`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -185,7 +185,8 @@ export default function LlenadoPasajeros({ NumPasajeros, DatosPasajeros }) {
 export async function getServerSideProps(context) {
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
-
+  const APIpath = process.env.API_DOMAIN;
+  
   let DatosPasajeros = [];
 
   const Idurl = context.query.llenadoPasajeros;
@@ -219,7 +220,8 @@ export async function getServerSideProps(context) {
   return {
     props: {
       NumPasajeros: NumPasajeros,
-      DatosPasajeros: DatosPasajeros
+      DatosPasajeros: DatosPasajeros,
+      APIpath:APIpath
     }
   };
 }

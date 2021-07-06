@@ -4,7 +4,7 @@ import CampoTexto from "@/components/Formulario/CampoTexto/CampoTexto";
 import CampoGranTexto from "@/components/Formulario/CampoGranTexto/CampoGranTexto";
 import { useRouter } from "next/router";
 
-export default function Seguimiento({ Datos }) {
+export default function Seguimiento({ Datos,APIpath }) {
   let x = {};
   const router = useRouter();
   const { IdSeguimiento } = router.query;
@@ -25,7 +25,7 @@ export default function Seguimiento({ Datos }) {
     if (Object.keys(dataActualizada).length === 0) {
       console.log(dataActualizada);
     } else {
-      await fetch(`http://localhost:3000/api/cliente/seguimiento`, {
+      await fetch(APIpath+`/api/cliente/seguimiento`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -153,6 +153,8 @@ export async function getServerSideProps(context) {
   /*---------------------------------------------------------------------------------*/
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
+  const APIpath = process.env.API_DOMAIN;
+
   let client = new MongoClient(url, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -177,7 +179,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      Datos: Datos
+      Datos: Datos, APIpath:APIpath
     }
   };
 }

@@ -10,7 +10,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
   let x = {};
   const router = useRouter();
   const { detalleCliente } = router.query;
-
+  const APIpath = process.env.API_DOMAIN
   const [dataActualizada, setDataActualizada] = useState({});
   const [datosTablaSeguimiento, setDatosTablaSeguimiento] = useState(
     DatosSeguimiento
@@ -42,7 +42,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
     if (Object.keys(dataActualizada).length === 0) {
       console.log(dataActualizada);
     } else {
-      fetch(`http://localhost:3000/api/cliente/clientes`, {
+      fetch(APIpath+`/api/cliente/clientes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -313,7 +313,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                     IdCliente: detalleCliente
                   };
                   console.log(y);
-                  fetch(`http://localhost:3000/api/cliente/seguimiento`, {
+                  fetch(APIpath+`/api/cliente/seguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -337,7 +337,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                   dataUpdate[index] = newData;
                   setDatosEditables([...dataUpdate]);
 
-                  fetch(`http://localhost:3000/api/cliente/seguimiento`, {
+                  fetch(APIpath+`/api/cliente/seguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -363,7 +363,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                   console.log(dataDelete[index]);
                   console.log(dataDelete[index].IdProductoHotel);
 
-                  fetch(`http://localhost:3000/api/cliente/seguimiento`, {
+                  fetch(APIpath+`/api/cliente/seguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({

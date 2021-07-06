@@ -4,7 +4,7 @@ import BotonAñadir from "@/components/BotonAnadir/BotonAnadir";
 import { withSSRContext } from "aws-amplify";
 import { useEffect, useState } from "react";
 
-export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes }) {
+export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath:APIpath }) {
   // console.log(DatosIngreso)
   const [datoTablaIngreso, setDatoTablaIngreso] = useState();
   const [datoTablaEgreso, setDatoTablaEgreso] = useState();
@@ -82,7 +82,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes }) {
   function PasarSuma() {
     let x = {};
     x = { SumaAdelantoNeto: sumaAdelantoNeto, SumaTotalNeto: sumaTotalDolares };
-    fetch(`http://localhost:3000/api/finanzas/reportesfinanzas`, {
+    fetch(APIpath+`/api/finanzas/reportesfinanzas`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -126,7 +126,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes }) {
           onRowAdd: (newData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                fetch(`http://localhost:3000/api/finanzas/ingresos`, {
+                fetch(APIpath+`/api/finanzas/ingresos`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -167,7 +167,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes }) {
 
                 setDatoTablaIngreso([...dataUpdate]);
 
-                fetch(`http://localhost:3000/api/finanzas/ingresos`, {
+                fetch(APIpath+`/api/finanzas/ingresos`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -200,7 +200,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes }) {
           onRowAdd: (newData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                fetch(`http://localhost:3000/api/finanzas/egresos`, {
+                fetch(APIpath+`/api/finanzas/egresos`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -244,7 +244,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes }) {
 
                 setDatoTablaEgreso([...dataUpdate]);
 
-                fetch(`http://localhost:3000/api/finanzas/egresos`, {
+                fetch(APIpath+`/api/finanzas/egresos`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -272,6 +272,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes }) {
 export async function getServerSideProps({ req, res }) {
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
+  const APIpath = process.env.API_DOMAIN;
 
   let DatosEgreso = [];
   let DatosIngreso = [];
@@ -372,7 +373,8 @@ export async function getServerSideProps({ req, res }) {
     props: {
       DatosIngreso: DatosIngreso,
       DatosEgreso: DatosEgreso,
-      Reportes: Reportes
+      Reportes: Reportes,
+      APIpath:APIpath
     }
   };
 }
