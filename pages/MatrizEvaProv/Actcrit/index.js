@@ -2,7 +2,7 @@ import MaterialTable from "material-table";
 import { MongoClient } from "mongodb";
 import {useEffect, useRef, useState} from 'react'
 
-export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
+export default function AñadirEvaluacion({DatosActividad, DatosCriterio,APIpath}){
 
     const [datosActEditables, setDatosActEditables] = useState(DatosActividad)
     const [datosCritEditables, setDatosCritEditables] = useState(DatosCriterio)
@@ -82,7 +82,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
         dataFetch.push(estructuraFetch)
       })
       
-      fetch(`http://localhost:3000/api/proveedores/actividad`,{
+      fetch(APIpath+`/api/proveedores/actividad`,{
         method:"POST",
         headers:{"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -109,7 +109,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
   //   })
   //   console.log(idFetch)
   //   console.log(dataFetch)
-  //   fetch(`http://localhost:3000/api/proveedores/actividad`,{
+  //   fetch(APIpath+`/api/proveedores/actividad`,{
   //     method:"POST",
   //     headers:{"Content-Type": "application/json"},
   //     body: JSON.stringify({
@@ -133,7 +133,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                 onRowAdd: newData =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        fetch(`http://localhost:3000/api/proveedores/criterio`,{
+                        fetch(APIpath+`/api/proveedores/criterio`,{
                           method:"POST",
                           headers:{"Content-Type": "application/json"},
                           body: JSON.stringify({
@@ -159,7 +159,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
 
                       delete dataUpdate[index]._id
 
-                      fetch(`http://localhost:3000/api/proveedores/criterio`,{
+                      fetch(APIpath+`/api/proveedores/criterio`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
                         body: JSON.stringify({
@@ -185,7 +185,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       // console.log(dataDelete[index])
                       // console.log(dataDelete[index].IdProductoHotel)
 
-                      fetch(`http://localhost:3000/api/proveedores/criterio`,{
+                      fetch(APIpath+`/api/proveedores/criterio`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
                         body: JSON.stringify({
@@ -217,7 +217,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                 onRowAdd: newData =>
                   new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        fetch(`http://localhost:3000/api/proveedores/actividad`,{
+                        fetch(APIpath+`/api/proveedores/actividad`,{
                           method:"POST",
                           headers:{"Content-Type": "application/json"},
                           body: JSON.stringify({
@@ -243,7 +243,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
 
                       // delete dataUpdate[index]._id
 
-                      fetch(`http://localhost:3000/api/proveedores/actividad`,{
+                      fetch(APIpath+`/api/proveedores/actividad`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
                         body: JSON.stringify({
@@ -269,7 +269,7 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio}){
                       // console.log(dataDelete[index])
                       // console.log(dataDelete[index].IdProductoHotel)
 
-                      fetch(`http://localhost:3000/api/proveedores/actividad`,{
+                      fetch(APIpath+`/api/proveedores/actividad`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
                         body: JSON.stringify({
@@ -303,6 +303,7 @@ export async function getStaticProps() {
 
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
+  const APIpath = process.env.API_DOMAIN;
 
   let client = new MongoClient(url, {
     useNewUrlParser: true,
@@ -355,6 +356,8 @@ export async function getStaticProps() {
 
   return {
     props:{
-      DatosActividad: DatosActividad, DatosCriterio:DatosCriterio
+      DatosActividad: DatosActividad, 
+      DatosCriterio:DatosCriterio,
+      APIpath:APIpath
     }}
 }

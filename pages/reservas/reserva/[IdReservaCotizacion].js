@@ -16,7 +16,7 @@ import { Modal } from "@material-ui/core";
 
 resetServerContext();
 
-const ReservaCotizacion = ({ APIPatch }) => {
+const ReservaCotizacion = ({ APIPatch, APIpath }) => {
   const router = useRouter();
   const { IdReservaCotizacion } = router.query;
   // --------------------------------------------------------------------------------------
@@ -402,11 +402,11 @@ const ReservaCotizacion = ({ APIPatch }) => {
           <h3>LLenado de Pasajeros</h3>
           <div>
             <input
-              value={`http://localhost:3000/LlenadoPasajeros/${IdReservaCotizacion}`}
+              value={APIpath+`/LlenadoPasajeros/${IdReservaCotizacion}`}
               disabled
             />
             <Link
-              href={`http://localhost:3000/LlenadoPasajeros/${IdReservaCotizacion}`}
+              href={APIpath+`/LlenadoPasajeros/${IdReservaCotizacion}`}
             >
               <button>
                 <a>Llenar Lista de Pasajeros</a>
@@ -490,10 +490,11 @@ const ReservaCotizacion = ({ APIPatch }) => {
 
 export async function getServerSideProps(context) {
   let APIPatch = process.env.API_DOMAIN;
-
+  const APIpath = process.env.API_DOMAIN;
   return {
     props: {
-      APIPatch: APIPatch
+      APIPatch: APIPatch,
+      APIpath: APIpath
     }
   };
 }
