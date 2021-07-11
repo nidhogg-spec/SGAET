@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-require("dotenv").config();
+
 import { db_connect } from "../../../src/db";
 
 // const url= process.env.MONGODB_URI
