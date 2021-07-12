@@ -1,6 +1,6 @@
 import { remove } from "js-cookie";
 import { MongoClient } from "mongodb";
-require("dotenv").config();
+
 
 const jwtsecret = process.env.SECRET_KEY;
 

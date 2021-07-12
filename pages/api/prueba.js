@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 import {CRUD_log} from "../../src/FuncionalidadInterna/Log/CRUD";
-require("dotenv").config();
+
 
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;

@@ -1,7 +1,7 @@
 import { db_connect } from "../../db";
 import { MongoClient } from "mongodb";
 import { withSSRContext } from "aws-amplify";
-require("dotenv").config();
+
 
 export async function CRUD_log(
   req,
