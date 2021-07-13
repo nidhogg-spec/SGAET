@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-require("dotenv").config();
+
 import pdfMake from "pdfmake";
 import fs from "fs";
 
