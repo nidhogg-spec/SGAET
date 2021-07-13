@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {useRouter} from 'next/router'
+import { withSSRContext } from 'aws-amplify'
 
 import MaterialTable from "material-table";
 import Loader from '@/components/Loading/Loading'
@@ -58,11 +59,18 @@ const Index=({
   )
   
 }
-export async function getStaticProps(){
+export async function getServerSideProps({ req, res }){
   let DataReservas=[]
   
   const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
+  const { Auth } = withSSRContext({ req })
+  try {
+    const user = await Auth.currentAuthenticatedUser()
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
   return({props:{
     APIPath:process.env.API_DOMAIN
   }})

@@ -1,12 +1,12 @@
 import MaterialTable,{ MTableToolbar } from "material-table";
 import Router from 'next/router'
 import BotonAnadir from 'components/BotonAnadir/BotonAnadir'
-
+import { withSSRContext } from 'aws-amplify'
 import { MongoClient } from "mongodb";
 
 import { useEffect, useState } from "react";
 
-export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaAct}){    
+export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaAct, APIpath}){    
     let datosTabla = []
     let arrayEvaluacion = []
     let objetoDatos = {}
@@ -57,7 +57,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
         objetoDatos = {evaperiodo:actividadesActivas, IdProveedor: x.IdProveedor, periodo: datoPeriodo}
         arrayEvaluacion.push(objetoDatos)
       })
-      fetch(`http://localhost:3000/api/proveedores/mep`,{
+      fetch(APIpath+`/api/proveedores/mep`,{
         method:"POST",
         headers:{"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -100,7 +100,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
 
       ArrayPocentajeProvEvaProv.map((x)=>{
         let y = {porcentajeTotal: x.porcentajeTotal, periodoActual:x.periodoActual}
-         fetch(`http://localhost:3000/api/proveedores/listaProveedores`,{
+         fetch(APIpath+`/proveedores/listaProveedores`,{
           method:"POST",
           headers:{"Content-Type": "application/json"},
           body: JSON.stringify({
@@ -249,7 +249,7 @@ export default function Home({datosPeriodo, datosActividad, datosProv, datosEvaA
         </div>
     )
 }
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
 
     let datosPeriodo=[]
     let datosProv = []
@@ -258,6 +258,15 @@ export async function getStaticProps() {
 
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
+    const APIpath = process.env.API_DOMAIN;
+
+    const { Auth } = withSSRContext({ req })
+    try {
+      const user = await Auth.currentAuthenticatedUser()
+    } catch (err) {
+      res.writeHead(302, { Location: '/' })
+      res.end()
+    }
 
     let client = new MongoClient(url, {
       useNewUrlParser: true,
@@ -370,6 +379,10 @@ export async function getStaticProps() {
     }
     return {
       props:{
-        datosPeriodo:datosPeriodo, datosActividad:datosActividad, datosEvaAct:datosEvaAct, datosProv:datosProv
+        datosPeriodo:datosPeriodo, 
+        datosActividad:datosActividad, 
+        datosEvaAct:datosEvaAct, 
+        datosProv:datosProv,
+        APIpath:APIpath
       }}
   }

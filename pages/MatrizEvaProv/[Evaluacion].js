@@ -4,7 +4,7 @@ import { MongoClient } from "mongodb";
 import {useRouter} from 'next/router'
 
 
-export default function Evaluacion({Datos}){
+export default function Evaluacion({Datos, APIpath}){
 
     /* variables en las que se guardan los datos de la url */
     const router = useRouter();
@@ -92,7 +92,7 @@ export default function Evaluacion({Datos}){
 
                       objetoDatosMongo = {evaperiodo:dataUpdate,puntosTotales: suma, porcentajeTotal: porcent }
 
-                      fetch(`http://localhost:3000/api/proveedores/mep`,{
+                      fetch(APIpath+`/api/proveedores/mep`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
                         body: JSON.stringify({
@@ -114,7 +114,7 @@ export default function Evaluacion({Datos}){
                       const dataDelete = [...datosTabla];
                       const index = oldData.tableData.id;
 
-                      fetch(`http://localhost:3000/api/proveedores/mep`,{
+                      fetch(APIpath+`/api/proveedores/mep`,{
                         method:"POST",
                         headers:{"Content-Type": "application/json"},
                         body: JSON.stringify({
@@ -147,6 +147,7 @@ export async function getServerSideProps(context) {
 
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
+    const APIpath = process.env.API_DOMAIN;
 
     let Datos=[]
     
@@ -182,6 +183,7 @@ export async function getServerSideProps(context) {
     }
     return {
       props:{
-        Datos:Datos
+        Datos:Datos,
+        APIpath:APIpath
       }}
   }

@@ -10,6 +10,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
   let x = {};
   const router = useRouter();
   const { detalleCliente } = router.query;
+<<<<<<< HEAD
 
   const [dataActualizada, setDataActualizada] = useState({});
   const [datosTablaSeguimiento, setDatosTablaSeguimiento] = useState(
@@ -58,6 +59,56 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
     }
   }, [dataActualizada]);
 
+=======
+  const APIpath = process.env.API_DOMAIN
+  const [dataActualizada, setDataActualizada] = useState({});
+  const [datosTablaSeguimiento, setDatosTablaSeguimiento] = useState(
+    DatosSeguimiento
+  );
+  const [modoEdicion, setModoEdicion] = useState(false);
+  const [datosPersonales, setDatosPersonales] = useState(false);
+
+  const Columnas = [
+    { title: "ID", field: "IdSeguimiento", hidden: true },
+    { title: "Fecha", field: "Fecha", type: "date" },
+    { title: "Via Contacto", field: "ViaContacto" },
+    { title: "Descripcion", field: "Descripcion" }
+  ];
+  // console.log(Datos)
+  useEffect(() => {
+    if (datosPersonales == true) {
+      // console.log(x)
+      setDataActualizada(x);
+      setDatosPersonales(false);
+    }
+  }, [datosPersonales]);
+
+  useEffect(async () => {
+    // console.log(dataActualizada)
+    // dataActualizada.map(x=>{
+    //     console.log(x)
+    // })
+    // console.log(Object.keys(dataActualizada).length)
+    if (Object.keys(dataActualizada).length === 0) {
+      console.log(dataActualizada);
+    } else {
+      fetch(APIpath+`/api/cliente/clientes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idProducto: detalleCliente,
+          data: dataActualizada,
+          accion: "update"
+        })
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          alert(data.message);
+        });
+    }
+  }, [dataActualizada]);
+
+>>>>>>> deploy
   function setData(key, data) {
     x[key] = data;
   }
@@ -142,6 +193,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
       DarDato: datosPersonales,
       Dato: Datos.Etapavida,
       Reiniciar: false
+<<<<<<< HEAD
     }
   ];
   const showdatosAfiliamiento = [
@@ -204,6 +256,70 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
       Reiniciar: false
     }
   ];
+=======
+    }
+  ];
+  const showdatosAfiliamiento = [
+    {
+      Title: "Tipo de Cliente",
+      ModoEdicion: modoEdicion,
+      Dato: Datos.Tipocliente,
+      DevolverDatoFunct: setData,
+      KeyDato: "TipoCliente",
+      DarDato: datosPersonales,
+      Reiniciar: false
+    },
+    {
+      Title: "Empresa Afiliada",
+      ModoEdicion: modoEdicion,
+      DevolverDatoFunct: setData,
+      KeyDato: "EmpresaAfiliada",
+      DarDato: datosPersonales,
+      Dato: Datos.EmpresaAfiliada,
+      Reiniciar: false
+    }
+  ];
+  const showdatosAlimentacion = [
+    {
+      Title: "Tipo de Regimen Alimenticio",
+      ModoEdicion: modoEdicion,
+      Dato: "",
+      DevolverDatoFunct: setData,
+      KeyDato: "TipRegAlimen",
+      DarDato: datosPersonales,
+      Reiniciar: false
+    },
+    {
+      Title: "Observacion",
+      ModoEdicion: modoEdicion,
+      DevolverDatoFunct: setData,
+      KeyDato: "Observacion",
+      DarDato: datosPersonales,
+      Dato: Datos.Observacion,
+      Reiniciar: false
+    }
+  ];
+  const showdatosMedicos = [
+    {
+      Title: "Alergias",
+      ModoEdicion: modoEdicion,
+      DevolverDatoFunct: setData,
+      KeyDato: "Alergias",
+      DarDato: datosPersonales,
+      Dato: Datos.Alergias,
+      Reiniciar: false
+    },
+    {
+      Title: "Descripcion Alergia",
+      ModoEdicion: modoEdicion,
+      DevolverDatoFunct: setData,
+      KeyDato: "DescripAlergia",
+      DarDato: datosPersonales,
+      Dato: Datos.DescripAlergia,
+      Reiniciar: false
+    }
+  ];
+>>>>>>> deploy
   return (
     <div>
       <div>
@@ -313,7 +429,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                     IdCliente: detalleCliente
                   };
                   console.log(y);
-                  fetch(`http://localhost:3000/api/cliente/seguimiento`, {
+                  fetch(APIpath+`/api/cliente/seguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -337,7 +453,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                   dataUpdate[index] = newData;
                   setDatosEditables([...dataUpdate]);
 
-                  fetch(`http://localhost:3000/api/cliente/seguimiento`, {
+                  fetch(APIpath+`/api/cliente/seguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -363,7 +479,11 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                   console.log(dataDelete[index]);
                   console.log(dataDelete[index].IdProductoHotel);
 
+<<<<<<< HEAD
                   fetch(`http://localhost:3000/api/cliente/seguimiento`, {
+=======
+                  fetch(APIpath+`/api/cliente/seguimiento`, {
+>>>>>>> deploy
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -424,11 +544,19 @@ export async function getServerSideProps(context) {
     let client = new MongoClient(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
+<<<<<<< HEAD
     });
     client = new MongoClient(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
+=======
+    });
+    client = new MongoClient(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+>>>>>>> deploy
     await client.connect();
     const dbo = client.db(dbName);
     const collection = dbo.collection("Cliente");

@@ -1,6 +1,7 @@
 import styles from "./navLateral.module.css";
 import Modulo from "./components/modulo"
-import useSWR from "swr";
+import {useAppContext} from '@/components/Contexto'
+import { Auth } from 'aws-amplify'
 import { useEffect,useState } from "react";
 
 //Font awesome
@@ -89,6 +90,18 @@ import { useEffect,useState } from "react";
     //   ] 
     // },
 export default function NavLateral() {
+
+  const [[Logged,setLogged]]=useAppContext()
+
+  useEffect( async ()=>{
+    await Auth.currentAuthenticatedUser()
+      .then((x)=>{
+        setLogged(true)
+      })
+      .catch(err => {
+        setLogged(false)
+      })      
+  },[Logged])
   // const { data, revalidate } = useSWR("/api/me", async function (args) {
   //   const res = await fetch(args);
   //   return res.json();
@@ -230,13 +243,18 @@ export default function NavLateral() {
   //   })
   //   setDataFiltrada(y) 
   // },[])
-  return (
-    <nav className={styles.NavLateralSquare}>
-      {datos.map((modulosData)=>(
-        <Modulo data={modulosData} key={datos.indexOf(modulosData)}/>
-      ))}      
-    </nav>
-  );
+  if (Logged) {
+    return (
+      <nav className={styles.NavLateralSquare}>
+        {datos.map((modulosData)=>(
+          <Modulo data={modulosData} key={datos.indexOf(modulosData)}/>
+        ))}      
+      </nav>
+    );
+  }else{
+    return null
+  }
+  
 }
 /*
 <div>

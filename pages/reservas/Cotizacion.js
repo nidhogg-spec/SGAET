@@ -1,7 +1,7 @@
 //Paquetes
 import React, { useEffect, useState, useContext, createContext } from "react";
 import { useRouter } from "next/router";
-
+import { withSSRContext } from 'aws-amplify'
 //Componentes
 
 import CampoTexto from "@/components/Formulario_V2/CampoTexto/CampoTexto";
@@ -519,8 +519,15 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
   const APIpath = process.env.API_DOMAIN;
+  const { Auth } = withSSRContext({ req })
+  try {
+    const user = await Auth.currentAuthenticatedUser()
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
   // const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
   return {

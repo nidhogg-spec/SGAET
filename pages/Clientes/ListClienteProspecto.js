@@ -1,6 +1,7 @@
 import MaterialTable from "material-table";
 import { MongoClient } from "mongodb";
 import Router from "next/router";
+import { withSSRContext } from 'aws-amplify'
 import { useEffect, useState, createContext } from "react";
 
 //Componentes
@@ -309,7 +310,7 @@ export default function Home({ Datos, api_general }) {
     </div>
   );
 }
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
   const api_general = process.env.API_DOMAIN + "/api/general";
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
@@ -319,6 +320,14 @@ export async function getStaticProps() {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
+
+  const { Auth } = withSSRContext({ req })
+  try {
+    const user = await Auth.currentAuthenticatedUser()
+  } catch (err) {
+    res.writeHead(302, { Location: '/' })
+    res.end()
+  }
 
   try {
     await client.connect();

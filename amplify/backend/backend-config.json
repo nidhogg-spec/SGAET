@@ -1,1 +1,17 @@
-{}
+{
+  "auth": {
+    "InkaPeruTravel": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "service": "amplifyhosting",
+      "type": "cicd",
+      "lastPushTimeStamp": "2021-03-01T21:27:26.367Z"
+    }
+  }
+}

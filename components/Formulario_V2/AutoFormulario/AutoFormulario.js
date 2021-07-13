@@ -12,6 +12,7 @@ import CampoFecha from "../CampoFecha/CampoFecha";
 import CampoCorreo from "../CampoCorreo/CampoCorreo";
 import TablaSimple from "../TablaSimple/TablaSimple";
 import CampoBoolean from '../CampoBoolean/CampoBoolean'
+import CampoEmail from "../CampoEmail/CampoEmail";
 const AutoFormulario = (
   props = {
     Formulario: {
@@ -25,10 +26,10 @@ const AutoFormulario = (
     },
     ModoEdicion,
     Dato,
-    setDato: () => {},
+    setDato: () => { },
   }
 ) => {
-  const GenerarComponente = (compo,key) => {
+  const GenerarComponente = (compo, key) => {
     switch (compo.tipo) {
       case "texto":
         return (
@@ -38,7 +39,7 @@ const AutoFormulario = (
             setDato={props.setDato}
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
-            key={'AD'+key}
+            key={'AD' + key}
           />
         );
         break;
@@ -50,22 +51,22 @@ const AutoFormulario = (
             setDato={props.setDato}
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
-            key={'AD'+key}
+            key={'AD' + key}
           />
         );
         break;
       case "correo":
-      return (
-        <CampoCorreo
-          Title={compo.Title}
-          ModoEdicion={props.ModoEdicion}
-          setDato={props.setDato}
-          KeyDato={compo.KeyDato}
-          Dato={props.Dato}
-          key={'AD'+key}
-        />
-      );
-      break;
+        return (
+          <CampoCorreo
+            Title={compo.Title}
+            ModoEdicion={props.ModoEdicion}
+            setDato={props.setDato}
+            KeyDato={compo.KeyDato}
+            Dato={props.Dato}
+            key={'AD' + key}
+          />
+        );
+        break;
       case "granTexto":
         return (
           <CampoGranTexto
@@ -74,7 +75,19 @@ const AutoFormulario = (
             setDato={props.setDato}
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
-            key={'AD'+key}
+            key={'AD' + key}
+          />
+        );
+        break;
+      case "CampoEmail":
+        return (
+          <CampoEmail
+            Title={compo.Title}
+            ModoEdicion={props.ModoEdicion}
+            setDato={props.setDato}
+            KeyDato={compo.KeyDato}
+            Dato={props.Dato}
+            key={'AD' + key}
           />
         );
         break;
@@ -87,7 +100,7 @@ const AutoFormulario = (
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
             SelectOptions={compo.SelectOptions}
-            key={'AD'+key}
+            key={'AD' + key}
           />
         );
         break;
@@ -100,7 +113,7 @@ const AutoFormulario = (
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
             InputStep={compo.InputStep}
-            key={'AD'+key}
+            key={'AD' + key}
           />
         );
         break;
@@ -112,7 +125,7 @@ const AutoFormulario = (
             setDato={props.setDato}
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
-            key={'AD'+key}
+            key={'AD' + key}
           />
         );
         break;
@@ -125,11 +138,11 @@ const AutoFormulario = (
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
             columnas={compo.columnas}
-            key={'AD'+key}
+            key={'AD' + key}
           />
         );
         break;
-        case "boolean":
+      case "boolean":
         return (
           <CampoBoolean
             Title={compo.Title}
@@ -137,7 +150,7 @@ const AutoFormulario = (
             setDato={props.setDato}
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
-            key={'AD'+key}
+            key={'AD' + key}
           />
         );
         break;
@@ -149,13 +162,13 @@ const AutoFormulario = (
   return (
     <div className={styles.Modal_content}>
       {/* <h2>{props.Formulario.title}</h2> */}
-      {props.Formulario.secciones.map((seccion,SeccionesIndex) => {
+      {props.Formulario.secciones.map((seccion, SeccionesIndex) => {
         return (
           <div key={'Seccion_' + SeccionesIndex}>
             <h3>{seccion.subTitle}</h3>
             <div>
-              {seccion.componentes.map((componente,index) => {
-                return GenerarComponente(componente,index);
+              {seccion.componentes.map((componente, index) => {
+                return GenerarComponente(componente, index);
               })}
             </div>
           </div>

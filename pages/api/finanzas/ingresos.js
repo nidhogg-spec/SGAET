@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-require("dotenv").config();
+
 
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
@@ -64,6 +64,7 @@ let client = new MongoClient(url, {
               } 
               console.log("Insercion completada");
             });
+            res.status(200).send('Ingresado')
           } catch (error) {
             console.log("error - " + error);
           } 

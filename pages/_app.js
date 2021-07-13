@@ -4,9 +4,7 @@ import NavLateral from "../components/navLateral/NavLateral"
 import {Amplify } from 'aws-amplify'
 import config from 'src/aws-exports'
 import Router from "next/router";
-import App from 'next/app'
-import { withSSRContext } from 'aws-amplify'
-import { useState,useEffect,createContext } from 'react'
+import { useState } from 'react'
 import {AppWrapper} from '@/components/Contexto'
 import AppLoader from '@/components/Loading/Loading'
 

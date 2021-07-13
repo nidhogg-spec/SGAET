@@ -1,15 +1,26 @@
 {
-  "dev": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-sgaet-dev-101245-authRole",
-      "UnauthRoleArn": "arn:aws:iam::752655624004:role/amplify-sgaet-dev-101245-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::752655624004:role/amplify-sgaet-dev-101245-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-sgaet-dev-101245-deployment",
-      "UnauthRoleName": "amplify-sgaet-dev-101245-unauthRole",
-      "StackName": "amplify-sgaet-dev-101245",
-      "StackId": "arn:aws:cloudformation:us-east-1:752655624004:stack/amplify-sgaet-dev-101245/48c77040-6632-11eb-97d6-12936a84a87d",
-      "AmplifyAppId": "d3stavz9rso609"
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-sgaet-dev-155713-authRole",
+            "UnauthRoleArn": "arn:aws:iam::414431727276:role/amplify-sgaet-dev-155713-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::414431727276:role/amplify-sgaet-dev-155713-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-sgaet-dev-155713-deployment",
+            "UnauthRoleName": "amplify-sgaet-dev-155713-unauthRole",
+            "StackName": "amplify-sgaet-dev-155713",
+            "StackId": "arn:aws:cloudformation:us-east-1:414431727276:stack/amplify-sgaet-dev-155713/b56fa070-7ad0-11eb-9e9e-0e9822115cf7",
+            "AmplifyAppId": "d34otlwh3kbppk"
+        },
+        "categories": {
+            "auth": {
+                "InkaPeruTravel": {}
+            },
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d34otlwh3kbppk",
+                    "type": "cicd"
+                }
+            }
+        }
     }
-  }
 }

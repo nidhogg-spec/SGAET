@@ -1,9 +1,10 @@
 import MaterialTable from "material-table";
 import { MongoClient } from "mongodb";
 import  Router  from "next/router";
+import { withSSRContext } from 'aws-amplify'
 import { useState } from "react";
 
-export default function Home({Datos}){
+export default function Home({Datos,APIpath}){
 
 const [datosEditables, setDatosEditables] = useState(Datos);
 
@@ -30,7 +31,7 @@ const [datosEditables, setDatosEditables] = useState(Datos);
                     onRowAdd: newData =>
                       new Promise((resolve, reject) => {
                         setTimeout(() => {
-                            fetch(`http://localhost:3000/api/cliente/clientes`,{
+                            fetch(APIpath+`/api/cliente/clientes`,{
                               method:"POST",
                               headers:{"Content-Type": "application/json"},
                               body: JSON.stringify({
@@ -56,7 +57,7 @@ const [datosEditables, setDatosEditables] = useState(Datos);
                           
                           delete dataUpdate[index]._id
                           
-                          fetch(`http://localhost:3000/api/cliente/clientes`,{
+                          fetch(APIpath+`/api/cliente/clientes`,{
                             method:"POST",
                             headers:{"Content-Type": "application/json"},
                             body: JSON.stringify({
@@ -79,7 +80,7 @@ const [datosEditables, setDatosEditables] = useState(Datos);
                           const dataDelete = [...datosEditables];
                           const index = oldData.tableData.id;
         
-                          fetch(`http://localhost:3000/api/cliente/clientes`,{
+                          fetch(APIpath+`/api/cliente/clientes`,{
                             method:"POST",
                             headers:{"Content-Type": "application/json"},
                             body: JSON.stringify({
@@ -126,16 +127,26 @@ const [datosEditables, setDatosEditables] = useState(Datos);
         </div>
     )
 }
-export async function getStaticProps() {
+export async function getServerSideProps({ req, res }) {
     var Datos = [];
   
     /*---------------------------------------------------------------------------------*/
     const url = process.env.MONGODB_URI;
     const dbName = process.env.MONGODB_DB;
+    const APIpath = process.env.API_DOMAIN;
+
     let client = new MongoClient(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+
+    const { Auth } = withSSRContext({ req })
+    try {
+      const user = await Auth.currentAuthenticatedUser()
+    } catch (err) {
+      res.writeHead(302, { Location: '/' })
+      res.end()
+    }
 
     try {
       console.log("mongo xdxdxdxd");
@@ -155,6 +166,6 @@ export async function getStaticProps() {
 
     return {
       props:{
-        Datos:Datos
+        Datos:Datos, APIpath:APIpath
       }}
   }
