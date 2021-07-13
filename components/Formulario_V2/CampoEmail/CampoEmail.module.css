@@ -20,3 +20,21 @@
     border: 3px solid black;
     background-color: gainsboro;
 }
+
+/* -------------------------------- */
+.divMadre a{
+    margin: 0px 20px;
+    background-color: rgb(240, 240, 240);
+    border-radius: 100%;
+    height: 2rem;
+    width: 2rem;
+    transition: 0.5s;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.divMadre a:hover{
+    background-color: rgb(165, 165, 165);
+}
+

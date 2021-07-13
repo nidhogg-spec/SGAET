@@ -1,0 +1,22 @@
+.divMadre{
+    display: flex;
+    flex-direction: row;
+    padding: 10px 25px 10px 20px;
+}
+
+.divMadre span{
+    width: 300px;
+}
+
+.divMadre select{
+    width: 250px;
+    height: 2rem;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+.divMadre select:focus{
+    border: 3px solid black;
+    background-color: gainsboro;
+}
