@@ -4,11 +4,7 @@ import CampoTexto from "@/components/Formulario/CampoTexto/CampoTexto";
 import CampoGranTexto from "@/components/Formulario/CampoGranTexto/CampoGranTexto";
 import { useRouter } from "next/router";
 
-<<<<<<< HEAD
-export default function Seguimiento({ Datos }) {
-=======
 export default function Seguimiento({ Datos,APIpath }) {
->>>>>>> deploy
   let x = {};
   const router = useRouter();
   const { IdSeguimiento } = router.query;
@@ -29,11 +25,7 @@ export default function Seguimiento({ Datos,APIpath }) {
     if (Object.keys(dataActualizada).length === 0) {
       console.log(dataActualizada);
     } else {
-<<<<<<< HEAD
-      await fetch(`http://localhost:3000/api/cliente/seguimiento`, {
-=======
       await fetch(APIpath+`/api/cliente/seguimiento`, {
->>>>>>> deploy
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -48,19 +40,11 @@ export default function Seguimiento({ Datos,APIpath }) {
         });
     }
   }, [dataActualizada]);
-<<<<<<< HEAD
 
   function setData(key, data) {
     x[key] = data;
   }
 
-=======
-
-  function setData(key, data) {
-    x[key] = data;
-  }
-
->>>>>>> deploy
   const showCampoTexto = [
     {
       Title: "ID",
@@ -169,13 +153,6 @@ export async function getServerSideProps(context) {
   /*---------------------------------------------------------------------------------*/
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
-<<<<<<< HEAD
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-
-=======
   const APIpath = process.env.API_DOMAIN;
 
   let client = new MongoClient(url, {
@@ -183,7 +160,6 @@ export async function getServerSideProps(context) {
     useUnifiedTopology: true
   });
 
->>>>>>> deploy
   try {
     console.log("mongo xdxdxdxd");
     await client.connect();
@@ -203,11 +179,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-<<<<<<< HEAD
-      Datos: Datos
-=======
       Datos: Datos, APIpath:APIpath
->>>>>>> deploy
     }
   };
 }
