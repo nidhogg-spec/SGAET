@@ -270,11 +270,6 @@ export default function TipoProveedor(
     }
   }, [DevolverDato]);
 
-  // useEffect(() => {
-  //   console.log("gsdg");
-  //   console.log(Proveedor);
-  //   console.log(Proveedor);
-  // }, [Proveedor]);
   return (
     <div>
       <h1>{Proveedor.nombre}</h1>
@@ -383,7 +378,7 @@ export default function TipoProveedor(
                   KeyDato: "NumeroPrincipal"
                 },
                 {
-                  tipo: "texto",
+                  tipo: "CampoEmail",
                   Title: "Email principal",
                   KeyDato: "EmailPrincipal"
                 },

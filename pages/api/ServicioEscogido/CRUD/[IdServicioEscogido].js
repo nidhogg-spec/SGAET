@@ -1,7 +1,5 @@
 import { MongoClient } from "mongodb";
 
-
-
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
 
