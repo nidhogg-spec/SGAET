@@ -1,10 +1,11 @@
 //Package
-import styles from "./CampoTexto.module.css";
+import styles from "./CampoWeb.module.css";
 import React from "react";
+import { Language } from "@material-ui/icons";
 
 //Componentes
 
-const CampoTexto = (
+const CampoWeb = (
   props = {
     Title: "Nombre del Proveedor",
     ModoEdicion: true,
@@ -38,9 +39,16 @@ const CampoTexto = (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
         <input value={value} disabled />
+        {value!=null & value!=""?
+          <a href={`${value}`} target="_blank" title="Abrir web en otra pestaña">
+            <Language/>
+          </a> 
+        :null
+        }
+              
       </div>
     );
   }
 };
 
-export default CampoTexto;
+export default CampoWeb;

@@ -17,7 +17,7 @@ const CampoGranTexto = (
   const value = props.Dato[props.KeyDato] || '';
   if (props.ModoEdicion == true) {
     return (
-      <div>
+      <div className={styles.divMadre}>
         <span>{props.Title}</span>
         <textarea
           value={value}

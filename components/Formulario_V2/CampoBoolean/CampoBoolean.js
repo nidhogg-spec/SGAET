@@ -17,7 +17,7 @@ const CampoBoolean = (
   const value = props.Dato[props.KeyDato] || false;
   if (props.ModoEdicion == true) {
     return (
-      <div>
+      <div className={styles.divMadre}>
         <span>{props.Title}</span>
         <input
           checked={value}
