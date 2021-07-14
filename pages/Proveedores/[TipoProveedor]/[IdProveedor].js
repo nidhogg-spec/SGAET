@@ -577,7 +577,7 @@ export default function TipoProveedor(
               {
                 field: "Moneda",
                 title: "Moneda",
-                lookup: { Dolares: "Dolares", Soles: "Soles" }
+                lookup: { Dolar: "Dolar", "Sol": "Sol", Otro:"Otro"  }
               },
               {
                 field: "TipoDocumento",

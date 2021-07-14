@@ -339,7 +339,7 @@ export default function TipoProveedor(props = { APIpath }) {
               {
                 field: "Moneda",
                 title: "Moneda",
-                lookup: { Dolares: "Dolares", Soles: "Soles" }
+                lookup: { Dolar: "Dolar", "Sol": "Sol", Otro:"Otro"  }
               },
               {
                 field: "TipoDocumento",
