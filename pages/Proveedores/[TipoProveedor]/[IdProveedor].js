@@ -273,16 +273,21 @@ export default function TipoProveedor(
   return (
     <div>
       <h1>{Proveedor.nombre}</h1>
-      <button>
-        <img
-          src="/resources/save-black-18dp.svg"
-          onClick={() => {
-            setEdicion(false);
-            setDevolverDato(true);
-          }}
-        />
-      </button>
-      <button>
+      {
+        Edicion?
+        <button title="Guardar">
+          <img
+            src="/resources/save-black-18dp.svg"
+            onClick={() => {
+              setEdicion(false);
+              setDevolverDato(true);
+            }}
+          />
+        </button>
+        :
+        null
+      }      
+      <button title="Habilitar edición de datos">
         <img
           src="/resources/edit-black-18dp.svg"
           onClick={(event) => {
@@ -381,6 +386,11 @@ export default function TipoProveedor(
                   tipo: "CampoEmail",
                   Title: "Email principal",
                   KeyDato: "EmailPrincipal"
+                },
+                {
+                  tipo: "CampoWeb",
+                  Title: "Pagina web",
+                  KeyDato: "PaginaWeb"
                 },
                 {
                   tipo: "selector",
@@ -556,7 +566,18 @@ export default function TipoProveedor(
               { field: "Beneficiario", title: "Beneficiario" },
               {
                 field: "TipoCuenta",
-                title: "Tipo de Cuenta Bancaria"
+                title: "Tipo de Cuenta Bancaria",
+                lookup: { 
+                  "Corriente": "Corriente", 
+                  "De ahorro": "De ahorro",
+                  "Sueldo":"Sueldo",
+                  "Moneda extranjera":"Moneda extranjera"
+                }
+              },
+              {
+                field: "Moneda",
+                title: "Moneda",
+                lookup: { Dolares: "Dolares", Soles: "Soles" }
               },
               {
                 field: "TipoDocumento",

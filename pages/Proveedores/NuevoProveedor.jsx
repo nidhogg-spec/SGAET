@@ -58,8 +58,8 @@ export default function TipoProveedor(props = { APIpath }) {
   return (
     <div>
       <LoadingComp Loading={Loading} />
-      <h1>{Proveedor.nombre}</h1>
-      <button onClick={HandleGuardar}>
+      <h1>Ingreso de nuevo proveedor</h1>
+      <button onClick={HandleGuardar} title="Guardar datos">
         <img src="/resources/save-black-18dp.svg" />
       </button>
 
@@ -145,9 +145,14 @@ export default function TipoProveedor(props = { APIpath }) {
                   KeyDato: "NumeroPrincipal"
                 },
                 {
-                  tipo: "texto",
+                  tipo: "CampoEmail",
                   Title: "Email principal",
                   KeyDato: "EmailPrincipal"
+                },
+                {
+                  tipo: "CampoWeb",
+                  Title: "Pagina web",
+                  KeyDato: "PaginaWeb"
                 },
                 {
                   tipo: "selector",
@@ -323,7 +328,18 @@ export default function TipoProveedor(props = { APIpath }) {
               { field: "Beneficiario", title: "Beneficiario" },
               {
                 field: "TipoCuenta",
-                title: "Tipo de Cuenta Bancaria"
+                title: "Tipo de Cuenta Bancaria",
+                lookup: { 
+                  "Corriente": "Corriente", 
+                  "De ahorro": "De ahorro",
+                  "Sueldo":"Sueldo",
+                  "Moneda extranjera":"Moneda extranjera"
+                }
+              },
+              {
+                field: "Moneda",
+                title: "Moneda",
+                lookup: { Dolares: "Dolares", Soles: "Soles" }
               },
               {
                 field: "TipoDocumento",
