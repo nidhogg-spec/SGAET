@@ -287,15 +287,13 @@ export default function TipoProveedor(
         :
         null
       }      
-      <button title="Habilitar edición de datos">
+      <button title={Edicion?"Cancelar edición":"Habilitar edición de datos"}>
         <img
-          src="/resources/edit-black-18dp.svg"
+          src={Edicion?"/resources/close-black-18dp.svg":"/resources/edit-black-18dp.svg"}
           onClick={(event) => {
             if (Edicion == false) {
-              event.target.src = "/resources/close-black-18dp.svg";
               setEdicion(true);
             } else {
-              event.target.src = "/resources/edit-black-18dp.svg";
               setEdicion(false);
             }
           }}
