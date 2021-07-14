@@ -18,7 +18,7 @@ const CampoEmail = (
   const value = props.Dato[props.KeyDato] || '';
   if (props.ModoEdicion == true) {
     return (
-      <div>
+      <div className={styles.divMadre}>
         <span>{props.Title}</span>
         <input
           value={value}
@@ -40,7 +40,7 @@ const CampoEmail = (
         <span>{props.Title}</span>
         <input value={value} disabled />
         {value!=null & value!=""?
-          <a href={`mailto:${value}`}>
+          <a href={`mailto:${value}`} title="Enviar correo">
             <Send/>
           </a> 
         :null

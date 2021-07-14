@@ -17,7 +17,7 @@ const CampoMoney = (
   const value = props.Dato[props.KeyDato] || 0;
   if (props.ModoEdicion == true) {
     return (
-      <div>
+      <div className={styles.divMadre}>
         <span>{props.Title}</span>
         <input
           value={value}

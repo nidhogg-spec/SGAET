@@ -13,6 +13,7 @@ import CampoCorreo from "../CampoCorreo/CampoCorreo";
 import TablaSimple from "../TablaSimple/TablaSimple";
 import CampoBoolean from '../CampoBoolean/CampoBoolean'
 import CampoEmail from "../CampoEmail/CampoEmail";
+import CampoWeb from "../CampoWeb/CampoWeb";
 const AutoFormulario = (
   props = {
     Formulario: {
@@ -82,6 +83,18 @@ const AutoFormulario = (
       case "CampoEmail":
         return (
           <CampoEmail
+            Title={compo.Title}
+            ModoEdicion={props.ModoEdicion}
+            setDato={props.setDato}
+            KeyDato={compo.KeyDato}
+            Dato={props.Dato}
+            key={'AD' + key}
+          />
+        );
+        break;
+      case "CampoWeb":
+        return (
+          <CampoWeb
             Title={compo.Title}
             ModoEdicion={props.ModoEdicion}
             setDato={props.setDato}

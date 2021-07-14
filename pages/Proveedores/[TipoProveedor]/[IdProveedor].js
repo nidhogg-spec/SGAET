@@ -273,24 +273,27 @@ export default function TipoProveedor(
   return (
     <div>
       <h1>{Proveedor.nombre}</h1>
-      <button>
+      {
+        Edicion?
+        <button title="Guardar">
+          <img
+            src="/resources/save-black-18dp.svg"
+            onClick={() => {
+              setEdicion(false);
+              setDevolverDato(true);
+            }}
+          />
+        </button>
+        :
+        null
+      }      
+      <button title={Edicion?"Cancelar edición":"Habilitar edición de datos"}>
         <img
-          src="/resources/save-black-18dp.svg"
-          onClick={() => {
-            setEdicion(false);
-            setDevolverDato(true);
-          }}
-        />
-      </button>
-      <button>
-        <img
-          src="/resources/edit-black-18dp.svg"
+          src={Edicion?"/resources/close-black-18dp.svg":"/resources/edit-black-18dp.svg"}
           onClick={(event) => {
             if (Edicion == false) {
-              event.target.src = "/resources/close-black-18dp.svg";
               setEdicion(true);
             } else {
-              event.target.src = "/resources/edit-black-18dp.svg";
               setEdicion(false);
             }
           }}
@@ -381,6 +384,11 @@ export default function TipoProveedor(
                   tipo: "CampoEmail",
                   Title: "Email principal",
                   KeyDato: "EmailPrincipal"
+                },
+                {
+                  tipo: "CampoWeb",
+                  Title: "Pagina web",
+                  KeyDato: "PaginaWeb"
                 },
                 {
                   tipo: "selector",
@@ -556,7 +564,18 @@ export default function TipoProveedor(
               { field: "Beneficiario", title: "Beneficiario" },
               {
                 field: "TipoCuenta",
-                title: "Tipo de Cuenta Bancaria"
+                title: "Tipo de Cuenta Bancaria",
+                lookup: { 
+                  "Corriente": "Corriente", 
+                  "De ahorro": "De ahorro",
+                  "Sueldo":"Sueldo",
+                  "Moneda extranjera":"Moneda extranjera"
+                }
+              },
+              {
+                field: "Moneda",
+                title: "Moneda",
+                lookup: { Dolar: "Dolar", "Sol": "Sol", Otro:"Otro"  }
               },
               {
                 field: "TipoDocumento",
