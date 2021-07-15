@@ -27,32 +27,47 @@ export default function TipoProveedor(props = { APIpath }) {
   }, [Proveedor["tipo"]]);
   //Acciones de botones
   const HandleGuardar = async () => {
-    //Validar que tipo es correcto
+    //Validaciones a realizar
     if (Proveedor.nombre == null) {
       alert("Llene el Campo Nombre Comercial");
-    } else {
-      setLoading(true);
-      Proveedor.Contacto = ProveedorContacto;
-      Proveedor.DatosBancarios = ProveedorBanco;
-      if (
-        !confirm(
-          `El tipo de proveedor actual es ${Proveedor["tipo"]}, ¿Es correcto? (Este dato no se podra cambiar despues)`
-        )
-      ) {
-        setLoading(false);
-        return;
-      }
-      let result = await axios.post(
-        props.APIpath + "/api/proveedores/listaProveedores",
-        {
-          accion: "Create",
-          data: Proveedor
-        }
-      );
-      router.push(
-        `/Proveedores/${Proveedor["tipo"]}/${result.data["IdProveedor"]}`
-      );
+      return;
     }
+    if(Proveedor.TipoDocumento==null || Proveedor.TipoDocumento=="") {
+      alert("Seleccione un Tipo de documento");
+      return;
+    }
+      if (Proveedor.TipoDocumento == 'DNI' && (Proveedor.NroDocumento?.length!=8 | Proveedor.NroDocumento!=undefined)) {
+      alert("Ingrese un numero de DNI valido");
+      return;
+    }
+    if (Proveedor.TipoDocumento == 'RUC' && (Proveedor.NroDocumento?.length!=11 | Proveedor.NroDocumento!=undefined)) {
+      alert("Ingrese un numero de RUC valido");
+      console.log(Proveedor.Documento?.length);
+      return;
+    }
+
+    //Una vez que este validado, guardar
+    setLoading(true);
+    Proveedor.Contacto = ProveedorContacto;
+    Proveedor.DatosBancarios = ProveedorBanco;
+    if (
+      !confirm(
+        `El tipo de proveedor actual es ${Proveedor["tipo"]}, ¿Es correcto? (Este dato no se podra cambiar despues)`
+      )
+    ) {
+      setLoading(false);
+      return;
+    }
+    let result = await axios.post(
+      props.APIpath + "/api/proveedores/listaProveedores",
+      {
+        accion: "Create",
+        data: Proveedor
+      }
+    );
+    router.push(
+      `/Proveedores/${Proveedor["tipo"]}/${result.data["IdProveedor"]}`
+    );
   };
 
   return (

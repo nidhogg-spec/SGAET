@@ -279,6 +279,26 @@ export default function TipoProveedor(
           <img
             src="/resources/save-black-18dp.svg"
             onClick={() => {
+              //Validaciones a realizar
+              console.log(Proveedor);
+              if (Proveedor.nombre == null) {
+                alert("Llene el Campo Nombre Comercial");
+                return;
+              }
+              if(Proveedor.TipoDocumento==null || Proveedor.TipoDocumento=="") {
+                alert("Seleccione un Tipo de documento");
+                return;
+              }
+                if (Proveedor.TipoDocumento == 'DNI' && (Proveedor.NroDocumento?.length!=8 | Proveedor.NroDocumento==undefined)) {
+                alert("Ingrese un numero de DNI valido");
+                return;
+              }
+              if (Proveedor.TipoDocumento == 'RUC' && (Proveedor.NroDocumento?.length!=11 | Proveedor.NroDocumento==undefined)) {
+                alert("Ingrese un numero de RUC valido");
+                console.log(Proveedor.Documento?.length);
+                return;
+              }
+
               setEdicion(false);
               setDevolverDato(true);
             }}
