@@ -1,8 +1,17 @@
 .BotonAnadir{
     display: flex;
-    background-color: #78B525;
+    background-color: #5cb85c;
     width: fit-content;
     height: 100%;
+    border: none;
     border-radius: 25px;
-    padding: 5px 10px 5px 10px;
+    padding: 5px 30px 5px 30px;
+    align-items: center;
+}
+
+.BotonAnadir:hover{
+    background-color: #4cae4c;
+}
+.BotonAnadir:active{
+    background-color: #449d44;
 }

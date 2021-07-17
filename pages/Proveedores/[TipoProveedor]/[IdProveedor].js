@@ -271,55 +271,67 @@ export default function TipoProveedor(
   }, [DevolverDato]);
 
   return (
-    <div>
-      <h1>{Proveedor.nombre}</h1>
-      {
-        Edicion?
-        <button title="Guardar">
-          <img
-            src="/resources/save-black-18dp.svg"
-            onClick={() => {
-              //Validaciones a realizar
-              console.log(Proveedor);
-              if (Proveedor.nombre == null) {
-                alert("Llene el Campo Nombre Comercial");
-                return;
-              }
-              if(Proveedor.TipoDocumento==null || Proveedor.TipoDocumento=="") {
-                alert("Seleccione un Tipo de documento");
-                return;
-              }
-                if (Proveedor.TipoDocumento == 'DNI' && (Proveedor.NroDocumento?.length!=8 | Proveedor.NroDocumento==undefined)) {
-                alert("Ingrese un numero de DNI valido");
-                return;
-              }
-              if (Proveedor.TipoDocumento == 'RUC' && (Proveedor.NroDocumento?.length!=11 | Proveedor.NroDocumento==undefined)) {
-                alert("Ingrese un numero de RUC valido");
-                console.log(Proveedor.Documento?.length);
-                return;
-              }
+    <div className={styles.mainContainer}>
+      <div className={styles.titleContainer}>
+        <h1>{Proveedor.nombre}</h1>
+        <div className={styles.buttonsContainer}>
+          {
+            Edicion ?
+              <button
+                title="Guardar"
+                className={`${styles.button} ${styles.buttonGuardar}`}
+                onClick={() => {
+                  //Validaciones a realizar
+                  console.log(Proveedor);
+                  if (Proveedor.nombre == null) {
+                    alert("Llene el Campo Nombre Comercial");
+                    return;
+                  }
+                  if (Proveedor.TipoDocumento == null || Proveedor.TipoDocumento == "") {
+                    alert("Seleccione un Tipo de documento");
+                    return;
+                  }
+                  if (Proveedor.TipoDocumento == 'DNI' && (Proveedor.NroDocumento?.length != 8 | Proveedor.NroDocumento == undefined)) {
+                    alert("Ingrese un numero de DNI valido");
+                    return;
+                  }
+                  if (Proveedor.TipoDocumento == 'RUC' && (Proveedor.NroDocumento?.length != 11 | Proveedor.NroDocumento == undefined)) {
+                    alert("Ingrese un numero de RUC valido");
+                    console.log(Proveedor.Documento?.length);
+                    return;
+                  }
 
-              setEdicion(false);
-              setDevolverDato(true);
+                  setEdicion(false);
+                  setDevolverDato(true);
+                }}
+              >
+                Guardar
+                <img src="/resources/save-black-18dp.svg"/>
+              </button>
+              :
+              null
+          }
+          <button
+            title={Edicion ? "Cancelar edición" : "Habilitar edición de datos"}
+            className={`${styles.button} ${Edicion ? styles.buttonCancelar : styles.buttonGuardar}`}
+            onClick={(event) => {
+              if (Edicion == false) {
+                setEdicion(true);
+              } else {
+                setEdicion(false);
+              }
             }}
-          />
-        </button>
-        :
-        null
-      }      
-      <button title={Edicion?"Cancelar edición":"Habilitar edición de datos"}>
-        <img
-          src={Edicion?"/resources/close-black-18dp.svg":"/resources/edit-black-18dp.svg"}
-          onClick={(event) => {
-            if (Edicion == false) {
-              setEdicion(true);
-            } else {
-              setEdicion(false);
-            }
-          }}
-        />
-      </button>
-      <a href="#ProductoServicio_area">Productos/Servicios</a>
+          >
+            {Edicion ? "Cancelar" : "Editar"}
+            <img
+              src={Edicion ? "/resources/close-black-18dp.svg" : "/resources/edit-black-18dp.svg"}
+            />
+          </button>
+          <a href="#ProductoServicio_area">Productos/Servicios</a>
+        </div>
+      </div>
+
+
       <AutoFormulario
         Formulario={{
           title: "Datos de Proveedor",
@@ -585,17 +597,17 @@ export default function TipoProveedor(
               {
                 field: "TipoCuenta",
                 title: "Tipo de Cuenta Bancaria",
-                lookup: { 
-                  "Corriente": "Corriente", 
+                lookup: {
+                  "Corriente": "Corriente",
                   "De ahorro": "De ahorro",
-                  "Sueldo":"Sueldo",
-                  "Moneda extranjera":"Moneda extranjera"
+                  "Sueldo": "Sueldo",
+                  "Moneda extranjera": "Moneda extranjera"
                 }
               },
               {
                 field: "Moneda",
                 title: "Moneda",
-                lookup: { Dolar: "Dolar", "Sol": "Sol", Otro:"Otro"  }
+                lookup: { Dolar: "Dolar", "Sol": "Sol", Otro: "Otro" }
               },
               {
                 field: "TipoDocumento",
@@ -677,8 +689,8 @@ export default function TipoProveedor(
                       newData[item.field] == undefined ||
                       newData[item.field] == null
                     ) {
-                      alert(item.title+' esta vacio')
-                      reject();                      
+                      alert(item.title + ' esta vacio')
+                      reject();
                       SaveFlag = false;
                       return;
                     }
@@ -706,7 +718,7 @@ export default function TipoProveedor(
                     if (!deepEqual(temp_newData, temp_DataBase)) {
                       await axios
                         .post(
-                          props.APIpath+`/api/proveedores/${provDinamico}`,
+                          props.APIpath + `/api/proveedores/${provDinamico}`,
                           {
                             data: newData,
                             accion: "create"
@@ -770,7 +782,7 @@ export default function TipoProveedor(
                   }
                   await axios
                     .post(
-                      props.APIpath+`/api/proveedores/${provDinamico}`,
+                      props.APIpath + `/api/proveedores/${provDinamico}`,
                       {
                         idProducto: dataUpdate[index][IdKey],
                         data: dataUpdate[index],
@@ -825,7 +837,7 @@ export default function TipoProveedor(
                   console.log(dataDelete[index][IdKey]);
                   await axios
                     .post(
-                      props.APIpath+`/api/proveedores/${provDinamico}`,
+                      props.APIpath + `/api/proveedores/${provDinamico}`,
                       {
                         idProducto: dataDelete[index][IdKey],
                         accion: "delete"

@@ -71,14 +71,18 @@ export default function TipoProveedor(props = { APIpath }) {
   };
 
   return (
-    <div>
+    <div className={styles.mainContainer}>
       <LoadingComp Loading={Loading} />
-      <h1>Ingreso de nuevo proveedor</h1>
-      <button onClick={HandleGuardar} title="Guardar datos">
-        <img src="/resources/save-black-18dp.svg" />
-      </button>
-
-      <a href="#ProductoServicio_area">Productos/Servicios</a>
+      <div className={styles.titleContainer}>
+        <h1>Ingreso de nuevo proveedor</h1>
+        <div className={styles.buttonsContainer}>
+          <button onClick={HandleGuardar} title="Guardar datos" className={`${styles.button} ${styles.buttonGuardar}`}>
+            <span>Guardar</span><img src="/resources/save-black-18dp.svg" />
+          </button>
+          <a href="#ProductoServicio_area">Productos/Servicios</a>
+        </div>
+      </div>
+      
       <AutoFormulario
         Formulario={{
           title: "Datos de Proveedor",

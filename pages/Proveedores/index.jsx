@@ -8,6 +8,11 @@ import { resetServerContext } from "react-beautiful-dnd";
 //Componentes
 import MaterialTable from "material-table";
 import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
+
+//CSS
+import styles from "@/globalStyles/Proveedor.module.css";
+
+
 resetServerContext();
 
 export default function Home({ Datos, APIpath }) {
@@ -19,10 +24,12 @@ export default function Home({ Datos, APIpath }) {
   }
 
   return (
-    <div>
-      <div>
+    <div className={styles.mainContainer}>
+      <div className={styles.titleContainer}>
         <h1 className="Titulo">Lista de Proveedores</h1>
-        <BotonAnadir Accion={HandleAnadir}/>
+        <div>
+          <BotonAnadir Accion={HandleAnadir}/>
+        </div>
       </div>
       <div className="">
         <MaterialTable

@@ -7,10 +7,10 @@ const BotonAnadir = (props={
 //     
 //El desarrollador no se hace responsable de su mal uso :v  
     return ( 
-        <div className={styles.BotonAnadir} onClick={props.Accion}>
+        <button className={styles.BotonAnadir} onClick={props.Accion} title={"Añadir nuevo"}>
             <span>Añadir</span>
             <img src="/resources/add-black-18dp.svg" />
-        </div>
+        </button>
      );
 }
  

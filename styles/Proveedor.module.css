@@ -1,3 +1,53 @@
+.mainContainer{
+    padding: 0px 20px 50px 20px;
+    background-color: white;
+}
+.titleContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 50px;
+    /* height: 5rem;     */
+    
+    
+}
+.titleContainer div{
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}
+.button{
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    height: 100%;
+    border: none;
+    border-radius: 25px;
+    padding: 5px 20px;
+    align-items: center;
+    column-gap: 0.5rem;
+}
+.buttonGuardar{
+    background-color: #5cb85c;    
+}
+.buttonGuardar:hover{
+    background-color: #4cae4c;
+}
+.buttonGuardar:active{
+    background-color: #449d44;
+}
+.buttonCancelar{
+    background: #d9534f;    
+}
+.buttonCancelar:hover{
+    background: #c9302c;
+}
+.buttonCancelar:active{
+    background: #bd2c00;
+}
+
+
 .DataContacto{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -13,3 +63,4 @@
 .ServiciosPersonalizados{
     grid-row: 1/3;
 }
+
