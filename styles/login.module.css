@@ -31,3 +31,26 @@
     border-radius: 15px;
     height:50%;
 }
+
+
+
+/* -------------------------------------------- */
+
+.mainContainer{
+    padding: 0px 20px 50px 20px;
+    background-color: white;
+    width: 100%;
+    height: auto;
+}
+.opcionesAdmin{
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+.opcionesAdmin div{
+    margin-left: 20px;
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+    align-items: center;
+}

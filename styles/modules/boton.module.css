@@ -1,0 +1,60 @@
+.button{
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    height: 100%;
+    border: none;
+    border-radius: 25px;
+    padding: 5px 20px;
+    align-items: center;
+    column-gap: 0.5rem;
+}
+/* ----------------Guardar----------------------- */
+.buttonGuardar{
+    background-color: #5cb85c;    
+}
+.buttonGuardar:hover{
+    background-color: #4cae4c;
+}
+.buttonGuardar:active{
+    background-color: #449d44;
+}
+/* ----------------Cancelar----------------------- */
+.buttonCancelar{
+    background: #d9534f;    
+}
+.buttonCancelar:hover{
+    background: #c9302c;
+}
+.buttonCancelar:active{
+    background: #bd2c00;
+}
+/* ----------------Retroceder----------------------- */
+.BackButton{
+    background: #ffffff;    
+}
+.BackButton:hover{
+    background: #ebebeb;
+}
+.BackButton:active{
+    background: #d8d8d8;
+}
+
+
+/* Enlaces que deben de parecer botones */
+.enlaceBton{
+    margin: 0px 20px;
+    background-color: rgb(240, 240, 240);
+    border-radius: 100%;
+    border: none;
+    height: 2rem;
+    width: 2rem;
+    transition: 0.5s;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.enlaceBton:hover{
+    background-color: rgb(165, 165, 165);
+}

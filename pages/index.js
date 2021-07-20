@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import styles from "../styles/login.module.css";
 import { Auth, API } from "aws-amplify";
 import { useAppContext } from "@/components/Contexto";
 import Notificaciones from "../components/Notificaciones/Notificaciones";
+
+// CSS
+import styles from "../styles/login.module.css";
+import botones from '../styles/modules/boton.module.css'
+
 
 export default function loginPrincipal({ APIpath }) {
   const [userName, setUserName] = useState("");
@@ -48,7 +52,7 @@ export default function loginPrincipal({ APIpath }) {
   //       .catch(err=> setUser(null))
   // } ,[])
   return (
-    <div>
+    <div className={styles.mainContainer}>
       <h1 className={styles.loginHeader}>
         Sistema de Gestion Administrativa de Empresas Turisticas
       </h1>
@@ -192,91 +196,89 @@ const CambioDolar = () => {
   }, []);
 
   return (
-    <div>
-      <span>Opciones de Adminstrador</span>
+    <div className={styles.opcionesAdmin}>
+      <h2>Opciones de Adminstrador</h2>
       <div>
-        <div>
-          <span>Cambio soles a dolares</span>
-          {EstadoEditado ? (
-            <>
-              {Loading ? (
-                <>
-                  <span>Guardando ...</span>
-                </>
-              ) : (
-                <>
-                  <button>
-                    <img
-                      src="/resources/save-black-18dp.svg"
-                      onClick={async () => {
-                        setLoading(true);
-                        await fetch("/api/DataSistema", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            accion: "CambiarCambioDolar",
-                            value: ValueDolartoSol
-                          })
-                        });
-                        setValueDolarSolInit(ValueDolartoSol);
-                        setEstadoEditado(false);
-                        setLoading(false);
-                        // ReiniciarData()
-                      }}
-                    />
-                  </button>
-                  <button>
-                    <img
-                      src="/resources/close-black-18dp.svg"
-                      onClick={(event) => {
-                        setEstadoEditado(false);
-                        setValueDolartoSol(ValueDolarSolInit);
-                      }}
-                    />
-                  </button>
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              {Loading ? (
-                <>
-                  <span> Cargando ...</span>
-                </>
-              ) : (
-                <>
+        <span>Cambio soles a dolares</span>
+        {EstadoEditado ? (
+          <>
+            {Loading ? (
+              <>
+                <span>Guardando ...</span>
+              </>
+            ) : (
+              <>
+                <button className={`${botones.buttonGuardar} ${botones.button}`}>
                   <img
-                    src="/resources/edit-black-18dp.svg"
-                    onClick={(event) => {
-                      setEstadoEditado(true);
+                    src="/resources/save-black-18dp.svg"
+                    onClick={async () => {
+                      setLoading(true);
+                      await fetch("/api/DataSistema", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          accion: "CambiarCambioDolar",
+                          value: ValueDolartoSol
+                        })
+                      });
+                      setValueDolarSolInit(ValueDolartoSol);
+                      setEstadoEditado(false);
+                      setLoading(false);
+                      // ReiniciarData()
                     }}
                   />
-                </>
-              )}
-            </>
-          )}
-        </div>
-        <div>
-          {EstadoEditado ? (
-            <>
-              <span>1 Dolar = </span>
-              <input
-                type="number"
-                value={ValueDolartoSol}
-                onChange={(event) => {
-                  setValueDolartoSol(event.currentTarget.value);
-                }}
-              />
-              <span> Nuevos Soles</span>
-            </>
-          ) : (
-            <>
-              <span>1 Dolar = </span>
-              <input type="number" value={ValueDolartoSol} readOnly={true} />
-              <span> Nuevos Soles</span>
-            </>
-          )}
-        </div>
+                </button>
+                <button className={`${botones.buttonCancelar} ${botones.button}`}>
+                  <img
+                    src="/resources/close-black-18dp.svg"
+                    onClick={(event) => {
+                      setEstadoEditado(false);
+                      setValueDolartoSol(ValueDolarSolInit);
+                    }}
+                  />
+                </button>
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            {Loading ? (
+              <>
+                <span> Cargando ...</span>
+              </>
+            ) : (
+              <button className={botones.enlaceBton}>
+                <img
+                  src="/resources/edit-black-18dp.svg"
+                  onClick={(event) => {
+                    setEstadoEditado(true);
+                  }}
+                />
+              </button>
+            )}
+          </>
+        )}
+      </div>
+      <div>
+        {EstadoEditado ? (
+          <>
+            <span>1 Dolar = </span>
+            <input
+              type="number"
+              value={ValueDolartoSol}
+              onChange={(event) => {
+                setValueDolartoSol(event.currentTarget.value);
+              }}
+            />
+            <span> Nuevos Soles</span>
+          </>
+        ) : (
+          <>
+            <span>1 Dolar = </span>
+            <input type="number" value={ValueDolartoSol} readOnly={true} />
+            <span> Nuevos Soles</span>
+          </>
+        )}
       </div>
     </div>
   );

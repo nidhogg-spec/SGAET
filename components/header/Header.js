@@ -1,9 +1,11 @@
 //componentes
 import styles from "./Header.module.css";
+import botonStyle from "@/globalStyles/modules/boton.module.css"
 
 //modulos
 import { Auth,withSSRContext } from 'aws-amplify'
 
+import { ArrowBack } from "@material-ui/icons";
 import Router,{useRouter} from 'next/router';
 import Link from 'next/link';
 import { useEffect, useState, useContext } from "react";
@@ -58,7 +60,12 @@ export default function Header(){
   return(
       <header className = {styles.HeaderDiv}>
           <img src='/resources/logo.png' className={styles.HeaderLogo} />
-          <span className={styles.HeaderSideName} >{window.location.pathname.split("/")[1]}  </span>
+          <div>
+            <span className={styles.HeaderSideName} >{window.location.pathname.split("/")[1]}  </span>
+            <button onClick={()=>{history.go(-1)}} className={`${botonStyle.BackButton} ${botonStyle.button}`}>
+              <ArrowBack className={styles.HeaderArrowBack} />
+            </button>
+          </div>
           {Logged && (
             <div>
               <p>Bienvenido {data.username}!</p>
