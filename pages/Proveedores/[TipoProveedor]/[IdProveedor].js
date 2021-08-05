@@ -663,6 +663,13 @@ export default function TipoProveedor(
           tableRef={materialTableRef}
           initialFormData={initialFormData}
           actions={[
+            (provDinamico=='agencia' && {
+              icon: "double_arrow",
+              tooltip: "Mas informacion de este Sevicio",
+              onClick: (event, rowData) => {
+                router.push(`/Proveedores/Itinerario/${rowData['IdProductoAgencia']}`);
+              }
+            }),
             {
               icon: "library_add",
               tooltip: "Duplicate User",
@@ -675,7 +682,7 @@ export default function TipoProveedor(
                   showAddRow: true
                 });
               }
-            }
+            },            
           ]}
           //-------------------------------------------------------------------------
 

@@ -9,7 +9,7 @@ const TablaSimple = (
   props = {
     Title: "Nombre del Proveedor",
     ModoEdicion: true,
-    setDato: () => {},
+    setDato: (x) => {},
     Dato: {},
     KeyDato: "nombre",
     Reiniciar: true,
@@ -29,7 +29,7 @@ const TablaSimple = (
       <div>
         <span>{props.Title}</span>
         <MaterialTable
-          title={props.Title}
+          title={props.Title?props.Title:null}
           columns={props.columnas}
           data={value}
           editable={{

@@ -31,7 +31,7 @@ const AutoFormulario = (
   }
 ) => {
   const GenerarComponente = (compo, key) => {
-    switch (compo.tipo) {
+    switch (compo?.tipo) {
       case "texto":
         return (
           <CampoTexto
@@ -167,6 +167,9 @@ const AutoFormulario = (
           />
         );
         break;
+      case null:
+        return <></>;
+        break;
       default:
         return <p>Error al leer el componente</p>;
         break;
@@ -178,12 +181,12 @@ const AutoFormulario = (
       {props.Formulario.secciones.map((seccion, SeccionesIndex) => {
         return (
           <div key={'Seccion_' + SeccionesIndex}>
-            <h3>{seccion.subTitle}</h3>
-            <div>
+            {seccion.subTitle && <h3>{seccion.subTitle}</h3>}
+            <form>
               {seccion.componentes.map((componente, index) => {
                 return GenerarComponente(componente, index);
               })}
-            </div>
+            </form>
           </div>
         );
       })}

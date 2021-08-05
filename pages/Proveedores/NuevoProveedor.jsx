@@ -8,6 +8,24 @@ import { resetServerContext } from "react-beautiful-dnd";
 import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import LoadingComp from "@/components/Loading/Loading";
 resetServerContext();
+
+const TiposProveedores =[
+  { value: "Hotel", texto: "Hotel" },
+  { value: "Agencia", texto: "Agencia" },
+  { value: "Guia", texto: "Guia" },
+  {
+    value: "TransporteTerrestre",
+    texto: "Transporte Terrestre"
+  },
+  { value: "Restaurante", texto: "Restaurante" },
+  { value: "SitioTuristico", texto: "Sitio Turistico" },
+  {
+    value: "TransporteFerroviario",
+    texto: "Transporte Ferroviario"
+  },
+  { value: "Otro", texto: "Otro" }
+];
+
 export default function TipoProveedor(props = { APIpath }) {
   //Variables
   const [Proveedor, setProveedor] = useState({
@@ -17,14 +35,17 @@ export default function TipoProveedor(props = { APIpath }) {
   });
   const [ProveedorContacto, setProveedorContacto] = useState([]);
   const [ProveedorBanco, setProveedorBanco] = useState([]);
-  const [provDinamico, setprovDinamico] = useState("hotel");
+  const [provDinamico, setprovDinamico] = useState("Hotel");
   const [Loading, setLoading] = useState(false);
+
+
   const router = useRouter();
 
-  useEffect(() => {
-    if (Proveedor["tipo"] == undefined) return;
-    setprovDinamico(Proveedor["tipo"].toLowerCase());
-  }, [Proveedor["tipo"]]);
+  // useEffect(() => {
+  //   if (Proveedor["tipo"] == undefined) 
+  //     return;
+  //   setprovDinamico(Proveedor["tipo"].toLowerCase());
+  // }, [Proveedor["tipo"]]);
   //Acciones de botones
   const HandleGuardar = async () => {
     //Validaciones a realizar
@@ -48,6 +69,7 @@ export default function TipoProveedor(props = { APIpath }) {
 
     //Una vez que este validado, guardar
     setLoading(true);
+    Proveedor.tipo= provDinamico;
     Proveedor.Contacto = ProveedorContacto;
     Proveedor.DatosBancarios = ProveedorBanco;
     if (
@@ -82,7 +104,16 @@ export default function TipoProveedor(props = { APIpath }) {
           <a href="#ProductoServicio_area">Productos/Servicios</a>
         </div>
       </div>
-      
+      <label htmlFor="">Tipo de Proveedor</label>
+      <select value={provDinamico} onChange={(newValue)=>{
+          setprovDinamico(newValue.target.value);
+      }}>
+        {TiposProveedores.map((SelectOption) => {
+          return (
+            <option value={SelectOption.value}>{SelectOption.texto}</option>
+          );
+        })}
+      </select>
       <AutoFormulario
         Formulario={{
           title: "Datos de Proveedor",
@@ -90,37 +121,43 @@ export default function TipoProveedor(props = { APIpath }) {
             {
               subTitle: "",
               componentes: [
-                {
-                  tipo: "selector",
-                  Title: "Tipo de Proveedor",
-                  KeyDato: "tipo",
-                  SelectOptions: [
-                    { value: "Hotel", texto: "Hotel" },
-                    { value: "Agencia", texto: "Agencia" },
-                    { value: "Guia", texto: "Guia" },
-                    {
-                      value: "TransporteTerrestre",
-                      texto: "Transporte Terrestre"
-                    },
-                    { value: "Restaurante", texto: "Restaurante" },
-                    { value: "SitioTuristico", texto: "Sitio Turistico" },
-                    {
-                      value: "TransporteFerroviario",
-                      texto: "Transporte Ferroviario"
-                    },
-                    { value: "Otro", texto: "Otro" }
-                  ]
-                },
-                {
+                // {
+                //   tipo: "selector",
+                //   Title: "Tipo de Proveedor",
+                //   KeyDato: "tipo",
+                //   SelectOptions: [
+                //     { value: "Hotel", texto: "Hotel" },
+                //     { value: "Agencia", texto: "Agencia" },
+                //     { value: "Guia", texto: "Guia" },
+                //     {
+                //       value: "TransporteTerrestre",
+                //       texto: "Transporte Terrestre"
+                //     },
+                //     { value: "Restaurante", texto: "Restaurante" },
+                //     { value: "SitioTuristico", texto: "Sitio Turistico" },
+                //     {
+                //       value: "TransporteFerroviario",
+                //       texto: "Transporte Ferroviario"
+                //     },
+                //     { value: "Otro", texto: "Otro" }
+                //   ]
+                // },
+                (provDinamico=="Guia"?{
+                  tipo: "texto",
+                  Title: "Nombre del guia",
+                  KeyDato: "NombreGuia"
+                }:{
                   tipo: "texto",
                   Title: "Razon Social",
                   KeyDato: "RazonSocial"
-                },
-                {
+                }),
+                (provDinamico!="Guia"?{
                   tipo: "texto",
                   Title: "Nombre Comercial",
                   KeyDato: "nombre"
-                },
+                }:{
+                  tipo: null                  
+                }),
                 {
                   tipo: "selector",
                   Title: "Tipo de Documento",
