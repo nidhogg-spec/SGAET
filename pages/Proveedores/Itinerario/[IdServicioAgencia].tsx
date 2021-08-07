@@ -10,31 +10,37 @@ import { resetServerContext } from "react-beautiful-dnd";
 import TablaSimple from "@/components/Formulario_V2/TablaSimple/TablaSimple";
 import formStyle from "@/globalStyles/modules/input.module.css";
 import botonStyle from "@/globalStyles/modules/boton.module.css";
+import { getOneData } from "@/utils/API/conexionMongo";
 
 resetServerContext();
 
 export interface ItinerarioProps {
-    IdProveedor: string
+    IdServicioAgencia: string,
+    itinerario: IItinerario_Data,
+    error?:boolean
 }
 interface IItinerario_Data {
-    Resumen: String;
-    Itinerario: Array<object>;
-    Incluye: Array<object>;
-    NoIncluye: Array<object>;
+    resumen: string;
+    itinerario: Array<object>;
+    incluye: Array<object>;
+    noIncluye: Array<object>;
 }
 const Itinerario = (props: ItinerarioProps) => {
     //Estados
-    const [Estado_Editando, setEstado_Editando] = useState(true);
+    const [Estado_Editando, setEstado_Editando] = useState(false);
     const [Loading, setLoading] = useState(false);
     const router = useRouter();
     const { IdProveedor } = router.query;
     //-----------------------------------------------------
+    if(props.error)
+        router.back();
+    //-----------------------------------------------------
     const formik = useFormik({
         initialValues: {
-            Incluye: [],
-            Itinerario: [],
-            NoIncluye: [],
-            Resumen: ""
+            Incluye: props.itinerario.incluye,
+            Itinerario: props.itinerario.itinerario,
+            NoIncluye: props.itinerario.noIncluye,
+            Resumen: props.itinerario.resumen
         },
         onSubmit: async values => {
             // console.log(JSON.stringify(values, null));
@@ -219,19 +225,106 @@ const Itinerario = (props: ItinerarioProps) => {
                 <button type="submit" className={`${botonStyle.button} ${botonStyle.buttonGuardar}`} style={{ margin: '20px 0px', justifySelf: 'right' }}>Guardar</button>
             </form>
         ) : (
-            <div>
-
+            <div className={formStyle.form__container__1}>
+                <div className={formStyle.form__tittle_container}>
+                    <h1>Itinerario</h1>
+                    <div className={formStyle.form__button_container}>
+                        <button className={`${botonStyle.button} ${botonStyle.buttonCancelar}`}>Editar</button>
+                    </div>
+                </div>
+                <h2>Resumen</h2>
+                <p>{formik.values.Resumen}</p>
+                <h2>Itinerario</h2>
+                {/* <table>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Actividad</th>
+                    </tr>
+                    <tr>
+                        <table>
+                            <tr><th>Dia 1</th></tr>
+                            <tr>
+                                <td>08:00 - 11:00</td>
+                                <td>Desayuno</td>
+                            </tr>
+                        </table>
+                    </tr>
+                </table> */}
+                <MaterialTable
+                    data={formik.values.Itinerario}
+                    columns={[
+                        //@ts-ignore
+                        { title: 'Dia', field: 'Dia', type: 'numeric',defaultGroupOrder:0 },
+                        //@ts-ignore
+                        { title: 'Hora', field: 'Hora' },
+                        //@ts-ignore
+                        { title: 'Actividad', field: 'Actividad' },
+                    ]}
+                    options={{
+                        actionsColumnIndex: -1,
+                        showTitle: false,
+                        // grouping:true
+                    }}
+                />
+                <h2>Incluye</h2>
+                <MaterialTable
+                    data={formik.values.Incluye}
+                    columns={[
+                        //@ts-ignore
+                        { title: 'Item', field: 'Item' },
+                    ]}
+                    options={{
+                        actionsColumnIndex: -1,
+                        showTitle: false,
+                    }}
+                />
+                <h2>No incluye</h2>
+                <MaterialTable
+                    data={formik.values.NoIncluye}
+                    columns={[
+                        //@ts-ignore
+                        { title: 'Item', field: 'Item' },
+                    ]}
+                    options={{
+                        actionsColumnIndex: -1,
+                        showTitle: false,
+                    }}
+                />
             </div>
         )
     );
 }
 
 export async function getServerSideProps<GetServerSideProps>(context: GetServerSidePropsContext) {
-    return {
-        props: {
-            IdProveedor: context.params?.IdIdProveedor
+    const IdProductoAgencia = context.params?.IdServicioAgencia;
+    let data_ProductoAgencia = await getOneData("ProductoAgencias",{"IdProductoAgencia":IdProductoAgencia})
+    let itinerario = {}
+    if (data_ProductoAgencia) {      
+        if(data_ProductoAgencia.itinerario){
+            itinerario=data_ProductoAgencia.itinerario
+        }else{
+            itinerario={"data":{
+                resumen: "",
+                itinerario: [],
+                incluye: [],
+                noIncluye: [],
+            }};
         }
-    };
+        return {
+            props: {
+                IdServicioAgencia: IdProductoAgencia,
+                itinerario:itinerario
+            }
+        };   
+    }else{
+        return {
+            props: {
+                IdServicioAgencia:"",
+                itinerario:{},
+                error:true
+            }
+        };
+    }
 }
 
 

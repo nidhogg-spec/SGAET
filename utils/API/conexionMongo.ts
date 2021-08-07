@@ -1,4 +1,4 @@
-import { MongoClient, Db, MongoCallback } from "mongodb";
+import { MongoClient, Db, MongoCallback, ObjectId } from "mongodb";
 
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
@@ -37,20 +37,11 @@ async function getAllData(collectionName: string) {
     })
 }
 
-// async function getOneData(collectionName, id) {
-//     return await connectToMongoAtlas().then((anyDb) => {
-//         let ObjectIdWantFind;
-//         try {
-//             ObjectIdWantFind = new ObjectId(id);
-//         } catch (error) {
-//             console.error("Id given can't be transformed in an objectId");
-//             return ({
-//                 error: 'Error ID'
-//             });
-//         }
-//         return anyDb?.collection(collectionName).findOne({ _id: ObjectIdWantFind })
-//     })
-// }
+async function getOneData(collectionName:string, filter:Object) {
+    return await connectToMongoAtlas().then((anyDb) => {
+        return anyDb?.collection(collectionName).findOne(filter)
+    })
+}
 
 async function getLastAdded(collectionName: string, filter?: object) {
     // filtro={ tipo: tipoProveedor }
@@ -121,5 +112,7 @@ export {
     getAllData,
     createDocument,
     updateDocument,
-    deleteDocument
+    deleteDocument,
+    getOneData,
+    connectToMongoAtlas
 }
