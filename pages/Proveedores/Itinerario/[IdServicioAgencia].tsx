@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext } from "next";
 import { useFormik } from "formik";
 import MaterialTable from "material-table";
 import axios from "axios";
@@ -20,47 +20,63 @@ export interface ItinerarioProps {
     error?:boolean
 }
 interface IItinerario_Data {
-    resumen: string;
-    itinerario: Array<object>;
-    incluye: Array<object>;
-    noIncluye: Array<object>;
+    Resumen: string;
+    Itinerario: Array<object>;
+    Incluye: Array<object>;
+    NoIncluye: Array<object>;
 }
 const Itinerario = (props: ItinerarioProps) => {
     //Estados
     const [Estado_Editando, setEstado_Editando] = useState(false);
     const [Loading, setLoading] = useState(false);
     const router = useRouter();
-    const { IdProveedor } = router.query;
     //-----------------------------------------------------
     if(props.error)
         router.back();
     //-----------------------------------------------------
     const formik = useFormik({
         initialValues: {
-            Incluye: props.itinerario.incluye,
-            Itinerario: props.itinerario.itinerario,
-            NoIncluye: props.itinerario.noIncluye,
-            Resumen: props.itinerario.resumen
+            Incluye: props.itinerario.Incluye,
+            Itinerario: props.itinerario.Itinerario,
+            NoIncluye: props.itinerario.NoIncluye,
+            Resumen: props.itinerario.Resumen
         },
         onSubmit: async values => {
             // console.log(JSON.stringify(values, null));
             setLoading(true);
             console.log(values);
-            let result = await axios.post(
-                "/api/proveedores/Itinerario",
+            let result = await axios.put(
+                `/api/proveedores/itinerario/${props.IdServicioAgencia}`,
                 {
-                    accion: "Update",
-                    data: values
+                    itinerario: values
                 }
             );
-            if (result.data.ok) {
-                router.back();
+            console.log(result);
+            if (result.statusText === "OK") {
+                router.reload();
             } else {
                 alert(`Ocurrio un error: ${result.status}`)
                 setLoading(false);
             }
         },
     });
+
+    //-------------Funciones-------------------------------
+    const handleEditar = () =>{
+        setLoading(true);
+        setTimeout(() => {
+            setEstado_Editando(true);
+            setLoading(false);
+        }, 1000);
+    }
+    const handleCancelar = () =>{
+        setLoading(true);
+        setTimeout(() => {
+            setEstado_Editando(false);
+            setLoading(false);
+        }, 1000);
+    }
+
     return (
         Estado_Editando ? (
             <form onSubmit={formik.handleSubmit} className={formStyle.form__container__1}>
@@ -68,7 +84,7 @@ const Itinerario = (props: ItinerarioProps) => {
                     <h1>Itinerario</h1>
                     <div className={formStyle.form__button_container}>
                         <button type="submit" className={`${botonStyle.button} ${botonStyle.buttonGuardar}`}>Guardar</button>
-                        <button className={`${botonStyle.button} ${botonStyle.buttonCancelar}`}>Cancelar</button>
+                        <button className={`${botonStyle.button} ${botonStyle.buttonCancelar}`} onClick={handleCancelar}>Cancelar</button>
                     </div>
                 </div>
 
@@ -147,7 +163,7 @@ const Itinerario = (props: ItinerarioProps) => {
                         onRowAdd: (newData) =>
                             new Promise<void>((resolve, reject) => {
                                 setTimeout(() => {
-                                    formik.setFieldValue('Incluye', formik.values.Incluye.concat(newData));
+                                    formik.setFieldValue('Incluye', formik.values.Incluye.concat([newData]));
                                     // setData([...Data, newData]);
                                     resolve();
                                 }, 1000);
@@ -192,7 +208,7 @@ const Itinerario = (props: ItinerarioProps) => {
                         onRowAdd: (newData) =>
                             new Promise<void>((resolve, reject) => {
                                 setTimeout(() => {
-                                    formik.setFieldValue('NoIncluye', formik.values.NoIncluye.concat(newData));
+                                    formik.setFieldValue('NoIncluye', formik.values.NoIncluye.concat([newData]));
                                     // setData([...Data, newData]);
                                     resolve();
                                 }, 1000);
@@ -229,39 +245,24 @@ const Itinerario = (props: ItinerarioProps) => {
                 <div className={formStyle.form__tittle_container}>
                     <h1>Itinerario</h1>
                     <div className={formStyle.form__button_container}>
-                        <button className={`${botonStyle.button} ${botonStyle.buttonCancelar}`}>Editar</button>
+                        <button className={`${botonStyle.button} ${botonStyle.buttonGuardar}`} onClick={handleEditar}>Editar</button>
                     </div>
                 </div>
                 <h2>Resumen</h2>
                 <p>{formik.values.Resumen}</p>
                 <h2>Itinerario</h2>
-                {/* <table>
-                    <tr>
-                        <th>Hora</th>
-                        <th>Actividad</th>
-                    </tr>
-                    <tr>
-                        <table>
-                            <tr><th>Dia 1</th></tr>
-                            <tr>
-                                <td>08:00 - 11:00</td>
-                                <td>Desayuno</td>
-                            </tr>
-                        </table>
-                    </tr>
-                </table> */}
                 <MaterialTable
                     data={formik.values.Itinerario}
                     columns={[
                         //@ts-ignore
-                        { title: 'Dia', field: 'Dia', type: 'numeric',defaultGroupOrder:0 },
+                        { title: 'Dia', field: 'Dia',type:'numeric', defaultGroupOrder:0, cellStyle:{textAlign: 'left',} },
                         //@ts-ignore
-                        { title: 'Hora', field: 'Hora' },
+                        { title: 'Hora', field: 'Hora', cellStyle:{width:'20%'}},
                         //@ts-ignore
                         { title: 'Actividad', field: 'Actividad' },
                     ]}
                     options={{
-                        actionsColumnIndex: -1,
+                        // actionsColumnIndex: -1,
                         showTitle: false,
                         // grouping:true
                     }}
@@ -302,13 +303,19 @@ export async function getServerSideProps<GetServerSideProps>(context: GetServerS
     if (data_ProductoAgencia) {      
         if(data_ProductoAgencia.itinerario){
             itinerario=data_ProductoAgencia.itinerario
+            itinerario={
+                Resumen: data_ProductoAgencia.itinerario.Resumen?data_ProductoAgencia.itinerario.Resumen:"",
+                Itinerario: data_ProductoAgencia.itinerario.Itinerario?data_ProductoAgencia.itinerario.Itinerario:[],
+                Incluye: data_ProductoAgencia.itinerario.Incluye?data_ProductoAgencia.itinerario.Incluye:[],
+                NoIncluye: data_ProductoAgencia.itinerario.NoIncluye?data_ProductoAgencia.itinerario.NoIncluye:[],
+            };
         }else{
-            itinerario={"data":{
-                resumen: "",
-                itinerario: [],
-                incluye: [],
-                noIncluye: [],
-            }};
+            itinerario={
+                Resumen: "",
+                Itinerario: [],
+                Incluye: [],
+                NoIncluye: [],
+            };
         }
         return {
             props: {
@@ -317,6 +324,7 @@ export async function getServerSideProps<GetServerSideProps>(context: GetServerS
             }
         };   
     }else{
+               
         return {
             props: {
                 IdServicioAgencia:"",
