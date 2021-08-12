@@ -1,0 +1,24 @@
+.formulario__idioma__containar{
+    display: flex;
+    flex-direction: row;
+    padding: 10px 25px 10px 20px;
+    flex-wrap: wrap;
+}
+
+.formulario__idioma__containar span{
+    width: 300px;
+}
+
+.formulario__idioma__containar input{
+    height: 1.5rem;
+    width: 1.5rem;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.formulario__idioma__checkboxContainer{
+    display: flex;
+    margin-right: 10px;
+    align-items: center;
+}

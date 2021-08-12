@@ -190,6 +190,13 @@ export default function TipoProveedor(props = { APIpath }) {
                     { value: "Dolar", texto: "Dolares" }
                   ]
                 },
+                (provDinamico=="Guia"?{
+                  tipo: "CampoIdiomas",
+                  Title: "Idiomas",
+                  KeyDato: "Idiomas"
+                }:{
+                  tipo: null                  
+                }),
                 {
                   tipo: "texto",
                   Title: "Enlace al Documento",

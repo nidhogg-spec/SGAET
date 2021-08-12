@@ -402,6 +402,13 @@ export default function TipoProveedor(
                     { value: "Dolar", texto: "Dolares" }
                   ]
                 },
+                (provDinamico=="guia"?{
+                  tipo: "CampoIdiomas",
+                  Title: "Idiomas",
+                  KeyDato: "Idiomas"
+                }:{
+                  tipo: null                  
+                }),
                 {
                   tipo: "texto",
                   Title: "Enlace al Documento",

@@ -14,6 +14,7 @@ import TablaSimple from "../TablaSimple/TablaSimple";
 import CampoBoolean from '../CampoBoolean/CampoBoolean'
 import CampoEmail from "../CampoEmail/CampoEmail";
 import CampoWeb from "../CampoWeb/CampoWeb";
+import CampoIdiomas from "../CampoIdiomas/CampoIdiomas";
 const AutoFormulario = (
   props = {
     Formulario: {
@@ -158,6 +159,18 @@ const AutoFormulario = (
       case "boolean":
         return (
           <CampoBoolean
+            Title={compo.Title}
+            ModoEdicion={props.ModoEdicion}
+            setDato={props.setDato}
+            KeyDato={compo.KeyDato}
+            Dato={props.Dato}
+            key={'AD' + key}
+          />
+        );
+        break;
+      case "CampoIdiomas":
+        return (
+          <CampoIdiomas
             Title={compo.Title}
             ModoEdicion={props.ModoEdicion}
             setDato={props.setDato}
