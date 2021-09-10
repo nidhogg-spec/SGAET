@@ -1,0 +1,5 @@
+:root {
+    --basic--background-color: hsl(201, 68%, 60%);
+    --hover--a-color: hsl(201, 68%, 50%);
+    --active--a-color: hsl(201, 68%, 40%);
+}

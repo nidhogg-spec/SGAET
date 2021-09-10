@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import '../styles/global_var.css'
 import Header from "../components/header/Header"
 import NavLateral from "../components/navLateral/NavLateral"
 import {Amplify } from 'aws-amplify'

@@ -59,7 +59,7 @@ export default function Header(){
   
   return(
       <header className = {styles.HeaderDiv}>
-          <img src='/resources/logo.png' className={styles.HeaderLogo} />
+          <img src='/resources/logo.png' className={styles.HeaderLogo} onClick={()=>{router.push('/')}} />
           <div>
             <span className={styles.HeaderSideName} >{window.location.pathname.split("/")[1]}  </span>
             <button onClick={()=>{history.go(-1)}} className={`${botonStyle.BackButton} ${botonStyle.button}`}>

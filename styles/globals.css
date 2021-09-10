@@ -16,7 +16,13 @@ a {
   box-sizing: border-box;
 }
  .MainContainer{
+  position: fixed;
   transition: margin-left .5s;
+  width: 85%;
+  height: 90%;
+  top: 10%;
+  left: 15%;
   padding: 20px;
-  margin: 100px 0 0 15%;
+  overflow-x: hidden;
+  /* margin: 10% 0 0 15%; */
  }
