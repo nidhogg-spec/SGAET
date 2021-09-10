@@ -9,7 +9,7 @@ class MyDocument extends Document {
     return (
       <Html>
          <Head>
-            <link rel="icon" href="/favicon.ico" />
+            <link rel="icon" href="/resources/mini_logo.png" />
             <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
         </Head>
         <body>          
