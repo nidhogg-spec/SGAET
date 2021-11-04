@@ -13,6 +13,7 @@ import CampoCorreo from "../CampoCorreo/CampoCorreo";
 import TablaSimple from "../TablaSimple/TablaSimple";
 import CampoBoolean from '../CampoBoolean/CampoBoolean'
 import CampoEmail from "../CampoEmail/CampoEmail";
+import FileUpload from "../FileUpload/FileUpload";
 const AutoFormulario = (
   props = {
     Formulario: {
@@ -64,6 +65,13 @@ const AutoFormulario = (
             KeyDato={compo.KeyDato}
             Dato={props.Dato}
             key={'AD' + key}
+          />
+        );
+        break;
+      case "files":
+        return (
+          <FileUpload
+           Title={compo.Title}
           />
         );
         break;

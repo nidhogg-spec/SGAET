@@ -368,9 +368,8 @@ export default function TipoProveedor(
                   ]
                 },
                 {
-                  tipo: "texto",
-                  Title: "Enlace al Documento",
-                  KeyDato: "EnlaceDocumento"
+                  tipo: "files",
+                  Title: "Enlace Documento",
                 },
                 {
                   tipo: "texto",
@@ -438,6 +437,7 @@ export default function TipoProveedor(
         ModoEdicion={Edicion}
         key={"AutoFormulario001"}
       />
+      <input type="text"></input>
       <div className={styles.divDatosPrincipal}>
         <div className={styles.Proveedor}>
           <h2>Otros Datos</h2>
