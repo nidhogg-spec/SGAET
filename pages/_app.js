@@ -6,6 +6,7 @@ import {Amplify } from 'aws-amplify'
 import config from 'src/aws-exports'
 import Router from "next/router";
 import { useState } from 'react'
+import Head from 'next/head'
 import {AppWrapper} from '@/components/Contexto'
 import AppLoader from '@/components/Loading/Loading'
 
@@ -31,6 +32,9 @@ function MyApp({ Component, pageProps }) {
     add the footer under the component and will work like the footer don't delete the <> </> cause throws and error
     */
     <>
+      <Head>
+        <title>Sistema SGAET</title>
+      </Head>
       <AppWrapper>
         <AppLoader
           Loading={AppLoading}
