@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import styles from "./Notificaciones.module.css";
 
 export default function Notificaciones(
   props = {
@@ -124,12 +125,13 @@ export default function Notificaciones(
   //   console.log(ReservasProximas)
 
   return (
-    <div>
+    <div className={styles.mainContainer}>
       <img
         src="/resources/Bell.svg"
         width="25px"
         height="25px"
         onClick={handleClick}
+        className={styles.bell_bell_icon}
       ></img>
       {show && (
         <div>

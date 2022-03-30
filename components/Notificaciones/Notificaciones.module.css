@@ -1,0 +1,8 @@
+.mainContainer{
+    display: flex;
+    flex-direction: column;
+}
+.bell_icon{
+    justify-self: flex-end;
+    right: 0;
+}

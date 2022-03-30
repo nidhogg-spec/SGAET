@@ -4,8 +4,8 @@ import { useAppContext } from "@/components/Contexto";
 import Notificaciones from "../components/Notificaciones/Notificaciones";
 
 // CSS
-import styles from "../styles/login.module.css";
-import botones from '../styles/modules/boton.module.css'
+import styles from "@/globalStyles/login.module.css";
+import botones from '@/globalStyles/modules/boton.module.css'
 
 
 export default function loginPrincipal({ APIpath }) {
@@ -52,16 +52,19 @@ export default function loginPrincipal({ APIpath }) {
   //       .catch(err=> setUser(null))
   // } ,[])
   return (
-    <div className={styles.mainContainer}>
+    <div className={`${styles.mainContainer}`}>
       <h1 className={styles.loginHeader}>
         Sistema de Gestion Administrativa de Empresas Turisticas
       </h1>
 
       {loged && (
         <>
-          <Notificaciones APIpath={APIpath} />
+          <div className={styles.notification__container}>
+            <Notificaciones APIpath={APIpath} />
+          </div>
           <CambioDolar />
           <button
+            className={`${botones.button} ${styles.button__logs}`}
             onClick={async (event) => {
               await fetch(APIpath + "/api/Log/getPdfLog")
                 .then((response) => {
@@ -131,7 +134,8 @@ export default function loginPrincipal({ APIpath }) {
               </div>
             )}
             <input
-              className={styles.formularioLogin_button}
+              className={`${botones.button} ${botones.button_primary}`}
+              // className={styles.formularioLogin_button}
               type="submit"
               value="Login"
             />
