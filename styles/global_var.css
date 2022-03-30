@@ -3,5 +3,24 @@
     --hover--a-color: hsl(201, 68%, 50%);
     --active--a-color: hsl(201, 68%, 40%);
 
-    
+    /* Modo Dia */
+    --main--text-color: hsl(0, 0%, 0%);
+    --main--background-color: hsl(0, 0%, 97%);
+    --navLateral--background-color: hsl(202, 61%, 50%);
+    --navLateral--text-color: hsl(0, 0%, 0%);
+    --navLateral--active-text-color: hsl(0, 0%, 100%);
+    --navLateral--active-background-color: hsl(201, 68%, 40%);
+    --navLateral--hover-text-color: hsl(0, 0%, 100%);
+    --navLateral--hover-background-color: hsl(201, 68%, 50%);
+
+
+    /* Modo Noche */
+    /* --main--text-color: hsl(0, 0%, 0%);
+    --main--background-color: hsl(209, 61%, 16%);
+    --navLateral--background-color: hsl(209, 55%, 25%);
+    --navLateral--text-color: hsl(0, 0%, 100%);
+    --navLateral--active-text-color: hsl(0, 0%, 100%);
+    --navLateral--active-background-color: hsl(209, 40%, 30%);
+    --navLateral--hover-text-color: hsl(0, 0%, 100%);
+    --navLateral--hover-background-color: hsl(209, 40%, 30%); */
 }

@@ -7,6 +7,7 @@ import Loader from '@/components/Loading/Loading'
 
 //CSS
 import global_style from '@/globalStyles/modules/global.module.css'
+import styles from "@/globalStyles/Biblia.module.css";
 
 const Index = ({
     APIPath
@@ -14,6 +15,7 @@ const Index = ({
     const router = useRouter()
     const [Loading, setLoading] = useState(false);
     const [DataCotizacion, setDataCotizacion] = useState([]);
+    const [BibliaData_pasajeros, setBibliaData_pasajeros] = useState([]);
 
     useEffect(async () => {
         setLoading(true)
@@ -34,14 +36,17 @@ const Index = ({
                 <br />
                 <h2>Lista de Reservas activas</h2>
                 <MaterialTable
-
                     columns={
                         [{ title: "Id", field: "IdReservaCotizacion" },
-                        { title: "NombreGrupo", field: "NombreGrupo" },
-                        { title: "CodGrupo", field: "CodGrupo" },
+                        { title: "Nombre de Grupo", field: "NombreGrupo" },
+                        { title: "Codigo de Grupo", field: "CodGrupo" },
                         {
-                            title: "FechaIN",
+                            title: "Fecha IN",
                             field: "FechaIN",
+                        },
+                        {
+                            title: "Fecha OUT",
+                            field: "FechaOUT",
                         }]}
                     data={DataCotizacion}
                     title={null}
@@ -51,19 +56,126 @@ const Index = ({
                                 icon: () => {
                                     return <img src="/resources/remove_red_eye-24px.svg" />;
                                 },
-                                tooltip: "Mostrar reserva",
+                                tooltip: "Ver mas datos",
                                 onClick: (event, rowData) => {
-                                    router.push(`/reservas/reserva/${rowData.IdReservaCotizacion}`)
+                                    setBibliaData_pasajeros([
+
+                                    ])
+                                    document.getElementById("Extra_info").scrollIntoView({ behavior: 'smooth' });
                                 },
                             },
                         ]}
                     options={{
                         actionsColumnIndex: -1,
-                    }
-                    }
+                    }}
                 />
-            </div>
 
+
+
+            </div>
+            <section id='Extra_info' ></section>
+            <div className={global_style.main_work_space_container} >
+                <h1>Datos de Reserva</h1>
+                <br />
+                <h2>Lista de clientes</h2>
+                <MaterialTable
+                    columns={
+                        [{ title: "Id", field: "" },
+                        { title: "Nombres", field: "" },
+                        { title: "Apellidos", field: "" },
+                        {
+                            title: "Edad",
+                            field: "",
+                        }, {
+                            title: "Numero de Pasajeros",
+                            field: "",
+                        }, {
+                            title: "Nacionalidad",
+                            field: "",
+                        }, {
+                            title: "Fecha de NAcimiento",
+                            field: "",
+                        }, {
+                            title: "Etapa",
+                            field: "",
+                        }, {
+                            title: "Vegetariano",
+                            field: "",
+                        }, {
+                            title: "Alergia",
+                            field: "",
+                        }, {
+                            title: "Noche extra",
+                            field: "",
+                        }]}
+                    data={BibliaData_pasajeros}
+                    title={null}
+                />
+                <div className={styles.second__biblia_data_container}>
+                    <div>
+                        <h2>Entradas</h2>
+                        <MaterialTable
+                            columns={
+                                [{ title: "Id", field: "IdReservaCotizacion" },
+                                { title: "Nombre Entrada", field: "" },
+                                { title: "Fecha", field: "" },
+                                {
+                                    title: "Codigo",
+                                    field: "",
+                                }]}
+                            data={DataCotizacion}
+                            title={null}
+                        />
+                        <h2>Transporte</h2>
+                        <MaterialTable
+                            columns={[
+                                { title: "Id", field: "IdReservaCotizacion" },
+                                { title: "Inicio", field: "" },
+                                { title: "Llegada", field: "" },
+                                { title: "Fecha y Hora", field: "" }
+                            ]}
+                            data={DataCotizacion}
+                            title={null}
+                        />
+                    </div>
+                    <div>
+                        <h2>Briefing</h2>
+                        <MaterialTable
+                            columns={[
+                                { title: "Id", field: "IdReservaCotizacion" },
+                                { title: "Inicio", field: "" },
+                                { title: "Llegada", field: "" },
+                                { title: "Tipo", field: "" },
+                                { title: "Fecha y Hora", field: "" }
+                            ]}
+                            data={DataCotizacion}
+                            title={null}
+                        />
+                        <h2>Equipo</h2>
+                        <MaterialTable
+                            columns={[
+                                { title: "Id", field: "IdReservaCotizacion" },
+                                { title: "Nombre de equipo", field: "" },
+                                { title: "Cantidad", field: "" },
+                                { title: "Descripcion", field: "" },
+                            ]}
+                            data={DataCotizacion}
+                            title={null}
+                        />
+                        <h2>Observaciones</h2>
+                        <MaterialTable
+                            columns={[
+                                { title: "Id", field: "IdReservaCotizacion" },
+                                { title: "Nombre", field: "" },
+                                { title: "Descripcion", field: "" },
+                                { title: "Otro", field: "" },
+                            ]}
+                            data={DataCotizacion}
+                            title={null}
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
     )
 

@@ -60,18 +60,18 @@ export default function Header(){
   return(
       <header className = {styles.HeaderDiv}>
           <img src='/resources/logo.png' className={styles.HeaderLogo} onClick={()=>{router.push('/')}} />
-          <div>
-            <span className={styles.HeaderSideName} >{window.location.pathname.split("/")[1]}  </span>
+          <div className = {styles.MainTittleContainer}>
             <button onClick={()=>{history.go(-1)}} className={`${botonStyle.BackButton} ${botonStyle.button}`}>
               <ArrowBack className={styles.HeaderArrowBack} />
             </button>
+            <span className={styles.HeaderSideName} >{window.location.pathname.split("/")[1]}  </span>
           </div>
           {Logged && (
-            <div>
-              <p>Bienvenido {data.username}!</p>
-              <form onSubmit={signOut} method="post">
+            <div className = {styles.NameLoginContainer_up}>
+              <form className = {styles.NameLoginContainer} onSubmit={signOut} method="post">
+                <p>Bienvenido {data.username}!</p>
                 <input
-                  className={styles.formularioLogin_button}
+                  className={`${botonStyle.button} ${botonStyle.buttonLogin}`}
                   type="submit"
                   value="Logout"
                 />

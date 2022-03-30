@@ -5,12 +5,13 @@
     justify-content: center;
     width: 15%;
     height: 90%;
-    background-color: #3293CC;
+    background-color: var(--navLateral--background-color);
     z-index: 1;
     left: 0;
     overflow-x: hidden;
     top: 10%;
     box-sizing: border-box;
+    color: var(--navLateral--text-color);
 }
 .NavLateralSquare::-webkit-scrollbar{
     display: none;

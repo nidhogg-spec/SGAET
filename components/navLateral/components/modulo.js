@@ -1,6 +1,6 @@
 import styles from "./modulo.module.css";
 import Link from "next/link";
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 
 // function AnimationSubModulos(e) {
 //   let x = HTMLElement;
@@ -26,7 +26,7 @@ import React, { useEffect, useState} from "react";
 //   }
 // }
 
-const SubModulos = ({ dataSubModulos = [] }) => {  
+const SubModulos = ({ dataSubModulos = [] }) => {
   if (dataSubModulos.tipo == "link") {
     return (
       <Link href={dataSubModulos.link}>
@@ -69,15 +69,15 @@ const modulos = ({
   const [viewState, setViewState] = useState(styles.invisible);
   return (
     <div>
-      <div 
-        className={`${styles.NavLateralModulos}`} 
-        onClick={()=>{
-          viewState==styles.invisible ? setViewState(styles.visible) : setViewState(styles.invisible)
-          }} 
+      <div
+        className={`${styles.NavLateralModulos}`}
+        onClick={() => {
+          viewState == styles.invisible ? setViewState(styles.visible) : setViewState(styles.invisible)
+        }}
       >
-        <img src={"/resources/" + data.svg} />
+        <img className={`${styles.svgImage}`} src={"/resources/" + data.svg} />
         {data.modulo}
-        <img src="/resources/keyboard_arrow_down-black-18dp.svg" />
+        <img className={`${styles.svgImage}`} src="/resources/keyboard_arrow_down-black-18dp.svg" />
       </div>
       <div className={`${styles.NavLateralSubModulos} ${viewState}`}>
         {data.subModulos.map((dataSubModulosInner) => (

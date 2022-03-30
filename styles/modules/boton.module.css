@@ -9,6 +9,16 @@
     align-items: center;
     column-gap: 0.5rem;
 }
+/* ----------------Login----------------------- */
+.buttonLogin{
+    background-color: hsl(192, 100%, 50%);    
+}
+.buttonLogin:hover{
+    background-color: hsl(192, 75%, 50%);
+}
+.buttonLogin:active{
+    background-color: hsl(192, 50%, 50%);
+}
 /* ----------------Guardar----------------------- */
 .buttonGuardar{
     background-color: #5cb85c;    
