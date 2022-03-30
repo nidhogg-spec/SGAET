@@ -2,8 +2,10 @@
 import React, { useEffect, useState, useContext, createContext } from "react";
 import { useRouter } from "next/router";
 import { withSSRContext } from 'aws-amplify'
-//Componentes
+import MaterialTable from "material-table";
+import axios from "axios";
 
+//Componentes
 import CampoTexto from "@/components/Formulario_V2/CampoTexto/CampoTexto";
 import CampoFecha from "@/components/Formulario_V2/CampoFecha/CampoFecha";
 import CampoGranTexto from "@/components/Formulario_V2/CampoGranTexto/CampoGranTexto";
@@ -13,17 +15,18 @@ import CampoNumero from "@/components/Formulario_V2/CampoNumero/CampoNumero";
 // import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
 import TablaSimple from "@/components/Formulario_V2/TablaSimple/TablaSimple";
 import TablaServicioCotizacion from "@/components/Formulario/CustomComponenteFormu/TablaServicioCotizacion/TablaServicioCotizacion";
-
 import Loader from "@/components/Loading/Loading";
+
 //Style
-import styles from "../../styles/Cotizacion.module.css";
-import MaterialTable from "material-table";
-import axios from "axios";
+import styles from "@/globalStyles/Cotizacion.module.css";
+import botones from '@/globalStyles/modules/boton.module.css'
+import globalStyles from '@/globalStyles/modules/global.module.css'
+
 
 const Contexto = createContext([
-  [{}, () => {}],
-  [{}, () => {}],
-  [{}, () => {}]
+  [{}, () => { }],
+  [{}, () => { }],
+  [{}, () => { }]
 ]);
 
 const Cotizacion = ({ APIpath, APIpathGeneral }) => {
@@ -162,15 +165,16 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
   }, [IdProgramaTuristico]);
 
   return (
-    <div className={styles.ContenedorPrincipal}>
+    <div className={globalStyles.main_work_space_container}>
       <Contexto.Provider value={[[FechaIN, setFechaIN]]}>
         <Loader Loading={Loading} />
-        <div className={styles.Formulario}>
-          <div>
-            <h2>Cotizacion</h2>
+        <div>
+          <div className={styles.Formulario}>
+            <h1>Cotizacion</h1>
             {Fase >= 3 ? (
               <>
-                <button>
+                <button className={`${botones.button} ${botones.buttonGuardar}`}>
+                  Guardar
                   <img
                     src="/resources/save-black-18dp.svg"
                     onClick={HandleSave}
@@ -182,11 +186,11 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
             )}
           </div>
 
-          <div>
+          <div className={styles.Formulario}>
             {Fase >= 1 ? (
               <>
                 <div>
-                  <div>
+                  <div className={`${globalStyles.global_textInput_container}`}>
                     <span>Tipo del cliente</span>
                     <select
                       value={TipoCliente}
@@ -197,7 +201,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                     >
                       <option value={1}>Corporativo</option>
                       <option value={2}>Directo</option>
-                      <option value={0}>Seleecione alguno</option>
+                      <option value={0}>Seleccione alguno</option>
                     </select>
                   </div>
                   {TipoCliente > 0 ? (
@@ -205,7 +209,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                       {TipoCliente == 1 ? (
                         <>
                           <MaterialTable
-                            title="Todos los Clientes corporativos"
+                            title="Seleccione un cliente corporativo"
                             columns={[
                               {
                                 title: "Nombre Completo",
@@ -249,7 +253,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
 
                       <h3>Datos del Cotizante</h3>
 
-                      <div>
+                      <div className={`${globalStyles.global_textInput_container}`}>
                         <span>Nombre completo</span>
                         <input
                           value={cliente["NombreCompleto"]}
@@ -258,10 +262,10 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["NombreCompleto"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
-                          disabled={TipoCliente==1?true:false}                          
+                          disabled={TipoCliente == 1 ? true : false}
                         />
                       </div>
-                      <div>
+                      <div className={`${globalStyles.global_textInput_container}`}>
                         <span>Tipo de documento</span>
                         <select
                           onChange={(event) => {
@@ -269,7 +273,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["TipoDocumento"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
-                          disabled={TipoCliente==1?true:false}
+                          disabled={TipoCliente == 1 ? true : false}
                         >
                           <option value={null}>Seleccione Documento</option>
                           <option value={cliente["DNI"]}>DNI</option>
@@ -281,7 +285,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                           </option>
                         </select>
                       </div>
-                      <div>
+                      <div className={`${globalStyles.global_textInput_container}`}>
                         <span>Numero de documento</span>
                         <input
                           value={cliente["NroDocumento"]}
@@ -290,10 +294,10 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["NroDocumento"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
-                          disabled={TipoCliente==1?true:false}
+                          disabled={TipoCliente == 1 ? true : false}
                         />
                       </div>
-                      <div>
+                      <div className={`${globalStyles.global_textInput_container}`}>
                         <span>Celular</span>
                         <input
                           value={cliente["Celular"]}
@@ -302,10 +306,10 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["Celular"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
-                          disabled={TipoCliente==1?true:false}
+                          disabled={TipoCliente == 1 ? true : false}
                         />
                       </div>
-                      <div>
+                      <div className={`${globalStyles.global_textInput_container}`}>
                         <span>Email</span>
                         <input
                           value={cliente["Email"]}
@@ -314,7 +318,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                             temp_cliente["Email"] = event.target.value;
                             setcliente(temp_cliente);
                           }}
-                          disabled={TipoCliente==1?true:false}
+                          disabled={TipoCliente == 1 ? true : false}
                         />
                       </div>
                     </>
@@ -353,9 +357,10 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                   KeyDato={"NpasajerosChild"}
                   InputStep="1"
                 />
-                <div>
+                <div className={`${globalStyles.global_textInput_container}`}>
                   <span>Fecha de Inicio</span>
                   <input
+
                     value={FechaIN}
                     type={"date"}
                     onChange={(event) => {
@@ -371,8 +376,9 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                   KeyDato={"FechaOUT"}
                 />
                 {Fase == 1 ? (
-                  <>
+                  <div className={`${styles.button_container}`}>
                     <button
+                      className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
                       onClick={(event) => {
                         event.currentTarget.disabled = true;
                         if (FechaIN == "" || TipoCliente == 0) {
@@ -387,7 +393,7 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                     >
                       Siguiente
                     </button>
-                  </>
+                  </div>
                 ) : (
                   <></>
                 )}
@@ -509,6 +515,21 @@ const Cotizacion = ({ APIpath, APIpathGeneral }) => {
                   ]}
                 />
               </div>
+              {Fase >= 3 ? (
+                <>
+                  <div className={`${styles.button_container}`}>
+                    <button className={`${botones.button} ${botones.buttonGuardar} `}>
+                      Guardar
+                      <img
+                        src="/resources/save-black-18dp.svg"
+                        onClick={HandleSave}
+                      />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
             </>
           ) : (
             <></>

@@ -9,6 +9,10 @@
     align-items: center;
     column-gap: 0.5rem;
 }
+.button_border{
+    border: 1px solid #000 ;
+    /* border-radius: 25px; */
+}
 /* ----------------Login----------------------- */
 .buttonLogin{
     background-color: hsl(192, 100%, 50%);    
@@ -48,6 +52,17 @@
 }
 .BackButton:active{
     background: #d8d8d8;
+}
+
+/* ----------------generic Button----------------------- */
+.GenerickButton{
+    background: hsl(0, 0%, 100%);    
+}
+.GenerickButton:hover{
+    background: hsl(0, 0%, 90%);
+}
+.GenerickButton:active{
+    background: hsl(0, 0%, 60%);
 }
 
 
