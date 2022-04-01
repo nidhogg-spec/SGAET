@@ -10,6 +10,8 @@ import { withSSRContext } from 'aws-amplify'
 
 //css
 import CustomStyles from "@/globalStyles/ProgramasTuristicos.module.css";
+import botones from '@/globalStyles/modules/boton.module.css'
+import globalStyles from '@/globalStyles/modules/global.module.css'
 
 //modulos
 import MaterialTable from "material-table";
@@ -35,9 +37,9 @@ function ProgramasTuristicos({
   const [Display, setDisplay] = useState(false);
   const [ModalData, setModalData] = useState({});
   const ModalDisplay = createContext([
-    [{}, () => {}],
-    [{}, () => {}],
-    [{}, () => {}]
+    [{}, () => { }],
+    [{}, () => { }],
+    [{}, () => { }]
   ]);
 
   const firstUpdate = useRef(true);
@@ -328,79 +330,84 @@ function ProgramasTuristicos({
           ModalDisplay={ModalDisplay} //Contexto - Por si lo preguntaban
           IdDato={"IdProgramaTuristico"}
         />
+        <div className={globalStyles.main_work_space_container}>
+          <div className={CustomStyles.main_work_space_container_title}>
+            <span className={CustomStyles.titulo}>Lista de Programas turisticos</span>
+            <button
+              className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
+              onClick={(event) => {
+                setIdDato(null);
+                setModalData({});
+                setFormulario(Formulario_default);
+                setDisplay(true);
+              }}
+            >
+              Nuevo Programa Turistico
+            </button>
+          </div>
 
-        <span className={CustomStyles.titulo}>Programas turisticos</span>
-        <button
-          onClick={(event) => {
-            setIdDato(null);
-            setModalData({});
-            setFormulario(Formulario_default);
-            setDisplay(true);
-          }}
-        >
-          Nuevo Programa Turistico
-        </button>
-        <div className={CustomStyles.tituloBox}>
-          <MaterialTable
-            columns={Columnas}
-            data={TablaDatos}
-            title="Programas turisticos"
-            actions={[
-              {
-                icon: () => {
-                  return <img src="/resources/remove_red_eye-24px.svg" />;
+          <div className={CustomStyles.tituloBox}>
+            <MaterialTable
+              columns={Columnas}
+              data={TablaDatos}
+              title={null}
+              actions={[
+                {
+                  icon: () => {
+                    return <img src="/resources/remove_red_eye-24px.svg" />;
+                  },
+                  tooltip: "Save User",
+                  onClick: (event, rowData) => {
+                    // setIdDato();
+                    router.push(
+                      `/ProgramaTuristico/${rowData.IdProgramaTuristico}`
+                    );
+                    // setDisplay(true);
+                  }
                 },
-                tooltip: "Save User",
-                onClick: (event, rowData) => {
-                  // setIdDato();
-                  router.push(
-                    `/ProgramaTuristico/${rowData.IdProgramaTuristico}`
-                  );
-                  // setDisplay(true);
-                }
-              },
-              (rowData) => ({
-                icon: () => {
-                  return <img src="/resources/delete-black-18dp.svg" />;
-                },
-                tooltip: "Delete User",
-                onClick: (event, rowData) => {
-                  const dataDelete = [...TablaDatos];
-                  const index = rowData.tableData.id;
-                  dataDelete.splice(index, 1);
-                  setTablaDatos([...dataDelete]);
+                (rowData) => ({
+                  icon: () => {
+                    return <img src="/resources/delete-black-18dp.svg" />;
+                  },
+                  tooltip: "Delete User",
+                  onClick: (event, rowData) => {
+                    const dataDelete = [...TablaDatos];
+                    const index = rowData.tableData.id;
+                    dataDelete.splice(index, 1);
+                    setTablaDatos([...dataDelete]);
 
-                  fetch(APIpathGeneral, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      accion: "DeleteOne",
-                      coleccion: "ProgramaTuristico",
-                      query: {
-                        IdProgramaTuristico: rowData["IdProgramaTuristico"]
-                      }
+                    fetch(APIpathGeneral, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        accion: "DeleteOne",
+                        coleccion: "ProgramaTuristico",
+                        query: {
+                          IdProgramaTuristico: rowData["IdProgramaTuristico"]
+                        }
+                      })
                     })
-                  })
-                    .then((r) => r.json())
-                    .then((data) => {
-                      alert("Eliminacion realizada");
-                    });
-                }
-              })
-            ]}
-            options={{
-              actionsColumnIndex: -1
-            }}
-          />
-        </div>
-        <div>
-          <span>Opciones Avanzadas</span>
-          <FusionProgramas
-            TablaDatos={TablaDatos}
-            DevolverEstructuraFormulario={DevolverEstructuraFormulario}
-            ModalDisplay={ModalDisplay}
-            APIpathGeneral={APIpathGeneral}
-          />
+                      .then((r) => r.json())
+                      .then((data) => {
+                        alert("Eliminacion realizada");
+                      });
+                  }
+                })
+              ]}
+              options={{
+                actionsColumnIndex: -1
+              }}
+            />
+          </div>
+          <div>
+            <h2>Opciones Avanzadas</h2>
+            <FusionProgramas
+              TablaDatos={TablaDatos}
+              DevolverEstructuraFormulario={DevolverEstructuraFormulario}
+              ModalDisplay={ModalDisplay}
+              APIpathGeneral={APIpathGeneral}
+            />
+          </div>
         </div>
       </ModalDisplay.Provider>
     </div>
@@ -498,9 +505,9 @@ export async function getServerSideProps({ req, res }) {
             Nombre: x["TipoPaxs"] + " - " + x["tipoHabitacion"] || null,
             Descripcion:
               "Cama Adicional: " +
-                (x["camAdic"] ? "si" : "no") +
-                " - Descripcion: " +
-                x["descripcionHabitacion"] || null,
+              (x["camAdic"] ? "si" : "no") +
+              " - Descripcion: " +
+              x["descripcionHabitacion"] || null,
             Precio: x["precioCoti"] || 0.0,
             Costo: x["precioConfi"] || 0.0,
             NombreProveedor: proveedor["nombre"],
@@ -540,10 +547,10 @@ export async function getServerSideProps({ req, res }) {
             TipoServicio: "Restaurante" || null,
             Nombre:
               x["codServicio"] +
-                " - " +
-                x["servicio"] +
-                " - " +
-                x["TipoPaxs"] || null,
+              " - " +
+              x["servicio"] +
+              " - " +
+              x["TipoPaxs"] || null,
             Descripcion: "Caracteristicas: " + x["caracte"] || null,
             Precio: x["precioCoti"] || 0.0,
             Costo: x["precioConfi"] || 0.0,
@@ -587,14 +594,14 @@ export async function getServerSideProps({ req, res }) {
             TipoServicio: "Transporte Terrestre" || null,
             Nombre:
               x["codServicio"] +
-                " / " +
-                // x["EtapaPaxs"] +
-                // " / " +
-                x["TipoPaxs"] +
-                " / " +
-                x["servicio"] +
-                " / Horario:" +
-                x["horario"] || null,
+              " / " +
+              // x["EtapaPaxs"] +
+              // " / " +
+              x["TipoPaxs"] +
+              " / " +
+              x["servicio"] +
+              " / Horario:" +
+              x["horario"] || null,
             Descripcion: "Tipo de Vehiculo: " + x["tipvehiculo"] || null,
             Precio: x["precioCoti"] || 0.0,
             Costo: x["precioConfi"] || 0.0,
@@ -641,11 +648,11 @@ export async function getServerSideProps({ req, res }) {
               null,
             Descripcion:
               "N° Carne: " +
-                x["carne"] +
-                "; Idioma: " +
-                x["idiomas"] +
-                "; DNI: " +
-                x["dni"] || null,
+              x["carne"] +
+              "; Idioma: " +
+              x["idiomas"] +
+              "; DNI: " +
+              x["dni"] || null,
             Precio: x["precioCoti"] || 0.0,
             Costo: x["precioConfi"] || 0.0,
             NombreProveedor: proveedor["nombre"],
@@ -685,10 +692,10 @@ export async function getServerSideProps({ req, res }) {
             TipoServicio: "Agencia" || null,
             Nombre:
               x["codServicio"] +
-                " - " +
-                x["TipoPaxs"] +
-                " - " +
-                x["servicio"] || null,
+              " - " +
+              x["TipoPaxs"] +
+              " - " +
+              x["servicio"] || null,
             Descripcion: "Duracion: " + x["duracion"] || null,
             Precio: x["precioCoti"] || 0.0,
             Costo: x["precioConfi"] || 0.0,
@@ -729,14 +736,14 @@ export async function getServerSideProps({ req, res }) {
             TipoServicio: "Transporte Ferroviario" || null,
             Nombre:
               x["TipoPaxs"] +
-                " / " +
-                x["EtapaPaxs"] +
-                " / " +
-                x["ruta"] +
-                "/ Horario:" +
-                x["salida"] +
-                "-" +
-                x["llegada"] || null,
+              " / " +
+              x["EtapaPaxs"] +
+              " / " +
+              x["ruta"] +
+              "/ Horario:" +
+              x["salida"] +
+              "-" +
+              x["llegada"] || null,
             Descripcion: "Tipo de tren: " + x["tipoTren"] || null,
             Precio: x["precioCoti"] || 0.0,
             Costo: x["precioConfi"] || 0.0,
@@ -816,10 +823,10 @@ export async function getServerSideProps({ req, res }) {
             TipoServicio: "Otro" || null,
             Nombre:
               x["codServicio"] +
-                " - " +
-                x["TipoPaxs"] +
-                " - " +
-                x["servicio"] || null,
+              " - " +
+              x["TipoPaxs"] +
+              " - " +
+              x["servicio"] || null,
             Descripcion: x["Descripcion"] || null,
             Precio: x["precioCoti"] || 0.0,
             Costo: x["precioConfi"] || 0.0,

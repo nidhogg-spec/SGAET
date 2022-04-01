@@ -1,9 +1,16 @@
 .tituloBox{
     display: flex;
     align-items: center;
-        
+    justify-content: center;
 }
 .titulo{
     padding: 15px 25px 15px 0px;
     font-size: 35px;
+}
+.main_work_space_container_title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 50px 0 0;
 }

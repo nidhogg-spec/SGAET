@@ -1,0 +1,27 @@
+.fusion_tablas{
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+}
+.arrow_container{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+.title_contaier{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    margin-left: 20px;
+}
+.fusion_title_container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.fusion_title_container h3{
+    margin-right: 40px;
+}
