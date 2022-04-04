@@ -9,7 +9,7 @@ import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormul
 import LoadingComp from "@/components/Loading/Loading";
 resetServerContext();
 
-const TiposProveedores =[
+const TiposProveedores = [
   { value: "Hotel", texto: "Hotel" },
   { value: "Agencia", texto: "Agencia" },
   { value: "Guia", texto: "Guia" },
@@ -53,15 +53,15 @@ export default function TipoProveedor(props = { APIpath }) {
       alert("Llene el Campo Nombre Comercial");
       return;
     }
-    if(Proveedor.TipoDocumento==null || Proveedor.TipoDocumento=="") {
+    if (Proveedor.TipoDocumento == null || Proveedor.TipoDocumento == "") {
       alert("Seleccione un Tipo de documento");
       return;
     }
-      if (Proveedor.TipoDocumento == 'DNI' && (Proveedor.NroDocumento?.length!=8 | Proveedor.NroDocumento!=undefined)) {
+    if (Proveedor.TipoDocumento == 'DNI' && (Proveedor.NroDocumento?.length != 8 | Proveedor.NroDocumento != undefined)) {
       alert("Ingrese un numero de DNI valido");
       return;
     }
-    if (Proveedor.TipoDocumento == 'RUC' && (Proveedor.NroDocumento?.length!=11 | Proveedor.NroDocumento!=undefined)) {
+    if (Proveedor.TipoDocumento == 'RUC' && (Proveedor.NroDocumento?.length != 11 | Proveedor.NroDocumento != undefined)) {
       alert("Ingrese un numero de RUC valido");
       console.log(Proveedor.Documento?.length);
       return;
@@ -69,7 +69,7 @@ export default function TipoProveedor(props = { APIpath }) {
 
     //Una vez que este validado, guardar
     setLoading(true);
-    Proveedor.tipo= provDinamico;
+    Proveedor.tipo = provDinamico;
     Proveedor.Contacto = ProveedorContacto;
     Proveedor.DatosBancarios = ProveedorBanco;
     if (
@@ -101,19 +101,20 @@ export default function TipoProveedor(props = { APIpath }) {
           <button onClick={HandleGuardar} title="Guardar datos" className={`${styles.button} ${styles.buttonGuardar}`}>
             <span>Guardar</span><img src="/resources/save-black-18dp.svg" />
           </button>
-          <a href="#ProductoServicio_area">Productos/Servicios</a>
         </div>
       </div>
-      <label htmlFor="">Tipo de Proveedor</label>
-      <select value={provDinamico} onChange={(newValue)=>{
+      <div className={styles.tipo_proveedor_container}>
+        <h3 htmlFor="">Tipo de Proveedor</h3>
+        <select value={provDinamico} onChange={(newValue) => {
           setprovDinamico(newValue.target.value);
-      }}>
-        {TiposProveedores.map((SelectOption) => {
-          return (
-            <option value={SelectOption.value}>{SelectOption.texto}</option>
-          );
-        })}
-      </select>
+        }}>
+          {TiposProveedores.map((SelectOption) => {
+            return (
+              <option value={SelectOption.value}>{SelectOption.texto}</option>
+            );
+          })}
+        </select>
+      </div>
       <AutoFormulario
         Formulario={{
           title: "Datos de Proveedor",
@@ -142,21 +143,21 @@ export default function TipoProveedor(props = { APIpath }) {
                 //     { value: "Otro", texto: "Otro" }
                 //   ]
                 // },
-                (provDinamico=="Guia"?{
+                (provDinamico == "Guia" ? {
                   tipo: "texto",
                   Title: "Nombre del guia",
                   KeyDato: "NombreGuia"
-                }:{
+                } : {
                   tipo: "texto",
                   Title: "Razon Social",
                   KeyDato: "RazonSocial"
                 }),
-                (provDinamico!="Guia"?{
+                (provDinamico != "Guia" ? {
                   tipo: "texto",
                   Title: "Nombre Comercial",
                   KeyDato: "nombre"
-                }:{
-                  tipo: null                  
+                } : {
+                  tipo: null
                 }),
                 {
                   tipo: "selector",
@@ -190,12 +191,12 @@ export default function TipoProveedor(props = { APIpath }) {
                     { value: "Dolar", texto: "Dolares" }
                   ]
                 },
-                (provDinamico=="Guia"?{
+                (provDinamico == "Guia" ? {
                   tipo: "CampoIdiomas",
                   Title: "Idiomas",
                   KeyDato: "Idiomas"
-                }:{
-                  tipo: null                  
+                } : {
+                  tipo: null
                 }),
                 {
                   tipo: "texto",
@@ -275,13 +276,13 @@ export default function TipoProveedor(props = { APIpath }) {
       />
       <div className={styles.divDatosPrincipal}>
         <div className={styles.Proveedor}>
-          <h2>Otros Datos</h2>
+          
 
           {provDinamico == "hotel" ? (
             <>
               <AutoFormulario
                 Formulario={{
-                  title: "Datos de Proveedor",
+                  title: null,
                   secciones: [
                     {
                       subTitle: "",
@@ -313,7 +314,7 @@ export default function TipoProveedor(props = { APIpath }) {
             <>
               <AutoFormulario
                 Formulario={{
-                  title: "Datos de Proveedor",
+                  title: null,
                   secciones: [
                     {
                       subTitle: "",
@@ -342,8 +343,9 @@ export default function TipoProveedor(props = { APIpath }) {
               />
             </>
           ) : null}
+          <h2>Datos de Contacto</h2>
           <MaterialTable
-            title="Datos de Contacto"
+            title=""
             columns={[
               { field: "NombreContac", title: "Nombre del Contacto" },
               { field: "Area", title: "Area de trabajo" },
@@ -384,25 +386,26 @@ export default function TipoProveedor(props = { APIpath }) {
                 })
             }}
           />
+          <h2>Datos de Cuentas Bancarias</h2>
           <MaterialTable
-            title="Datos de Cuentas Bancarias"
+            title=""
             columns={[
               { field: "Banco", title: "Banco" },
               { field: "Beneficiario", title: "Beneficiario" },
               {
                 field: "TipoCuenta",
                 title: "Tipo de Cuenta Bancaria",
-                lookup: { 
-                  "Corriente": "Corriente", 
+                lookup: {
+                  "Corriente": "Corriente",
                   "De ahorro": "De ahorro",
-                  "Sueldo":"Sueldo",
-                  "Moneda extranjera":"Moneda extranjera"
+                  "Sueldo": "Sueldo",
+                  "Moneda extranjera": "Moneda extranjera"
                 }
               },
               {
                 field: "Moneda",
                 title: "Moneda",
-                lookup: { Dolar: "Dolar", "Sol": "Sol", Otro:"Otro"  }
+                lookup: { Dolar: "Dolar", "Sol": "Sol", Otro: "Otro" }
               },
               {
                 field: "TipoDocumento",

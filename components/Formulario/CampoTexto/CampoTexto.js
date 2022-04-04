@@ -2,7 +2,8 @@
 import styles from "./CampoTexto.module.css";
 import React, { useEffect, useState} from "react";
 
-//Componentes
+import globalStyles from '@/globalStyles/modules/global.module.css'
+
 
 
 const CampoTexto = (props={
@@ -38,7 +39,7 @@ const CampoTexto = (props={
     
     if(ModoEdicion==true){
         return ( 
-            <div>
+            <div className={`${globalStyles.global_textInput_container}`}>
                 <span>{props.Title}</span>
                 <input value={Dato} onChange={(event)=>{
                         setDato(event.target.value)
@@ -47,7 +48,7 @@ const CampoTexto = (props={
             </div> );
     }else{
         return ( 
-            <div className={styles.divMadre}>
+            <div className={`${globalStyles.global_textInput_container}`}>
                 <span>{props.Title}</span>
                 <span>{Dato}</span>
             </div> 

@@ -8,6 +8,10 @@ import { useEffect, useState, createContext } from "react";
 import AutoModal_v2 from "@/components/AutoModal_v2/AutoModal_v2";
 import { Suspense } from "react";
 
+// Estilos
+import globalStyles from '@/globalStyles/modules/global.module.css'
+
+
 /*
 Campos de ClientesProspectos
  - IdClienteProspecto
@@ -51,8 +55,8 @@ export default function Home({ Datos, api_general }) {
   const [Display, setDisplay] = useState(false);
   const [ModalData, setModalData] = useState({});
   const ModalDisplay = createContext([
-    [{}, () => {}],
-    [{}, () => {}],
+    [{}, () => { }],
+    [{}, () => { }],
   ]);
   const [Data, setData] = useState({});
   useEffect(() => {
@@ -67,7 +71,7 @@ export default function Home({ Datos, api_general }) {
           accion: "update",
           coleccion: "ClienteProspecto",
           query: { IdClienteProspecto: Data["IdClienteProspecto"] },
-          data:ModalData,
+          data: ModalData,
         }),
       })
         .then((r) => r.json())
@@ -81,232 +85,235 @@ export default function Home({ Datos, api_general }) {
     <div>
       {/* <ConstrutorModal Display={Display} setDisplay={setDisplay} /> */}
       <ModalDisplay.Provider
-          value={[
-            [Display, setDisplay],
-            [ModalData, setModalData],
-          ]}
-        >
-          <AutoModal_v2
-            Formulario={{
-              id:Data['IdClienteProspecto'],
-              title: "Datos de Cliente/Prospecto",
-              secciones: [
-                {
-                  subTitle: "",
-                  componentes: [
-                    {
-                      tipo: "texto",
-                      Title: "Nombre completo",
-                      KeyDato: "NombreCompleto",
-                      Dato: Data["NombreCompleto"],
-                    },
-                    {
-                      tipo: "selector",
-                      Title: "Tipo de Cliente",
-                      KeyDato: "TipoCliente",
-                      Dato: Data["TipoCliente"],
-                      SelectOptions: [
-                        { texto: "Seleccion un Tipo de Cliente", value: null },
-                        { texto: "Corporativo", value: "Corporativo" },
-                        { texto: "Directo", value: "Directo" },
-                      ],
-                    },
-                    {
-                      tipo: "selector",
-                      Title: "Estado",
-                      KeyDato: "Estado",
-                      Dato: Data["Estado"],
-                      SelectOptions: [
-                        { texto: "Seleccion un Estado", value: null },
-                        { texto: "Prospecto", value: "Prospecto" },
-                        { texto: "Cliente", value: "Cliente" },
-                      ],
-                    },
-                    {
-                      tipo: "selector",
-                      Title: "Tipo de Documento",
-                      KeyDato: "TipoDocumento",
-                      Dato: Data["TipoDocumento"],
-                      SelectOptions: [
-                        { texto: "Seleccion un Tipo de Documento", value: null },
-                        { texto: "DNI", value: "DNI" },
-                        { texto: "RUC", value: "RUC" },
-                      ],
-                    },
-                    {
-                      tipo: "selector",
-                      Title: "Tipo de Comision",
-                      KeyDato: "TipoComision",
-                      Dato: Data["TipoComision"],
-                      SelectOptions: [
-                        { texto: "Seleccion un Tipo de Comision", value: null },
-                        { texto: "Fijo", value: "Fijo" },
-                        { texto: "Porcentual", value: "Porcentual" },
-                      ],
-                    },
-                    {
-                      tipo: "money",
-                      Title: "Comision",
-                      KeyDato: "Comision",
-                      Dato: Data["Comision"],
-                    },
-                    {
-                      tipo: "texto",
-                      Title: "Nro Documento",
-                      KeyDato: "NroDocumento",
-                      Dato: Data["NroDocumento"],
-                    },
-                    {
-                      tipo: "tablaSimple",
-                      Title: "Contacto",
-                      KeyDato: "Contacto",
-                      Dato: Data["Contacto"] || [],
-                      columnas: [
-                        { field: "NombreContac", title: "Nombre" },
-                        { field: "Area", title: "Area" },
-                        { field: "Numero", title: "Numero" },
-                        { field: "Email", title: "Email" },
-                      ],
-                    },
-                    {
-                      tipo: "tablaSimple",
-                      Title: "Seguimientos",
-                      KeyDato: "Seguimiento",
-                      Dato: Data["Seguimiento"] || [], //deber ser un [] - array - Sino todo explota
-                      columnas: [
-                        {
-                          field: "Descripcion",
-                          title: "Descripcion del seguimiento",
-                        },
-                        { field: "Fecha", title: "Fecha" },
-                        { field: "ViaContacto", title: "Via de contacto" },
-                        { field: "Problemas", title: "Problemas" },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            }}
-            ModalDisplay={ModalDisplay}
-            IdDato={'IdClienteProspecto'}
-            // APIpath={}
-          />
-        </ModalDisplay.Provider>
-      <MaterialTable
-        columns={Columnas}
-        data={datosEditables}
-        title="Clientes"
-        editable={{
-          onRowAdd: (newData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                fetch(api_general, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    accion: "Insert",
-                    coleccion: "ClienteProspecto",
-                    keyId: "IdClienteProspecto",
-                    Prefijo: "CP",
-                    data: newData,
-                  }),
+        value={[
+          [Display, setDisplay],
+          [ModalData, setModalData],
+        ]}
+      >
+        <AutoModal_v2
+          Formulario={{
+            id: Data['IdClienteProspecto'],
+            title: "Datos de Cliente/Prospecto",
+            secciones: [
+              {
+                subTitle: "",
+                componentes: [
+                  {
+                    tipo: "texto",
+                    Title: "Nombre completo",
+                    KeyDato: "NombreCompleto",
+                    Dato: Data["NombreCompleto"],
+                  },
+                  {
+                    tipo: "selector",
+                    Title: "Tipo de Cliente",
+                    KeyDato: "TipoCliente",
+                    Dato: Data["TipoCliente"],
+                    SelectOptions: [
+                      { texto: "Seleccion un Tipo de Cliente", value: null },
+                      { texto: "Corporativo", value: "Corporativo" },
+                      { texto: "Directo", value: "Directo" },
+                    ],
+                  },
+                  {
+                    tipo: "selector",
+                    Title: "Estado",
+                    KeyDato: "Estado",
+                    Dato: Data["Estado"],
+                    SelectOptions: [
+                      { texto: "Seleccion un Estado", value: null },
+                      { texto: "Prospecto", value: "Prospecto" },
+                      { texto: "Cliente", value: "Cliente" },
+                    ],
+                  },
+                  {
+                    tipo: "selector",
+                    Title: "Tipo de Documento",
+                    KeyDato: "TipoDocumento",
+                    Dato: Data["TipoDocumento"],
+                    SelectOptions: [
+                      { texto: "Seleccion un Tipo de Documento", value: null },
+                      { texto: "DNI", value: "DNI" },
+                      { texto: "RUC", value: "RUC" },
+                    ],
+                  },
+                  {
+                    tipo: "selector",
+                    Title: "Tipo de Comision",
+                    KeyDato: "TipoComision",
+                    Dato: Data["TipoComision"],
+                    SelectOptions: [
+                      { texto: "Seleccion un Tipo de Comision", value: null },
+                      { texto: "Fijo", value: "Fijo" },
+                      { texto: "Porcentual", value: "Porcentual" },
+                    ],
+                  },
+                  {
+                    tipo: "money",
+                    Title: "Comision",
+                    KeyDato: "Comision",
+                    Dato: Data["Comision"],
+                  },
+                  {
+                    tipo: "texto",
+                    Title: "Nro Documento",
+                    KeyDato: "NroDocumento",
+                    Dato: Data["NroDocumento"],
+                  },
+                  {
+                    tipo: "tablaSimple",
+                    Title: "Contacto",
+                    KeyDato: "Contacto",
+                    Dato: Data["Contacto"] || [],
+                    columnas: [
+                      { field: "NombreContac", title: "Nombre" },
+                      { field: "Area", title: "Area" },
+                      { field: "Numero", title: "Numero" },
+                      { field: "Email", title: "Email" },
+                    ],
+                  },
+                  {
+                    tipo: "tablaSimple",
+                    Title: "Seguimientos",
+                    KeyDato: "Seguimiento",
+                    Dato: Data["Seguimiento"] || [], //deber ser un [] - array - Sino todo explota
+                    columnas: [
+                      {
+                        field: "Descripcion",
+                        title: "Descripcion del seguimiento",
+                      },
+                      { field: "Fecha", title: "Fecha" },
+                      { field: "ViaContacto", title: "Via de contacto" },
+                      { field: "Problemas", title: "Problemas" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          }}
+          ModalDisplay={ModalDisplay}
+          IdDato={'IdClienteProspecto'}
+        // APIpath={}
+        />
+      </ModalDisplay.Provider>
+      <div className={`${globalStyles.main_work_space_container}`}>
+        <h1>Lista de clientes/Prospectos</h1>
+        <MaterialTable
+          columns={Columnas}
+          data={datosEditables}
+          title={null}
+          editable={{
+            onRowAdd: (newData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  fetch(api_general, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      accion: "Insert",
+                      coleccion: "ClienteProspecto",
+                      keyId: "IdClienteProspecto",
+                      Prefijo: "CP",
+                      data: newData,
+                    }),
+                  })
+                    .then((r) => r.json())
+                    .then((data) => {
+                      alert(data.result);
+                    });
+                  setDatosEditables([...datosEditables, newData]);
+                  resolve();
+                }, 1000);
+              }),
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataUpdate = [...datosEditables];
+                  const index = oldData.tableData.id;
+                  dataUpdate[index] = newData;
+                  setDatosEditables([...dataUpdate]);
+
+                  delete dataUpdate[index]._id;
+
+                  fetch(api_general, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      // idProducto: dataUpdate[index].IdCliente,
+                      // data: dataUpdate[index],
+                      // accion: "update",
+                      accion: "update",
+                      coleccion: "ClienteProspecto",
+                      query: {
+                        IdClienteProspecto: dataUpdate[index].IdClienteProspecto,
+                      },
+                      data: dataUpdate[index],
+                    }),
+                  })
+                    .then((r) => r.json())
+                    .then((data) => {
+                      alert(data.result);
+                    });
+                  console.log(dataUpdate[index]);
+                  resolve();
+                }, 1000);
+              }),
+            onRowDelete: (oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataDelete = [...datosEditables];
+                  const index = oldData.tableData.id;
+
+                  fetch(api_general, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      // idProducto: dataDelete[index].IdCliente,
+                      accion: "DeleteOne",
+                      coleccion: "ClienteProspecto",
+                      query: {
+                        IdClienteProspecto: dataDelete[index].IdClienteProspecto,
+                      },
+                    }),
+                  })
+                    .then((r) => r.json())
+                    .then((data) => {
+                      alert(data.result);
+                    });
+
+                  dataDelete.splice(index, 1);
+                  setDatosEditables([...dataDelete]);
+
+                  resolve();
+                }, 1000);
+              }),
+          }}
+          actions={[
+            {
+              icon: () => {
+                return <img src="/resources/remove_red_eye-24px.svg" />;
+              },
+              tooltip: "Mostrar todo",
+              onClick: (event, rowData) => {
+                let dt = datosEditables.find((value) => {
+                  return value['IdClienteProspecto'] == rowData['IdClienteProspecto']
                 })
-                  .then((r) => r.json())
-                  .then((data) => {
-                    alert(data.result);
-                  });
-                setDatosEditables([...datosEditables, newData]);
-                resolve();
-              }, 1000);
-            }),
-          onRowUpdate: (newData, oldData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                const dataUpdate = [...datosEditables];
-                const index = oldData.tableData.id;
-                dataUpdate[index] = newData;
-                setDatosEditables([...dataUpdate]);
-
-                delete dataUpdate[index]._id;
-
-                fetch(api_general, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    // idProducto: dataUpdate[index].IdCliente,
-                    // data: dataUpdate[index],
-                    // accion: "update",
-                    accion: "update",
-                    coleccion: "ClienteProspecto",
-                    query: {
-                      IdClienteProspecto: dataUpdate[index].IdClienteProspecto,
-                    },
-                    data: dataUpdate[index],
-                  }),
-                })
-                  .then((r) => r.json())
-                  .then((data) => {
-                    alert(data.result);
-                  });
-                console.log(dataUpdate[index]);
-                resolve();
-              }, 1000);
-            }),
-          onRowDelete: (oldData) =>
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                const dataDelete = [...datosEditables];
-                const index = oldData.tableData.id;
-
-                fetch(api_general, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    // idProducto: dataDelete[index].IdCliente,
-                    accion: "DeleteOne",
-                    coleccion: "ClienteProspecto",
-                    query: {
-                      IdClienteProspecto: dataDelete[index].IdClienteProspecto,
-                    },
-                  }),
-                })
-                  .then((r) => r.json())
-                  .then((data) => {
-                    alert(data.result);
-                  });
-
-                dataDelete.splice(index, 1);
-                setDatosEditables([...dataDelete]);
-
-                resolve();
-              }, 1000);
-            }),
-        }}
-        actions={[
-          {
-            icon: () => {
-              return <img src="/resources/remove_red_eye-24px.svg" />;
-            },
-            tooltip: "Mostrar todo",
-            onClick: (event, rowData) =>{
-              let dt = datosEditables.find((value)=>{
-                return value['IdClienteProspecto']==rowData['IdClienteProspecto']
-              })
-              console.log(dt)
-              setData(dt)
-              setDisplay(true)
-            }
+                console.log(dt)
+                setData(dt)
+                setDisplay(true)
+              }
               // Router.push({
               //   pathname: `/Clientes/ClienteProspecto/${rowData.IdClienteProspecto}`,
               // }),
               // setDisplay(true)
-              
-          },
-        ]}
-        options={{
-          actionsColumnIndex: -1,
-        }}
-      />
+
+            },
+          ]}
+          options={{
+            actionsColumnIndex: -1,
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -352,11 +359,11 @@ export async function getServerSideProps({ req, res }) {
 }
 
 const ConstrutorModal = ({ Display, setDisplay }) => {
-  
+
   return (
     <>
       {/* <Suspense fallback={<span>Cargando Data ...</span>}> */}
-        
+
       {/* </Suspense> */}
     </>
   );

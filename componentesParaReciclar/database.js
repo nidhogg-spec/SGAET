@@ -9,6 +9,7 @@ export default async (req, res) => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    console.log('Connected to the Database');
     
     // const dbo = db.db("inkatourtravelmanagmentsystemdb");
     // const bcrypt = require('bcrypt');

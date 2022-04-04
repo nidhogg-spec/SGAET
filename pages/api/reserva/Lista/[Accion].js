@@ -51,6 +51,7 @@ const func_ListaCotizacion = async (req, res) => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
+  console.log('Connected to the Database');
 
   try {
     await client.connect();

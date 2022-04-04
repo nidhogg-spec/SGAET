@@ -441,7 +441,6 @@ export async function getServerSideProps(context) {
       .toArray();
     result.map((x) => {
       if (x.IdCliente == idClienteFront) {
-        console.log("aca es ");
         Datos = x;
       }
     });
