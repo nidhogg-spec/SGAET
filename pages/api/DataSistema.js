@@ -67,6 +67,7 @@ const func_CambiarCambioDolar = async (req, res) => {
     });
     try {
       await client.connect(async (error) => {
+        console.log('Connected to the Database');
         // assert.equal(err, null); // Preguntar
         let dbo = client.db(dbName);
         let collection = dbo.collection("DataSistema");
