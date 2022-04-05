@@ -1,6 +1,4 @@
-import { MongoClient } from "mongodb";
-
-
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
@@ -47,71 +45,52 @@ export default async (req, res) => {
 };
 
 const func_ListaCotizacion = async (req, res) => {
-  const client = await MongoClient.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  console.log('Connected to the Database');
-
   try {
-    await client.connect();
-    // assert.equal(err, null); // Preguntar
-    let dbo = client.db(dbName);
-    let collection = dbo.collection("ReservaCotizacion");
-    // collection.findOne(idServicio)
-    let result = await collection
-      .find(
-        { $or: [{ Estado: 0 }, { Estado: null }, { Estado: undefined }] },
-        {
-          projection: {
-            _id: 0,
-            IdReservaCotizacion: 1,
-            NombreGrupo: 1,
-            CodGrupo: 1,
-            FechaIN: 1,
-          },
-        }
-      )
-      .toArray();
+    await connectToDatabase().then(async connectedObject => {
+      let collection = connectedObject.db.collection("ReservaCotizacion");
+      let result = await collection
+        .find(
+          { $or: [{ Estado: 0 }, { Estado: null }, { Estado: undefined }] },
+          {
+            projection: {
+              _id: 0,
+              IdReservaCotizacion: 1,
+              NombreGrupo: 1,
+              CodGrupo: 1,
+              FechaIN: 1,
+            },
+          }
+        )
+        .toArray();
 
-    // let result_formateado = []
-    // result.map(dt =>{
-    //   console.log(dt)
-    //   result_formateado.push({
-    //     IdReservaCotizacion: dt['IdReservaCotizacion'],
-    //     NombreGrupo:dt['NombreGrupo'],
-    //     CodGrupo:dt['CodGrupo'],
-    //     FechaIN:dt['FechaIN'],
-    //   })
-    // })
-    res.status(200).json({ AllCotizacion: result });
-    client.close();
-    // result.toArray((err, result) => {
-
-    //
-
-    //   });
+      // let result_formateado = []
+      // result.map(dt =>{
+      //   console.log(dt)
+      //   result_formateado.push({
+      //     IdReservaCotizacion: dt['IdReservaCotizacion'],
+      //     NombreGrupo:dt['NombreGrupo'],
+      //     CodGrupo:dt['CodGrupo'],
+      //     FechaIN:dt['FechaIN'],
+      //   })
+      // })
+      res.status(200).json({ AllCotizacion: result });
+    });
   } catch (error) {
     console.log("Error - 103");
     console.log(error);
     // res.redirect("/500");
-    res.status(500).json({ error: "Algun error"});
+    res.status(500).json({ error: "Algun error" });
   }
 };
 const func_ListaReserva = async (req, res) => {
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
   try {
-    await client.connect((error) => {
-      // assert.equal(err, null); // Preguntar
-      let dbo = client.db(dbName);
+    await connectToDatabase().then(async connectedObject => {
+      let dbo = connectedObject.db;
       let collection = dbo.collection("ReservaCotizacion");
       // collection.findOne(idServicio)
       collection
         .find(
-          { $or: [{ Estado: 2 },{ Estado: 3 }] },
+          { $or: [{ Estado: 2 }, { Estado: 3 }] },
           {
             projection: {
               _id: 0,
@@ -136,13 +115,12 @@ const func_ListaReserva = async (req, res) => {
           //   })
           // })
           res.status(200).json({ AllCotizacion: result });
-          client.close();
         });
     });
   } catch (error) {
     console.log("Error - 104");
     console.log(error);
     // res.redirect("/500");
-    res.status(500).json({ error: "Algun error"});
+    res.status(500).json({ error: "Algun error" });
   }
 };

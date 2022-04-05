@@ -4,7 +4,7 @@ import MaterialTable from "material-table";
 import Router from "next/router";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { MongoClient } from "mongodb";
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 
 export default function detalleCliente({ Datos, DatosSeguimiento }) {
   let x = {};
@@ -42,7 +42,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
     if (Object.keys(dataActualizada).length === 0) {
       console.log(dataActualizada);
     } else {
-      fetch(APIpath+`/api/cliente/clientes`, {
+      fetch(APIpath + `/api/cliente/clientes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -313,7 +313,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                     IdCliente: detalleCliente
                   };
                   console.log(y);
-                  fetch(APIpath+`/api/cliente/seguimiento`, {
+                  fetch(APIpath + `/api/cliente/seguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -337,7 +337,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                   dataUpdate[index] = newData;
                   setDatosEditables([...dataUpdate]);
 
-                  fetch(APIpath+`/api/cliente/seguimiento`, {
+                  fetch(APIpath + `/api/cliente/seguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -363,7 +363,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                   console.log(dataDelete[index]);
                   console.log(dataDelete[index].IdProductoHotel);
 
-                  fetch(APIpath+`/api/cliente/seguimiento`, {
+                  fetch(APIpath + `/api/cliente/seguimiento`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -412,72 +412,50 @@ export async function getServerSideProps(context) {
   let DatosSeguimiento = [];
   let idClienteFront = context.query.detalleCliente;
 
-  // console.log(idClienteFront)
-
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
 
   /* Consulta para extraer los datos de Clientes */
   try {
-    let client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("Cliente");
+    await connectToDatabase().then(async connectedObject => {
+      let dbo = connectedObject.db;
+      const collection = dbo.collection("Cliente");
 
-    let result = await collection
-      .find({})
-      .project({
-        _id: 0
-      })
-      .toArray();
-    result.map((x) => {
-      if (x.IdCliente == idClienteFront) {
-        Datos = x;
-      }
+      let result = await collection
+        .find({})
+        .project({
+          _id: 0
+        })
+        .toArray();
+      result.map((x) => {
+        if (x.IdCliente == idClienteFront) {
+          Datos = x;
+        }
+      });
     });
+
   } catch (error) {
     console.log("error - " + error);
-  } finally {
-    client.close();
   }
   /* Consulta para extraer los datos de Clientes */
   try {
-    let client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("Seguimiento");
+    await connectToDatabase().then(async connectedObject => {
+      let dbo = connectedObject.db;
+      const collection = dbo.collection("Seguimiento");
 
-    let result = await collection
-      .find({})
-      .project({
-        _id: 0
-      })
-      .toArray();
-    result.map((x) => {
-      if (x.IdCliente == idClienteFront) {
-        DatosSeguimiento.push(x);
-      }
+      let result = await collection
+        .find({})
+        .project({
+          _id: 0
+        })
+        .toArray();
+      result.map((x) => {
+        if (x.IdCliente == idClienteFront) {
+          DatosSeguimiento.push(x);
+        }
+      });
     });
+
   } catch (error) {
     console.log("error - " + error);
-  } finally {
-    client.close();
   }
   return {
     props: {
