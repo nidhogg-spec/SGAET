@@ -148,7 +148,7 @@ export default function loginPrincipal({ APIpath }) {
 export async function getServerSideProps() {
   const APIpath = process.env.API_DOMAIN;
   // const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
-
+  
   return {
     props: {
       APIpath: APIpath
