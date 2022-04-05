@@ -1,17 +1,10 @@
-import { MongoClient } from "mongodb";
-
-
+import { connectToDatabase } from "../../utils/API/connectMongo-v2";
 const jwtsecret = process.env.SECRET_KEY;
-
 const saltRounds = 10;
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
 
 export default async (req, res) => {
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
   switch (req.method) {
     case "POST":
       switch (req.body.accion) {
@@ -23,10 +16,8 @@ export default async (req, res) => {
               - keyId
               - projection
             */
-          await client.connect((error) => {
-            // assert.equal(err, null); // Preguntar
-            let dbo = client.db(dbName);
-
+          await connectToDatabase().then(async connectedObject => {
+            let dbo = connectedObject.db;
             let collection = dbo.collection(req.body.coleccion);
             // collection.findOne(idServicio)
             let query = { $or: [] };
@@ -53,15 +44,10 @@ export default async (req, res) => {
                   throw err;
                 }
                 res.status(200).json({ result });
-                client.close();
               });
           });
           break;
         case "FindOne":
-          client = new MongoClient(url, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-          });
           /*Que debe de ir en el REQ
               - accion
               - coleccion
@@ -69,10 +55,8 @@ export default async (req, res) => {
               - keyId
               - projection
             */
-          await client.connect(async (error) => {
-            // assert.equal(err, null); // Preguntar
-            let dbo = client.db(dbName);
-
+          await connectToDatabase().then(async connectedObject => {
+            let dbo = connectedObject.db;
             let collection = dbo.collection(req.body.coleccion);
             // collection.findOne(idServicio)
             let query = {};
@@ -83,7 +67,6 @@ export default async (req, res) => {
             });
 
             res.status(200).json({ result });
-            // client.close();
           });
           break;
         case "FindAll":
@@ -93,10 +76,8 @@ export default async (req, res) => {
               - projection
             */
           try {
-            await client.connect((error) => {
-              // assert.equal(err, null); // Preguntar
-              let dbo = client.db(dbName);
-
+            await connectToDatabase().then(async connectedObject => {
+              let dbo = connectedObject.db;
               let collection = dbo.collection(req.body.coleccion);
               // collection.findOne(idServicio)
               collection
@@ -106,7 +87,6 @@ export default async (req, res) => {
                     throw err;
                   }
                   res.status(200).json({ result });
-                  client.close();
                 });
             });
           } catch (error) {
@@ -124,42 +104,39 @@ export default async (req, res) => {
             */
           let IdNumero2 = 1;
           try {
-            client = new MongoClient(url, {
-              useNewUrlParser: true,
-              useUnifiedTopology: true,
-            });
-            await client.connect();
-            let collection = client.db(dbName).collection(req.body.coleccion);
-            const options = { sort: {} };
-            options.sort[req.body.keyId] = -1;
-            const result = await collection.findOne({}, options);
-            console.log(result);
-            if (result && result[req.body.keyId]) {
-              IdNumero2 = parseInt(
-                result[req.body.keyId].slice(req.body.Prefijo.length),
-                10
-              );
-              IdNumero2++;
-            }
-            let dt_sinID = [...req.body.data];
-            dt_sinID.map((dt) => {
-              dt[req.body.keyId] =
-                req.body.Prefijo +
-                ("00000" + IdNumero2.toString()).slice(
-                  IdNumero2.toString().length
+            await connectToDatabase().then(async connectedObject => {
+              let collection = connectedObject.db.collection(req.body.coleccion);
+              const options = { sort: {} };
+              options.sort[req.body.keyId] = -1;
+              const result = await collection.findOne({}, options);
+              console.log(result);
+              if (result && result[req.body.keyId]) {
+                IdNumero2 = parseInt(
+                  result[req.body.keyId].slice(req.body.Prefijo.length),
+                  10
                 );
-              IdNumero2++;
+                IdNumero2++;
+              }
+              let dt_sinID = [...req.body.data];
+              dt_sinID.map((dt) => {
+                dt[req.body.keyId] =
+                  req.body.Prefijo +
+                  ("00000" + IdNumero2.toString()).slice(
+                    IdNumero2.toString().length
+                  );
+                IdNumero2++;
+              });
+              req.body.data = dt_sinID;
             });
-            req.body.data = dt_sinID;
+
+
           } catch (error) {
             console.log("error - " + error);
           }
 
           try {
-            await client.connect((error) => {
-              // assert.equal(err, null); // Preguntar
-              let dbo = client.db(dbName);
-
+            await connectToDatabase().then(async connectedObject => {
+              let dbo = connectedObject.db;
               let collection = dbo.collection(req.body.coleccion);
               // collection.findOne(idServicio)
               collection.insertMany(req.body.data, function (err, res) {
@@ -172,7 +149,6 @@ export default async (req, res) => {
                 );
               });
               res.status(200).json({ result: "Insercion realizada" });
-              client.close();
             });
           } catch (error) {
             console.log(error);
@@ -189,30 +165,29 @@ export default async (req, res) => {
             */
           let IdNumero = 1;
           try {
-            await client.connect();
-            let collection = client.db(dbName).collection(req.body.coleccion);
-            const options = { sort: {} };
-            options.sort[req.body.keyId] = -1;
-            const result = await collection.findOne({}, options);
-            if (result) {
-              IdNumero = parseInt(
-                result[req.body.keyId].slice(req.body.Prefijo.length),
-                req.body.Prefijo.length + 8
-              );
-              IdNumero++;
-            }
-            req.body.data[req.body.keyId] =
-              req.body.Prefijo +
-              ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
+            await connectToDatabase().then(async connectedObject => {
+              let collection = connectedObject.db.collection(req.body.coleccion);
+              const options = { sort: {} };
+              options.sort[req.body.keyId] = -1;
+              const result = await collection.findOne({}, options);
+              if (result) {
+                IdNumero = parseInt(
+                  result[req.body.keyId].slice(req.body.Prefijo.length),
+                  req.body.Prefijo.length + 8
+                );
+                IdNumero++;
+              }
+              req.body.data[req.body.keyId] =
+                req.body.Prefijo +
+                ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
+            });
+
           } catch (error) {
             console.log("error al Devolver ID - " + error);
           }
-          console.log(req.body.data);
           try {
-            await client.connect((error) => {
-              // assert.equal(err, null); // Preguntar
-              let dbo = client.db(dbName);
-
+            await connectToDatabase().then(async connectedObject => {
+              let dbo = connectedObject.db;
               let collection = dbo.collection(req.body.coleccion);
               // collection.findOne(idServicio)
               collection.insertOne(req.body.data, function (err, res) {
@@ -225,7 +200,6 @@ export default async (req, res) => {
                 );
               });
               res.status(200).json({ result: "Insercion realizada" });
-              client.close();
             });
           } catch (error) {
             console.log(error);
@@ -239,22 +213,13 @@ export default async (req, res) => {
               - query
               - data
             */
-           let client_update = new MongoClient(url, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-          });
           try {
-            await client_update.connect(async (error) => {
-              // assert.equal(err, null); // Preguntar
-              if (error) {
-                console.log("El error es"+error)
-              }
-              let dbo = client_update.db(dbName);
-
+            await connectToDatabase().then(async connectedObject=>{
+              let dbo = connectedObject.db;
               let collection = dbo.collection(req.body.coleccion);
               // collection.findOne(idServicio)
               let newvalues = { $set: req.body.data };
-              await collection.updateOne(req.body.query,newvalues,function (err, res) {
+              await collection.updateOne(req.body.query, newvalues, function (err, res) {
                 if (err) {
                   console.log(err);
                   throw err;
@@ -267,28 +232,21 @@ export default async (req, res) => {
             });
           } catch (error) {
             console.log(error);
-          } finally {
-            client_update.close();
           }
 
           break;
-          case "DeleteOne":
+        case "DeleteOne":
           /*Que debe de ir en el REQ
               - Accion
               - coleccion
               - query
             */
-           let client_deleteone = new MongoClient(url, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-          });
           try {
-            await client_deleteone.connect(async (error) => {
-              // assert.equal(err, null); // Preguntar
-              let dbo = client_deleteone.db(dbName);
+            await connectToDatabase().then(async connectedObject=>{
+              let dbo = connectedObject.db;
               let collection = dbo.collection(req.body.coleccion);
               // collection.findOne(idServicio)
-              await collection.deleteOne(req.body.query,function (err, res) {
+              await collection.deleteOne(req.body.query, function (err, res) {
                 if (err) {
                   console.log(err);
                   throw err;
@@ -301,8 +259,6 @@ export default async (req, res) => {
             });
           } catch (error) {
             console.log(error);
-          } finally {
-            client_deleteone.close();
           }
 
           break;
@@ -315,27 +271,29 @@ export default async (req, res) => {
             */
           let IdNumero3 = 1;
           try {
-            await client.connect();
-            let collection = client.db(dbName).collection(req.body.coleccion);
-            const options = { sort: {} };
-            options.sort[req.body.keyId] = -1;
-            const result = await collection.findOne({}, options);
-            if (result) {
-              IdNumero3 = parseInt(
-                result[req.body.keyId].slice(req.body.Prefijo.length),
-                req.body.Prefijo.length + 8
-              );
-              IdNumero3++;
-            }
-            let ID =
-              req.body.Prefijo +
-              ("00000" + IdNumero3.toString()).slice(
-                IdNumero3.toString().length
-              );
+            await connectToDatabase().then(async connectedObject => {
+              let collection = connectedObject.db.collection(req.body.coleccion);
+              const options = { sort: {} };
+              options.sort[req.body.keyId] = -1;
+              const result = await collection.findOne({}, options);
+              if (result) {
+                IdNumero3 = parseInt(
+                  result[req.body.keyId].slice(req.body.Prefijo.length),
+                  req.body.Prefijo.length + 8
+                );
+                IdNumero3++;
+              }
+              let ID =
+                req.body.Prefijo +
+                ("00000" + IdNumero3.toString()).slice(
+                  IdNumero3.toString().length
+                );
 
-            res.status(200).json({
-              result: ID,
+              res.status(200).json({
+                result: ID,
+              });
             });
+
           } catch (error) {
             console.log("error al Devolver ID - " + error);
           }
