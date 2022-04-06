@@ -56,25 +56,27 @@ export default async (req, res) => {
   /* -----------------------Ingreso de reserva Cotizacion -------------------------------*/
   IdNumero = 1;
   Prefijo = "RC";
-
-  try {
-    let collection = client.db(dbName).collection("ReservaCotizacion");
-    const options = { sort: {} };
-    options.sort["IdReservaCotizacion"] = -1;
-    const result = await collection.findOne({}, options);
-    if (result) {
-      IdNumero = parseInt(
-        result["IdReservaCotizacion"].slice(Prefijo.length),
-        Prefijo.length + 8
-      );
-      IdNumero++;
+  await connectToDatabase().then(async connectedObject => {
+    try {
+      let collection = connectedObject.db.collection("ReservaCotizacion");
+      const options = { sort: {} };
+      options.sort["IdReservaCotizacion"] = -1;
+      const result = await collection.findOne({}, options);
+      if (result) {
+        IdNumero = parseInt(
+          result["IdReservaCotizacion"].slice(Prefijo.length),
+          Prefijo.length + 8
+        );
+        IdNumero++;
+      }
+      ReservaCotizacion["IdReservaCotizacion"] =
+        Prefijo +
+        ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
+    } catch (error) {
+      console.log("error al Devolver ID - " + error);
     }
-    ReservaCotizacion["IdReservaCotizacion"] =
-      Prefijo +
-      ("00000" + IdNumero.toString()).slice(IdNumero.toString().length);
-  } catch (error) {
-    console.log("error al Devolver ID - " + error);
-  }
+  })
+
 
   //----------------------------------Ingreso de ServiciosEscogidos-----------------------
 
@@ -106,8 +108,6 @@ export default async (req, res) => {
   } catch (error) {
     console.log("error - " + error);
   }
-  await client.close();
-
   await Promise.all([
     //Guardar ReservaCotizacion
     new Promise(async (resolve, reject) => {
@@ -160,21 +160,24 @@ export default async (req, res) => {
     }),
     //Guardar ServiciosEscogidos
     new Promise(async (resolve, reject) => {
-      try {
-        let dbo = client.db(dbName);
-        let collection = dbo.collection("ServicioEscogido");
-        collection.insertMany(ServiciosEscogidos, function (err, res) {
-          if (err) {
-            console.log(err);
-            throw err;
-          }
-          console.log("Number of documents inserted: " + res.insertedCount);
-        });
-        resolve();
-      } catch (error) {
-        console.log(error);
-        reject();
-      }
+      await connectToDatabase().then(async connectedObject => {
+        try {
+          let dbo = connectedObject.db;
+          let collection = dbo.collection("ServicioEscogido");
+          collection.insertMany(ServiciosEscogidos, function (err, res) {
+            if (err) {
+              console.log(err);
+              throw err;
+            }
+            console.log("Number of documents inserted: " + res.insertedCount);
+          });
+          resolve();
+        } catch (error) {
+          console.log(error);
+          reject();
+        }
+      })
+
     }),
   ]);
 

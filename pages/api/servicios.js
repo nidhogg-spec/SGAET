@@ -88,7 +88,6 @@ export default async (req, res) => {
               await collection.insertOne(req.body.data, function (err, result) {
                 if (err) {
                   res.status(500).json({ error: true, message: "un error 2 .v "+err });
-                  // client.close();
                   return;
                 }
                 console.log("Insercion completada");
@@ -100,8 +99,6 @@ export default async (req, res) => {
             
           } catch (error) {
             console.log("error 2 - " + error);
-          }finally{
-            await client.close()
           }
           break;
         default:
@@ -123,7 +120,6 @@ export default async (req, res) => {
         collection.updateOne(query, dataActu, (err, result) => {
           if (err) {
             res.status(500).json({ error: true, message: "un error .v" });
-            client.close();
             return;
           }
           console.log("Actualizacion satifactoria");
@@ -142,7 +138,6 @@ export default async (req, res) => {
         collection.deleteOne(query, (err, result) => {
           if (err) {
             res.status(500).json({ error: true, message: "un error .v" });
-            client.close();
             return;
           }
           console.log("Deleteacion satifactoria");

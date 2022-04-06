@@ -75,7 +75,5 @@ const func_CambiarCambioDolar = async (req, res) => {
     });
   } catch (error) {
     console.log("error - Cambiar cambiodolar => " + error);
-  } finally {
-    client.close();
   }
 };

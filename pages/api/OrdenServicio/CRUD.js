@@ -55,7 +55,6 @@ const func_Crear = async (req, res) => {
     } catch (error) {
       console.log("error al Devolver ID - " + error);
       res.status(500);
-      client.close();
       return;
     }
     try {

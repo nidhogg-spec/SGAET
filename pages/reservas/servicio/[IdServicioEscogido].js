@@ -107,7 +107,7 @@ const ServicioEscogido = (
         OrdenServicio["IdOrdenServicio"] != null &&
         OrdenServicio["IdOrdenServicio"] != undefined
       ) {
-        await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
+        await fetch("/api/OrdenServicio/CRUD", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -118,7 +118,7 @@ const ServicioEscogido = (
       } else {
         let temp_OrdenServicio = OrdenServicio;
         temp_OrdenServicio["IdServicioEscogido"] = IdServicioEscogido;
-        await fetch(props.URL_path + "/api/OrdenServicio/CRUD", {
+        await fetch("/api/OrdenServicio/CRUD", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

@@ -32,9 +32,6 @@ export default async (req, res) => {
         } catch (error) {
           console.log("error - " + error);
         }
-        // } finally {
-        //   client.close();
-        // }
         //Enviando Datos
         try {
           await connectToDatabase().then(async connectedObject => {
@@ -51,9 +48,6 @@ export default async (req, res) => {
         } catch (error) {
           console.log("error - " + error);
         }
-        // finally {
-        //   await client.close();
-        // }
         break;
       case "update":
         await connectToDatabase().then(async connectedObject => {

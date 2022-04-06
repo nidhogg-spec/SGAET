@@ -38,9 +38,6 @@ export default async (req, res) => {
         } catch (error) {
           console.log("error - " + error);
         }
-        // } finally {
-        //   client.close();
-        // }
         //Enviando Datos
         try {
           await connectToDatabase().then(async connectedObject => {
@@ -56,9 +53,6 @@ export default async (req, res) => {
         } catch (error) {
           console.log("error - " + error);
         }
-        // finally {
-        //   await client.close();
-        // }
         break;
       case "update":
         await connectToDatabase().then(async connectedObject => {
@@ -99,7 +93,6 @@ export default async (req, res) => {
             (err, result) => {
               if (err) {
                 res.status(500).json({ error: true, message: "un error .v" + err });
-                client.close();
                 return;
               }
               console.log("Actualizacion satifactoria");
@@ -116,7 +109,6 @@ export default async (req, res) => {
             (err, result) => {
               if (err) {
                 res.status(500).json({ error: true, message: "un error .v" });
-                client.close();
                 return;
               }
               console.log("Deleteacion satifactoria");
@@ -148,7 +140,6 @@ export default async (req, res) => {
           return;
         }
         res.status(200).json({ data })
-        client.close;
       });
     });
   }
