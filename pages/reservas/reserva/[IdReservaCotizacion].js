@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-// import styles from '..'
-
+import { estadosReservaCotizacion } from "@/utils/dominio";
 //Componentes
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import Loader from "@/components/Loading/Loading";
@@ -19,7 +18,8 @@ import botones from '@/globalStyles/modules/boton.module.css'
 import globalStyles from '@/globalStyles/modules/global.module.css'
 
 resetServerContext();
-
+const estadosReservaCotizacion_array = Object.values(estadosReservaCotizacion);
+console.log(estadosReservaCotizacion_array);
 const ReservaCotizacion = ({ APIPatch, APIpath }) => {
   const router = useRouter();
   const { IdReservaCotizacion } = router.query;
@@ -334,10 +334,9 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
               setLoading(false);
             }}
           >
-            <option value={0}>Cotizacion Proveedores sin confirmar</option>
-            <option value={1}>Cotizacion Proveedores confirmados</option>
-            <option value={2}>Reserva Pagada</option>
-            <option value={3}>Cotizacion Cancelada</option>
+            {estadosReservaCotizacion_array.map((Estado) => {
+              return <option value={Estado.numero}>{Estado.estado}</option>
+            })}
           </select>
         </div>
         <div>

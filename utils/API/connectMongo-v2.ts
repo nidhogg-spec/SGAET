@@ -1,4 +1,5 @@
 import { Db, MongoClient } from 'mongodb';
+import {  } from "next";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB = process.env.MONGODB_DB;
@@ -13,20 +14,25 @@ if (!MONGODB_DB) {
     throw new Error('Define the MONGODB_DB environmental variable');
 }
 
-let cachedClient: MongoClient | null = null;
-let cachedDb: Db | null = null;
+declare global {
+    var mongo_cachedClient: null | MongoClient;
+    var mongo_cachedDb: null | Db;
+}
+
+// let cachedClient: MongoClient | null = global.mongo_cachedClient;
+// let cachedDb: Db | null = global.mongo_cachedDb;
 
 export async function connectToDatabase() {
     // check the cached.
-    if (cachedClient && cachedDb) {
-        console.log('Connected to the Database');
+    if (global.mongo_cachedClient && global.mongo_cachedDb) {
         // load from cache
+        console.log("Estado de coneccion: "+global.mongo_cachedClient.isConnected());
         return {
-            client: cachedClient,
-            db: cachedDb,
+            client: global.mongo_cachedClient,
+            db: global.mongo_cachedDb,
         };
     }
-
+    console.log('Connecting to the Database v2');
     // set the connection options
     const opts = {
         useNewUrlParser: true,
@@ -39,11 +45,11 @@ export async function connectToDatabase() {
     let db = client.db(MONGODB_DB);
 
     // set cache
-    cachedClient = client;
-    cachedDb = db;
+    global.mongo_cachedClient = client;
+    global.mongo_cachedDb = db;
 
     return {
-        client: cachedClient,
-        db: cachedDb,
+        client: global.mongo_cachedClient,
+        db: global.mongo_cachedDb,
     };
 }

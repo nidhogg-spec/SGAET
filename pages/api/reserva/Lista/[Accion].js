@@ -5,7 +5,7 @@ const dbName = process.env.MONGODB_DB;
 
 export default async (req, res) => {
   const {
-    query: { Accion },
+    query: { Accion }
   } = req;
   switch (req.method) {
     case "GET":
@@ -46,7 +46,7 @@ export default async (req, res) => {
 
 const func_ListaCotizacion = async (req, res) => {
   try {
-    await connectToDatabase().then(async connectedObject => {
+    await connectToDatabase().then(async (connectedObject) => {
       let collection = connectedObject.db.collection("ReservaCotizacion");
       let result = await collection
         .find(
@@ -57,8 +57,8 @@ const func_ListaCotizacion = async (req, res) => {
               IdReservaCotizacion: 1,
               NombreGrupo: 1,
               CodGrupo: 1,
-              FechaIN: 1,
-            },
+              FechaIN: 1
+            }
           }
         )
         .toArray();
@@ -84,21 +84,27 @@ const func_ListaCotizacion = async (req, res) => {
 };
 const func_ListaReserva = async (req, res) => {
   try {
-    await connectToDatabase().then(async connectedObject => {
+    await connectToDatabase().then(async (connectedObject) => {
       let dbo = connectedObject.db;
       let collection = dbo.collection("ReservaCotizacion");
       // collection.findOne(idServicio)
+      let filtro = { $or: [{ Estado: 1 }, { Estado: 2 }, { Estado: 3 }, { Estado: 4 }] }
+      if(req.query.inactivos == "true"){
+        console.log("inactivos");
+        filtro.$or.push({ Estado: 5 })
+        filtro.$or.push({ Estado: 12 })
+      }
       collection
         .find(
-          { $or: [{ Estado: 2 }, { Estado: 3 }] },
+          filtro,
           {
             projection: {
               _id: 0,
               IdReservaCotizacion: 1,
               NombreGrupo: 1,
               CodGrupo: 1,
-              FechaIN: 1,
-            },
+              FechaIN: 1
+            }
           }
         )
         .toArray((err, result) => {
