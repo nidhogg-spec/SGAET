@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 
 
 const url = process.env.MONGODB_URI;
@@ -8,13 +9,9 @@ export default async (req, res) => {
   const {
     query: { IdReservaCotizacion },
   } = req;
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
   try {
-    await client.connect((error) => {
-      let dbo = client.db(dbName);
+    await connectToDatabase().then(async connectedObject => {
+      let dbo = connectedObject.db;
       let collection = dbo.collection("ServicioEscogido");
       let query = { $or: [] };
       collection
@@ -37,7 +34,5 @@ export default async (req, res) => {
     console.log("error - Obtener cambios dolar => " + error);
     // res.redirect("/500");
     res.status(500).json({ error: "Algun error" });
-  } finally {
-    client.close();
   }
 };

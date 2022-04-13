@@ -115,7 +115,6 @@ async function Crear(req, res) {
     return;
   }
 
-  client.close();
 }
 
 async function Eliminar(req, res) {
@@ -130,7 +129,6 @@ async function Eliminar(req, res) {
   } else {
     console.log("No se elimino correctamente");
   }
-  client.close();
 }
 
 async function Actualizar(req, res) {
@@ -155,7 +153,6 @@ async function Actualizar(req, res) {
     `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
   );
   res.status(200).send("Todo bien, todo correcto, Actualizacion satifactoria");
-  client.close();
 }
 
 async function Mostrar(req, res) {

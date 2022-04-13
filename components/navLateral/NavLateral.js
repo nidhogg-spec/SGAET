@@ -122,15 +122,20 @@ export default function NavLateral() {
           subModuloName: "Programa Turistico",
           link: "/ProgramaTuristico"
         },
+        // {
+        //   tipo: "link",
+        //   subModuloName: "Lista de Cotizaciones",
+        //   link: "/reservas/ListaCotizacion"
+        // },
+        // {
+        //   tipo: "link",
+        //   subModuloName: "Lista de Reservas",
+        //   link: "/reservas/ListaReserva"
+        // },
         {
           tipo: "link",
-          subModuloName: "Lista de Cotizaciones",
-          link: "/reservas/ListaCotizacion"
-        },
-        {
-          tipo: "link",
-          subModuloName: "Lista de Reservas",
-          link: "/reservas/ListaReserva"
+          subModuloName: "Lista de Reserva/Cotizacion",
+          link: "/reservas/ListaReservaCotizacion"
         },
       ]
     },

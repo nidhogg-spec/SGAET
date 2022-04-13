@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 
 import pdfMake from "pdfmake";
 import fs from "fs";
@@ -10,57 +10,52 @@ export default async (req, res) => {
   const {
     query: { IdOrdenServicio },
   } = req;
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  let   OrdenServicio;
+  let OrdenServicio;
   try {
-    await client.connect();
-    let dbo = client.db(dbName);
-    let collection = dbo.collection("OrdenServicio");
-    try {
+    await connectToDatabase().then(async connectedObject => {
+      let collection = connectedObject.db.collection("OrdenServicio");
+      try {
         OrdenServicio = await collection.findOne(
-        { IdOrdenServicio: IdOrdenServicio },
-        { projection: { _id: 0 } }
-      );
-    } catch (error) {
-      console.log("Error - 103");
-      console.log("error => " + error);
-      res.status(500).json({ error: "Algun error" });
-    }
+          { IdOrdenServicio: IdOrdenServicio },
+          { projection: { _id: 0 } }
+        );
+      } catch (error) {
+        console.log("Error - 103");
+        console.log("error => " + error);
+        res.status(500).json({ error: "Algun error" });
+      }
+    });
+
   } catch (error) {
     console.log("Error - 102");
     console.log("error => " + error);
     // res.redirect("/500");
     res.status(500).json({ error: "Algun error" });
-  } finally {
-    client.close();
   }
   //-------------------------------------------------------------------
   let docDefinition = {}
-  switch(OrdenServicio.TipoOrdenServicio){
+  switch (OrdenServicio.TipoOrdenServicio) {
     case "A":
       docDefinition = {
         content: [
-          'Codigo Orden de Servicio: '+OrdenServicio['CodigoOrdenServ'],
-          'Codigo de Grupo: '+OrdenServicio['CodGrupo'],
-          'Tour: '+OrdenServicio['Tour'],
-          'Guia: '+OrdenServicio['Guia'],
-          'Asistente: '+OrdenServicio['Asistente'],
-          'Fecha: '+OrdenServicio['Fecha'],
-          
-          'N° Pax: '+OrdenServicio['NumPax'],
-          'N° Porters: '+OrdenServicio['NumPorters'],
-          'Transporte: '+OrdenServicio['Trasnporte'],
-          'Grupo Nombre: '+OrdenServicio['NomGrupo'],
-          'Anexo: ' +OrdenServicio['Anexo'],
-          'Ingreso: '+OrdenServicio['Ingreso'],
-          'N° Box Lunch: '+OrdenServicio['BoxLunch'],
-          'N° Botiquin: '+OrdenServicio['Nbotiquin'],
-          'N° Primeros Auxilios: '+OrdenServicio['NprimerosAuxilios'],
-          'Imprevistos(S/.): '+OrdenServicio['ImprevistosSoles'],
-          'Imprevistos(US $): '+OrdenServicio['ImprevistosDolares'],
+          'Codigo Orden de Servicio: ' + OrdenServicio['CodigoOrdenServ'],
+          'Codigo de Grupo: ' + OrdenServicio['CodGrupo'],
+          'Tour: ' + OrdenServicio['Tour'],
+          'Guia: ' + OrdenServicio['Guia'],
+          'Asistente: ' + OrdenServicio['Asistente'],
+          'Fecha: ' + OrdenServicio['Fecha'],
+
+          'N° Pax: ' + OrdenServicio['NumPax'],
+          'N° Porters: ' + OrdenServicio['NumPorters'],
+          'Transporte: ' + OrdenServicio['Trasnporte'],
+          'Grupo Nombre: ' + OrdenServicio['NomGrupo'],
+          'Anexo: ' + OrdenServicio['Anexo'],
+          'Ingreso: ' + OrdenServicio['Ingreso'],
+          'N° Box Lunch: ' + OrdenServicio['BoxLunch'],
+          'N° Botiquin: ' + OrdenServicio['Nbotiquin'],
+          'N° Primeros Auxilios: ' + OrdenServicio['NprimerosAuxilios'],
+          'Imprevistos(S/.): ' + OrdenServicio['ImprevistosSoles'],
+          'Imprevistos(US $): ' + OrdenServicio['ImprevistosDolares'],
         ],
         defaultStyle: {
           font: "Times",
@@ -70,47 +65,47 @@ export default async (req, res) => {
     case "B":
       docDefinition = {
         content: [
-          'Codigo de Grupo: '+OrdenServicio['CodGrupo'],
-          'Trekking: '+OrdenServicio['trekking'],
-          'Fecha: '+OrdenServicio['Fecha'],
-          'N° Pax: '+OrdenServicio['Fecha'],
-          'Guia: '+OrdenServicio['Guia'],
-          'Asistente: '+OrdenServicio['Asistente'],
-          'Cocinero: '+OrdenServicio['Cocinero'],
-          'Transporte: '+OrdenServicio['Trasnporte'],
-          'Grupo Nombre: '+OrdenServicio['NomGrupo'],
-          'Anexo: ' +OrdenServicio['Anexo'],
-          'PTO. de Ingreso: : '+OrdenServicio['PuntoIngreso'],
-          'Oxigeno: '+OrdenServicio['Oxigeno'],
-          'N° Botiquin: '+OrdenServicio['NumBotiquin'],
-          'Imprevistos(S/.): '+OrdenServicio['ImprevistosSoles'],
-          'Imprevistos(US $): '+OrdenServicio['ImprevistosDolares'],
-          'N° Porters: '+OrdenServicio['NumPorters'],
-          'N° Porters Extra: '+OrdenServicio['NumPortersExtra'],
-          'N° Arrieros: '+OrdenServicio['NumaArrieros'],
-          'N° Caballos Carga: '+OrdenServicio['NumCaballoCarga'],
-          'N° Caballos Silla: ' +OrdenServicio['NumCaballoSilla'],
-          'Campamento 1er Dia: '+OrdenServicio['CampoPrimerDia'],
-          'Campamento 2do Dia: '+OrdenServicio['CampoSegunDia'],
-          'Campamento 3er Dia: '+OrdenServicio['CampoTercerDia'],
-          'Campamento 4to Dia: '+OrdenServicio['CampoCuartoDia'],
-          'Carpas Dobles: '+OrdenServicio['NumCarpaDobles'],
-          'Carpas Simples: ' +OrdenServicio['NumCarpaSimples'],
-          'Carpas Triple: : '+OrdenServicio['NumCarpaTriple'],
-          'Matras Simples: '+OrdenServicio['NumMatrasSimples'],
-          'Matras Infables: '+OrdenServicio['NumMatrasInfables'],
-          'Sleeping Sinteticos: '+OrdenServicio['NumSleepingSinteticos'],
-          'Sleeping Plumas: '+OrdenServicio['ImprevistosDolares'],
-          'Bastones '+OrdenServicio['NumBastones'],
-          'Duffel: '+OrdenServicio['NumDuffel'],
-          'Carpa Guia: '+OrdenServicio['CarpaGuia'],
-          'Carpa Comedor: '+OrdenServicio['CarpaComedor'],
-          'Carpa Cocina: ' +OrdenServicio['CarpaCocina'],
-          'Carpa Baño: '+OrdenServicio['CarpaBaño'],
-          'Bolsas Biodegradables: '+OrdenServicio['BolsasBiodegradables'],
-          'Oxigeno: '+OrdenServicio['Oxigeno'],
-          'Botiquin: '+OrdenServicio['Botiquin'],
-          'Otros'+OrdenServicio['Otros'],
+          'Codigo de Grupo: ' + OrdenServicio['CodGrupo'],
+          'Trekking: ' + OrdenServicio['trekking'],
+          'Fecha: ' + OrdenServicio['Fecha'],
+          'N° Pax: ' + OrdenServicio['Fecha'],
+          'Guia: ' + OrdenServicio['Guia'],
+          'Asistente: ' + OrdenServicio['Asistente'],
+          'Cocinero: ' + OrdenServicio['Cocinero'],
+          'Transporte: ' + OrdenServicio['Trasnporte'],
+          'Grupo Nombre: ' + OrdenServicio['NomGrupo'],
+          'Anexo: ' + OrdenServicio['Anexo'],
+          'PTO. de Ingreso: : ' + OrdenServicio['PuntoIngreso'],
+          'Oxigeno: ' + OrdenServicio['Oxigeno'],
+          'N° Botiquin: ' + OrdenServicio['NumBotiquin'],
+          'Imprevistos(S/.): ' + OrdenServicio['ImprevistosSoles'],
+          'Imprevistos(US $): ' + OrdenServicio['ImprevistosDolares'],
+          'N° Porters: ' + OrdenServicio['NumPorters'],
+          'N° Porters Extra: ' + OrdenServicio['NumPortersExtra'],
+          'N° Arrieros: ' + OrdenServicio['NumaArrieros'],
+          'N° Caballos Carga: ' + OrdenServicio['NumCaballoCarga'],
+          'N° Caballos Silla: ' + OrdenServicio['NumCaballoSilla'],
+          'Campamento 1er Dia: ' + OrdenServicio['CampoPrimerDia'],
+          'Campamento 2do Dia: ' + OrdenServicio['CampoSegunDia'],
+          'Campamento 3er Dia: ' + OrdenServicio['CampoTercerDia'],
+          'Campamento 4to Dia: ' + OrdenServicio['CampoCuartoDia'],
+          'Carpas Dobles: ' + OrdenServicio['NumCarpaDobles'],
+          'Carpas Simples: ' + OrdenServicio['NumCarpaSimples'],
+          'Carpas Triple: : ' + OrdenServicio['NumCarpaTriple'],
+          'Matras Simples: ' + OrdenServicio['NumMatrasSimples'],
+          'Matras Infables: ' + OrdenServicio['NumMatrasInfables'],
+          'Sleeping Sinteticos: ' + OrdenServicio['NumSleepingSinteticos'],
+          'Sleeping Plumas: ' + OrdenServicio['ImprevistosDolares'],
+          'Bastones ' + OrdenServicio['NumBastones'],
+          'Duffel: ' + OrdenServicio['NumDuffel'],
+          'Carpa Guia: ' + OrdenServicio['CarpaGuia'],
+          'Carpa Comedor: ' + OrdenServicio['CarpaComedor'],
+          'Carpa Cocina: ' + OrdenServicio['CarpaCocina'],
+          'Carpa Baño: ' + OrdenServicio['CarpaBaño'],
+          'Bolsas Biodegradables: ' + OrdenServicio['BolsasBiodegradables'],
+          'Oxigeno: ' + OrdenServicio['Oxigeno'],
+          'Botiquin: ' + OrdenServicio['Botiquin'],
+          'Otros' + OrdenServicio['Otros'],
         ],
         defaultStyle: {
           font: "Times",
@@ -120,14 +115,14 @@ export default async (req, res) => {
     case "C":
       docDefinition = {
         content: [
-          'Empresa: '+OrdenServicio['Empresa'],
-          'Codigo de Grupo: '+OrdenServicio['CodGrupo'],
-          'Tour: '+OrdenServicio['Tour'],
-          'N° Pax: '+OrdenServicio['NumPax'],
-          'Tipo de Tranporte: '+OrdenServicio['TipoTranporte'],
-          'Capacidad: '+OrdenServicio['Capacidad'],
-          'Fecha IN: '+OrdenServicio['FechaIn'],
-          'Fecha OUT: '+OrdenServicio['FechaOut'],
+          'Empresa: ' + OrdenServicio['Empresa'],
+          'Codigo de Grupo: ' + OrdenServicio['CodGrupo'],
+          'Tour: ' + OrdenServicio['Tour'],
+          'N° Pax: ' + OrdenServicio['NumPax'],
+          'Tipo de Tranporte: ' + OrdenServicio['TipoTranporte'],
+          'Capacidad: ' + OrdenServicio['Capacidad'],
+          'Fecha IN: ' + OrdenServicio['FechaIn'],
+          'Fecha OUT: ' + OrdenServicio['FechaOut'],
           'Tabla Pasajero: ',
           'Tabla Trasnporte: ',
         ],
@@ -139,16 +134,16 @@ export default async (req, res) => {
     case "D":
       docDefinition = {
         content: [
-          'CodigoOrdenServicio: '+OrdenServicio['CodigoOrdenServicio'],
-          'Para: '+OrdenServicio['Empresa'],
-          'Direccion: '+OrdenServicio['Direccion'],
-          'Telefono: '+OrdenServicio['Telefono'],
-          'N° Paxs: '+OrdenServicio['NumPax'],
-          'Idioma: '+OrdenServicio['Idioma'],
-          'A Nombre de PAX: '+OrdenServicio['Pax'],
-          'Detalle de Servicio: '+OrdenServicio['NombreServicio'],
-          'Fecha: '+OrdenServicio['FechaReserva'],
-          'Observaciones: '+OrdenServicio['Observaciones'],
+          'CodigoOrdenServicio: ' + OrdenServicio['CodigoOrdenServicio'],
+          'Para: ' + OrdenServicio['Empresa'],
+          'Direccion: ' + OrdenServicio['Direccion'],
+          'Telefono: ' + OrdenServicio['Telefono'],
+          'N° Paxs: ' + OrdenServicio['NumPax'],
+          'Idioma: ' + OrdenServicio['Idioma'],
+          'A Nombre de PAX: ' + OrdenServicio['Pax'],
+          'Detalle de Servicio: ' + OrdenServicio['NombreServicio'],
+          'Fecha: ' + OrdenServicio['FechaReserva'],
+          'Observaciones: ' + OrdenServicio['Observaciones'],
         ],
         defaultStyle: {
           font: "Times",

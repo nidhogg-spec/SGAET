@@ -1,5 +1,6 @@
 import MaterialTable from "material-table";
-import { MongoClient } from "mongodb";
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
+
 import Router from "next/router";
 import { withSSRContext } from 'aws-amplify'
 import { useEffect, useState, createContext } from "react";
@@ -321,12 +322,7 @@ export async function getServerSideProps({ req, res }) {
   const api_general = process.env.API_DOMAIN + "/api/general";
   const url = process.env.MONGODB_URI;
   const dbName = process.env.MONGODB_DB;
-
   let Datos = [];
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
 
   const { Auth } = withSSRContext({ req })
   try {
@@ -337,17 +333,17 @@ export async function getServerSideProps({ req, res }) {
   }
 
   try {
-    await client.connect();
-    let collection = client.db(dbName).collection("ClienteProspecto");
-    let result = await collection.find({}).project({ _id: 0 }).toArray();
-    // DatosProveedor = JSON.stringify(result);
+    await connectToDatabase().then(async connectedObject => {
+      let collection = connectedObject.db.collection("ClienteProspecto");
+      let result = await collection.find({}).project({ _id: 0 }).toArray();
+      // DatosProveedor = JSON.stringify(result);
 
-    result._id = JSON.stringify(result._id);
-    Datos = result;
+      result._id = JSON.stringify(result._id);
+      Datos = result;
+    });
+
   } catch (error) {
     console.log("Error cliente Mongo 1 => " + error);
-  } finally {
-    client.close();
   }
 
   return {

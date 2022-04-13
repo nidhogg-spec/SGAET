@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 
 import pdfMake from "pdfmake";
 import fs from "fs";
@@ -10,47 +10,42 @@ export default async (req, res) => {
   const {
     query: { IdReservaCotizacion },
   } = req;
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
   let ReservaCotizacion;
   try {
-    await client.connect();
-    let dbo = client.db(dbName);
-    let collection = dbo.collection("ReservaCotizacion");
-    try {
-      ReservaCotizacion = await collection.findOne(
-        { IdReservaCotizacion: IdReservaCotizacion },
-        { projection: { _id: 0 } }
-      );
-    } catch (error) {
-      console.log("Error - 103");
-      console.log("error => " + error);
-      res.status(500).json({ error: "Algun error" });
-    }
+    await connectToDatabase().then(async connectedObject => {
+      let dbo = connectedObject.db;
+      let collection = dbo.collection("ReservaCotizacion");
+      try {
+        ReservaCotizacion = await collection.findOne(
+          { IdReservaCotizacion: IdReservaCotizacion },
+          { projection: { _id: 0 } }
+        );
+      } catch (error) {
+        console.log("Error - 103");
+        console.log("error => " + error);
+        res.status(500).json({ error: "Algun error" });
+      }
+    });
   } catch (error) {
     console.log("Error - 102");
     console.log("error => " + error);
     // res.redirect("/500");
     res.status(500).json({ error: "Algun error" });
-  } finally {
-    client.close();
   }
   //-------------------------------------------------------------------
   let docDefinition = {
     content: [
-      'NombreGrupo: '+ReservaCotizacion['NombreGrupo'],
-      'CodGrupo: '+ReservaCotizacion['CodGrupo'],
-      'NpasajerosAdult: '+ReservaCotizacion['NpasajerosAdult'],
-      'NpasajerosChild: '+ReservaCotizacion['NpasajerosChild'],
-      'FechaOUT: '+ReservaCotizacion['FechaOUT'],
-      'Descripcion: '+ReservaCotizacion['Descripcion'],
-      'FechaIN: '+ReservaCotizacion['FechaIN'],
-      'IdClienteProspecto: '+ReservaCotizacion['IdClienteProspecto'],
-      'IdReservaCotizacion: '+ReservaCotizacion['IdReservaCotizacion'],
-    //   ': '+ReservaCotizacion[''],
-    //   ': '+ReservaCotizacion[''],
+      'NombreGrupo: ' + ReservaCotizacion['NombreGrupo'],
+      'CodGrupo: ' + ReservaCotizacion['CodGrupo'],
+      'NpasajerosAdult: ' + ReservaCotizacion['NpasajerosAdult'],
+      'NpasajerosChild: ' + ReservaCotizacion['NpasajerosChild'],
+      'FechaOUT: ' + ReservaCotizacion['FechaOUT'],
+      'Descripcion: ' + ReservaCotizacion['Descripcion'],
+      'FechaIN: ' + ReservaCotizacion['FechaIN'],
+      'IdClienteProspecto: ' + ReservaCotizacion['IdClienteProspecto'],
+      'IdReservaCotizacion: ' + ReservaCotizacion['IdReservaCotizacion'],
+      //   ': '+ReservaCotizacion[''],
+      //   ': '+ReservaCotizacion[''],
     ],
     defaultStyle: {
       font: "Times",

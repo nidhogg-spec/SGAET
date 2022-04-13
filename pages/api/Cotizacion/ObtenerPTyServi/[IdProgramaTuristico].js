@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 
 
 const url = process.env.MONGODB_URI;
@@ -8,14 +8,9 @@ export default async (req, res) => {
   const {
     query: {IdProgramaTuristico},
   } = req;
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
   try {
-    await client.connect(async (error) => {
-      // assert.equal(err, null); // Preguntar
-      let dbo = client.db(dbName);
+    await connectToDatabase().then(async connectedObject=>{
+      let dbo = connectedObject.db;
       let collection = dbo.collection("ProgramaTuristico");
       // collection.findOne(idServicio)
       let result = await collection.findOne({ IdProgramaTuristico: IdProgramaTuristico });
@@ -30,7 +25,5 @@ export default async (req, res) => {
     });
   } catch (error) {
     console.log("error - Obtener cambios dolar => " + error);
-  } finally {
-    client.close();
   }
 };

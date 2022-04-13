@@ -1,6 +1,5 @@
 import { db_connect } from "@/src/db";
-import { MongoClient } from "mongodb";
-
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
@@ -8,11 +7,6 @@ const dbName = process.env.MONGODB_DB;
 const coleccion = "Egreso";
 const keyId = "IdEgreso";
 const IdLetras = "EG";
-
-let client = new MongoClient(url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
 
 export default async (req, res) => {
   if (req.method == "POST") {
@@ -43,19 +37,11 @@ export default async (req, res) => {
           console.log("Insercion Realizada");
         } catch (error) {
           console.log("error - " + error);
-        } finally {
-          await client.close();
-        }
+        } 
         break;
       case "update":
-        client = new MongoClient(url, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-        });
-
-        client.connect(function (err) {
-          console.log("Connected to MognoDB server =>");
-          const dbo = client.db(dbName);
+        await connectToDatabase().then(async connectedObject=>{
+          let dbo = connectedObject.db;
           const collection = dbo.collection(coleccion);
           let dataActu = {
             $set: req.body.data,
@@ -69,36 +55,31 @@ export default async (req, res) => {
                 res
                   .status(500)
                   .json({ error: true, message: "un error .v" + err });
-                client.close();
                 return;
               }
               console.log("Actualizacion satifactoria");
               res.status(200).json({
                 message: "Todo bien, todo correcto, Actualizacion satifactoria",
               });
-              client.close();
             }
           );
         });
         break;
       case "delete":
-        client.connect(function (err) {
-          console.log("Connected to MognoDB server =>");
-          const dbo = client.db(dbName);
+        await connectToDatabase().then(async connectedObject=>{
+          let dbo = connectedObject.db;
           const collection = dbo.collection(coleccion);
           collection.deleteOne(
             { IdEgreso: req.body.idProducto },
             (err, result) => {
               if (err) {
                 res.status(500).json({ error: true, message: "un error .v" });
-                client.close();
                 return;
               }
               console.log("Deleteacion satifactoria");
               res.status(200).json({
                 message: "Todo bien, todo correcto, Deleteacion satifactoria ",
               });
-              client.close();
             }
           );
         });

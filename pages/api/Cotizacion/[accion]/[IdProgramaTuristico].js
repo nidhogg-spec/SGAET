@@ -1,7 +1,4 @@
-import { MongoClient } from "mongodb";
-
-
-
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
 
@@ -43,14 +40,9 @@ export default async (req, res) => {
 
 
 const func_ObtenerTodosPT = async (req, res) => {
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
   try {
-    await client.connect((error) => {
-      // assert.equal(err, null); // Preguntar
-      let dbo = client.db(dbName);
+    await connectToDatabase().then(async connectedObject => {
+      let dbo = connectedObject.db;
       let collection = dbo.collection("ProgramaTuristico");
       // collection.findOne(idServicio)
       collection
@@ -75,7 +67,6 @@ const func_ObtenerTodosPT = async (req, res) => {
             throw err;
           }
           res.status(200).json({ AllProgramasTuristicos: result });
-          client.close();
         });
     });
   } catch (error) {
@@ -86,22 +77,15 @@ const func_ObtenerUnPT = async (req, res) => {
   const {
     query: { accion, IdProgramaTuristico },
   } = req;
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
   try {
-    await client.connect(async (error) => {
-      // assert.equal(err, null); // Preguntar
-      let dbo = client.db(dbName);
-
+    await connectToDatabase().then(async connectedObject => {
+      let dbo = connectedObject.db;
       let collection = dbo.collection("ProgramaTuristico");
       // collection.findOne(idServicio)
       let query = {};
       query["IdProgramaTuristico"] = IdProgramaTuristico;
       let result = await collection.findOne(query);
       res.status(200).json({ result });
-      // client.close();
     });
   } catch (error) {
     res.status(500);
