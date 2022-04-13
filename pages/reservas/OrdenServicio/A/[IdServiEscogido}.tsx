@@ -1,1 +1,3 @@
-export const ToDelete = {} as any;
+export default function Index() {
+  return <>ToDelete</>;
+}
