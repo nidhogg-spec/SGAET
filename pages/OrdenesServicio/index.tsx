@@ -23,9 +23,12 @@ import { log } from "console";
 const Index = ({}) => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [ListarReservaProveedores_API, setListarReservaProveedores_API]  = useState<api_response>();
+  const [ListarReservaProveedores_API, setListarReservaProveedores_API] =
+    useState<api_response>();
   const [Loading, setLoading] = useState(false);
-  const [DataCotizacion, setDataCotizacion] = useState<reservaCotizacionInterface[]>([]);
+  const [DataCotizacion, setDataCotizacion] = useState<
+    reservaCotizacionInterface[]
+  >([]);
   const [Proveedores, setProveedores] = useState([]);
   const [IdReserva, setIdReserva] = useState("");
   const [ListarInactivos, setListarInactivos] = useState(false);
@@ -68,7 +71,7 @@ const Index = ({}) => {
       )
       .then((data) => {
         console.log(data.data);
-        
+
         setListarReservaProveedores_API(data.data as api_response);
         setProveedores(data.data.tablaProductos);
         setLoading(false);
@@ -87,24 +90,29 @@ const Index = ({}) => {
         <h2>
           Lista de Reservas {!ListarInactivos ? "Activas" : "Activas/Inactivas"}
         </h2>
-        <ModalOSInfo 
+        <ModalOSInfo
           open={open}
           setOpen={setOpen}
           data={ListarReservaProveedores_API}
           IdProveedor={IdProveedor}
           key={IdReserva}
         />
-        <label>
-          <input
-            type="checkbox"
-            onChange={(value) => {
-              setListarInactivos(value.target.checked);
-            }}
-            //@ts-ignore
-            value={ListarInactivos}
-          />
-          <span>Mostrar Inactivos</span>
-        </label>
+        <div className={global_style.checkbox_container}>
+          <label className={global_style.checkbox_switch}>
+            <input
+              type="checkbox"
+              onChange={(value) => {
+                setListarInactivos(value.target.checked);
+              }}
+              //@ts-ignore
+              value={ListarInactivos}
+            />
+            <span
+              className={`${global_style.checkbox_switch_slider} ${global_style.checkbox_switch_slider_round}`}
+            ></span>
+          </label>
+          <span className={global_style.checkbox_label}>Mostrar Inactivos</span>
+        </div>
         <MaterialTable
           columns={[
             { title: "Id", field: "IdReservaCotizacion" },

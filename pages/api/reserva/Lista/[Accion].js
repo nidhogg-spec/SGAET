@@ -4,44 +4,48 @@ const url = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
 
 export default async (req, res) => {
-  const {
-    query: { Accion }
-  } = req;
-  switch (req.method) {
-    case "GET":
-      switch (Accion) {
-        // --------------------Cambio dolar---------------------
-        case "ListaCotizacion":
-          func_ListaCotizacion(req, res);
-          break;
-        case "ListaReserva":
-          func_ListaReserva(req, res);
-          break;
-        //------------------------------------------------------
-        default:
-          console.log("Accion incorrecta - 101");
-          // res.redirect("/500");
-          res.status(500).json({ error: "Algun error" });
-          break;
-      }
-      break;
-    case "POST":
-      switch (Accion) {
-        // --------------------Cambio dolar---------------------
-        //------------------------------------------------------
-        default:
-          // res.redirect("/500");
-          res.status(500).json({ error: "Algun error" });
-          break;
-      }
-      break;
+  await new Promise(async (resolve, reject) => {
+    const {
+      query: { Accion }
+    } = req;
+    switch (req.method) {
+      case "GET":
+        switch (Accion) {
+          // --------------------Cambio dolar---------------------
+          case "ListaCotizacion":
+            await func_ListaCotizacion(req, res);
+            break;
+          case "ListaReserva":
+            await func_ListaReserva(req, res);
+            break;
+          //------------------------------------------------------
+          default:
+            console.log("Accion incorrecta - 101");
+            // res.redirect("/500");
+            res.status(500).json({ error: "Algun error" });
+            break;
+        }
+        break;
+      case "POST":
+        switch (Accion) {
+          // --------------------Cambio dolar---------------------
+          //------------------------------------------------------
+          default:
+            // res.redirect("/500");
+            res.status(500).json({ error: "Algun error" });
+            break;
+        }
+        break;
 
-    default:
-      console.log("Accion incorrecta - 102");
-      // res.redirect("/500");
-      res.status(500).json({ error: "Algun error" });
-      break;
-  }
+      default:
+        console.log("Accion incorrecta - 102");
+        // res.redirect("/500");
+        res.status(500).json({ error: "Algun error" });
+        break;
+    }
+    resolve();
+  })
+
 };
 
 const func_ListaCotizacion = async (req, res) => {
@@ -89,7 +93,7 @@ const func_ListaReserva = async (req, res) => {
       let collection = dbo.collection("ReservaCotizacion");
       // collection.findOne(idServicio)
       let filtro = { $or: [{ Estado: 1 }, { Estado: 2 }, { Estado: 3 }, { Estado: 4 }] }
-      if(req.query.inactivos == "true"){
+      if (req.query.inactivos == "true") {
         console.log("inactivos");
         filtro.$or.push({ Estado: 5 })
         filtro.$or.push({ Estado: 12 })

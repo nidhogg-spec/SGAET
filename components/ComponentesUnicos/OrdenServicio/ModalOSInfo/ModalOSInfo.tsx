@@ -6,8 +6,10 @@ import { ListarReservaProveedores_get_response } from "@/utils/interfaces/API/re
 
 // Estilos
 import globalStyles from "@/globalStyles/modules/global.module.css";
+import botones from "@/globalStyles/modules/boton.module.css";
 import customStyle from "./ModalOSInfo.module.css";
 import { servicioEscogidoInterface } from "@/utils/interfaces/db";
+import axios from "axios";
 
 interface props {
   open: boolean;
@@ -33,6 +35,36 @@ export default function ModalOSInfo({
   const handleClose = () => {
     setOpen(false);
   };
+  const generarPDF_button_funcion = async () => {
+    let pdf = await axios({
+      url:
+        "/api/reserva/generarPDFOrdenServicio?IdReserva=" +
+        reserva.IdReservaCotizacion +
+        "&IdProveedor=" +
+        IdProveedor, //your url
+      method: "GET",
+      responseType: "blob"
+    })
+      .then((response) => {
+        if (response.status === 400) {
+          alert("Error al generar el PDF");
+          return;
+        }
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          `Orden_Servicio-${data?.reserva.IdReservaCotizacion}-${IdProveedor}.pdf`
+        ); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch((error) => {
+        alert("Error al generar el PDF");
+      });
+  };
+
   return (
     <>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
@@ -43,6 +75,12 @@ export default function ModalOSInfo({
             </h1>
           </div>
           <div>
+            <button
+              onClick={generarPDF_button_funcion}
+              className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
+            >
+              Generar PDF
+            </button>
             <h2>Datos del proveedor</h2>
             <div className={`${globalStyles.global_textInput_container}`}>
               <label>Nombre Proveedor</label>
@@ -77,7 +115,11 @@ export default function ModalOSInfo({
             <h2>Datos de reserva</h2>
             <div className={`${globalStyles.global_textInput_container}`}>
               <label>Id Reserva</label>
-              <input type="text" disabled value={reserva?.IdReservaCotizacion} />
+              <input
+                type="text"
+                disabled
+                value={reserva?.IdReservaCotizacion}
+              />
             </div>
             <div className={`${globalStyles.global_textInput_container}`}>
               <label>Nombre de grupo</label>
@@ -88,7 +130,10 @@ export default function ModalOSInfo({
               <MaterialTable
                 columns={[
                   { title: "Nombre del Servicio", field: "NombreServicio" },
-                  { title: "Precio de Cotizacion Total", field: "PrecioCotiTotal" },
+                  {
+                    title: "Precio de Cotizacion Total",
+                    field: "PrecioCotiTotal"
+                  },
                   { title: "Currency", field: "Currency" },
                   { title: "Fecha de Reserva", field: "FechaReserva" },
                   { title: "Fecha Limite de Pago", field: "FechaLimitePago" }
