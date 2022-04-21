@@ -3,46 +3,63 @@ export enum Currency {
   Soles = "Soles"
 }
 
+
 export const tiposProveedoresServicios = [
   {
     prefijo: "PH",
     collectionName: "ProductoHoteles",
-    idKey: "IdProductoHotel"
+    idKey: "IdProductoHotel",
+    nombreGeneral: "Hotel",
+    nombreTipo: "Hotel"
   },
   {
     prefijo: "PA",
     collectionName: "ProductoAgencias",
-    idKey: "IdProductoAgencia"
+    idKey: "IdProductoAgencia",
+    nombreGeneral: "Agencia",
+    nombreTipo: "Agencia"
   },
   {
     prefijo: "PG",
     collectionName: "ProductoGuias",
-    idKey: "IdProductoGuia"
+    idKey: "IdProductoGuia",
+    nombreGeneral: "Guia",
+    nombreTipo: "Guia"
   },
   {
     prefijo: "PO",
     collectionName: "ProductoOtros",
-    idKey: "IdProductoOtro"
+    idKey: "IdProductoOtro",
+    nombreGeneral: "Otro",
+    nombreTipo: "Otro"
   },
   {
     prefijo: "PR",
     collectionName: "ProductoRestaurantes",
-    idKey: "IdProductoRestaurante"
+    idKey: "IdProductoRestaurante",
+    nombreGeneral: "Restaurante",
+    nombreTipo: "Restaurante"
   },
   {
     prefijo: "PS",
     collectionName: "ProductoSitioTuristico",
-    idKey: "IdProductoSitioTuristico"
+    idKey: "IdProductoSitioTuristico",
+    nombreGeneral: "Sitio Turistico",
+    nombreTipo: "SitioTuristico"
   },
   {
     prefijo: "PF",
     collectionName: "ProductoTransFerroviario",
-    idKey: "IdProductoTransFerroviario"
+    idKey: "IdProductoTransFerroviario",
+    nombreGeneral: "Transporte Ferroviario",
+    nombreTipo: "TransporteFerroviario"
   },
   {
     prefijo: "PT",
     collectionName: "ProductoTransportes",
-    idKey: "IdProductoTransporte"
+    idKey: "IdProductoTransporte",
+    nombreGeneral: "Transporte Terrestre",
+    nombreTipo: "TransporteTerrestre"
   }
 ];
 

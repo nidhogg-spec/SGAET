@@ -280,7 +280,12 @@ export interface proveedorInterface {
   Estado: number | string;
   NombreRepresentanteLegal: string;
   NroDocIdentRepresentanteLegal: string;
+  //------------------ Guia
+  NombreGuia: "";
+  Idiomas: string[];
+  //------------------ Hotel
   NEstrellas: number | string;
+  //---------------------------
   Contacto: {
     NombreContac: string;
     Area: string;
