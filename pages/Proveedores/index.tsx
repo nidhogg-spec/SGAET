@@ -10,9 +10,13 @@ import { resetServerContext } from "react-beautiful-dnd";
 import MaterialTable from "material-table";
 import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
 import ModalProveedores_NuevoProv from "@/components/ComponentesUnicos/Proveedores/ModalProveedores_NuevoProv/ModalProveedores_NuevoProv";
+import Loader from "@/components/Loading/Loading";
 
 //CSS
 import styles from "@/globalStyles/Proveedor.module.css";
+import global_style from "@/globalStyles/modules/global.module.css";
+import botones from "@/globalStyles/modules/boton.module.css";
+import axios from "axios";
 
 interface proveedorList {
   id: string;
@@ -27,26 +31,67 @@ interface Props {
 export default function Home({ proveedores }: Props) {
   const router = useRouter();
   const [TablaDatos, setTablaDatos] = useState(proveedores);
+  const [ListarInactivos, setListarInactivos] = useState(false);
   const [open, setOpen] = useState(false);
+  const [Loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    if (ListarInactivos == true) {
+      axios
+        .post("/api/proveedores/listaProveedores?inactivos=true",{
+          accion: "find",
+        })
+        .then((data) => {
+          setTablaDatos(data.data.ListaProveedores);
+          setLoading(false);
+        });
+    } else {
+      axios.post("/api/proveedores/listaProveedores",{
+        accion: "find",
+      }).then((data) => {
+        setTablaDatos(data.data.ListaProveedores);
+        setLoading(false);
+      });
+    }
+  }, [ListarInactivos]);
 
   const HandleAnadir = () => {
-    // router.push("/Proveedores/NuevoProveedor");
     setOpen(true);
   };
 
   return (
     <div className={styles.mainContainer}>
-      <ModalProveedores_NuevoProv
-        open={open}
-        setOpen={setOpen}
-      />
+      <Loader Loading={Loading} />
+      <ModalProveedores_NuevoProv open={open} setOpen={setOpen} />
       <div className={styles.titleContainer}>
         <h1 className="Titulo">Lista de Proveedores</h1>
         <div>
-          <BotonAnadir Accion={HandleAnadir} />
+          <button
+            className={`${botones.button} ${botones.buttonGuardar}`}
+            onClick={HandleAnadir}
+          >
+            Añadir Proveedor
+          </button>
         </div>
       </div>
       <div className="">
+        <div className={global_style.checkbox_container}>
+          <label className={global_style.checkbox_switch}>
+            <input
+              type="checkbox"
+              onChange={(value) => {
+                setListarInactivos(value.target.checked);
+              }}
+              //@ts-ignore
+              value={ListarInactivos}
+            />
+            <span
+              className={`${global_style.checkbox_switch_slider} ${global_style.checkbox_switch_slider_round}`}
+            ></span>
+          </label>
+          <span className={global_style.checkbox_label}>Mostrar Inactivos</span>
+        </div>
         <MaterialTable
           columns={[
             { title: "ID", field: "id", filtering: false, hidden: true },

@@ -13,12 +13,16 @@ import { servicioEscogidoInterface } from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 
 import { proveedorInterface } from "@/utils/interfaces/db";
+import { useRouter } from "next/router";
 interface props {
   open: boolean;
   setOpen: Function;
 }
 
 export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
+  const router = useRouter();
+  const [openSiguientePaso, setOpenSiguientePaso] = useState(false);
+  const [Link_ultimoIngresado, setLink_ultimoIngresado] = useState("");
   const {
     register,
     handleSubmit,
@@ -46,7 +50,8 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
       Idiomas: [],
       //------------------ Hotel
       NEstrellas: 0
-    }
+    },
+    mode: "onBlur"
   });
   const [ProveedorContacto, setProveedorContacto] = useState([]);
   const [ProveedorBanco, setProveedorBanco] = useState([]);
@@ -57,21 +62,86 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
     setOpen(false);
   };
   const onSubmit = (data: any) => {
+    const temp_ProveedorContacto = [...ProveedorContacto];
+    const temp_ProveedorBanco = [...ProveedorBanco];
+    setProveedorBanco([]);
+    setProveedorContacto([]);
+    // new Promise<void>((resolve) => {
     setLoading(true);
     let db_proveedor = formatear_proveedore_database(
       data,
-      ProveedorBanco,
-      ProveedorContacto,
+      temp_ProveedorBanco,
+      temp_ProveedorContacto,
       provDinamico
     );
     console.log(db_proveedor);
-    setLoading(false);
-    setOpen(false);
+    let result = axios
+      .post("/api/proveedores/listaProveedores", {
+        accion: "Create",
+        data: db_proveedor
+      })
+      .then((res) => {
+        try {
+          if (res.status === 200) {
+            console.log(res.data);
+            setOpenSiguientePaso(true);
+            setLink_ultimoIngresado(
+              `/Proveedores/${db_proveedor["tipo"]}/${res.data?.data["IdProveedor"]}`
+            );
+          } else {
+            alert("Error al guardar");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+        setLoading(false);
+        setOpen(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+    //   resolve();
+    // });
   };
 
   return (
     <>
       <LoadingComp Loading={Loading} />
+      <Dialog
+        open={openSiguientePaso}
+        onClose={() => {
+          router.reload();
+        }}
+        fullWidth
+        maxWidth="xs"
+      >
+        <DialogContent>
+          <div className={customStyle.postRegistro__container}>
+            <h4>Proveedor nuevo registrado. ¿Cual es su siguiente paso?</h4>
+            <button
+              onClick={() => {
+                if (Link_ultimoIngresado !== "") {
+                  router.push(Link_ultimoIngresado);
+                } else {
+                  router.reload();
+                }
+              }}
+              className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
+            >
+              Ver nuevo Proveedor
+            </button>
+            <button
+              onClick={() => {
+                router.reload();
+              }}
+              className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
+            >
+              Seguir en Lista de proveedores
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
         <DialogContent>
           <form action="" onSubmit={handleSubmit(onSubmit)}>
@@ -267,11 +337,16 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
               </div>
               <div className={`${globalStyles.global_textInput_container}`}>
                 <label>Email principal</label>
-                <input type="text" {...register("EmailPrincipal",{
+                <input
+                  type="text"
+                  {...register("EmailPrincipal", {
                     pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
-                })} />
-                <span className={`${globalStyles.global_error_message}`}>{errors.EmailPrincipal?.type == "pattern" &&
-                    "Ingrese un email valido"}</span>
+                  })}
+                />
+                <span className={`${globalStyles.global_error_message}`}>
+                  {errors.EmailPrincipal?.type == "pattern" &&
+                    "Ingrese un email valido"}
+                </span>
               </div>
               <div className={`${globalStyles.global_textInput_container}`}>
                 <label>Pagina web</label>
@@ -446,8 +521,8 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
 
 function formatear_proveedore_database(
   form_data: any,
-  tabla_contactos: any[],
   tabla_cuentaBancarias: any[],
+  tabla_contactos: any[],
   tipoProveedor: string
 ): proveedorInterface {
   tabla_contactos.map((data) => {

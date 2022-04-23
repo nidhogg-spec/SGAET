@@ -22,7 +22,7 @@
     "isomorphic-unfetch": "^3.1.0",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
-    "material-table": "^1.69.2",
+    "material-table": "^1.69.3",
     "mongodb": "^3.6.3",
     "next": "10.0.5",
     "next-images": "^1.7.0",
