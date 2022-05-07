@@ -280,6 +280,7 @@ export interface proveedorInterface {
   Estado: number | string;
   NombreRepresentanteLegal: string;
   NroDocIdentRepresentanteLegal: string;
+  EnlaceDocumento: string;
   //------------------ Guia
   NombreGuia: "";
   Idiomas: string[];

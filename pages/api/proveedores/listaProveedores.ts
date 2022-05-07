@@ -16,9 +16,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method == "POST") {
       switch (req.body.accion) {
         case "find":
-          let filtro = { $or: [{ Estado: "1" }] };
+          let filtro = { $or: [{ Estado: "1" }, { Estado: 1 }] };
           if (req.query.inactivos == "true") {
             filtro.$or.push({ Estado: "0" });
+            filtro.$or.push({ Estado: 0 });
           }
           let Datos: proveedorList[] = [];
           await connectToDatabase().then(async (connectedObject) => {
@@ -98,16 +99,32 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           res.status(200).json({ data: result.ops[0] });
           break;
         case "update":
-          updateDocument(
-            coleccion,
-            req.body.data,
-            { IdProveedor: req.body.IdProveedor },
-            () => {
-              res.status(200).json({
-                message: "Actualizacion satifactoria"
-              });
-            }
-          );
+          await connectToDatabase().then(async (connectedObject) => {
+            let dbo = connectedObject.db;
+            const collection = dbo.collection(coleccion);
+            collection.updateOne(
+              { IdProveedor: req.body.IdProveedor },
+              { $set: req.body.data },
+              (err, result) => {
+                if (err) {
+                  res.status(500).json({ error: true, message: "Error" });
+                  return;
+                }
+                res.status(200).json({ result });
+                res.end();
+              }
+            );
+          });
+          // updateDocument(
+          //   coleccion,
+          //   req.body.data,
+          //   { IdProveedor: req.body.IdProveedor },
+          //   () => {
+          //     res.status(200).json({
+          //       message: "Actualizacion satifactoria"
+          //     });
+          //   }
+          // );
           break;
         case "updateMany":
           await connectToDatabase().then(async (connectedObject) => {
@@ -150,17 +167,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           await connectToDatabase().then(async (connectedObject) => {
             let dbo = connectedObject.db;
             const collection = dbo.collection(coleccion);
-            collection.deleteOne(
+            collection.updateOne(
               { IdProveedor: req.body.IdProveedor },
+              {
+                $set: {
+                  Estado: 0
+                }
+              },
               (err, result) => {
                 if (err) {
-                  res.status(500).json({ error: true, message: "un error .v" });
+                  res.status(500).json({ error: true, message: "Error " });
                   return;
                 }
-                console.log("Deleteacion satifactoria");
                 res.status(200).json({
-                  message: "Todo bien, todo correcto, Deleteacion satifactoria "
+                  message: "Desactivacion satisfactoria"
                 });
+                res.end();
               }
             );
           });
@@ -173,7 +195,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           break;
       }
     }
-    res.end();
+    // res.end();
     resolve();
   });
 };

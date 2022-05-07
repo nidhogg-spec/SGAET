@@ -8,27 +8,33 @@ import { tiposProveedoresServicios, Idiomas } from "@/utils/dominio/index";
 // Estilos
 import globalStyles from "@/globalStyles/modules/global.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
-import customStyle from "./ModalProveedores_NuevoProv.module.css";
+import customStyle from "./ModalProveedores_EditProv.module.css";
 import { servicioEscogidoInterface } from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 
 import { proveedorInterface } from "@/utils/interfaces/db";
 import { useRouter } from "next/router";
+
 interface props {
   open: boolean;
   setOpen: Function;
+  proveedor_init_info: proveedorInterface;
 }
 
-export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
+export default function ModalProveedores_EditProv({
+  open,
+  setOpen,
+  proveedor_init_info
+}: props) {
   const router = useRouter();
   const [openSiguientePaso, setOpenSiguientePaso] = useState(false);
-  const [Link_ultimoIngresado, setLink_ultimoIngresado] = useState("");
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-    getValues
+    getValues,
+    reset
   } = useForm({
     defaultValues: {
       RazonSocial: "",
@@ -74,36 +80,115 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
       temp_ProveedorContacto,
       provDinamico
     );
+    //@ts-ignore
+    delete db_proveedor.IdProveedor;
     console.log(db_proveedor);
-    let result = axios
-      .post("/api/proveedores/listaProveedores", {
-        accion: "Create",
-        data: db_proveedor
-      })
-      .then((res) => {
-        try {
-          if (res.status === 200) {
-            console.log(res.data);
-            setOpenSiguientePaso(true);
-            setLink_ultimoIngresado(
-              `/Proveedores/${db_proveedor["tipo"]}/${res.data?.data["IdProveedor"]}`
-            );
-          } else {
-            alert("Error al guardar");
-          }
-        } catch (error) {
-          console.log(error);
-        }
-        setLoading(false);
-        setOpen(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-    //   resolve();
-    // });
+    if (
+      proveedor_init_info.IdProveedor == undefined ||
+      proveedor_init_info.IdProveedor == ""
+    ) {
+      throw new Error("No se puede editar un proveedor que no existe");
+    }
+    new Promise<void>((resolve, reject) => {
+      setTimeout(() => {
+        fetch("/api/proveedores/listaProveedores", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accion: "update",
+            data: db_proveedor,
+            IdProveedor: proveedor_init_info.IdProveedor || ""
+          })
+        })
+          .then((res) => {
+            try {
+              if (res.status === 200) {
+                setOpenSiguientePaso(true);
+              } else {
+                alert("Error al guardar");
+              }
+            } catch (error) {
+              console.log(error);
+            }
+            setLoading(false);
+            // setOpen(false);
+            resolve();
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+            reject();
+          });
+      }, 1000);
+    });
+
+    // let result = axios
+    //   .post("/api/proveedores/listaProveedores", {
+    //     accion: "update",
+    //     data: db_proveedor,
+    //     IdProveedor: proveedor_init_info.IdProveedor || ""
+    //   })
+    //   .then((res) => {
+    //     try {
+    //       if (res.status === 200) {
+    //         setOpenSiguientePaso(true);
+    //       } else {
+    //         alert("Error al guardar");
+    //       }
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+    //     setLoading(false);
+    //     setOpen(false);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setLoading(false);
+    //   });
   };
+
+  useEffect(() => {
+    setprovDinamico(proveedor_init_info.tipo);
+    reset({
+      RazonSocial: proveedor_init_info.RazonSocial,
+      nombre: proveedor_init_info.nombre,
+      TipoDocumento: proveedor_init_info.TipoDocumento,
+      NroDocumento: proveedor_init_info.NroDocumento,
+      DireccionFiscal: proveedor_init_info.DireccionFiscal,
+      TipoMoneda: proveedor_init_info.TipoMoneda,
+      EnlaceDocumento: proveedor_init_info.EnlaceDocumento,
+      NumeroPrincipal: proveedor_init_info.NumeroPrincipal,
+      EmailPrincipal: proveedor_init_info.EmailPrincipal,
+      PaginaWeb: proveedor_init_info.PaginaWeb,
+      Estado: parseInt(proveedor_init_info.Estado.toString()) === 1 ? 1 : 0,
+      NombreRepresentanteLegal: proveedor_init_info.NombreRepresentanteLegal,
+      NroDocIdentRepresentanteLegal:
+        proveedor_init_info.NroDocIdentRepresentanteLegal,
+
+      //------------------ Guia
+      NombreGuia: proveedor_init_info.NombreGuia || "",
+      Idiomas: (proveedor_init_info.Idiomas as never[]) || [],
+      //------------------ Hotel
+      NEstrellas: parseInt(proveedor_init_info.NEstrellas.toString()) || 0
+    });
+    setProveedorBanco((proveedor_init_info.DatosBancarios as never[]) || []);
+    setProveedorContacto((proveedor_init_info.Contacto as never[]) || []);
+  }, [proveedor_init_info]);
+
+
+  const handleDelete = () => {
+    axios.post("/api/proveedores/listaProveedores", {
+      accion: "delete",
+      IdProveedor: proveedor_init_info.IdProveedor || ""
+    }).then(res => {
+      if (res.status === 200) {
+        // setOpen(false);
+        setOpenSiguientePaso(true);
+      } else {
+        alert("Error al guardar");
+      }
+    });
+  }
 
   return (
     <>
@@ -118,26 +203,14 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
       >
         <DialogContent>
           <div className={customStyle.postRegistro__container}>
-            <h4>Proveedor nuevo registrado. ¿Cual es su siguiente paso?</h4>
-            <button
-              onClick={() => {
-                if (Link_ultimoIngresado !== "") {
-                  router.push(Link_ultimoIngresado);
-                } else {
-                  router.reload();
-                }
-              }}
-              className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
-            >
-              Ver nuevo Proveedor
-            </button>
+            <h4>Proveedor editado correctamente.</h4>
             <button
               onClick={() => {
                 router.reload();
               }}
               className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
             >
-              Seguir en Lista de proveedores
+              Continuar →
             </button>
           </div>
         </DialogContent>
@@ -154,6 +227,12 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
                 type="submit"
               >
                 Guardar
+              </button>
+              <button
+                className={`${botones.button} ${botones.buttonCancelar}`}
+                onClick={handleDelete}
+              >
+                Desactivar
               </button>
             </div>
             <div className={customStyle.tipo_proveedor_container}>
@@ -468,38 +547,42 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
                   { field: "CCI", title: "CCI" }
                 ]}
                 data={ProveedorBanco}
-                editable={{
-                  onRowAdd: (newData) =>
-                    new Promise<void>((resolve, reject) => {
-                      setTimeout(() => {
-                        //@ts-ignore
-                        setProveedorBanco([...ProveedorBanco, newData]);
+                editable={
+                  openSiguientePaso
+                    ? {}
+                    : {
+                        onRowAdd: (newData) =>
+                          new Promise<void>((resolve, reject) => {
+                            setTimeout(() => {
+                              //@ts-ignore
+                              setProveedorBanco([...ProveedorBanco, newData]);
 
-                        resolve();
-                      }, 1000);
-                    }),
-                  onRowUpdate: (newData, oldData) =>
-                    new Promise<void>((resolve, reject) => {
-                      setTimeout(() => {
-                        const dataUpdate: any[] = [...ProveedorBanco];
-                        const index = oldData.tableData.id;
-                        dataUpdate[index] = newData;
-                        setProveedorBanco([...(dataUpdate as never[])]);
-                        resolve();
-                      }, 1000);
-                    }),
-                  onRowDelete: (oldData: any) =>
-                    new Promise<void>((resolve, reject) => {
-                      setTimeout(() => {
-                        const dataDelete = [...ProveedorBanco];
-                        const index = oldData.tableData.id;
-                        dataDelete.splice(index, 1);
-                        setProveedorBanco([...dataDelete]);
+                              resolve();
+                            }, 1000);
+                          }),
+                        onRowUpdate: (newData, oldData) =>
+                          new Promise<void>((resolve, reject) => {
+                            setTimeout(() => {
+                              const dataUpdate: any[] = [...ProveedorBanco];
+                              const index = oldData.tableData.id;
+                              dataUpdate[index] = newData;
+                              setProveedorBanco([...(dataUpdate as never[])]);
+                              resolve();
+                            }, 1000);
+                          }),
+                        onRowDelete: (oldData: any) =>
+                          new Promise<void>((resolve, reject) => {
+                            setTimeout(() => {
+                              const dataDelete = [...ProveedorBanco];
+                              const index = oldData.tableData.id;
+                              dataDelete.splice(index, 1);
+                              setProveedorBanco([...dataDelete]);
 
-                        resolve();
-                      }, 1000);
-                    })
-                }}
+                              resolve();
+                            }, 1000);
+                          })
+                      }
+                }
               />
             </div>
             <div

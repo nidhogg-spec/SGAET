@@ -78,7 +78,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "pages/Proveedores/[TipoProveedor]/[IdProveedor].jsx"  ],
   "exclude": [
     "node_modules"
   ]
