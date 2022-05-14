@@ -1,22 +1,35 @@
 //Package
-import styles from "./TablaProgramaServicio_v2.module.css";
+import styles from "./TablaProgramaServicio_v3.module.css";
 import React, { useEffect, useState } from "react";
 
 //Componentes
 import MaterialTable from "material-table";
 
+interface props {
+  Title: string;
+  ModoEdicion: boolean,
+  // DevolverDatoFunct: (keyDato:string, Dato:any) => void,
+  setCotiServicio: (Dato:any)=>void,
+  // KeyDato: string,
+  CotiServicio: any[],
+  ListaServiciosProductos: any[],
+  Reiniciar: boolean,
+}
+
+
 const TablaProgramaServicio_v2 = (
-  props = {
-    Title: "Nombre del Proveedor",
-    ModoEdicion: true,
-    DevolverDatoFunct: (keyDato, Dato) => { },
-    DarDato: false,
-    KeyDato: "nombre",
-    Dato: [],
-    ListaServiciosProductos: [],
-    Reiniciar: true,
-    // columnas:[]
-  }
+  props:props
+  // {
+  //   Title: "Nombre del Proveedor",
+  //   ModoEdicion: true,
+  //   // DevolverDatoFunct: (keyDato, Dato) => { },
+  //   DarDato: false,
+  //   // KeyDato: "nombre",
+  //   Dato: [],
+  //   ListaServiciosProductos: [],
+  //   Reiniciar: true,
+  //   // columnas:[]
+  // }
 ) => {
   // -------------------------------Variables---------------------------------
   let editableacion = {};
@@ -25,7 +38,7 @@ const TablaProgramaServicio_v2 = (
   const [Data, setData] = useState([]);
   const [DataInit, setDataInit] = useState([]);
   //Datos q se guardaran en la cotizacion
-  const [CotiServicio, setCotiServicio] = useState([]);
+  // const [CotiServicio, setCotiServicio] = useState([]);
   const [CotiServicioInit, setCotiServicioInit] = useState([]);
   //Lista de servicios para añadir
   const [ServiciosInit, setServiciosInit] = useState([]);
@@ -39,25 +52,26 @@ const TablaProgramaServicio_v2 = (
   //---------------------------------------------------------------------------------
 
   //------------------------------------Hooks-----------------------------------------
-  useEffect(() => {
-    try {
-      let ActuDataTableServicios = [...ServiciosInit];
-      props.Dato.map((element) => {
-        ActuDataTableServicios.splice(
-          ActuDataTableServicios.find((value) => {
-            return value["IdServicio"] == element["IdServicio"];
-          }),
-          1
-        );
-      });
-      setDataTableServicios(ActuDataTableServicios);
-      if (props.Dato != []) {
-        setCotiServicio(props.Dato);
-      }
-    } catch (error) {
-      console.log("Error - Extraccion DATA - " + error);
-    }
-  }, [props.Dato]);
+  // useEffect(() => {
+  //   try {
+  //     let ActuDataTableServicios = [...ServiciosInit];
+  //     props.Dato.map((element) => {
+  //       ActuDataTableServicios.splice(
+  //         //@ts-ignore
+  //         ActuDataTableServicios.find((value) => {
+  //           return value["IdServicio"] == element["IdServicio"];
+  //         }),
+  //         1
+  //       );
+  //     });
+  //     setDataTableServicios(ActuDataTableServicios);
+  //     if (props.Dato != []) {
+  //       setCotiServicio(props.Dato as never[]);
+  //     }
+  //   } catch (error) {
+  //     console.log("Error - Extraccion DATA - " + error);
+  //   }
+  // }, [props.Dato]);
   useEffect(() => {
     if (props.Reiniciar == true) {
       setData(DataInit);
@@ -66,17 +80,17 @@ const TablaProgramaServicio_v2 = (
   useEffect(() => {
     setModoEdicion(props.ModoEdicion);
   }, [props.ModoEdicion]);
-  useEffect(() => {
-    if (props.DarDato == true) {
-      console.log(CotiServicio);
-      props.DevolverDatoFunct(props.KeyDato, CotiServicio);
-    }
-  }, [props.DarDato]);
+  // useEffect(() => {
+  //   if (props.DarDato == true) {
+  //     console.log(CotiServicio);
+  //     props.DevolverDatoFunct(props.KeyDato, CotiServicio);
+  //   }
+  // }, [props.DarDato]);
   useEffect(() => {
     let temp_MontoTotal = 0;
     switch (CurrencyTotal) {
       case "Dolar":
-        CotiServicio.map((uni_CotiServi) => {
+        props.CotiServicio.map((uni_CotiServi) => {
           switch (uni_CotiServi["Currency"] || "Dolar") {
             case "Dolar":
               temp_MontoTotal += parseFloat(uni_CotiServi["PrecioCotiTotal"]);
@@ -89,7 +103,7 @@ const TablaProgramaServicio_v2 = (
         });
         break;
       case "Sol":
-        CotiServicio.map((uni_CotiServi) => {
+        props.CotiServicio.map((uni_CotiServi) => {
           switch (uni_CotiServi["Currency"]) {
             case "Dolar":
               temp_MontoTotal +=
@@ -103,11 +117,11 @@ const TablaProgramaServicio_v2 = (
         break;
     }
     setMontoTotal(temp_MontoTotal);
-  }, [CotiServicio, CurrencyTotal]);
+  }, [props.CotiServicio, CurrencyTotal]);
   useEffect(() => {
     let CambioDolar_temp = sessionStorage.getItem("CambioDolar");
     if (CambioDolar_temp) {
-      setCambioDolar(CambioDolar_temp);
+      setCambioDolar(parseFloat(CambioDolar_temp));
     } else {
       fetch("/api/DataSistema", {
         method: "POST",
@@ -197,7 +211,7 @@ const TablaProgramaServicio_v2 = (
                 type: "numeric",
               },
             ]}
-            data={CotiServicio}
+            data={props.CotiServicio}
             editable={{
               onBulkUpdate: (cambios) =>
                 new Promise((resolve, reject) => {
@@ -206,7 +220,7 @@ const TablaProgramaServicio_v2 = (
                     //   cambios = [cambios]
                     // }
                     Object.entries(cambios).map((cambio) => {
-                      let temp_CotiServicio = [...CotiServicio];
+                      let temp_CotiServicio = [...props.CotiServicio];
                       let temp_newData = cambio[1]["newData"];
                       let id = temp_newData["tableData"]["id"];
 
@@ -216,21 +230,25 @@ const TablaProgramaServicio_v2 = (
                         temp_newData["Dia"];
                       temp_CotiServicio[id]["IGV"] = temp_newData["IGV"];
                       if (temp_CotiServicio[id]["IGV"]) {
+                        //@ts-ignore
                         temp_CotiServicio[id]["PrecioCotiTotal"] = (
                           temp_newData["Cantidad"] *
                           temp_newData["PrecioCotiUnitario"] *
                           1.18
                         ).toFixed(2);
+                        //@ts-ignore
                         temp_CotiServicio[id]["PrecioConfiTotal"] = (
                           temp_newData["Cantidad"] *
                           temp_newData["PrecioConfiUnitario"] *
                           1.18
                         ).toFixed(2);
                       } else {
+                        //@ts-ignore
                         temp_CotiServicio[id]["PrecioCotiTotal"] = (
                           temp_newData["Cantidad"] *
                           temp_newData["PrecioCotiUnitario"]
                         ).toFixed(2);
+                        //@ts-ignore
                         temp_CotiServicio[id]["PrecioConfiTotal"] = (
                           temp_newData["Cantidad"] *
                           temp_newData["PrecioConfiUnitario"]
@@ -238,19 +256,20 @@ const TablaProgramaServicio_v2 = (
                       }
                       temp_CotiServicio[id]["PrecioCotiUnitario"] =
                         temp_newData["PrecioCotiUnitario"];
-                      setCotiServicio(temp_CotiServicio);
-                      resolve();
+                      props.setCotiServicio(temp_CotiServicio);
+                      resolve(null);
                     });
                   }, 1000);
                 }),
               onRowDelete: (oldData) =>
                 new Promise((resolve, reject) => {
                   setTimeout(() => {
-                    const dataDelete = [...CotiServicio];
+                    const dataDelete = [...props.CotiServicio];
+                        //@ts-ignore
                     const index = oldData.tableData.id;
                     dataDelete.splice(index, 1);
-                    setCotiServicio([...dataDelete]);
-                    resolve();
+                    props.setCotiServicio([...dataDelete]);
+                    resolve(null);
                   }, 1000);
                 }),
             }}
@@ -320,7 +339,7 @@ const TablaProgramaServicio_v2 = (
                 icon: "add",
                 tooltip: "Añadir Servicio a Cotizacion",
                 onClick: (event, rowData) => {
-                  let x = [...CotiServicio];
+                  let x:any[] = [...props.CotiServicio];
                   x.push({
                     IdServicioProducto: rowData["IdServicioProducto"],
                     TipoServicio: rowData['TipoServicio'],
@@ -335,7 +354,7 @@ const TablaProgramaServicio_v2 = (
                     Currency: rowData["Currency"],
                     PrecioPublicado: rowData["PrecioPublicado"],
                   });
-                  setCotiServicio(x);
+                  props.setCotiServicio(x as never[]);
                   let ActuDataTableServicios = [...DataTableServicios];
                   ActuDataTableServicios.splice(
                     ActuDataTableServicios.findIndex((value) => {
@@ -420,7 +439,7 @@ const TablaProgramaServicio_v2 = (
               type: "numeric",
             },
           ]}
-          data={CotiServicio}
+          data={props.CotiServicio}
         />
       </div>
     );

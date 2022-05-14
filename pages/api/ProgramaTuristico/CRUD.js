@@ -64,7 +64,11 @@ const func_Crear = async (req, res) => {
       let result = await collection.insertOne(ProgramaTuristico);
       console.log("Insercion realizada");
       CRUD_log(req, { Action: 'Create', Message: `Programa ${ProgramaTuristico[keyId]} creado` })
-      res.status(200).send("Insercion realizada");
+      if (result.result.ok != 1) {
+        res.status(500).json({ error: true, message: "Error" });
+        return;
+      }
+      res.status(200).json({ data: result.ops[0] });
     } catch (error) {
       res.status(500);
       console.log(error);

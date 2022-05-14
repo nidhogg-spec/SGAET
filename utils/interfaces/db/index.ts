@@ -244,25 +244,23 @@ export interface programaTuristicoInterface {
       id: number;
     };
   }[];
-  ServicioProducto: [
-    {
-      IdServicioProducto: string;
-      TipoServicio: string;
-      PrecioConfiUnitario: number;
-      NombreServicio: string;
-      Dia: number;
-      Cantidad: number;
-      PrecioCotiUnitario: number;
-      IGV: boolean;
-      PrecioCotiTotal: number;
-      PrecioConfiTotal: number;
-      Currency: "Dolar" | "Soles" | string;
-      PrecioPublicado: number;
-      tableData: {
-        id: number;
-      };
-    }
-  ];
+  ServicioProducto: {
+    IdServicioProducto: string;
+    TipoServicio: string;
+    PrecioConfiUnitario: number;
+    NombreServicio: string;
+    Dia: number;
+    Cantidad: number;
+    PrecioCotiUnitario: number;
+    IGV: boolean;
+    PrecioCotiTotal: number;
+    PrecioConfiTotal: number;
+    Currency: "Dolar" | "Soles" | string;
+    PrecioPublicado: number;
+    tableData?: {
+      id: number;
+    };
+  }[];
   IdProgramaTuristico: string;
 }
 // ------------------Proveedor-------------------

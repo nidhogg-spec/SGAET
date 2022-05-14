@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./DetalleProgramaTuristico.module.css";
 import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import { MongoClient } from "mongodb";
@@ -7,65 +7,70 @@ import { useRouter } from "next/router";
 import TablaProgramaServicio_v2 from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio_v2/TablaProgramaServicio_v2";
 import MaterialTable from "material-table";
 import { resetServerContext } from "react-beautiful-dnd";
-resetServerContext();
 
 const DetalleProgramaTuristico = (
   props = {
     ProgramaTuristico,
     APIpath,
-    ListaServiciosProductos,
+    ListaServiciosProductos
   }
 ) => {
   const router = useRouter();
-  const {IdProgramaTuristico}=router.query
+  const { IdProgramaTuristico } = router.query;
   const [ProgramaTuristico, setProgramaTuristico] = useState(
     props.ProgramaTuristico
   );
   const [ModoEdicion, setModoEdicion] = useState(false);
-  const [ServicioProducto, setServicioProducto] = useState(props.ProgramaTuristico['ServicioProducto']);
+  const [ServicioProducto, setServicioProducto] = useState(
+    props.ProgramaTuristico["ServicioProducto"]
+  );
 
   return (
     <div className={styles.ContainerPrincipal}>
-      <h1 className="Titulo">{ProgramaTuristico['NombrePrograma']}</h1>
+      <h1 className="Titulo">{ProgramaTuristico["NombrePrograma"]}</h1>
       <div className="Acciones">
         {ModoEdicion ? (
           <>
-          <button>
-            <img
-              src="/resources/save-black-18dp.svg"
-              onClick={() => {
-                async function Actualizar() {
-                  let temp_ProgramaTuristico = {...ProgramaTuristico,ServicioProducto:ServicioProducto}
-                  let result = await axios.put(props.APIpath + '/api/ProgramaTuristico/CRUD',{
-                    IdProgramaTuristico: IdProgramaTuristico,
-                    ProgramaTuristico: temp_ProgramaTuristico
-                  })
-                  console.log(result)
-                  alert('Actualizacion realizada')
-                }
-                Actualizar()
-              }}
-            />
-          </button>
+            <button>
+              <img
+                src="/resources/save-black-18dp.svg"
+                onClick={() => {
+                  async function Actualizar() {
+                    let temp_ProgramaTuristico = {
+                      ...ProgramaTuristico,
+                      ServicioProducto: ServicioProducto
+                    };
+                    let result = await axios.put(
+                      props.APIpath + "/api/ProgramaTuristico/CRUD",
+                      {
+                        IdProgramaTuristico: IdProgramaTuristico,
+                        ProgramaTuristico: temp_ProgramaTuristico
+                      }
+                    );
+                    console.log(result);
+                    alert("Actualizacion realizada");
+                  }
+                  Actualizar();
+                }}
+              />
+            </button>
             <button>
               <img
                 src="/resources/close-black-18dp.svg"
                 onClick={(event) => {
-                  setModoEdicion(false)
-                  }
-                }
+                  setModoEdicion(false);
+                }}
               />
             </button>
           </>
         ) : (
           <>
-          <button>
+            <button>
               <img
                 src="/resources/edit-black-18dp.svg"
                 onClick={(event) => {
-                  setModoEdicion(true)
-                  }
-                }
+                  setModoEdicion(true);
+                }}
               />
             </button>
           </>
@@ -81,39 +86,39 @@ const DetalleProgramaTuristico = (
                 {
                   tipo: "texto",
                   Title: "Nombre",
-                  KeyDato: "NombrePrograma",
+                  KeyDato: "NombrePrograma"
                 },
                 {
                   tipo: "texto",
                   Title: "Condigo",
-                  KeyDato: "CodigoPrograma",
+                  KeyDato: "CodigoPrograma"
                 },
                 {
                   tipo: "texto",
                   Title: "Tipo de experiencia",
-                  KeyDato: "Tipo",
+                  KeyDato: "Tipo"
                 },
                 {
                   tipo: "texto",
                   Title: "Duracion Dias",
-                  KeyDato: "DuracionDias",
+                  KeyDato: "DuracionDias"
                 },
                 {
                   tipo: "texto",
                   Title: "Duracion Noches",
-                  KeyDato: "DuracionNoche",
+                  KeyDato: "DuracionNoche"
                 },
                 {
                   tipo: "money",
                   Title: "Precio estandar",
-                  KeyDato: "PrecioEstandar",
+                  KeyDato: "PrecioEstandar"
                 },
                 {
                   tipo: "texto",
                   Title: "Localizacion",
-                  KeyDato: "Localizacion",
-                },
-              ],
+                  KeyDato: "Localizacion"
+                }
+              ]
             },
             {
               subTitle: "Descripcion",
@@ -121,11 +126,11 @@ const DetalleProgramaTuristico = (
                 {
                   tipo: "granTexto",
                   Title: "",
-                  KeyDato: "Descripcion",
-                },
-              ],
-            },
-          ],
+                  KeyDato: "Descripcion"
+                }
+              ]
+            }
+          ]
         }}
         ModoEdicion={ModoEdicion}
         Dato={ProgramaTuristico}
@@ -135,7 +140,7 @@ const DetalleProgramaTuristico = (
       <TablaServicioCotizacion
         CotiServicio={ServicioProducto}
         ListaServiciosProductos={props.ListaServiciosProductos}
-        Title={''}
+        Title={""}
         setCotiServicio={setServicioProducto}
       />
       <AutoFormulario
@@ -148,9 +153,9 @@ const DetalleProgramaTuristico = (
                 {
                   tipo: "granTexto",
                   Title: "",
-                  KeyDato: "ItinerarioDescripcion",
-                },
-              ],
+                  KeyDato: "ItinerarioDescripcion"
+                }
+              ]
             },
             {
               subTitle: "",
@@ -164,44 +169,42 @@ const DetalleProgramaTuristico = (
                       field: "Dia",
                       title: "Dia",
                       initialEditValue: 1,
-                      type: "numeric",
+                      type: "numeric"
                     },
                     {
                       field: "Hora Inicio",
                       title: "Hora de Inicio",
-                      initialEditValue: "00:00",
+                      initialEditValue: "00:00"
                     },
                     {
                       field: "Hora Fin",
                       title: "Hora de Fin",
-                      initialEditValue: "00:00",
+                      initialEditValue: "00:00"
                     },
-                    { field: "Actividad", title: "Actividad" },
-                  ],
+                    { field: "Actividad", title: "Actividad" }
+                  ]
                 },
                 {
                   tipo: "tablaSimple",
                   Title: "Incluye",
                   KeyDato: "Incluye",
-                  columnas: [{ field: "Actividad", title: "Actividad" }],
+                  columnas: [{ field: "Actividad", title: "Actividad" }]
                 },
                 {
                   tipo: "tablaSimple",
                   Title: "No Incluye",
                   KeyDato: "NoIncluye",
-                  columnas: [{ field: "Actividad", title: "Actividad" }],
+                  columnas: [{ field: "Actividad", title: "Actividad" }]
                 },
                 {
                   tipo: "tablaSimple",
                   Title: "Recomendaciones para llevar",
                   KeyDato: "RecomendacionesLlevar",
-                  columnas: [
-                    { field: "Recomendacion", title: "Recomendacion" },
-                  ],
-                },
-              ],
-            },
-          ],
+                  columnas: [{ field: "Recomendacion", title: "Recomendacion" }]
+                }
+              ]
+            }
+          ]
         }}
         ModoEdicion={ModoEdicion}
         Dato={ProgramaTuristico}
@@ -217,7 +220,7 @@ export async function getServerSideProps({ query, req, res }) {
   const IdProgramaTuristico = query.IdProgramaTuristico;
   const client = new MongoClient(url, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
   });
   await client.connect();
   const dbo = client.db(dbName);
@@ -250,7 +253,7 @@ export async function getServerSideProps({ query, req, res }) {
         tipo: 1,
         IdProveedor: 1,
         porcentajeTotal: 1,
-        TipoMoneda: 1,
+        TipoMoneda: 1
       })
       .toArray();
   } catch (error) {
@@ -264,7 +267,7 @@ export async function getServerSideProps({ query, req, res }) {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -291,7 +294,7 @@ export async function getServerSideProps({ query, req, res }) {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -303,7 +306,7 @@ export async function getServerSideProps({ query, req, res }) {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -337,8 +340,8 @@ export async function getServerSideProps({ query, req, res }) {
               PrecioPublicado: x["precioPubli"] || null,
               OrdenServicio: {
                 TipoOrden: "D",
-                Estado: 0,
-              },
+                Estado: 0
+              }
             });
           }
         });
@@ -350,7 +353,7 @@ export async function getServerSideProps({ query, req, res }) {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -388,8 +391,8 @@ export async function getServerSideProps({ query, req, res }) {
               PrecioPublicado: x["precioPubli"] || null,
               OrdenServicio: {
                 TipoOrden: "C",
-                Estado: 0,
-              },
+                Estado: 0
+              }
             });
           }
         });
@@ -401,7 +404,7 @@ export async function getServerSideProps({ query, req, res }) {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -439,7 +442,7 @@ export async function getServerSideProps({ query, req, res }) {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -451,7 +454,7 @@ export async function getServerSideProps({ query, req, res }) {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -483,7 +486,7 @@ export async function getServerSideProps({ query, req, res }) {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -495,7 +498,7 @@ export async function getServerSideProps({ query, req, res }) {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -531,7 +534,7 @@ export async function getServerSideProps({ query, req, res }) {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -543,7 +546,7 @@ export async function getServerSideProps({ query, req, res }) {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -570,7 +573,7 @@ export async function getServerSideProps({ query, req, res }) {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
@@ -582,7 +585,7 @@ export async function getServerSideProps({ query, req, res }) {
         let result = await collection
           .find({})
           .project({
-            _id: 0,
+            _id: 0
           })
           .toArray();
         let ListaServiciosProductos = [];
@@ -614,12 +617,12 @@ export async function getServerSideProps({ query, req, res }) {
               PuntajeProveedor: proveedor["porcentajeTotal"] + "%" || null,
               Currency: proveedor["TipoMoneda"] || null,
               PrecioPublicado: x["precioPubli"] || null,
-              OrdenServicio: null,
+              OrdenServicio: null
             });
           }
         });
         resolve(ListaServiciosProductos);
-      }),
+      })
     ]);
     // Transformar todo a un solo array de objetos
     DATA.map((d) => {
@@ -641,8 +644,8 @@ export async function getServerSideProps({ query, req, res }) {
     props: {
       ProgramaTuristico: ProgramaTuristico,
       APIpath: process.env.API_DOMAIN,
-      ListaServiciosProductos: ListaServiciosProductos,
-    },
+      ListaServiciosProductos: ListaServiciosProductos
+    }
   };
 }
 const TablaServicioCotizacion = (
@@ -650,7 +653,7 @@ const TablaServicioCotizacion = (
     Title: "Nombre del Proveedor",
     setCotiServicio: () => {},
     CotiServicio: [],
-    ListaServiciosProductos: [],
+    ListaServiciosProductos: []
   }
 ) => {
   // -------------------------------Variables---------------------------------
@@ -713,8 +716,8 @@ const TablaServicioCotizacion = (
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          accion: "ObtenerCambioDolar",
-        }),
+          accion: "ObtenerCambioDolar"
+        })
       })
         .then((r) => r.json())
         .then((data) => {
@@ -736,64 +739,64 @@ const TablaServicioCotizacion = (
               field: "IdServicioProducto",
               title: "IdServicioProducto",
               editable: "never",
-              hidden: true,
+              hidden: true
             },
             {
               field: "PrecioConfiUnitario",
               title: "Precio Confidencial Unitario",
               editable: "never",
               type: "numeric",
-              hidden: true,
+              hidden: true
             },
             { field: "NombreServicio", title: "Nombre", editable: "never" },
             {
               field: "Dia",
               title: "Dia",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "Cantidad",
               title: "Cantidad",
               editable: "always",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "Currency",
               title: "Moneda",
               editable: "never",
-              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" }
             },
             {
               field: "PrecioCotiUnitario",
               title: "Precio Cotizacion Unitario",
               editable: "always",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "PrecioPublicado",
               title: "Precio Publicado",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "IGV",
               title: "IGV incluido?",
               editable: "always",
-              type: "boolean",
+              type: "boolean"
             },
             {
               field: "PrecioCotiTotal",
               title: "Precio Cotizacion Total",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "PrecioConfiTotal",
               title: "Precio Confidencial Total",
               editable: "never",
-              type: "numeric",
-            },
+              type: "numeric"
+            }
           ]}
           data={props.CotiServicio}
           editable={{
@@ -848,7 +851,7 @@ const TablaServicioCotizacion = (
                   props.setCotiServicio([...dataDelete]);
                   resolve();
                 }, 1000);
-              }),
+              })
           }}
           actions={[
             {
@@ -858,8 +861,8 @@ const TablaServicioCotizacion = (
               tooltip: "Mostrar reserva",
               onClick: (event, rowData) => {
                 router.push(`/reservas/servicio/${rowData.IdServicioEscogido}`);
-              },
-            },
+              }
+            }
           ]}
         />
         <select
@@ -885,12 +888,12 @@ const TablaServicioCotizacion = (
               field: "IdServicioProducto",
               title: "IdServicioProducto",
               editable: "never",
-              hidden: true,
+              hidden: true
             },
             {
               field: "TipoServicio",
               title: "Tipo de Servicio",
-              editable: "never",
+              editable: "never"
             },
             { field: "Nombre", title: "Nombre", editable: "never" },
             { title: "Nombre del Proveedor", field: "NombreProveedor" },
@@ -900,26 +903,26 @@ const TablaServicioCotizacion = (
               field: "Currency",
               title: "Moneda",
               editable: "never",
-              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" }
             },
             {
               field: "Precio",
               title: "Precio Cotizacion",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "Costo",
               title: "Precio Confidencial",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "PrecioPublicado",
               title: "Precio Publicado",
               editable: "never",
-              type: "numeric",
-            },
+              type: "numeric"
+            }
           ]}
           data={props.ListaServiciosProductos}
           actions={[
@@ -930,7 +933,7 @@ const TablaServicioCotizacion = (
                 let x = [...props.CotiServicio];
                 x.push({
                   IdServicioProducto: rowData["IdServicioProducto"],
-                  TipoServicio:rowData['TipoServicio'],
+                  TipoServicio: rowData["TipoServicio"],
                   PrecioConfiUnitario: rowData["Costo"],
                   NombreServicio: rowData["Nombre"],
                   Dia: 1,
@@ -940,7 +943,7 @@ const TablaServicioCotizacion = (
                   PrecioCotiTotal: rowData["Precio"],
                   PrecioConfiTotal: rowData["Costo"],
                   Currency: rowData["Currency"],
-                  PrecioPublicado: rowData["PrecioPublicado"],
+                  PrecioPublicado: rowData["PrecioPublicado"]
                 });
                 props.setCotiServicio(x);
                 // let ActuDataTableServicios = [...DataTableServicios];
@@ -951,8 +954,8 @@ const TablaServicioCotizacion = (
                 //   1
                 // );
                 // setDataTableServicios(ActuDataTableServicios);
-              },
-            },
+              }
+            }
           ]}
         />
       </div>
