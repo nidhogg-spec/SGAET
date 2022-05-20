@@ -11,7 +11,7 @@ export default async (req, res) => {
   } = req;
   switch (req.method) {
     case "GET":
-      res.status(500);
+      func_Listar(req, res);
       break;
     case "POST":
       func_Crear(req, res);
@@ -96,7 +96,6 @@ const func_Eliminar = async (req, res) => {
     }
   });
 };
-
 const func_Actualizar = async (req, res) => {
   // ---------------- Informacion importante inicial -----------
   let ProgramaTuristico = req.body.ProgramaTuristico;
@@ -119,3 +118,28 @@ const func_Actualizar = async (req, res) => {
     }
   });
 };
+
+const func_Listar = async (req, res) => {
+  // ---------------- Informacion importante inicial -----------
+  let coleccion = "ProgramaTuristico";
+  let keyId = "Id" + coleccion;
+  const inactivo = req.query.inactivo;
+  //-------------------- Proceso ------------------------------
+  await connectToDatabase().then(async connectedObject => {
+    let dbo = connectedObject.db;
+    let collection = dbo.collection(coleccion);
+    try {
+      let query = {
+        $or: [{ Estado: 1 }]
+      };
+      if (req.query.inactivos == "true") {
+        query.$or.push({ Estado: 0 });
+      }
+      const result = await collection.find(query).toArray();
+      res.status(200).json({ data: result });
+    } catch (error) {
+      res.status(500);
+      console.log(error);
+    }
+  });
+}

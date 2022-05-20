@@ -86,21 +86,24 @@
   border-radius: 5px;
   padding-left: 10px;
   resize: none;
+
+  font-family: inherit;
+  font-size: inherit;
 }
 .global_textArea_container label {
   margin: 0 0 20px 0;
 }
 
 /* -------------------- ckeckbox-switch ------------------------------- */
-.checkbox_container{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 10px 25px 10px 20px;
+.checkbox_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 25px 10px 20px;
 }
-.checkbox_label{
-    margin: 0 0 0 10px;
+.checkbox_label {
+  margin: 0 0 0 10px;
 }
 .checkbox_switch {
   position: relative;

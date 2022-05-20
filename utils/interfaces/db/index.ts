@@ -209,6 +209,7 @@ export interface productoTransportesInterface extends productoInterface {
 // ------------------Programa Turistico-------------------
 export interface programaTuristicoInterface {
   _id?: string;
+  Estado: number;
   NombrePrograma: string;
   CodigoPrograma: string;
   Tipo: string;

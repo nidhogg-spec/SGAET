@@ -48,7 +48,24 @@ function ProgramasTuristicos({
   const [TablaDatos, setTablaDatos] = useState(Datos);
   const [Loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const [ListarInactivos, setListarInactivos] = useState(false);
+  
+  useEffect(() => {
+    // setLoading(true);
+    if (ListarInactivos == true) {
+      axios
+        .get("/api/ProgramaTuristico/CRUD?inactivos=true")
+        .then((data) => {
+          setTablaDatos(data.data.data);
+          setLoading(false);
+        });
+    } else {
+      axios.get("/api/ProgramaTuristico/CRUD").then((data) => {
+        setTablaDatos(data.data.data);
+        setLoading(false);
+      });
+    }
+  }, [ListarInactivos]);
   return (
     <div>
       <Loader Loading={Loading} />
@@ -72,7 +89,22 @@ function ProgramasTuristicos({
             Nuevo Programa Turistico
           </button>
         </div>
-
+        <div className={globalStyles.checkbox_container}>
+          <label className={globalStyles.checkbox_switch}>
+            <input
+              type="checkbox"
+              onChange={(value) => {
+                setListarInactivos(value.target.checked);
+              }}
+              //@ts-ignore
+              value={ListarInactivos}
+            />
+            <span
+              className={`${globalStyles.checkbox_switch_slider} ${globalStyles.checkbox_switch_slider_round}`}
+            ></span>
+          </label>
+          <span className={globalStyles.checkbox_label}>Mostrar Inactivos</span>
+        </div>
         <div className={CustomStyles.tituloBox}>
           <MaterialTable
             columns={Columnas}
@@ -126,15 +158,15 @@ function ProgramasTuristicos({
             }}
           />
         </div>
-        <div>
+        {/* <div>
           <h2>Opciones Avanzadas</h2>
-          {/* <FusionProgramas
+          <FusionProgramas
               TablaDatos={TablaDatos as never[]}
               DevolverEstructuraFormulario={DevolverEstructuraFormulario as any}
               ModalDisplay={ModalDisplay}
               APIpathGeneral={APIpathGeneral}
-            /> */}
-        </div>
+            />
+        </div> */}
       </div>
     </div>
   );
@@ -173,7 +205,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       new Promise(async (resolve, reject) => {
         let ProgramaTuristico = await collection
           .find(
-            {},
+            { Estado: 1 },
             {
               projection: {
                 _id: 0,

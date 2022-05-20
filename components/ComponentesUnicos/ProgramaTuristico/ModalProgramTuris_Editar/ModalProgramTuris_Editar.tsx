@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 // Estilos
 import globalStyles from "@/globalStyles/modules/global.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
-import customStyle from "./ModalProgramTuris_Nuevo.module.css";
+import customStyle from "./ModalProgramTuris_Editar.module.css";
 import { servicioEscogidoInterface } from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 
@@ -19,6 +19,7 @@ interface props {
   open: boolean;
   setOpen: Function;
   ListaServiciosProductos: never[];
+  programaTuristico: programaTuristicoInterface;
 }
 interface Itinerario_Interface {
   Dia: number;
@@ -65,14 +66,14 @@ interface ServicioProducto_Interface {
   };
 }
 
-export default function ModalProgramTuris_Nuevo({
+export default function ModalProgramTuris_Editar({
   open,
   setOpen,
-  ListaServiciosProductos
+  ListaServiciosProductos,
+  programaTuristico
 }: props) {
   const router = useRouter();
   const [openSiguientePaso, setOpenSiguientePaso] = useState(false);
-  const [Link_ultimoIngresado, setLink_ultimoIngresado] = useState("");
   const {
     register,
     handleSubmit,
@@ -81,30 +82,35 @@ export default function ModalProgramTuris_Nuevo({
     getValues
   } = useForm({
     defaultValues: {
-      NombrePrograma: "",
-      CodigoPrograma: "",
-      Tipo: "",
-      DuracionDias: 1,
-      DuracionNoche: 0,
-      Localizacion: "",
-      Descripcion: "",
-      Itinerario: [],
-      ItinerarioDescripcion: "",
-      Incluye: [],
-      NoIncluye: [],
-      RecomendacionesLlevar: [],
-      ServicioProducto: [],
-      IdProgramaTuristico: ""
+      NombrePrograma: programaTuristico["NombrePrograma"],
+      CodigoPrograma: programaTuristico["CodigoPrograma"],
+      Tipo: programaTuristico["Tipo"],
+      DuracionDias: programaTuristico["DuracionDias"],
+      DuracionNoche: programaTuristico["DuracionNoche"],
+      Localizacion: programaTuristico["Localizacion"],
+      Descripcion: programaTuristico["Descripcion"],
+      Itinerario: programaTuristico["Itinerario"],
+      ItinerarioDescripcion: programaTuristico["ItinerarioDescripcion"],
+      Incluye: programaTuristico["Incluye"],
+      NoIncluye: programaTuristico["NoIncluye"],
+      RecomendacionesLlevar: programaTuristico["RecomendacionesLlevar"],
+      ServicioProducto: programaTuristico["ServicioProducto"]
     },
     mode: "onBlur"
   });
   const [Loading, setLoading] = useState(false);
-  const [itinerario, setItinerario] = useState<Itinerario_Interface[]>([]);
-  const [Incluye, setIncluye] = useState<Incluye_Interface[]>([]);
-  const [NoIncluye, setNoIncluye] = useState<NoIncluye_Interface[]>([]);
+  const [itinerario, setItinerario] = useState<Itinerario_Interface[]>(
+    programaTuristico["Itinerario"]
+  );
+  const [Incluye, setIncluye] = useState<Incluye_Interface[]>(
+    programaTuristico["Incluye"]
+  );
+  const [NoIncluye, setNoIncluye] = useState<NoIncluye_Interface[]>(
+    programaTuristico["NoIncluye"]
+  );
   const [RecomendacionesLlevar, setRecomendacionesLlevar] = useState<
     RecomendacionesLlevar_Interface[]
-  >([]);
+  >(programaTuristico["RecomendacionesLlevar"]);
   const [ServicioProducto, setServicioProducto] = useState<
     ServicioProducto_Interface[]
   >([]);
@@ -122,37 +128,54 @@ export default function ModalProgramTuris_Nuevo({
     const temp_Incluye = [...Incluye];
     const temp_NoIncluye = [...NoIncluye];
     const temp_RecomendacionesLlevar = [...RecomendacionesLlevar];
-    const temp_ServicioProducto = [...ServicioProducto];
     setItinerario([]);
     setIncluye([]);
     setNoIncluye([]);
     setRecomendacionesLlevar([]);
-    setServicioProducto([]);
     let nuevo_prograTuristico = formatear_programaTuristico_database(
       data,
       temp_itinerario,
       temp_Incluye,
       temp_NoIncluye,
       temp_RecomendacionesLlevar,
-      temp_ServicioProducto
+      []
     );
     //@ts-ignore
     delete nuevo_prograTuristico.IdProgramaTuristico;
-    console.log(nuevo_prograTuristico);
+    //@ts-ignore
+    delete nuevo_prograTuristico.ServicioProducto;
+    // console.log(nuevo_prograTuristico);
+
+    let init_programaTuristico = formatear_programaTuristico_database(
+      programaTuristico,
+      programaTuristico["Itinerario"],
+      programaTuristico["Incluye"],
+      programaTuristico["NoIncluye"],
+      programaTuristico["RecomendacionesLlevar"],
+      []
+    );
+    //@ts-ignore
+    delete init_programaTuristico.IdProgramaTuristico;
+    //@ts-ignore
+    delete init_programaTuristico.ServicioProducto;
+    // console.log(init_programaTuristico);
+
+    if (
+      JSON.stringify(nuevo_prograTuristico) ===
+      JSON.stringify(init_programaTuristico)
+    ) {
+      alert("No se han realizado cambios");
+      router.reload();
+      return;
+    }
+    console.log("Si se han realizado cambios");
+
     axios
-      .post(`/api/ProgramaTuristico/CRUD`, {
-        ProgramaTuristico: nuevo_prograTuristico
+      .put(`/api/ProgramaTuristico/CRUD`, {
+        ProgramaTuristico: nuevo_prograTuristico,
+        IdProgramaTuristico: programaTuristico["IdProgramaTuristico"]
       })
       .then((result) => {
-        if (
-          result.data?.data["IdProgramaTuristico"] == undefined ||
-          result.data?.data["IdProgramaTuristico"] == ""
-        ) {
-          throw new Error("No se genero Id de prgrama turistico correctamente");
-        }
-        setLink_ultimoIngresado(
-          `/ProgramaTuristico/${result.data?.data["IdProgramaTuristico"]}`
-        );
         setOpenSiguientePaso(true);
       });
   };
@@ -171,27 +194,15 @@ export default function ModalProgramTuris_Nuevo({
         <DialogContent>
           <div className={customStyle.postRegistro__container}>
             <h4>
-              Programa Turistico nuevo registrado. ¿Cual es su siguiente paso?
+              Programa Turistico edicion registrado. ¿Cual es su siguiente paso?
             </h4>
-            <button
-              onClick={() => {
-                if (Link_ultimoIngresado !== "") {
-                  router.push(Link_ultimoIngresado);
-                } else {
-                  router.reload();
-                }
-              }}
-              className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
-            >
-              Ver nuevo Programa Turistico
-            </button>
             <button
               onClick={() => {
                 router.reload();
               }}
               className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
             >
-              Seguir en Lista de programas turisticos
+              Continuar
             </button>
           </div>
         </DialogContent>
@@ -254,9 +265,8 @@ export default function ModalProgramTuris_Nuevo({
                 <label>Duracion Noches</label>
                 <input
                   type="number"
-                  {...register("DuracionNoche",
-                  {
-                    validate: (value: number) => {
+                  {...register("DuracionNoche", {
+                    validate: (value: any) => {
                       const DuracionDias = parseInt(
                         getValues("DuracionDias").toString()
                       );
@@ -268,8 +278,7 @@ export default function ModalProgramTuris_Nuevo({
                         DuracionDias == val_int + 1
                       );
                     }
-                  }
-                  )}
+                  })}
                   min={0}
                 />
                 <span className={`${globalStyles.global_error_message}`}>
@@ -489,16 +498,6 @@ export default function ModalProgramTuris_Nuevo({
                       }, 1000);
                     })
                 }}
-              />
-              <h2>Servicios/Productos base del Programa Turistico</h2>
-              <TablaProgramaServicio_v3
-                Title={""}
-                ModoEdicion={true}
-                CotiServicio={ServicioProducto}
-                setCotiServicio={setServicioProducto}
-                // KeyDato={"ServicioProducto"}
-                ListaServiciosProductos={ListaServiciosProductos}
-                Reiniciar={false}
               />
             </div>
             <div
