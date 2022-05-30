@@ -247,7 +247,7 @@ export default function ModalProveedores_NuevoProv({ open, setOpen }: props) {
                           return false;
                       }
                     },
-                    pattern: /^[0-9]+$/
+                    pattern: /^[a-zA-Z0-9_]+$/
                   })}
                 />
                 <span className={`${globalStyles.global_error_message}`}>

@@ -474,12 +474,23 @@ export interface criterioInterface {
 export interface clienteProspectoInterface {
   _id?: string;
   NombreCompleto: string;
-  TipoCliente: string;
-  Estado: string;
-  TipoDocumento: string;
+  TipoCliente: "Directo" | "Corporativo" | "Otro" | string;
+  Estado: "Cliente" | "Prospecto" | string;
+  TipoDocumento: TipoDocumento;
   NroDocumento: string;
   IdClienteProspecto: string;
-  tableData: {
+  Celular: string;
+  Email: string;
+  tableData?: {
     id: number;
   };
+}
+
+enum TipoDocumento {
+  DNI = "DNI",
+  RUC = "RUC",
+  PASAPORTE = "PASAPORTE",
+  CARNET_EXTRANJERIA = "CARNET_EXTRANJERIA",
+  CEDULA_DIPLOMATICA = "CEDULA_DIPLOMATICA",
+  OTRO = "OTRO"
 }
