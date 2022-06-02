@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 // Estilos
 import globalStyles from "@/globalStyles/modules/global.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
-import customStyle from "./ModalClientes_Nuevo.module.css";
+import customStyle from "./Cotizacion_defCliente.module.css";
 import { clienteProspectoInterface } from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 
@@ -25,74 +25,19 @@ import { useRouter } from "next/router";
 interface props {
   open: boolean;
   setOpen: Function;
-  ListaServiciosProductos: never[];
+  fase: number;
+  setFase: Function;
+  clienteProspecto: clienteProspectoInterface;
+  setClienteProspecto: (cliente: clienteProspectoInterface) => {};
 }
-interface Itinerario_Interface {
-  Dia: number;
-  "Hora Inicio": string;
-  "Hora Fin": string;
-  Actividad: string;
-  tableData?: {
-    id: number;
-  };
-}
-interface Incluye_Interface {
-  Actividad: string;
-  tableData?: {
-    id: number;
-  };
-}
-interface NoIncluye_Interface {
-  Actividad: string;
-  tableData?: {
-    id: number;
-  };
-}
-interface RecomendacionesLlevar_Interface {
-  Recomendacion: string;
-  tableData?: {
-    id: number;
-  };
-}
-interface ServicioProducto_Interface {
-  IdServicioProducto: string;
-  TipoServicio: string;
-  PrecioConfiUnitario: number;
-  NombreServicio: string;
-  Dia: number;
-  Cantidad: number;
-  PrecioCotiUnitario: number;
-  IGV: boolean;
-  PrecioCotiTotal: number;
-  PrecioConfiTotal: number;
-  Currency: "Dolar" | "Soles" | string;
-  PrecioPublicado: number;
-  tableData?: {
-    id: number;
-  };
-}
-
-const style: React.CSSProperties = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "80%",
-  backgroundColor: "#fff",
-  border: "1px solid #000",
-  borderRadius: "5px",
-  boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-  padding: "20px",
-  overflowY: "scroll",
-  maxHeight: "90%"
-};
-
-export default function ModalProgramTuris_Nuevo({
-  open,
-  setOpen,
-  ListaServiciosProductos
+export default function Cotizacion_defCliente({
+  fase,
+  setFase,
+  clienteProspecto,
+  setClienteProspecto
 }: props) {
   const router = useRouter();
+  const [open, setOpen] = useState(false);
   const [openSiguientePaso, setOpenSiguientePaso] = useState(false);
   const [Link_ultimoIngresado, setLink_ultimoIngresado] = useState("");
   const {
@@ -115,6 +60,20 @@ export default function ModalProgramTuris_Nuevo({
     mode: "onBlur"
   });
   const [Loading, setLoading] = useState(false);
+  const [ListaClientes, setListaClientes] = useState<
+    clienteProspectoInterface[]
+  >([] as clienteProspectoInterface[]);
+
+  useEffect(() => {
+    axios
+      .get(`/api/cliente/clientes`)
+      .then((res) => {
+        setListaClientes(res.data.ListaClientes);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const handleClose = () => {
     setOpen(false);
@@ -147,50 +106,48 @@ export default function ModalProgramTuris_Nuevo({
         ) {
           throw new Error("No se genero Id de prgrama turistico correctamente");
         }
+        setClienteProspecto(result.data.data);
+        axios
+          .get(`/api/cliente/clientes`)
+          .then((res) => {
+            setListaClientes(res.data.ListaClientes);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         setLoading(false);
-        setLink_ultimoIngresado(
-          // `/ProgramaTuristico/${result.data?.data["IdProgramaTuristico"]}`
-          `/`
-        );
         setOpenSiguientePaso(true);
       });
   };
-
+  const siguienteFase = () => {
+    console.log(clienteProspecto);
+    if (clienteProspecto.NombreCompleto) {
+      setFase(2);
+    } else {
+      alert("Debe seleccionar un cliente");
+    }
+  };
   return (
     <>
       <LoadingComp Loading={Loading} />
       <Dialog
         open={openSiguientePaso}
         onClose={() => {
-          router.reload();
+          setOpenSiguientePaso(false);
         }}
         fullWidth
         maxWidth="xs"
       >
         <DialogContent>
           <div className={customStyle.postRegistro__container}>
-            <h4>
-              Cliente nuevo registrado. ¿Cual es su siguiente paso?
-            </h4>
-            {/* <button
-              onClick={() => {
-                if (Link_ultimoIngresado !== "") {
-                  router.push(Link_ultimoIngresado);
-                } else {
-                  router.reload();
-                }
-              }}
-              className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
-            >
-              Ver nuevo Programa Turistico
-            </button> */}
+            <h4>Cliente/Prospecto nuevo registrado. ¿Continuar?</h4>
             <button
               onClick={() => {
-                router.reload();
+                setOpenSiguientePaso(false);
               }}
               className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
             >
-              Seguir en Lista de programas turisticos
+              Continuar
             </button>
           </div>
         </DialogContent>
@@ -356,48 +313,93 @@ export default function ModalProgramTuris_Nuevo({
           </Box>
         </Fade>
       </Modal>
+      {fase == 1 && (
+        <>
+          <div className={customStyle.Formulario_Fase1}>
+            <div className={customStyle.Fase1_titulo}>
+              <h2>Paso 1: Define al cliente</h2>
+              <div className={`${customStyle.botones_container}`}>
+                <button
+                  className={`${botones.button} ${botones.buttonGuardar}`}
+                  onClick={siguienteFase}
+                >
+                  Siguiente paso
+                </button>
+                <button
+                  className={`${botones.button} ${botones.buttonGuardar}`}
+                  onClick={() => setOpen(true)}
+                >
+                  Nuevo Cliente
+                </button>
+              </div>
+            </div>
+
+            <div className={`${globalStyles.global_textInput_container}`}>
+              <label>Nombre del cliente</label>
+              <input
+                type="text"
+                disabled
+                value={clienteProspecto.NombreCompleto}
+              />
+            </div>
+            <div className={`${globalStyles.global_textInput_container}`}>
+              <label>Tipo de Documento</label>
+              <input
+                type="text"
+                disabled
+                value={clienteProspecto.TipoDocumento}
+              />
+            </div>
+            <div className={`${globalStyles.global_textInput_container}`}>
+              <label>Numero de Documento</label>
+              <input
+                type="text"
+                disabled
+                value={clienteProspecto.NroDocumento}
+              />
+            </div>
+            <MaterialTable
+              title="Seleccione un cliente corporativo"
+              columns={[
+                {
+                  title: "Nombre Completo",
+                  field: "NombreCompleto"
+                },
+                {
+                  title: "Tipo Documento",
+                  field: "TipoDocumento"
+                },
+                {
+                  title: "Numero de Documento",
+                  field: "NroDocumento"
+                },
+                { title: "Tipo de Cliente", field: "TipoCliente" },
+                { title: "Celular", field: "Celular" }
+              ]}
+              data={ListaClientes}
+              actions={[
+                {
+                  icon: "check",
+                  tooltip: "Seleccione Cliente",
+                  onClick: (event, rowData: any) => {
+                    setClienteProspecto(rowData);
+                  }
+                }
+              ]}
+            />
+          </div>
+          <div
+            className={`${customStyle.botones_container} ${customStyle.botones_container_final}`}
+          >
+            <button
+              className={`${botones.button} ${botones.buttonGuardar}`}
+              onClick={siguienteFase}
+            >
+              Siguiente paso
+            </button>
+          </div>
+        </>
+      )}
     </>
   );
-}
-
-function formatear_programaTuristico_database(
-  form_data: any,
-  itinerario: any[],
-  Incluye: any[],
-  NoIncluye: any[],
-  RecomendacionesLlevar: any[],
-  ServicioProducto: any[]
-): programaTuristicoInterface {
-  itinerario.map((data) => {
-    delete data.tableData;
-  });
-  Incluye.map((data) => {
-    delete data.tableData;
-  });
-  NoIncluye.map((data) => {
-    delete data.tableData;
-  });
-  RecomendacionesLlevar.map((data) => {
-    delete data.tableData;
-  });
-  ServicioProducto.map((data) => {
-    delete data.tableData;
-  });
-  return {
-    NombrePrograma: form_data.NombrePrograma,
-    Estado: 1,
-    CodigoPrograma: form_data.CodigoPrograma,
-    Tipo: form_data.Tipo,
-    DuracionDias: form_data.DuracionDias,
-    DuracionNoche: form_data.DuracionNoche,
-    Localizacion: form_data.Localizacion,
-    Descripcion: form_data.Descripcion,
-    Itinerario: [...itinerario],
-    ItinerarioDescripcion: form_data.ItinerarioDescripcion,
-    Incluye: [...Incluye],
-    NoIncluye: [...NoIncluye],
-    RecomendacionesLlevar: [...RecomendacionesLlevar],
-    ServicioProducto: [...ServicioProducto],
-    IdProgramaTuristico: ""
-  };
 }

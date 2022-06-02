@@ -319,6 +319,7 @@ export interface reservaCotizacionInterface {
   NombreGrupo: string;
   CodGrupo: string;
   NpasajerosAdult: number | string;
+  NpasajerosChild: number | string;
   NombrePrograma: string;
   CodigoPrograma: string;
   Tipo: string;
@@ -378,7 +379,7 @@ export interface reservaCotizacionInterface {
   IdProgramaTuristico: string;
   FechaIN: string;
   Estado: number;
-  NumPaxTotal: null;
+  NumPaxTotal: number;
   IdClienteProspecto: string;
   IdReservaCotizacion: string;
 }

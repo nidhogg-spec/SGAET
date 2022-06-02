@@ -1,0 +1,17 @@
+.Fase1_titulo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.Fase1_titulo h2 {
+  margin-right: 40px;
+}
+.botones_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.botones_container_final {
+  margin: 40px 0px;
+}

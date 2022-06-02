@@ -9,6 +9,14 @@ const keyId = "IdClienteProspecto";
 const IdLetras = "CP";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  if (req.method == "GET") {
+    await connectToDatabase().then(async (connectedObject) => {
+      let collection = connectedObject.db.collection(coleccion);
+      const result = await collection.find({}).toArray();
+      res.status(200).json({ListaClientes:result});
+      res.end();
+    });
+  }
   if (req.method == "POST") {
     switch (req.body.accion) {
       case "create":
