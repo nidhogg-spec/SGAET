@@ -13,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     await connectToDatabase().then(async (connectedObject) => {
       let collection = connectedObject.db.collection(coleccion);
       const result = await collection.find({}).toArray();
-      res.status(200).json({ListaClientes:result});
+      res.status(200).json({ ListaClientes: result });
       res.end();
     });
   }
@@ -70,19 +70,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           };
 
           collection.updateOne(
-            { IdCliente: req.body.idProducto },
+            { IdClienteProspecto: req.body.IdClienteProspecto },
             dataActu,
             (err, result) => {
               if (err) {
                 res
                   .status(500)
-                  .json({ error: true, message: "un error .v" + err });
+                  .json({ error: true, message: "Error" + err });
                 return;
               }
-              console.log("Actualizacion satifactoria");
-              res.status(200).json({
-                message: "Todo bien, todo correcto, Actualizacion satifactoria"
-              });
+              collection.findOne(
+                { IdClienteProspecto: req.body.IdClienteProspecto },
+                (err, result) => {
+                  if (err) {
+                    res
+                      .status(500)
+                      .json({ error: true, message: "Error" + err });
+                    return;
+                  }
+                  res.status(200).json({ data: result });
+                  res.end();
+                }
+              );
             }
           );
         });
@@ -95,7 +104,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             { IdCliente: req.body.idProducto },
             (err, result) => {
               if (err) {
-                res.status(500).json({ error: true, message: "un error .v" });
+                res.status(500).json({ error: true, message: "Error" });
                 return;
               }
               console.log("Deleteacion satifactoria");
@@ -120,7 +129,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   //     const dbo = client.db(dbName);
   //     getData(dbo, function (err, data) {
   //       if (err) {
-  //         res.status(500).json({ error: true, message: "un error .v" });
+  //         res.status(500).json({ error: true, message: "Error" });
   //         return;
   //       }
   //       res.status(200).json({data})

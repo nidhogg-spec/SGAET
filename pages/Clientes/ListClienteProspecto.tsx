@@ -17,6 +17,7 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import ModalClientes_Nuevo from "@/components/ComponentesUnicos/Clientes/ModalClientes_Nuevo/ModalClientes_Nuevo";
 import { resetServerContext } from "react-beautiful-dnd";
+import ModalClientes_Leer from "@/components/ComponentesUnicos/Clientes/ModalClientes_Leer/ModalClientes_Leer";
 interface Props {
   Datos: any[];
   api_general: string;
@@ -38,6 +39,7 @@ Campos de ClientesProspectos
 export default function Home({ Datos, api_general }: Props) {
   // let Display_out =false
   const [datosEditables, setDatosEditables] = useState(Datos);
+  const [EditandoCliente, setEditandoCliente] = useState(false);
 
   let Columnas = [
     { title: "ID", field: "IdClienteProspecto", hidden: true },
@@ -63,11 +65,8 @@ export default function Home({ Datos, api_general }: Props) {
 
   //------------------------------------------------
   const [Display, setDisplay] = useState(false);
+  const [Display_Leer, setDisplay_Leer] = useState(false);
   const [ModalData, setModalData] = useState({});
-  const ModalDisplay = createContext([
-    [{}, () => {}],
-    [{}, () => {}]
-  ]);
   const [Data, setData] = useState({});
   //------------------------------------------------
 
@@ -78,6 +77,13 @@ export default function Home({ Datos, api_general }: Props) {
         open={Display}
         setOpen={setDisplay}
         key={"ModalClientes_Nuevo_01"}
+      />
+      <ModalClientes_Leer
+        ClienteProspecto={Data as any}
+        open={Display_Leer}
+        setOpen={setDisplay_Leer}
+        Actualizando={EditandoCliente}
+        setActualizando={setEditandoCliente}
       />
       <div className={`${globalStyles.main_work_space_container}`}>
         <div className={styles.titleContainer}>
@@ -97,92 +103,6 @@ export default function Home({ Datos, api_general }: Props) {
           columns={Columnas}
           data={datosEditables}
           title={""}
-          editable={{
-            onRowAdd: (newData) =>
-              new Promise<void>((resolve, reject) => {
-                setTimeout(() => {
-                  fetch(api_general, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      accion: "Insert",
-                      coleccion: "ClienteProspecto",
-                      keyId: "IdClienteProspecto",
-                      Prefijo: "CP",
-                      data: newData
-                    })
-                  })
-                    .then((r) => r.json())
-                    .then((data) => {
-                      alert(data.result);
-                    });
-                  setDatosEditables([...datosEditables, newData]);
-                  resolve();
-                }, 1000);
-              }),
-            onRowUpdate: (newData, oldData) =>
-              new Promise<void>((resolve, reject) => {
-                setTimeout(() => {
-                  const dataUpdate = [...datosEditables];
-                  const index = oldData.tableData.id;
-                  dataUpdate[index] = newData;
-                  setDatosEditables([...dataUpdate]);
-
-                  delete dataUpdate[index]._id;
-
-                  fetch(api_general, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      // idProducto: dataUpdate[index].IdCliente,
-                      // data: dataUpdate[index],
-                      // accion: "update",
-                      accion: "update",
-                      coleccion: "ClienteProspecto",
-                      query: {
-                        IdClienteProspecto: dataUpdate[index].IdClienteProspecto
-                      },
-                      data: dataUpdate[index]
-                    })
-                  })
-                    .then((r) => r.json())
-                    .then((data) => {
-                      alert(data.result);
-                    });
-                  console.log(dataUpdate[index]);
-                  resolve();
-                }, 1000);
-              }),
-            onRowDelete: (oldData) =>
-              new Promise<void>((resolve, reject) => {
-                setTimeout(() => {
-                  const dataDelete = [...datosEditables];
-                  const index = oldData.tableData.id;
-
-                  fetch(api_general, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      // idProducto: dataDelete[index].IdCliente,
-                      accion: "DeleteOne",
-                      coleccion: "ClienteProspecto",
-                      query: {
-                        IdClienteProspecto: dataDelete[index].IdClienteProspecto
-                      }
-                    })
-                  })
-                    .then((r) => r.json())
-                    .then((data) => {
-                      alert(data.result);
-                    });
-
-                  dataDelete.splice(index, 1);
-                  setDatosEditables([...dataDelete]);
-
-                  resolve();
-                }, 1000);
-              })
-          }}
           actions={[
             {
               icon: () => {
@@ -197,12 +117,9 @@ export default function Home({ Datos, api_general }: Props) {
                 });
                 console.log(dt);
                 setData(dt);
-                setDisplay(true);
+                setEditandoCliente(false);
+                setDisplay_Leer(true);
               }
-              // Router.push({
-              //   pathname: `/Clientes/ClienteProspecto/${rowData.IdClienteProspecto}`,
-              // }),
-              // setDisplay(true)
             }
           ]}
           options={{
