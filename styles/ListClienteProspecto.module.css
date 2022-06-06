@@ -1,0 +1,15 @@
+.titleContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    column-gap: 50px;
+    /* height: 5rem;     */
+    
+    
+}
+.titleContainer div{
+    display: flex;
+    flex-direction: row;
+    column-gap: 20px;
+}

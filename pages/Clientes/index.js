@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import Router from "next/router";
 import { useState } from "react";
 
-export default function Home({ Datos, APIpath }) {
+export default function ClientesIndex({ Datos, APIpath }) {
 
   const [datosEditables, setDatosEditables] = useState(Datos);
 

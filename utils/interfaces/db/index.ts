@@ -319,6 +319,7 @@ export interface reservaCotizacionInterface {
   NombreGrupo: string;
   CodGrupo: string;
   NpasajerosAdult: number | string;
+  NpasajerosChild: number | string;
   NombrePrograma: string;
   CodigoPrograma: string;
   Tipo: string;
@@ -378,7 +379,7 @@ export interface reservaCotizacionInterface {
   IdProgramaTuristico: string;
   FechaIN: string;
   Estado: number;
-  NumPaxTotal: null;
+  NumPaxTotal: number;
   IdClienteProspecto: string;
   IdReservaCotizacion: string;
 }
@@ -474,12 +475,23 @@ export interface criterioInterface {
 export interface clienteProspectoInterface {
   _id?: string;
   NombreCompleto: string;
-  TipoCliente: string;
-  Estado: string;
-  TipoDocumento: string;
+  TipoCliente: "Directo" | "Corporativo" | "Otro" | string;
+  Estado: "Cliente" | "Prospecto" | string;
+  TipoDocumento: TipoDocumento;
   NroDocumento: string;
   IdClienteProspecto: string;
-  tableData: {
+  Celular: string;
+  Email: string;
+  tableData?: {
     id: number;
   };
+}
+
+enum TipoDocumento {
+  DNI = "DNI",
+  RUC = "RUC",
+  PASAPORTE = "PASAPORTE",
+  CARNET_EXTRANJERIA = "CARNET_EXTRANJERIA",
+  CEDULA_DIPLOMATICA = "CEDULA_DIPLOMATICA",
+  OTRO = "OTRO"
 }
