@@ -58,6 +58,7 @@ export default async (req, res) => {
       res.status(500).json({ error: "Algun error" });
       return;
     }
+    console.log("Realizado");
     res.status(200).json({
       ReservaCotizacion: ReservaCotizacion,
       ClienteProspecto: ClienteProspecto,
