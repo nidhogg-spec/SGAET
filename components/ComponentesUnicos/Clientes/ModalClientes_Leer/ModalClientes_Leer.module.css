@@ -1,0 +1,77 @@
+.title {
+  width: 100%;
+  text-align: center;
+}
+/* ---------------Selector de tipo de proveedor */
+.tipo_proveedor_container {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 25px 10px 0px;
+  align-items: center;
+}
+.tipo_proveedor_container h2 {
+  width: 320px;
+}
+.tipo_proveedor_container select {
+  width: 300px;
+  height: 2rem;
+  border: 2px solid black;
+  border-radius: 5px;
+  padding-left: 10px;
+  font-size: large;
+}
+
+/*------------------- Boton de guardar */
+.botones_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.botones_container_final{
+    margin: 40px 0px;
+}
+
+/* ----------------------------Check box space */
+.formulario__idioma__containar{
+    display: flex;
+    flex-direction: row;
+    padding: 10px 25px 10px 20px;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.formulario__idioma__containar label:first-child{
+    width: 300px;
+}
+
+.formulario__idioma__containar input{
+    height: 1.5rem;
+    width: 1.5rem;
+    border: 2px solid black;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+.formulario__idioma__checkboxContainer{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr ;
+    margin-right: 10px;
+    align-items: center;
+}
+.formulario__idioma__checkboxContainer div{
+    display: flex;
+    /* margin-right: 10px; */
+    align-items: center;
+}
+
+.postRegistro__container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 15px;
+}
+.postRegistro__container button{
+  margin: 5px 0;
+}
