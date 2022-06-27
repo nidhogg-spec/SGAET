@@ -57,6 +57,9 @@ const func_Crear = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         console.log("IdServicioEscogido no definido");
         return;
     }
+
+    
+
   //-------------------- Proceso ------------------------------
   await connectToDatabase().then(async connectedObject => {
     
