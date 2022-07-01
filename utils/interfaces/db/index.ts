@@ -4,6 +4,19 @@ export const dbColeccionesFormato = {
   //     coleccion: "",
   //     keyId: "",
   // },
+
+  // Agregados recientemente
+  ProgramaTuristico : {
+    prefijo: "OS",
+    coleccion: "ProgramaTuristico",
+    keyId: "IdProgramaTuristico"
+  },
+  Seguimiento : {
+    prefijo: "SG",
+    coleccion: "Seguimiento",
+    keyId: "IdSeguimiento"
+  },
+
   Proveedor: {
     prefijo: "HT",
     coleccion: "Proveedor",
