@@ -382,6 +382,7 @@ export interface reservaCotizacionInterface {
   NumPaxTotal: number;
   IdClienteProspecto: string;
   IdReservaCotizacion: string;
+  ListaPasajeros?: pasajeroInterface[];
 }
 // ------------------Orden de Servicio-------------------
 export interface ordenServicioInterface {
@@ -486,8 +487,31 @@ export interface clienteProspectoInterface {
     id: number;
   };
 }
+// ------------------Cliente Prospecto-------------------
+export interface pasajeroInterface {
+  _id?: string;
+  Nombres: string;
+  Apellidos: string;
+  TipoDocumento: TipoDocumento;
+  NroDocumento: string;
+  Sexo: "Masculino" | "Femenino" | string;
+  FechaNacimiento: string;
+  Celular: string;
+  Email: string;
+  Nacionalidad: string;
+  IdReservaCotizacion: string;
+  UrlDocumentos: string[];
+  RegimenAlimenticioDescripcion: string;
+  RegimenAlimenticioEspecial: boolean;
+  ProblemasMedicos: boolean;
+  ProblemasMedicosDescripcion: string;
+  NumPasajero: number;
+  tableData?: {
+    id: number;
+  };
+}
 
-enum TipoDocumento {
+export enum TipoDocumento {
   DNI = "DNI",
   RUC = "RUC",
   PASAPORTE = "PASAPORTE",

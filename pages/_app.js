@@ -2,17 +2,18 @@ import '../styles/globals.css'
 import '../styles/global_var.css'
 import Header from "../components/header/Header"
 import NavLateral from "../components/navLateral/NavLateral"
-import {Amplify } from 'aws-amplify'
+import { Amplify } from 'aws-amplify'
 import config from 'src/aws-exports'
 import Router from "next/router";
 import { useState } from 'react'
 import Head from 'next/head'
-import {AppWrapper} from '@/components/Contexto'
+import { AppWrapper } from '@/components/Contexto'
 import AppLoader from '@/components/Loading/Loading'
+import PublicHeader from "../components/PublicHeader/PublicHeader"
 
 //this import is using the next.config,js how we see we aren't specification the exact path
 
-Amplify.configure({...config,ssr: true})
+Amplify.configure({ ...config, ssr: true })
 
 
 function MyApp({ Component, pageProps }) {
@@ -35,15 +36,18 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <title>Sistema SGAET</title>
       </Head>
-      <AppWrapper>
+      {pageProps.publicPage ? <>
+        <PublicHeader />
+        <Component {...pageProps} />
+      </> : <AppWrapper>
         <AppLoader
           Loading={AppLoading}
           key={'AppLoader001'}
         />
         <Header />
-        <NavLateral/>
+        <NavLateral />
         <Component {...pageProps} />
-      </AppWrapper>
+      </AppWrapper>}
     </>
   )
 }
@@ -57,7 +61,7 @@ function MyApp({ Component, pageProps }) {
 //   // }catch{
 
 //   // }
-  
+
 //   // const appProps = await App.getInitialProps(ctx);
 //   // if(ctx.req){
 //   //   console.log("acaes")
