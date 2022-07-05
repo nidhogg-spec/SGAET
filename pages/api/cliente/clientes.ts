@@ -130,7 +130,7 @@ const eliminarCliente = async (req: NextApiRequest, res: NextApiResponse<any>) =
       const collection: Collection<any> = db.collection(coleccion.coleccion);
       await collection.deleteOne(
         {
-          IdCliente: idCliente
+          [coleccion.keyId]: idCliente
         }, (err : MongoError, result : any) => {
           if (err) {
             res.status(500).json({
