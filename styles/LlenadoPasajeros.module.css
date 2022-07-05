@@ -1,0 +1,35 @@
+.MainContainer {
+  display: flex;
+  position: fixed;
+  left: 0%;
+  right: 0%;
+  bottom: 0%;
+  height: 90%;
+  flex-direction: column;
+  background-color: white;
+  margin: 0 15%;
+  padding: 10px 20px;
+  overflow-y: scroll;
+}
+
+.MainContainer::-webkit-scrollbar {
+  width: 20px;
+}
+
+.MainContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.MainContainer::-webkit-scrollbar-thumb {
+  background: hsl(0, 0%, 70%);
+}
+
+/*------------------- Boton de guardar */
+.botones_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.botones_container_final {
+  margin: 40px 0px;
+}

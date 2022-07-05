@@ -1,0 +1,59 @@
+### Main Variables
+###
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+
+### Listar pasajeros por reserva
+GET http://{{host}}/api/pasajero/RS0000001
+
+### Crear pasajero por reserva
+POST http://{{host}}/api/pasajero/RS0000001
+content-type: application/json
+
+{
+    "Pasajero":[
+        {
+            "nombre": "Juan",
+            "apellido": "Perez",
+            "dni": "12345678",
+            "telefono": "12345678",
+            "email": ""
+        },
+        {
+            "nombre": "Juan",
+            "apellido": "Perez",
+            "dni": "12345678",
+            "telefono": "12345678",
+            "email": ""
+        }
+    ]
+}
+
+### Actualizar pasajeros por reserva
+PUT http://{{host}}/api/pasajero/RS0000001
+content-type: application/json
+
+{
+  "Pasajero":[
+        {
+            "nombre": "Juan 2",
+            "apellido": "Perez",
+            "dni": "12345678",
+            "telefono": "12345678",
+            "email": ""
+        },
+        {
+            "nombre": "Juan",
+            "apellido": "Perez",
+            "dni": "12345678",
+            "telefono": "12345678",
+            "email": ""
+        }
+    ]
+}
+
+### Eliminar pasajeros por reserva
+DELETE http://{{host}}/api/pasajero/RS0000001
