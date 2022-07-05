@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import router, { useRouter } from "next/router";
-import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
+import axios from "axios";
 import customStyle from "@/globalStyles/LlenadoPasajeros.module.css";
 import globalStyles from "@/globalStyles/modules/global.module.css";
+import botones from "@/globalStyles/modules/boton.module.css";
 
 import {
   pasajeroInterface,
@@ -65,8 +66,6 @@ export default function LlenadoPasajeros({
     return <p>Error: {error}</p>;
   }
   const router = useRouter();
-  const [Datos, setDatos] = useState({});
-  const { llenadoPasajeros } = router.query;
   const {
     register,
     handleSubmit,
@@ -78,7 +77,7 @@ export default function LlenadoPasajeros({
     mode: "onBlur"
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     let formPasajerosData: formPasajerosInterface[] = [];
     for (let index = 0; index < NumPasajeros; index++) {
       formPasajerosData.push({
@@ -122,75 +121,47 @@ export default function LlenadoPasajeros({
       }
     );
     console.log(pasajeroList);
+
+    await axios.put("/api/pasajero/" + IdReservaCotizcion, {
+      Pasajero: pasajeroList
+    });
+    router.reload();
   };
 
   useEffect(() => {
-    console.log(Datos);
+    let defaultList: any = {};
     if (DatosPasajeros.length != 0) {
-      setDatos(DatosPasajeros[DatosPasajeros.length - 1]);
+      DatosPasajeros.forEach((DatosPasajero: pasajeroInterface, index) => {
+        defaultList["Nombres_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.Nombres || "";
+        defaultList["Apellidos_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.Apellidos || "";
+        defaultList["TipoDocumento_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.TipoDocumento || "DNI";
+        defaultList["NroDocumento_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.NroDocumento || "";
+        defaultList["Sexo_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.Sexo || "FEMENINO";
+        defaultList["FechaNacimiento_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.FechaNacimiento || "";
+        defaultList["Celular_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.Celular || "";
+        defaultList["Email_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.Email || "";
+        defaultList["Nacionalidad_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.Nacionalidad || "Peruana";
+        defaultList["UrlDocumentos_" + DatosPasajero.NumPasajero] =
+          DatosPasajero.UrlDocumentos || "";
+        defaultList[
+          "RegimenAlimenticioDescripcion_" + DatosPasajero.NumPasajero
+        ] = DatosPasajero.RegimenAlimenticioDescripcion || "NO_ESPECIFICO";
+        defaultList[
+          "ProblemasMedicosDescripcion_" + DatosPasajero.NumPasajero
+        ] = DatosPasajero.ProblemasMedicosDescripcion || "";
+      });
+      reset(defaultList);
     }
   }, []);
-  // useEffect(()=>{
-
-  //     let tempDatoPadre = datoPadre
-  //     console.log(datoPadre)
-  //     if(datoHijo != null){
-  //         console.log(datoHijo)
-  //         // var valuesArray = tempDatoPadre.map(function(item){return item.docIdentidad})
-  //         // var hayDuplicado = valuesArray.some(function(item,idx){
-  //         //     return valuesArray.indexOf(item) != idx
-  //         // })
-  //         tempDatoPadre.push(datoHijo)
-  //         setDatoPadre(tempDatoPadre)
-
-  //         // if(!hayDuplicado){
-
-  //         // }
-  //         // console.log(hayDuplicado)
-  //     }
-  // },[datoPadre])
-
-  // function handleSubmit() {
-  //   let listaPasajeros = [];
-
-  //   for (let index = 0; index < NumPasajeros; index++) {
-  //     let object = {};
-  //     for (const key in Datos) {
-  //       let number = key.length - 1;
-  //       // console.log(Datos[key])
-  //       // console.log(key.slice(-1))
-  //       if (key.slice(-1) == index) {
-  //         object = { ...object, [key.slice(0, number)]: Datos[key] };
-  //         // object={[key]:Datos[key]}
-  //         // arrayData.push(object)
-  //       }
-  //     }
-  //     listaPasajeros.push(object);
-  //   }
-  //   console.log(listaPasajeros);
-  //   listaPasajeros.push(Datos);
-  //   // console.log(listaPasajeros)
-  //   // let y = []
-  //   // y.push(dato1,dato2,dato3,dato4,dato5)
-  //   // console.log(y)
-  //   // console.log(y)
-  //   fetch(`/api/reserva/DataReserva/CRUDReservaCotizacion`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({
-  //       idProducto: llenadoPasajeros,
-  //       data: { listaPasajeros },
-  //       accion: "update"
-  //     })
-  //   })
-  //     .then((r) => r.json())
-  //     .then((data) => {
-  //       alert(data.message);
-  //     });
-  // }
-
-  let item = new Array(NumPasajeros).fill(null);
-
   return (
     <div className={`${customStyle.MainContainer}`}>
       <h1>Datos de Pasajeros</h1>
@@ -206,7 +177,7 @@ export default function LlenadoPasajeros({
                 <label>Nombres</label>
                 <input
                   type="text"
-                  {...register("Nombres_" + (index + 1), { required: false })}
+                  {...register("Nombres_" + (index + 1), { required: true })}
                 />
                 <span className={`${globalStyles.global_error_message}`}>
                   {errors["Nombres_" + (index + 1)]?.type == "required" &&
@@ -218,11 +189,11 @@ export default function LlenadoPasajeros({
                 <label>Apellidos</label>
                 <input
                   type="text"
-                  {...register("Apellidos_" + (index + 1), { required: false })}
+                  {...register("Apellidos_" + (index + 1), { required: true })}
                 />
                 <span className={`${globalStyles.global_error_message}`}>
                   {errors["Apellidos_" + (index + 1)]?.type == "required" &&
-                    "Los Apellidos son obligatorio"}
+                    "Los apellidos son obligatorio"}
                 </span>
               </div>
               {/* ----------------------------- TipoDocumento ------------------------------------- */}
@@ -230,7 +201,7 @@ export default function LlenadoPasajeros({
                 <label htmlFor="">Tipo de Documento</label>
                 <select
                   {...register("TipoDocumento_" + (index + 1), {
-                    required: false
+                    required: true
                   })}
                 >
                   <option key={"DNI"} value={"DNI"}>
@@ -304,7 +275,7 @@ export default function LlenadoPasajeros({
               <div className={`${globalStyles.global_textInput_container}`}>
                 <label htmlFor="">Sexo</label>
                 <select
-                  {...register("Sexo_" + (index + 1), { required: false })}
+                  {...register("Sexo_" + (index + 1), { required: true })}
                 >
                   <option key={"MASCULINO"} value={"MASCULINO"}>
                     {"Masculino"}
@@ -327,7 +298,7 @@ export default function LlenadoPasajeros({
                 <input
                   type="date"
                   {...register("FechaNacimiento_" + (index + 1), {
-                    required: false
+                    required: true
                   })}
                 />
                 <span className={`${globalStyles.global_error_message}`}>
@@ -341,13 +312,10 @@ export default function LlenadoPasajeros({
                 <input
                   type="text"
                   {...register("Celular_" + (index + 1), {
-                    required: false,
                     pattern: /^[0-9_ +-]+$/
                   })}
                 />
                 <span className={`${globalStyles.global_error_message}`}>
-                  {errors["Celular_" + (index + 1)]?.type == "required" &&
-                    "El Celular es obligatorio"}
                   {errors["Celular_" + (index + 1)]?.type == "pattern" &&
                     "El Celular solo pude contener numeros"}
                 </span>
@@ -355,49 +323,33 @@ export default function LlenadoPasajeros({
               {/* ----------------------------- Email ------------------------------------- */}
               <div className={`${globalStyles.global_textInput_container}`}>
                 <label>Email</label>
-                <input
-                  type="text"
-                  {...register("Email_" + (index + 1), { required: false })}
-                />
-                <span className={`${globalStyles.global_error_message}`}>
-                  {errors["Email_" + (index + 1)]?.type == "required" &&
-                    "El Email es obligatorio"}
-                </span>
+                <input type="text" {...register("Email_" + (index + 1), {})} />
+                <span className={`${globalStyles.global_error_message}`}></span>
               </div>
               {/* ----------------------------- Nacionalidad ------------------------------------- */}
               <div className={`${globalStyles.global_textInput_container}`}>
                 <label>Nacionalidad</label>
                 <input
                   type="text"
-                  {...register("Nacionalidad_" + (index + 1), {
-                    required: false
-                  })}
+                  {...register("Nacionalidad_" + (index + 1), {})}
                 />
-                <span className={`${globalStyles.global_error_message}`}>
-                  {errors["Nacionalidad_" + (index + 1)]?.type == "required" &&
-                    "El Nacionalidad es obligatorio"}
-                </span>
+                <span className={`${globalStyles.global_error_message}`}></span>
               </div>
               {/* ----------------------------- UrlDocumentos ------------------------------------- */}
               <div className={`${globalStyles.global_textInput_container}`}>
                 <label>UrlDocumentos</label>
                 <input
                   type="text"
-                  {...register("UrlDocumentos_" + (index + 1), {
-                    required: false
-                  })}
+                  {...register("UrlDocumentos_" + (index + 1), {})}
                 />
-                <span className={`${globalStyles.global_error_message}`}>
-                  {errors["UrlDocumentos_" + (index + 1)]?.type == "required" &&
-                    "El UrlDocumentos es obligatorio"}
-                </span>
+                <span className={`${globalStyles.global_error_message}`}></span>
               </div>
               {/* ----------------------------- RegimenAlimenticioDescripcion ------------------------------------- */}
               <div className={`${globalStyles.global_textInput_container}`}>
                 <label>Regimen Alimenticio</label>
                 <select
                   {...register("RegimenAlimenticioDescripcion_" + (index + 1), {
-                    required: false
+                    required: true
                   })}
                 >
                   <option key={"NO_ESPECIFICO"} value={"NO_ESPECIFICO"}>
@@ -416,8 +368,6 @@ export default function LlenadoPasajeros({
                     {"Otro"}
                   </option>
                 </select>
-                {getValues("RegimenAlimenticioDescripcion_" + (index + 1)) ==
-                  "OTRO" && "Hola"}
                 <span className={`${globalStyles.global_error_message}`}>
                   {errors["RegimenAlimenticioDescripcion_" + (index + 1)]
                     ?.type == "required" &&
@@ -441,7 +391,16 @@ export default function LlenadoPasajeros({
             </div>
           );
         })}
-        <button>Enviar Datos</button>
+        <div
+          className={`${customStyle.botones_container} ${customStyle.botones_container_final}`}
+        >
+          <button
+            className={`${botones.button} ${botones.buttonGuardar}`}
+            type="submit"
+          >
+            Guardar
+          </button>
+        </div>
       </form>
       {/* {item.map((x,index)=>
                 <ListaPasajeros
@@ -495,6 +454,9 @@ export const getServerSideProps: GetServerSideProps = async ({
         .find({
           IdReservaCotizacion: idUrl
         })
+        .project({
+          _id: 0
+        })
         .toArray();
 
       if (pasajeros.length == 0) {
@@ -505,13 +467,13 @@ export const getServerSideProps: GetServerSideProps = async ({
             Apellidos: "",
             TipoDocumento: TipoDocumento.DNI,
             NroDocumento: "",
-            Sexo: "",
+            Sexo: "FEMENINO",
             FechaNacimiento: "",
             Celular: "",
             Email: "",
             Nacionalidad: "",
             UrlDocumentos: [],
-            RegimenAlimenticioDescripcion: "",
+            RegimenAlimenticioDescripcion: "NO_ESPECIFICO",
             RegimenAlimenticioEspecial: false,
             ProblemasMedicos: false,
             ProblemasMedicosDescripcion: "",
