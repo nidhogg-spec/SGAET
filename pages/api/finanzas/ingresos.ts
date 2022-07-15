@@ -1,22 +1,31 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ingresoInterface, dbColeccionesFormato } from "@/utils/interfaces/db";
-import { generarIdNuevo } from "@/utils/API/generarId";
+import { construirId, generarIdNuevo, obtenerUltimo } from "@/utils/API/generarId";
 import { Collection, Db } from "mongodb";
 
-export default async (req : NextApiRequest, res : NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "POST") {
         switch (req.body.accion) {
             case "create":
                 await crearIngreso(req, res);
                 break;
+            case "createMany":
+                await crearMuchos(req, res);
+                break;
             case "update":
                 await actualizarIngreso(req, res);
+                break;
+            case "updateMany":
+                await actualizarMuchos(req, res);
                 break;
             case "delete":
                 await eliminarIngreso(req, res);
                 break;
-            default: 
+            case "deleteMany":
+                await eliminarMuchos(req, res);
+                break;
+            default:
                 res.status(500).json({
                     message: "Error al enviar un metodo HTTP"
                 });
@@ -27,27 +36,27 @@ export default async (req : NextApiRequest, res : NextApiResponse) => {
     }
 }
 
-const crearIngreso = async (req : NextApiRequest, res : NextApiResponse<any>) => {
-    const coleccion : {
+const crearIngreso = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
         prefijo: string,
         coleccion: string,
         keyId: string
     } = dbColeccionesFormato.Ingreso;
-    const { coleccion : coleccionNombre, keyId } = coleccion;
-    const ingresoServicio : ingresoInterface = req.body.data;
-    const nuevoIngreso : ingresoInterface = {
+    const { coleccion: coleccionNombre, keyId } = coleccion;
+
+    const date: Date = new Date();
+
+    const ingresoServicio: ingresoInterface = req.body.data;
+    const nuevoIngreso: ingresoInterface = {
         ...ingresoServicio,
-        [keyId]: await generarIdNuevo(coleccion)
+        [keyId]: await generarIdNuevo(coleccion),
+        FechaCreacion: date,
+        FechaModificacion: date,
     };
-    if (req.body.data.IdIngreso == undefined) {
-        res.status(304).send("No se ha ingresado un Id de ingreso");
-        console.log("IdIngreso no se ha definido");
-        return;
-    }
 
     await connectToDatabase().then(async connectedObject => {
-        const dbo : Db = connectedObject.db;
-        const collection : Collection<any> = dbo.collection(coleccionNombre);
+        const dbo: Db = connectedObject.db;
+        const collection: Collection<any> = dbo.collection(coleccionNombre);
         try {
             const result = await collection.insertOne(nuevoIngreso);
             res.status(200).send(result);
@@ -58,24 +67,71 @@ const crearIngreso = async (req : NextApiRequest, res : NextApiResponse<any>) =>
     });
 }
 
-const actualizarIngreso = async (req : NextApiRequest, res: NextApiResponse<any>) => {
-    const coleccion : {
+const crearMuchos = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
         prefijo: string,
         coleccion: string,
         keyId: string
     } = dbColeccionesFormato.Ingreso;
-    const ingreso : ingresoInterface = req.body.data;
-    const idIngreso : string = req.body.idProducto;
+    const ingresos: ingresoInterface[] = req.body.data;
+
     await connectToDatabase().then(async connectedObject => {
-        const dbo : Db = connectedObject.db;
-        const collection  : Collection<any> = dbo.collection(coleccion.coleccion);
+        try {
+            const ultimoIngreso: ingresoInterface | any = await obtenerUltimo(coleccion);
+            let ultimoId: string = ultimoIngreso.IdIngreso;
+            const ingresosActualizados: ingresoInterface[] = ingresos.map((ingreso: ingresoInterface) => {
+                const nuevoId: string = construirId({}, coleccion.prefijo, coleccion.keyId, ultimoId)
+                const date: Date = new Date();
+                const ingresoActualizado: ingresoInterface = {
+                    ...ingreso,
+                    [coleccion.keyId]: nuevoId,
+                    FechaCreacion: date,
+                    FechaModificacion: date
+                };
+                ultimoId = nuevoId;
+                return ingresoActualizado;
+            });
+            const db: Db = connectedObject.db;
+            const collection: Collection<any> = db.collection(coleccion.coleccion);
+            await collection.insertMany(ingresosActualizados);
+            res.status(200).json({
+                message: "Insercion realizada satisfactoriamente"
+            });
+        } catch (e: any) {
+            console.log(e);
+            res.status(500).json({
+                error: true,
+                message: `Error al ingresar varios valores - ${e.message}`
+            });
+        }
+
+    });
+
+}
+
+
+const actualizarIngreso = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
+        prefijo: string,
+        coleccion: string,
+        keyId: string
+    } = dbColeccionesFormato.Ingreso;
+    const ingreso: ingresoInterface = req.body.data;
+    const ingresoFechaActualizada: ingresoInterface = {
+        ...ingreso,
+        FechaModificacion: new Date()
+    }
+    const idIngreso: string = req.body.idProducto;
+    await connectToDatabase().then(async connectedObject => {
+        const dbo: Db = connectedObject.db;
+        const collection: Collection<any> = dbo.collection(coleccion.coleccion);
         try {
             collection.updateOne(
                 {
                     [coleccion.keyId]: idIngreso,
-                }, 
+                },
                 {
-                    $set: ingreso
+                    $set: ingresoFechaActualizada
                 }
             );
             res.status(200).json({
@@ -83,7 +139,7 @@ const actualizarIngreso = async (req : NextApiRequest, res: NextApiResponse<any>
             });
         } catch (err) {
             res.status(500).json({
-                error: true, 
+                error: true,
                 message: `Error al actualizar - ${err}`
             });
             console.log(err);
@@ -91,18 +147,56 @@ const actualizarIngreso = async (req : NextApiRequest, res: NextApiResponse<any>
     });
 }
 
-const eliminarIngreso = async (req : NextApiRequest, res : NextApiResponse<any>) => {
-    const coleccion : {
+const actualizarMuchos = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
+        prefijo: string,
+        coleccion: string,
+        keyId: string
+    } = dbColeccionesFormato.Ingreso;
+    const ingresos = req.body.data;
+    ingresos.forEach((elemento: any) => {
+        elemento.ingreso.FechaModificacion = new Date();
+    });
+    await connectToDatabase().then(async connectedObject => {
+        const db: Db = connectedObject.db;
+        const collection: Collection<any> = db.collection(coleccion.coleccion);
+        try {
+            ingresos.forEach(async (elemento: any) => {
+                const { idProducto, ingreso: ingresoActualizado } = elemento;
+                console.log(elemento);
+                await collection.updateOne({
+                    [coleccion.keyId]: idProducto
+                }, {
+                    $set: ingresoActualizado
+                });
+            });
+            res.status(200).json({
+                message: "Actualizacion satisfactoria"
+            });
+        } catch (err: any) {
+            res.status(500).json({
+                error: true,
+                message: `Error al actualizar - ${err.message}`
+            });
+            console.log(err);
+        }
+    });
+
+}
+
+
+const eliminarIngreso = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
         prefijo: string,
         coleccion: string,
         keyId: string
     } = dbColeccionesFormato.Ingreso;
 
-    const idIngreso : string = req.body.idProducto;
+    const idIngreso: string = req.body.idProducto;
     await connectToDatabase().then(async connectedObject => {
         try {
-            const dbo : Db = connectedObject.db;
-            const collection : Collection<any> = dbo.collection(coleccion.coleccion);
+            const dbo: Db = connectedObject.db;
+            const collection: Collection<any> = dbo.collection(coleccion.coleccion);
             await collection.deleteOne(
                 {
                     [coleccion.keyId]: idIngreso
@@ -122,29 +216,100 @@ const eliminarIngreso = async (req : NextApiRequest, res : NextApiResponse<any>)
     });
 }
 
-const obtenerIngreso = async (req : NextApiRequest, res : NextApiResponse<any>) => {
+const eliminarMuchos = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
+        prefijo: string,
+        coleccion: string,
+        keyId: string
+    } = dbColeccionesFormato.Ingreso;
+    const ids: string[] = req.body.data;
+    const listaCondiciones: any = {
+        $or: []
+    };
     await connectToDatabase().then(async connectedObject => {
-        const dbo : Db = connectedObject.db;
-        obtenerIngresoCallback(dbo, (err : any, data : any) => {
-            if (err) {
-                res.status(500).json({
-                    error: true,
-                    message: "Ocurrio un error al listar"
+        try {
+            ids.forEach(id => {
+                listaCondiciones.$or.push({
+                    [coleccion.keyId]: id
                 });
-                return;
-            }
-            res.status(200).json({data});
-        });
-    })
+            });
+            const db: Db = connectedObject.db;
+            const collection: Collection<any> = db.collection(coleccion.coleccion);
+            await collection.deleteMany(listaCondiciones);
+            res.status(200).json({
+                message: "Eliminacion correcta"
+            });
+        } catch (err: any) {
+            console.log(err);
+            res.status(500).json({
+                error: true,
+                message: `Erros al eliminar varios - ${err.message}`
+            });
+        }
+
+    });
 }
 
-const obtenerIngresoCallback = async (dbo : Db, callback : any) => {
-    const coleccion : {
-        prefijo : string,
+const obtenerIngreso = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
+        prefijo: string,
         coleccion: string,
-        keyId : string
+        keyId: string
     } = dbColeccionesFormato.Ingreso;
-    const { coleccion : coleccionNombre } : {coleccion : string} = coleccion;
-    const collection : Collection<any> = dbo.collection(coleccionNombre);
-    collection.find({}).toArray(callback);
+    const filtro: any = req.query;
+    await connectToDatabase().then(async connectedObject => {
+        const db: Db = connectedObject.db;
+        const collection: Collection<any> = db.collection(coleccion.coleccion);
+        try {
+            if (filtro.hasOwnProperty("fechaInicio") && filtro.hasOwnProperty("fechaFin")) {
+                const { fechaInicio, fechaFin } = filtro;
+                const data = await collection.find({
+                    FechaCreacion: {
+                        $gte: new Date(fechaInicio),
+                        $lte: new Date(fechaFin)
+                    }
+                }).toArray();
+                res.status(200).json({ data });
+            } else if (filtro.hasOwnProperty("mes") && filtro.hasOwnProperty("anio")) {
+                const { mes, anio } = filtro;
+                const fechaInicio: string = `${anio}-${mes}-01`;
+                const fechaFinal: string = `${anio}-${mes}-${obtenerFinMes(mes, anio)}`;
+                const data = await collection.find({
+                    FechaCreacion: {
+                        $gte: new Date(fechaInicio),
+                        $lte: new Date(fechaFinal)
+                    }
+                }).toArray();
+                res.status(200).json({ data });
+            } else {
+                const data = await collection.find({}).toArray();
+                res.status(200).json({ data });
+            }
+
+        } catch (error: any) {
+            res.status(500).json({
+                error: true,
+                message: `Ocurrio un error - ${error.message}`
+            });
+        }
+    });
+}
+
+const obtenerFinMes = (mes: string, anio: string): string => {
+    const numeroAnio: number = +anio;
+    if (["01", "03", "05", "07", "08", "10", "12"].includes(mes)) {
+        return "31";
+    } else if (["04", "06", "09", "11"].includes(mes)) {
+        return "30";
+    }
+
+    if (mes === "02" && !(numeroAnio % 4)) {
+        if (!(numeroAnio % 100)) {
+            return !(numeroAnio % 400) ? "29" : "28";
+        } else {
+            return "29";
+        }
+    } else {
+        return "28";
+    }
 }
