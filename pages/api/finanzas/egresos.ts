@@ -1,4 +1,3 @@
-import { db_connect } from "@/src/db";
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { NextApiRequest, NextApiResponse } from "next";
 import { egresoInterface, dbColeccionesFormato } from "@/utils/interfaces/db";

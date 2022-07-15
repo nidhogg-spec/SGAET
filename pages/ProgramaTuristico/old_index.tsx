@@ -22,7 +22,6 @@ import FusionProgramas from "@/components/ComponentesUnicos/ProgramaTuristico/Fu
 import Loader from "@/components/Loading/Loading";
 import axios from "axios";
 import { route } from "next/dist/next-server/server/router";
-import { db_connect } from "@/src/db";
 
 //
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";

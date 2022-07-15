@@ -6,12 +6,12 @@ export const dbColeccionesFormato = {
   // },
 
   // Agregados recientemente
-  ProgramaTuristico : {
+  ProgramaTuristico: {
     prefijo: "OS",
     coleccion: "ProgramaTuristico",
     keyId: "IdProgramaTuristico"
   },
-  Seguimiento : {
+  Seguimiento: {
     prefijo: "SG",
     coleccion: "Seguimiento",
     keyId: "IdSeguimiento"
@@ -113,13 +113,18 @@ export const dbColeccionesFormato = {
   },
   ProductoSitioTransFerroviario: {
     prefijo: "PF",
-    collectionName: "ProductoTransFerroviario",
+    coleccion: "ProductoTransFerroviario",
     idKey: "IdProductoTransFerroviario"
   },
   ProductoTransportes: {
     prefijo: "PT",
     coleccion: "ProductoTransportes",
     keyId: "IdProductoTransporte"
+  },
+  User: {
+    prefijo: "US",
+    coleccion: "User",
+    keyId: "IdUser"
   }
 };
 
@@ -522,6 +527,17 @@ export interface pasajeroInterface {
   tableData?: {
     id: number;
   };
+}
+// ------------------ Usuarios -------------------
+export interface userInterface {
+  _id?: string;
+  Nombre: string;
+  Apellido: string;
+  Email: string;
+  Password: string;
+  TipoUsuario: "Administrador" | "Ventas" | "Marketing" | "";
+  Estado: "Activo" | "Inactivo" | string;
+  IdUser: string;
 }
 
 export enum TipoDocumento {
