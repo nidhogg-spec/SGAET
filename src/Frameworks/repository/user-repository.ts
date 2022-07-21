@@ -7,33 +7,33 @@ const coleccion: {
   coleccion: string;
   keyId: string;
 } = dbColeccionesFormato.User;
-const { coleccion: coleccionNombre, keyId } = coleccion;
 
 async function createUser(newUser: userInterface) {
-  await connectToDatabase().then(async (connectedObject) => {
-    const dbo: Db = connectedObject.db;
-    const collection: Collection<any> = dbo.collection(coleccionNombre);
-    try {
-      const result = await collection.insertOne(newUser);
-      if (result.result.ok === 1) {
-        console.log("Se agrego correctamente la usuario");
-      } else {
-        console.log("No se agrego correctamente la usuario");
-      }
-      return result.ops[0];
-    } catch (err) {
-      console.log(`Error - ${err}`);
+  const connectedObject = await connectToDatabase();
+  const dbo: Db = connectedObject.db;
+  const collection: Collection<any> = dbo.collection(coleccion.coleccion);
+  try {
+    const result = await collection.insertOne(newUser);
+    if (result.result.ok === 1) {
+      console.log("Se agrego correctamente la usuario");
+    } else {
+      console.log("No se agrego correctamente la usuario");
     }
-  });
+    return result.ops[0];
+  } catch (err) {
+    console.log(`Error - ${err}`);
+    return null;
+  }
 }
 
 function ReadUser(userId: string) {
   return new Promise((resolve, reject) => {
     connectToDatabase().then(async (connectedObject) => {
       const dbo: Db = connectedObject.db;
-      const collection: Collection<any> = dbo.collection(coleccionNombre);
+      const collection: Collection<any> = dbo.collection(coleccion.coleccion);
       try {
-        const result = await collection.findOne({ [keyId]: userId });
+        const result = await collection.findOne({ [coleccion.keyId]: userId });
+
         resolve(result);
       } catch (err) {
         reject(err);
@@ -46,7 +46,7 @@ function ReadUserByEmail(email: string) {
   return new Promise((resolve, reject) => {
     connectToDatabase().then(async (connectedObject) => {
       const dbo: Db = connectedObject.db;
-      const collection: Collection<any> = dbo.collection(coleccionNombre);
+      const collection: Collection<any> = dbo.collection(coleccion.coleccion);
       try {
         const result = await collection.findOne({ Email: email });
         resolve(result);
@@ -61,10 +61,10 @@ function UpdateUser(userId: string, newUser: userInterface) {
   return new Promise((resolve, reject) => {
     connectToDatabase().then(async (connectedObject) => {
       const dbo: Db = connectedObject.db;
-      const collection: Collection<any> = dbo.collection(coleccionNombre);
+      const collection: Collection<any> = dbo.collection(coleccion.coleccion);
       try {
         const result = await collection.updateOne(
-          { [keyId]: userId },
+          { [coleccion.keyId]: userId },
           { $set: newUser }
         );
         resolve(result);
@@ -75,4 +75,4 @@ function UpdateUser(userId: string, newUser: userInterface) {
   });
 }
 
-export { createUser, ReadUser, UpdateUser };
+export { createUser, ReadUser, UpdateUser, ReadUserByEmail };

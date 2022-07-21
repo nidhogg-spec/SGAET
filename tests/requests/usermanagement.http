@@ -1,0 +1,24 @@
+@dominio = localhost
+@port = 3000
+@protocol = http
+@url = {{protocol}}://{{dominio}}:{{port}}
+### Login
+POST {{url}}/api/user/login
+Content-Type: application/json
+
+{
+  "email": "root@root.adm",
+  "password": "root"
+}
+
+### Registro
+POST {{url}}/api/user/register
+Content-Type: application/json
+
+{
+  "Email": "test@test.ol",
+  "Password": "12345",
+  "Nombre": "test",
+  "Apellido": "test",
+  "TipoUsuario": "Ventas"
+}

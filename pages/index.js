@@ -43,6 +43,7 @@ export default function loginPrincipal({ APIpath }) {
       console.log("error signing in", error);
     }
   }
+  
   useEffect(() => {
     axios.get("/api/initconfig")
   }, [])
