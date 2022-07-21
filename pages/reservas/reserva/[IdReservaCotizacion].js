@@ -50,10 +50,10 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
         )
           .then((r) => r.json())
           .then((data) => {
-            setReservaCotizacion(data.ReservaCotizacion);
-            setClienteCotizacion(data.ClienteProspecto);
-            if (data.ReservaCotizacion["Estado"]) {
-              setEstado(data.ReservaCotizacion["Estado"]);
+            setReservaCotizacion(data.reservaCotizacion);
+            setClienteCotizacion(data.clienteProspecto);
+            if (data.reservaCotizacion["Estado"]) {
+              setEstado(data.reservaCotizacion["Estado"]);
             } else {
               setEstado(0);
             }
