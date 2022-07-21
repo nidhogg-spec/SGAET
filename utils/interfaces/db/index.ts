@@ -422,29 +422,33 @@ export interface ordenServicioDInterface extends ordenServicioInterface {
   Fecha: string;
   Idioma: string;
 }
-// ------------------Ingreso-------------------
+// ------------------Ingresos-------------------
 export interface ingresoInterface {
   _id?: string;
-  Npasajeros: number | string;
   Total: number;
   TotalNeto: number;
   Comision: number;
-  IdReservaCotizacion: string;
+  /* IdReservaCotizacion: string; */
+  ListaRelacionesId: any;
   Adelanto: number;
   MetodoPago: string;
   IdIngreso: string;
+  FechaCreacion: Date
+  FechaModificacion: Date
 }
 // ------------------Egreso-------------------
 export interface egresoInterface {
   _id?: string;
-  Npasajeros: number | string;
   Total: number;
   TotalNeto: number;
   Comision: number;
-  IdReservaCotizacion: string;
+  /* IdReservaCotizacion: string; */
+  ListaRelacionesId:  any;
   Adelanto: number;
   MetodoPago: string;
   IdEgreso: string;
+  FechaCreacion: Date
+  FechaModificacion: Date
 }
 // ------------------Evaluacion Actividad-------------------
 export interface evaluacionActividadInterface {
