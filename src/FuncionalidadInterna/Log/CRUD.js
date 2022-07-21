@@ -1,5 +1,4 @@
-import { db_connect } from "../../db";
-import { MongoClient } from "mongodb";
+import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { withSSRContext } from "aws-amplify";
 
 
@@ -10,11 +9,11 @@ export async function CRUD_log(
     Action,
   }
 ) {
-    let result;
+  let result;
   switch (Log.Action) {
     case "Create":
-        result=await Create(req, Log);
-        return result;
+      result = await Create(req, Log);
+      return result;
       break;
 
     default:
@@ -23,16 +22,15 @@ export async function CRUD_log(
 }
 
 async function Create(req, Log) {
-  const [client, collection] = await db_connect("Log");
+  const { db } = await connectToDatabase();
   const { Auth } = withSSRContext({ req });
   const user = await Auth.currentAuthenticatedUser();
   const Ahora = new Date();
-  
-  let result = await collection.insertOne({
+
+  let result = await db.collection("Log").insertOne({
     LogMessage: Log.Message,
     user: user.username,
     time: Ahora.toISOString(),
-  });  
-  await client.close();
-  return(result.insertedCount);
+  });
+  return (result.insertedCount);
 }

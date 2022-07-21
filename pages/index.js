@@ -6,6 +6,7 @@ import Notificaciones from "../components/Notificaciones/Notificaciones";
 // CSS
 import styles from "@/globalStyles/login.module.css";
 import botones from '@/globalStyles/modules/boton.module.css'
+import axios from "axios";
 
 
 export default function loginPrincipal({ APIpath }) {
@@ -42,6 +43,10 @@ export default function loginPrincipal({ APIpath }) {
       console.log("error signing in", error);
     }
   }
+  
+  useEffect(() => {
+    axios.get("/api/initconfig")
+  }, [])
   // useEffect(()=>{
   //   //Acceder a la sesion del usuario en el cliente
   //   Auth.currentAuthenticatedUser()
@@ -148,7 +153,7 @@ export default function loginPrincipal({ APIpath }) {
 export async function getServerSideProps() {
   const APIpath = process.env.API_DOMAIN;
   // const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
-  
+
   return {
     props: {
       APIpath: APIpath
