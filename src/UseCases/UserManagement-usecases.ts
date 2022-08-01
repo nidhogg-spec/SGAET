@@ -121,6 +121,13 @@ async function LoginUserReturnUser(
   }
 }
 
+async function GetUserById(id: string): Promise<userInterface> {
+  const user: userInterface = (await UserRepository.ReadUser(
+    id
+  )) as userInterface;
+  return user;
+}
+
 async function ChangePassword(
   email: string,
   password: string,
@@ -182,5 +189,6 @@ export {
   LoginUserReturnToken,
   LoginUserReturnUser,
   ChangePassword,
-  UpdateUser
+  UpdateUser,
+  GetUserById
 };

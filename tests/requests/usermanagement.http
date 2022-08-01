@@ -7,7 +7,7 @@ POST {{url}}/api/user/login
 Content-Type: application/json
 
 {
-  "email": "gerencia1",
+  "email": "gerencia1a",
   "password": "gerencia12345."
 }
 
@@ -40,6 +40,9 @@ Content-Type: application/json
 ### Get session info
 GET {{url}}/api/user/user
 Content-Type: application/json
+
+###
+GET {{url}}/api/user/user-info
 
 ### Logout
 GET {{url}}/api/user/logout

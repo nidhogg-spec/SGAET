@@ -14,6 +14,15 @@ const AWS_CLIENT_ID: string | undefined = process.env.AWS_CLIENT_ID;
 const LONG_SECRET_KEY: string =
   (SECRET_KEY as string).length < 32 ? SECRET_KEY.padEnd(32, "A") : SECRET_KEY;
 
+const ironOptions = {
+  cookieName: "SGAET",
+  password: LONG_SECRET_KEY,
+  // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
+  cookieOptions: {
+    secure: process.env.NODE_ENV === "production"
+  }
+};
+
 export {
   MONGODB_URI,
   MONGODB_DB,
@@ -21,5 +30,6 @@ export {
   API_DOMAIN,
   AWS_USER_POOLS_ID,
   AWS_CLIENT_ID,
-  LONG_SECRET_KEY
+  LONG_SECRET_KEY,
+  ironOptions
 };

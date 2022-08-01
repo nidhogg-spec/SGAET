@@ -39,7 +39,8 @@ function MyApp({ Component, pageProps }) {
       {pageProps.publicPage ? <>
         <PublicHeader />
         <Component {...pageProps} />
-      </> : <AppWrapper>
+      </> : 
+      <AppWrapper>
         <AppLoader
           Loading={AppLoading}
           key={'AppLoader001'}

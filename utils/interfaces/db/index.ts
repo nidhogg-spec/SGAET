@@ -543,7 +543,7 @@ export interface userInterface {
   Estado: "Activo" | "Inactivo" | string;
   IdUser: string;
 }
-enum TipoUsuario {
+export enum TipoUsuario {
   Administrador = "Administrador",
   Ventas = "Ventas",
   Marketing = "Marketing"
