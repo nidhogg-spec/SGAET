@@ -1,10 +1,11 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { NextApiRequest, NextApiResponse } from "next";
-import { reservaCotizacionInterface, dbColeccionesFormato } from "@/utils/interfaces/db";
-import { generarIdNuevo } from "@/utils/API/generarId";
+import { reservaCotizacionInterface, dbColeccionesFormato, egresoInterface, ingresoInterface } from "@/utils/interfaces/db";
+import { construirId, generarIdNuevo, obtenerUltimo } from "@/utils/API/generarId";
 import { Collection, Db } from "mongodb";
+import { estadosReservaCotizacion } from "@/utils/dominio";
 
-export default async (req : NextApiRequest, res : NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "POST") {
         switch (req.body.accion) {
             case "create":
@@ -28,10 +29,10 @@ export default async (req : NextApiRequest, res : NextApiResponse) => {
 }
 
 
-const obtenerReservaCotizacion = async (req : NextApiRequest, res: NextApiResponse<any>) => {
+const obtenerReservaCotizacion = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     await connectToDatabase().then(async connectedObject => {
-        const dbo : Db = connectedObject.db;
-        obtenerReservaCotizacionCallback(dbo, (err : any, data : any) => {
+        const dbo: Db = connectedObject.db;
+        obtenerReservaCotizacionCallback(dbo, (err: any, data: any) => {
             if (err) {
                 res.status(500).json({
                     error: true,
@@ -45,33 +46,33 @@ const obtenerReservaCotizacion = async (req : NextApiRequest, res: NextApiRespon
     });
 }
 
-const obtenerReservaCotizacionCallback = async (dbo : Db, callback : any) => {
-    const coleccion : {
+const obtenerReservaCotizacionCallback = async (dbo: Db, callback: any) => {
+    const coleccion: {
         prefijo: string,
         coleccion: string,
         keyId: string
     } = dbColeccionesFormato.ReservaCotizacion;
-    const { coleccion : coleccionNombre } : { coleccion : string} = coleccion;
-    const collection : Collection<any> = dbo.collection(coleccionNombre);
+    const { coleccion: coleccionNombre }: { coleccion: string } = coleccion;
+    const collection: Collection<any> = dbo.collection(coleccionNombre);
     collection.find({}).toArray(callback);
 
 }
 
-const crearReservaCotizacion = async (req : NextApiRequest, res: NextApiResponse<any>) => {
-    const coleccion : {
-        prefijo : string,
-        coleccion : string,
-        keyId : string
+const crearReservaCotizacion = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
+        prefijo: string,
+        coleccion: string,
+        keyId: string
     } = dbColeccionesFormato.ReservaCotizacion;
-    const { coleccion : coleccionNombre, keyId} = coleccion;
-    const reservaCotizacion : reservaCotizacionInterface = req.body.data;
-    const nuevaReservaCotizacion : reservaCotizacionInterface = {
+    const { coleccion: coleccionNombre, keyId } = coleccion;
+    const reservaCotizacion: reservaCotizacionInterface = req.body.data;
+    const nuevaReservaCotizacion: reservaCotizacionInterface = {
         ...reservaCotizacion,
         [keyId]: await generarIdNuevo(coleccion)
     };
     await connectToDatabase().then(async connectedObject => {
-        const dbo : Db = connectedObject.db;
-        const collection : Collection<any> = dbo.collection(coleccionNombre);
+        const dbo: Db = connectedObject.db;
+        const collection: Collection<any> = dbo.collection(coleccionNombre);
         try {
             const result = await collection.insertOne(nuevaReservaCotizacion);
             res.status(200).send(result);
@@ -82,22 +83,26 @@ const crearReservaCotizacion = async (req : NextApiRequest, res: NextApiResponse
     });
 }
 
-const actualizarReservaCotizacion = async (req : NextApiRequest, res: NextApiResponse<any>) => {
-    const coleccion : {
+const actualizarReservaCotizacion = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
         prefijo: string,
         coleccion: string,
         keyId: string
     } = dbColeccionesFormato.ReservaCotizacion;
-    const reservaCotizacion : reservaCotizacionInterface = req.body.data;
-    const idReservaCotizacion : string = req.body.idProducto;
+    const reservaCotizacion: reservaCotizacionInterface = req.body.data;
+    const idReservaCotizacion: string = req.body.idProducto;
+
+    await verificarEstadoCotizacion(reservaCotizacion, idReservaCotizacion);
+
+
     await connectToDatabase().then(async connectedObject => {
-        const dbo : Db = connectedObject.db;
-        const collection  : Collection<any> = dbo.collection(coleccion.coleccion);
+        const dbo: Db = connectedObject.db;
+        const collection: Collection<any> = dbo.collection(coleccion.coleccion);
         try {
             collection.updateOne(
                 {
                     [coleccion.keyId]: idReservaCotizacion,
-                }, 
+                },
                 {
                     $set: reservaCotizacion
                 }
@@ -107,7 +112,7 @@ const actualizarReservaCotizacion = async (req : NextApiRequest, res: NextApiRes
             });
         } catch (err) {
             res.status(500).json({
-                error: true, 
+                error: true,
                 message: `Error al actualizar - ${err}`
             });
             console.log(err);
@@ -115,18 +120,18 @@ const actualizarReservaCotizacion = async (req : NextApiRequest, res: NextApiRes
     });
 }
 
-const eliminarReservaCotizacion = async (req : NextApiRequest, res : NextApiResponse<any>) => {
-    const coleccion : {
+const eliminarReservaCotizacion = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion: {
         prefijo: string,
         coleccion: string,
         keyId: string
     } = dbColeccionesFormato.ReservaCotizacion;
 
-    const idReservaCotizacion : string = req.body.idProducto;
+    const idReservaCotizacion: string = req.body.idProducto;
     await connectToDatabase().then(async connectedObject => {
         try {
-            const dbo : Db = connectedObject.db;
-            const collection : Collection<any> = dbo.collection(coleccion.coleccion);
+            const dbo: Db = connectedObject.db;
+            const collection: Collection<any> = dbo.collection(coleccion.coleccion);
             await collection.deleteOne(
                 {
                     [coleccion.keyId]: idReservaCotizacion
@@ -145,3 +150,150 @@ const eliminarReservaCotizacion = async (req : NextApiRequest, res : NextApiResp
         }
     });
 }
+
+const verificarEstadoCotizacion = async ({ Estado, ...reservaCotizacion }: reservaCotizacionInterface, idReservaCotizacion : string) => {
+    const { ServicioProducto: servicios } = reservaCotizacion;
+    switch (Estado) {
+        case 4:
+            const filtroProveedor: { [key: string]: { precioTotal : number, idServicios : string[]} } = {};
+            for (let servicio of servicios) {
+                const { IdProveedor: idProveedor } = servicio;
+                const { PrecioConfiUnitario: precioUnitario, Cantidad: cantidad } = servicio;
+                const precioTotal: number = precioUnitario * cantidad;
+                const { IdServicioProducto } = servicio;
+
+                if (idProveedor in filtroProveedor) {
+                    filtroProveedor[idProveedor].precioTotal += precioTotal;
+                    filtroProveedor[idProveedor].idServicios.push(IdServicioProducto);
+                } else {
+                    filtroProveedor[idProveedor] = {
+                        precioTotal,
+                        idServicios: [IdServicioProducto]
+                    };
+                }
+            }
+            
+            await registrarEgreso(filtroProveedor, idReservaCotizacion);
+
+            break;
+        case 5:
+            let precioTotal: number = 0;
+            const idServicios : string[] = []; 
+            for (let servicio of servicios) {
+                const { 
+                    PrecioCotiUnitario: precioUnitario, 
+                    Cantidad: cantidad, 
+                    IdServicioProducto: idServicioProducto 
+                } = servicio;
+                precioTotal += precioUnitario * cantidad;
+                idServicios.push(idServicioProducto);
+            }
+            const infoIngresos = {
+                idReservaCotizacion,
+                idServicios,
+                precioTotal
+            };
+
+            await registrarIngreso(infoIngresos);
+
+            break;
+
+    }
+}
+
+const registrarEgreso = async (proveedores : { [key: string]: { precioTotal : number, idServicios : string[]}}, idReservaCotizacion : string) => {
+    const coleccion : {
+        prefijo: string,
+        coleccion: string,
+        keyId: string
+    } = dbColeccionesFormato.Egreso;
+
+    const nuevosEgresos : egresoInterface[] = [];
+    const hoy : Date = new Date();
+
+    for (let proveedor in proveedores) {
+        const { precioTotal, idServicios } = proveedores[proveedor];
+        const nuevoEgreso : egresoInterface = {
+            Total: precioTotal,
+            TotalNeto: 0,
+            Comision: 0,
+            ListaRelacionesId: {
+                idReservaCotizacion,
+                idProveedor: proveedor,
+                idServicios
+            },
+            Adelanto: 0,
+            MetodoPago: "No especifico",
+            IdEgreso: "",
+            FechaCreacion: hoy,
+            FechaModificacion: hoy
+        };
+        nuevosEgresos.push(nuevoEgreso);
+    }
+
+    await connectToDatabase().then(async connectedObject => {
+        try {
+            const ultimoEgreso: egresoInterface | any = await obtenerUltimo(coleccion);
+            let ultimoId: string = ultimoEgreso.IdEgreso;
+            const egresosActualizados: egresoInterface[] = nuevosEgresos.map((egreso: egresoInterface) => {
+                const nuevoId: string = construirId({}, coleccion.prefijo, coleccion.keyId, ultimoId);
+                const egresoActualizado: egresoInterface = {
+                    ...egreso,
+                    [coleccion.keyId]: nuevoId,
+                };
+                ultimoId = nuevoId;
+                return egresoActualizado;
+            });
+            const db: Db = connectedObject.db;
+            const collection: Collection<any> = db.collection(coleccion.coleccion);
+            await collection.insertMany(egresosActualizados);
+            console.log("Insercion de egresos realizada satisfactoriamente");
+        } catch (e) {
+            console.log(`Error al ingresar varios egresos - ${e}`);
+        }
+
+    });
+
+}
+
+const registrarIngreso = async ({ idReservaCotizacion, idServicios, precioTotal} : { idReservaCotizacion : string, idServicios : string[], precioTotal : number}) => {
+    const coleccion : {
+        prefijo: string,
+        coleccion: string,
+        keyId: string
+    } = dbColeccionesFormato.Ingreso;
+
+    const hoy : Date = new Date();
+    const totalNeto : number = precioTotal - (precioTotal * 0.18)
+
+    const nuevoIngreso : ingresoInterface = {
+        Total: precioTotal,
+        TotalNeto: +totalNeto.toFixed(2),
+        Comision: 0,
+        ListaRelacionesId: {
+            idReservaCotizacion,
+            idServicios
+        },
+        Adelanto: 0,
+        MetodoPago: "No especifico",
+        IdIngreso: await generarIdNuevo(coleccion),
+        FechaCreacion: hoy,
+        FechaModificacion: hoy
+    };
+
+    console.log(nuevoIngreso);
+
+    
+    await connectToDatabase().then(async connectedObject => {
+        const db : Db = connectedObject.db;
+        const collection : Collection<any> = db.collection(coleccion.coleccion);
+        try {
+            const result = await collection.insertOne(nuevoIngreso);
+            console.log("Egreso creado a partir de una nueva reserva cotizacion ");
+        } catch (err) {
+            console.log(`Error al crear nuevo egreso - ${err}`);
+        }
+    });
+    
+}
+

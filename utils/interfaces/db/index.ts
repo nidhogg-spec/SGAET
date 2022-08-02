@@ -392,6 +392,11 @@ export interface reservaCotizacionInterface {
         id: number;
       };
       FechaReserva: string;
+      IdReservaCotizacion: string;
+      IdServicioEscogido: string;
+      FechaLimitePago: Date;
+      Estado: number;
+      IdProveedor: string;
     }
   ];
   IdProgramaTuristico: string;
