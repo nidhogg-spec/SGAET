@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
+
 export default function detalleCliente({ Datos, DatosSeguimiento }) {
   let x = {};
   const router = useRouter();
@@ -404,63 +407,76 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-
-  let Datos = [];
-  let DatosSeguimiento = [];
-  let idClienteFront = context.query.detalleCliente;
-
-
-  /* Consulta para extraer los datos de Clientes */
-  try {
-    await connectToDatabase().then(async connectedObject => {
-      let dbo = connectedObject.db;
-      const collection = dbo.collection("Cliente");
-
-      let result = await collection
-        .find({})
-        .project({
-          _id: 0
-        })
-        .toArray();
-      result.map((x) => {
-        if (x.IdCliente == idClienteFront) {
-          Datos = x;
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
         }
-      });
-    });
-
-  } catch (error) {
-    console.log("error - " + error);
-  }
-  /* Consulta para extraer los datos de Clientes */
-  try {
-    await connectToDatabase().then(async connectedObject => {
-      let dbo = connectedObject.db;
-      const collection = dbo.collection("Seguimiento");
-
-      let result = await collection
-        .find({})
-        .project({
-          _id: 0
-        })
-        .toArray();
-      result.map((x) => {
-        if (x.IdCliente == idClienteFront) {
-          DatosSeguimiento.push(x);
-        }
-      });
-    });
-
-  } catch (error) {
-    console.log("error - " + error);
-  }
-  return {
-    props: {
-      Datos: Datos,
-      DatosSeguimiento: DatosSeguimiento
+      };
     }
-  };
-}
+    //---------------------------------------------------------------------------------------------------------------------
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
+
+    let Datos = [];
+    let DatosSeguimiento = [];
+    let idClienteFront = context.query.detalleCliente;
+
+
+    /* Consulta para extraer los datos de Clientes */
+    try {
+      await connectToDatabase().then(async connectedObject => {
+        let dbo = connectedObject.db;
+        const collection = dbo.collection("Cliente");
+
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0
+          })
+          .toArray();
+        result.map((x) => {
+          if (x.IdCliente == idClienteFront) {
+            Datos = x;
+          }
+        });
+      });
+
+    } catch (error) {
+      console.log("error - " + error);
+    }
+    /* Consulta para extraer los datos de Clientes */
+    try {
+      await connectToDatabase().then(async connectedObject => {
+        let dbo = connectedObject.db;
+        const collection = dbo.collection("Seguimiento");
+
+        let result = await collection
+          .find({})
+          .project({
+            _id: 0
+          })
+          .toArray();
+        result.map((x) => {
+          if (x.IdCliente == idClienteFront) {
+            DatosSeguimiento.push(x);
+          }
+        });
+      });
+
+    } catch (error) {
+      console.log("error - " + error);
+    }
+    return {
+      props: {
+        Datos: Datos,
+        DatosSeguimiento: DatosSeguimiento
+      }
+    };
+  },
+  ironOptions
+);

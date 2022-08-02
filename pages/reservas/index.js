@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {useRouter} from 'next/router'
-import { withSSRContext } from 'aws-amplify'
+import { useRouter } from 'next/router'
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 import MaterialTable from "material-table";
 
-const Index=({
+const Index = ({
   DataReservas
 }) => {
   const router = useRouter()
-  let data=[
+  let data = [
     {
       name: "Mehmet",
       surname: "Baran",
@@ -16,69 +17,81 @@ const Index=({
       birthCity: 63,
     },
   ]
-  
+
   return (
     <div>
       <MaterialTable
 
-      columns={
-      [{ title: "Id", field: "IdReservaCotizacion" },
-      { title: "NombreGrupo", field: "NombreGrupo" },
-      { title: "CodGrupo", field: "CodGrupo"},
-      {
-        title: "FechaIN",
-        field: "FechaIN",
-      }]}
-      data={DataReservas}
-      title={null}
-      actions={
-        [
+        columns={
+          [{ title: "Id", field: "IdReservaCotizacion" },
+          { title: "NombreGrupo", field: "NombreGrupo" },
+          { title: "CodGrupo", field: "CodGrupo" },
           {
-            icon: () => {
-              return <img src="/resources/remove_red_eye-24px.svg" />;
+            title: "FechaIN",
+            field: "FechaIN",
+          }]}
+        data={DataReservas}
+        title={null}
+        actions={
+          [
+            {
+              icon: () => {
+                return <img src="/resources/remove_red_eye-24px.svg" />;
+              },
+              tooltip: "Mostrar reserva",
+              onClick: (event, rowData) => {
+                router.push(`/reservas/reserva/${rowData.IdReservaCotizacion}`)
+              },
             },
-            tooltip: "Mostrar reserva",
-            onClick: (event, rowData) => {
-              router.push(`/reservas/reserva/${rowData.IdReservaCotizacion}`)
-            },
-          },
-        ]}
+          ]}
         options={{
           actionsColumnIndex: -1,
         }
-      }
+        }
       />
     </div>
   )
-  
-}
-export async function getServerSideProps({ req, res }){
-  let DataReservas=[]
-  const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
-  const { Auth } = withSSRContext({ req })
-  try {
-    const user = await Auth.currentAuthenticatedUser()
-  } catch (err) {
-    res.writeHead(302, { Location: '/' })
-    res.end()
-  }
-  
-  await fetch(APIpathGeneral, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      coleccion: "ReservaCotizacion",
-      accion: "FindAll",
-      projection:{},
-    }),
-  })
-    .then((r) => r.json())
-    .then((data) => {
-      DataReservas = data.result;
-    });
-  return({props:{
-    DataReservas:DataReservas
-  }})
 }
+
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res, query }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
+    }
+    //---------------------------------------------------------------------------------------------------------------------
+    let DataReservas = []
+    const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
+
+    await fetch(APIpathGeneral, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        coleccion: "ReservaCotizacion",
+        accion: "FindAll",
+        projection: {},
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        DataReservas = data.result;
+      });
+    return ({
+      props: {
+        DataReservas: DataReservas
+      }
+    })
+
+
+  },
+  ironOptions
+);
+
+
 export default Index;

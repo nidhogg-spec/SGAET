@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { estadosReservaCotizacion } from "@/utils/dominio";
+
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
+
 //Componentes
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import Loader from "@/components/Loading/Loading";
@@ -17,9 +21,10 @@ import styles from "@/globalStyles/DetalleReservaCotizacion.module.css";
 import botones from '@/globalStyles/modules/boton.module.css'
 import globalStyles from '@/globalStyles/modules/global.module.css'
 
-resetServerContext();
+
 const estadosReservaCotizacion_array = Object.values(estadosReservaCotizacion);
 console.log(estadosReservaCotizacion_array);
+
 const ReservaCotizacion = ({ APIPatch, APIpath }) => {
   const router = useRouter();
   const { IdReservaCotizacion } = router.query;
@@ -511,16 +516,31 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  let APIPatch = process.env.API_DOMAIN;
-  const APIpath = process.env.API_DOMAIN;
-  return {
-    props: {
-      APIPatch: APIPatch,
-      APIpath: APIpath
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps(context) {
+    const user = context.req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  };
-}
+    //---------------------------------------------------------------------------------------------------------------------
+    resetServerContext();
+    let APIPatch = process.env.API_DOMAIN;
+    const APIpath = process.env.API_DOMAIN;
+    return {
+      props: {
+        APIPatch: APIPatch,
+        APIpath: APIpath
+      }
+    };
+
+  },
+  ironOptions
+);
 
 export default ReservaCotizacion;
 

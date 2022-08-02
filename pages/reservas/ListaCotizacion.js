@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { withSSRContext } from "aws-amplify";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 import MaterialTable from "material-table";
 import Loader from "@/components/Loading/Loading";
@@ -54,21 +55,30 @@ const Index = ({ APIPath }) => {
     </div>
   );
 };
-export async function getServerSideProps({ req, res }) {
-  let DataReservas = [];
-  const { Auth } = withSSRContext({ req });
-  try {
-    const user = await Auth.currentAuthenticatedUser();
-  } catch (err) {
-    res.writeHead(302, { Location: "/" });
-    res.end();
-  }
-  const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
-  return {
-    props: {
-      APIPath: process.env.API_DOMAIN
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res, query }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  };
-}
+    //---------------------------------------------------------------------------------------------------------------------
+
+    let DataReservas = [];
+    const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
+
+    return {
+      props: {
+        APIPath: process.env.API_DOMAIN
+      }
+    };
+
+  },
+  ironOptions
+);
 export default Index;

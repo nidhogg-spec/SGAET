@@ -546,7 +546,8 @@ export interface userInterface {
 export enum TipoUsuario {
   Administrador = "Administrador",
   Ventas = "Ventas",
-  Marketing = "Marketing"
+  Marketing = "Marketing",
+  Operaciones = "Operaciones",
 }
 
 export enum TipoDocumento {

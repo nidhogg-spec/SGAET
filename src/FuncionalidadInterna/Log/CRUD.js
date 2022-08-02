@@ -1,35 +1,35 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
-import { withSSRContext } from "aws-amplify";
+import { withIronSessionApiRoute } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
-
-export async function CRUD_log(
-  req,
-  Log = {
+export default withIronSessionApiRoute(
+  function CRUD_log(req, res = {
     Message,
     Action,
-  }
-) {
-  let result;
-  switch (Log.Action) {
-    case "Create":
-      result = await Create(req, Log);
-      return result;
-      break;
+  }) {
+    let result;
+    switch (res.Action) {
+      case "Create":
+        result = await Create(req, res);
+        return result;
+        break;
 
-    default:
-      break;
-  }
-}
+      default:
 
-async function Create(req, Log) {
+        break;
+    }
+  },
+  ironOptions
+);
+
+async function Create(req, res) {
   const { db } = await connectToDatabase();
-  const { Auth } = withSSRContext({ req });
-  const user = await Auth.currentAuthenticatedUser();
+  const user = req.session.user;
   const Ahora = new Date();
 
   let result = await db.collection("Log").insertOne({
-    LogMessage: Log.Message,
-    user: user.username,
+    LogMessage: res.Message,
+    user: user.email,
     time: Ahora.toISOString(),
   });
   return (result.insertedCount);

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { withSSRContext } from "aws-amplify";
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { GetServerSideProps } from "next";
 import { resetServerContext } from "react-beautiful-dnd";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 //Componentes
 import MaterialTable from "material-table";
@@ -39,20 +40,22 @@ export default function Home({ proveedores }: Props) {
     setLoading(true);
     if (ListarInactivos == true) {
       axios
-        .post("/api/proveedores/listaProveedores?inactivos=true",{
-          accion: "find",
+        .post("/api/proveedores/listaProveedores?inactivos=true", {
+          accion: "find"
         })
         .then((data) => {
           setTablaDatos(data.data.ListaProveedores);
           setLoading(false);
         });
     } else {
-      axios.post("/api/proveedores/listaProveedores",{
-        accion: "find",
-      }).then((data) => {
-        setTablaDatos(data.data.ListaProveedores);
-        setLoading(false);
-      });
+      axios
+        .post("/api/proveedores/listaProveedores", {
+          accion: "find"
+        })
+        .then((data) => {
+          setTablaDatos(data.data.ListaProveedores);
+          setLoading(false);
+        });
     }
   }, [ListarInactivos]);
 
@@ -168,35 +171,42 @@ export default function Home({ proveedores }: Props) {
     </div>
   );
 }
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const { Auth } = withSSRContext({ req });
-  try {
-    const user = await Auth.currentAuthenticatedUser();
-  } catch (err) {
-    res.writeHead(302, { Location: "/" });
-    res.end();
-  }
-  resetServerContext();
-  //----------------------Obtener datos de proveedores-------------------------------------------
-  const coleccion = "Proveedor";
-  let Datos: proveedorList[] = [];
-  await connectToDatabase().then(async (connectedObject) => {
-    let collection = connectedObject.db.collection(coleccion);
-    let data = await collection.find({}).toArray();
-    data.map((datosResult) => {
-      Datos.push({
-        id: datosResult.IdProveedor,
-        proveedor: datosResult.nombre,
-        ubicacion: datosResult.DireccionFiscal,
-        tipo: datosResult.tipo
+
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res, query }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
+    }
+    //---------------------------------------------------------------------------------------------------------------------
+    resetServerContext();
+    //----------------------Obtener datos de proveedores-------------------------------------------
+    const coleccion = "Proveedor";
+    let Datos: proveedorList[] = [];
+    await connectToDatabase().then(async (connectedObject) => {
+      let collection = connectedObject.db.collection(coleccion);
+      let data = await collection.find({}).toArray();
+      data.map((datosResult) => {
+        Datos.push({
+          id: datosResult.IdProveedor,
+          proveedor: datosResult.nombre,
+          ubicacion: datosResult.DireccionFiscal,
+          tipo: datosResult.tipo
+        });
       });
     });
-  });
 
-  //----------------------------------------------------------------------------
-  return {
-    props: {
-      proveedores: Datos
-    }
-  };
-};
+    //----------------------------------------------------------------------------
+    return {
+      props: {
+        proveedores: Datos
+      }
+    };
+  },
+  ironOptions
+);

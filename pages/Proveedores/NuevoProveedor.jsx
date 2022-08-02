@@ -4,6 +4,9 @@ import MaterialTable from "material-table";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { resetServerContext } from "react-beautiful-dnd";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
+
 //componentes
 import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import LoadingComp from "@/components/Loading/Loading";
@@ -38,11 +41,10 @@ export default function TipoProveedor(props = { APIpath }) {
   const [provDinamico, setprovDinamico] = useState("Hotel");
   const [Loading, setLoading] = useState(false);
 
-
   const router = useRouter();
 
   // useEffect(() => {
-  //   if (Proveedor["tipo"] == undefined) 
+  //   if (Proveedor["tipo"] == undefined)
   //     return;
   //   setprovDinamico(Proveedor["tipo"].toLowerCase());
   // }, [Proveedor["tipo"]]);
@@ -57,11 +59,19 @@ export default function TipoProveedor(props = { APIpath }) {
       alert("Seleccione un Tipo de documento");
       return;
     }
-    if (Proveedor.TipoDocumento == 'DNI' && (Proveedor.NroDocumento?.length != 8 | Proveedor.NroDocumento != undefined)) {
+    if (
+      Proveedor.TipoDocumento == "DNI" &&
+      (Proveedor.NroDocumento?.length != 8) |
+        (Proveedor.NroDocumento != undefined)
+    ) {
       alert("Ingrese un numero de DNI valido");
       return;
     }
-    if (Proveedor.TipoDocumento == 'RUC' && (Proveedor.NroDocumento?.length != 11 | Proveedor.NroDocumento != undefined)) {
+    if (
+      Proveedor.TipoDocumento == "RUC" &&
+      (Proveedor.NroDocumento?.length != 11) |
+        (Proveedor.NroDocumento != undefined)
+    ) {
       alert("Ingrese un numero de RUC valido");
       console.log(Proveedor.Documento?.length);
       return;
@@ -98,16 +108,24 @@ export default function TipoProveedor(props = { APIpath }) {
       <div className={styles.titleContainer}>
         <h1>Ingreso de nuevo proveedor</h1>
         <div className={styles.buttonsContainer}>
-          <button onClick={HandleGuardar} title="Guardar datos" className={`${styles.button} ${styles.buttonGuardar}`}>
-            <span>Guardar</span><img src="/resources/save-black-18dp.svg" />
+          <button
+            onClick={HandleGuardar}
+            title="Guardar datos"
+            className={`${styles.button} ${styles.buttonGuardar}`}
+          >
+            <span>Guardar</span>
+            <img src="/resources/save-black-18dp.svg" />
           </button>
         </div>
       </div>
       <div className={styles.tipo_proveedor_container}>
         <h3 htmlFor="">Tipo de Proveedor</h3>
-        <select value={provDinamico} onChange={(newValue) => {
-          setprovDinamico(newValue.target.value);
-        }}>
+        <select
+          value={provDinamico}
+          onChange={(newValue) => {
+            setprovDinamico(newValue.target.value);
+          }}
+        >
           {TiposProveedores.map((SelectOption) => {
             return (
               <option value={SelectOption.value}>{SelectOption.texto}</option>
@@ -143,22 +161,26 @@ export default function TipoProveedor(props = { APIpath }) {
                 //     { value: "Otro", texto: "Otro" }
                 //   ]
                 // },
-                (provDinamico == "Guia" ? {
-                  tipo: "texto",
-                  Title: "Nombre del guia",
-                  KeyDato: "NombreGuia"
-                } : {
-                  tipo: "texto",
-                  Title: "Razon Social",
-                  KeyDato: "RazonSocial"
-                }),
-                (provDinamico != "Guia" ? {
-                  tipo: "texto",
-                  Title: "Nombre Comercial",
-                  KeyDato: "nombre"
-                } : {
-                  tipo: null
-                }),
+                provDinamico == "Guia"
+                  ? {
+                      tipo: "texto",
+                      Title: "Nombre del guia",
+                      KeyDato: "NombreGuia"
+                    }
+                  : {
+                      tipo: "texto",
+                      Title: "Razon Social",
+                      KeyDato: "RazonSocial"
+                    },
+                provDinamico != "Guia"
+                  ? {
+                      tipo: "texto",
+                      Title: "Nombre Comercial",
+                      KeyDato: "nombre"
+                    }
+                  : {
+                      tipo: null
+                    },
                 {
                   tipo: "selector",
                   Title: "Tipo de Documento",
@@ -191,13 +213,15 @@ export default function TipoProveedor(props = { APIpath }) {
                     { value: "Dolar", texto: "Dolares" }
                   ]
                 },
-                (provDinamico == "Guia" ? {
-                  tipo: "CampoIdiomas",
-                  Title: "Idiomas",
-                  KeyDato: "Idiomas"
-                } : {
-                  tipo: null
-                }),
+                provDinamico == "Guia"
+                  ? {
+                      tipo: "CampoIdiomas",
+                      Title: "Idiomas",
+                      KeyDato: "Idiomas"
+                    }
+                  : {
+                      tipo: null
+                    },
                 {
                   tipo: "texto",
                   Title: "Enlace al Documento",
@@ -276,8 +300,6 @@ export default function TipoProveedor(props = { APIpath }) {
       />
       <div className={styles.divDatosPrincipal}>
         <div className={styles.Proveedor}>
-          
-
           {provDinamico == "hotel" ? (
             <>
               <AutoFormulario
@@ -396,16 +418,16 @@ export default function TipoProveedor(props = { APIpath }) {
                 field: "TipoCuenta",
                 title: "Tipo de Cuenta Bancaria",
                 lookup: {
-                  "Corriente": "Corriente",
+                  Corriente: "Corriente",
                   "De ahorro": "De ahorro",
-                  "Sueldo": "Sueldo",
+                  Sueldo: "Sueldo",
                   "Moneda extranjera": "Moneda extranjera"
                 }
               },
               {
                 field: "Moneda",
                 title: "Moneda",
-                lookup: { Dolar: "Dolar", "Sol": "Sol", Otro: "Otro" }
+                lookup: { Dolar: "Dolar", Sol: "Sol", Otro: "Otro" }
               },
               {
                 field: "TipoDocumento",
@@ -456,13 +478,27 @@ export default function TipoProveedor(props = { APIpath }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  return {
-    props: {
-      APIpath: process.env.API_DOMAIN
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res, query }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  };
-}
+    //---------------------------------------------------------------------------------------------------------------------
+
+    return {
+      props: {
+        APIpath: process.env.API_DOMAIN
+      }
+    };
+  },
+  ironOptions
+);
 
 function deepEqual(object1, object2) {
   const keys1 = Object.keys(object1);

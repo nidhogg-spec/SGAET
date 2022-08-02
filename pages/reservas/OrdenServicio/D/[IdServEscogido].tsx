@@ -1,9 +1,10 @@
-import { withSSRContext } from "aws-amplify";
 import * as React from "react";
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { GetServerSideProps } from "next";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 // Estilos
 import botones from "@/globalStyles/modules/boton.module.css";
@@ -166,157 +167,170 @@ export default function OrdenServicioD(props: IOrdenServicioDProps) {
     </section>
   );
 }
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  const APIpath = process.env.API_DOMAIN;
 
-  const { Auth } = withSSRContext({ req: context.req });
-
-  let IdServicioRestaurante = context.params?.IdServEscogido;
-  let TipoOrdenServicio = context.params?.TipoOrdenServicio;
-
-  let DatosServEscogido: servicioEscogidoInterface | null = null;
-  let DatosProducto: productoRestaurantesInterface | null = null;
-  let DatosProveedor: proveedorInterface | null = null;
-  let DatosReservaCotizacion: reservaCotizacionInterface | null = null;
-  let CodOrdenServ: ordenServicioInterface | null = null;
-  let DatosClienteProspecto: clienteProspectoInterface | null = null;
-  let coleccionProducto: string = "";
-  let idProductoProveedor: string | null = null;
-
-  let result = await connectToDatabase().then(async (connectedObject) => {
-    // -------------------------------------------------------------- Obtener datos de ServicioEscogido
-    let collection = connectedObject.db.collection("ServicioEscogido");
-    let result01: servicioEscogidoInterface[] = await collection
-      .find({
-        IdServicioEscogido: IdServicioRestaurante
-      })
-      .project({
-        _id: 0
-      })
-      .toArray();
-    if (result01.length != 1) {
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps(context) {
+    const user = context.req.session.user;
+    if (!user) {
       return {
-        statusCode: 404,
-        body: "No se encontró el servicio escogido"
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
       };
     }
-    DatosServEscogido = result01[0];
-    let tipoProveedor = tiposProveedoresServicios.find(
-      (tipo) =>
-        tipo.prefijo === DatosServEscogido?.IdServicioProducto.slice(0, 2)
-    );
-    // -------------------------------------------------------------- Obtener datos del Producto
-    collection = connectedObject.db.collection(
-      tipoProveedor?.collectionName as string
-    );
-    let findObject: any = {};
-    findObject[tipoProveedor?.idKey as string] =
-      DatosServEscogido?.IdServicioProducto;
-    let result02: productoRestaurantesInterface[] = await collection
-      .find(findObject)
-      .project({
-        _id: 0
-      })
-      .toArray();
-    if (result02.length != 1) {
-      return {
-        statusCode: 404,
-        body: "No se encontró el Producto escogido"
-      };
-    }
-    DatosProducto = result02[0];
-    // -------------------------------------------------------------- Obtener datos del proveedor
-    collection = connectedObject.db.collection("Proveedor");
-    let result03: proveedorInterface[] = await collection
-      .find({
-        IdProveedor: DatosProducto?.IdProveedor
-      })
-      .project({
-        _id: 0
-      })
-      .toArray();
-    if (result03.length != 1) {
-      return {
-        statusCode: 404,
-        body: "No se encontró el Proveedor escogido"
-      };
-    }
-    DatosProveedor = result03[0];
-    // -------------------------------------------------------------- Obtener datos de la OrdenServicio
-    collection = connectedObject.db.collection("OrdenServicio");
-    let result04: ordenServicioInterface[] = await collection
-      .find({
-        IdServicioEscogido: DatosServEscogido?.IdServicioEscogido
-      })
-      .project({
-        _id: 0
-      })
-      .toArray();
+    //---------------------------------------------------------------------------------------------------------------------
 
-    if (result04.length != 1) {
-      return {
-        statusCode: 404,
-        body: "No se encontró el OrdenServicio"
-      };
-    }
-    CodOrdenServ = result04[0];
-    // -------------------------------------------------------------- Obtener datos de la Reserva
-    collection = connectedObject.db.collection("ReservaCotizacion");
-    let result05: reservaCotizacionInterface[] = await collection
-      .find({
-        IdReservaCotizacion: DatosServEscogido?.IdReservaCotizacion
-      })
-      .project({
-        _id: 0
-      })
-      .toArray();
-    if (result05.length != 1) {
-      return {
-        statusCode: 404,
-        body: "No se encontró el Reserva"
-      };
-    }
-    DatosReservaCotizacion = result05[0];
-    // -------------------------------------------------------------- Obtener datos de la ClienteProspecto
-    collection = connectedObject.db.collection("ClienteProspecto");
-    let result06: clienteProspectoInterface[] = await collection
-      .find({
-        IdClienteProspecto: DatosReservaCotizacion?.IdClienteProspecto
-      })
-      .project({
-        _id: 0
-      })
-      .toArray();
-    if (result06.length != 1) {
-      return {
-        statusCode: 404,
-        body: "No se encontró el ClienteProspecto"
-      };
-    }
-    DatosClienteProspecto = result06[0];
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
+    const APIpath = process.env.API_DOMAIN;
 
-    // Generar Datos de Orden de servicio
-    let OrdenServicio = {
-      IdOrdenServicio: "",
-      IdServicioEscogido: IdServicioRestaurante,
-      IdReservaCotizacion: (DatosServEscogido as servicioEscogidoInterface)
-        ?.IdReservaCotizacion
+    let IdServicioRestaurante = context.params?.IdServEscogido;
+    let TipoOrdenServicio = context.params?.TipoOrdenServicio;
+
+    let DatosServEscogido: servicioEscogidoInterface | null = null;
+    let DatosProducto: productoRestaurantesInterface | null = null;
+    let DatosProveedor: proveedorInterface | null = null;
+    let DatosReservaCotizacion: reservaCotizacionInterface | null = null;
+    let CodOrdenServ: ordenServicioInterface | null = null;
+    let DatosClienteProspecto: clienteProspectoInterface | null = null;
+    let coleccionProducto: string = "";
+    let idProductoProveedor: string | null = null;
+
+    let result = await connectToDatabase().then(async (connectedObject) => {
+      // -------------------------------------------------------------- Obtener datos de ServicioEscogido
+      let collection = connectedObject.db.collection("ServicioEscogido");
+      let result01: servicioEscogidoInterface[] = await collection
+        .find({
+          IdServicioEscogido: IdServicioRestaurante
+        })
+        .project({
+          _id: 0
+        })
+        .toArray();
+      if (result01.length != 1) {
+        return {
+          statusCode: 404,
+          body: "No se encontró el servicio escogido"
+        };
+      }
+      DatosServEscogido = result01[0];
+      let tipoProveedor = tiposProveedoresServicios.find(
+        (tipo) =>
+          tipo.prefijo === DatosServEscogido?.IdServicioProducto.slice(0, 2)
+      );
+      // -------------------------------------------------------------- Obtener datos del Producto
+      collection = connectedObject.db.collection(
+        tipoProveedor?.collectionName as string
+      );
+      let findObject: any = {};
+      findObject[tipoProveedor?.idKey as string] =
+        DatosServEscogido?.IdServicioProducto;
+      let result02: productoRestaurantesInterface[] = await collection
+        .find(findObject)
+        .project({
+          _id: 0
+        })
+        .toArray();
+      if (result02.length != 1) {
+        return {
+          statusCode: 404,
+          body: "No se encontró el Producto escogido"
+        };
+      }
+      DatosProducto = result02[0];
+      // -------------------------------------------------------------- Obtener datos del proveedor
+      collection = connectedObject.db.collection("Proveedor");
+      let result03: proveedorInterface[] = await collection
+        .find({
+          IdProveedor: DatosProducto?.IdProveedor
+        })
+        .project({
+          _id: 0
+        })
+        .toArray();
+      if (result03.length != 1) {
+        return {
+          statusCode: 404,
+          body: "No se encontró el Proveedor escogido"
+        };
+      }
+      DatosProveedor = result03[0];
+      // -------------------------------------------------------------- Obtener datos de la OrdenServicio
+      collection = connectedObject.db.collection("OrdenServicio");
+      let result04: ordenServicioInterface[] = await collection
+        .find({
+          IdServicioEscogido: DatosServEscogido?.IdServicioEscogido
+        })
+        .project({
+          _id: 0
+        })
+        .toArray();
+
+      if (result04.length != 1) {
+        return {
+          statusCode: 404,
+          body: "No se encontró el OrdenServicio"
+        };
+      }
+      CodOrdenServ = result04[0];
+      // -------------------------------------------------------------- Obtener datos de la Reserva
+      collection = connectedObject.db.collection("ReservaCotizacion");
+      let result05: reservaCotizacionInterface[] = await collection
+        .find({
+          IdReservaCotizacion: DatosServEscogido?.IdReservaCotizacion
+        })
+        .project({
+          _id: 0
+        })
+        .toArray();
+      if (result05.length != 1) {
+        return {
+          statusCode: 404,
+          body: "No se encontró el Reserva"
+        };
+      }
+      DatosReservaCotizacion = result05[0];
+      // -------------------------------------------------------------- Obtener datos de la ClienteProspecto
+      collection = connectedObject.db.collection("ClienteProspecto");
+      let result06: clienteProspectoInterface[] = await collection
+        .find({
+          IdClienteProspecto: DatosReservaCotizacion?.IdClienteProspecto
+        })
+        .project({
+          _id: 0
+        })
+        .toArray();
+      if (result06.length != 1) {
+        return {
+          statusCode: 404,
+          body: "No se encontró el ClienteProspecto"
+        };
+      }
+      DatosClienteProspecto = result06[0];
+
+      // Generar Datos de Orden de servicio
+      let OrdenServicio = {
+        IdOrdenServicio: "",
+        IdServicioEscogido: IdServicioRestaurante,
+        IdReservaCotizacion: (DatosServEscogido as servicioEscogidoInterface)
+          ?.IdReservaCotizacion
+      };
+    });
+
+    console.log(result);
+
+    return {
+      props: {
+        DatosServEscogido: DatosServEscogido,
+        DatosProducto: DatosProducto,
+        DatosProveedor: DatosProveedor,
+        CodOrdenServ: CodOrdenServ,
+        DatosClienteProspecto: DatosClienteProspecto,
+        DatosReservaCotizacion: DatosReservaCotizacion,
+        APIpath
+      }
     };
-  });
-
-  console.log(result);
-
-  return {
-    props: {
-      DatosServEscogido: DatosServEscogido,
-      DatosProducto: DatosProducto,
-      DatosProveedor: DatosProveedor,
-      CodOrdenServ: CodOrdenServ,
-      DatosClienteProspecto: DatosClienteProspecto,
-      DatosReservaCotizacion: DatosReservaCotizacion,
-      APIpath
-    }
-  };
-};
+  },
+  ironOptions
+);

@@ -3,6 +3,9 @@ import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import Router from "next/router";
 import { useState } from "react";
 
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
+
 export default function ClientesIndex({ Datos, APIpath }) {
 
   const [datosEditables, setDatosEditables] = useState(Datos);
@@ -131,31 +134,42 @@ export default function ClientesIndex({ Datos, APIpath }) {
     </div>
   )
 }
-export async function getStaticProps() {
-  var Datos = [];
 
-  /*---------------------------------------------------------------------------------*/
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  const APIpath = process.env.API_DOMAIN;
-  try {
-    await connectToDatabase().then(async connectedObject => {
-      let collection = connectedObject.db.collection("Cliente");
-      let result = await collection.find({}).project({ "_id": 0 }).toArray();
-      // DatosProveedor = JSON.stringify(result);
-
-      result._id = JSON.stringify(result._id);
-      Datos = result;
-    });
-
-
-  } catch (error) {
-    console.log("Error cliente Mongo 1 => " + error);
-  }
-
-  return {
-    props: {
-      Datos: Datos, APIpath: APIpath
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  }
-}
+    //---------------------------------------------------------------------------------------------------------------------
+    var Datos = [];
+
+    const APIpath = process.env.API_DOMAIN;
+    try {
+      await connectToDatabase().then(async connectedObject => {
+        let collection = connectedObject.db.collection("Cliente");
+        let result = await collection.find({}).project({ "_id": 0 }).toArray();
+        // DatosProveedor = JSON.stringify(result);
+
+        result._id = JSON.stringify(result._id);
+        Datos = result;
+      });
+
+
+    } catch (error) {
+      console.log("Error cliente Mongo 1 => " + error);
+    }
+
+    return {
+      props: {
+        Datos: Datos, APIpath: APIpath
+      }
+    }
+  },
+  ironOptions
+);

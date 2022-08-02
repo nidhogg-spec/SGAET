@@ -1,10 +1,12 @@
 import MaterialTable from "material-table";
 import { MongoClient } from "mongodb";
 import BotonAñadir from "@/components/BotonAnadir/BotonAnadir";
-import { withSSRContext } from "aws-amplify";
 import { useEffect, useState } from "react";
 
-export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath:APIpath }) {
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
+
+export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath: APIpath }) {
   // console.log(DatosIngreso)
   const [datoTablaIngreso, setDatoTablaIngreso] = useState();
   const [datoTablaEgreso, setDatoTablaEgreso] = useState();
@@ -82,7 +84,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath:
   function PasarSuma() {
     let x = {};
     x = { SumaAdelantoNeto: sumaAdelantoNeto, SumaTotalNeto: sumaTotalDolares };
-    fetch(APIpath+`/api/finanzas/reportesfinanzas`, {
+    fetch(APIpath + `/api/finanzas/reportesfinanzas`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -126,7 +128,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath:
           onRowAdd: (newData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                fetch(APIpath+`/api/finanzas/ingresos`, {
+                fetch(APIpath + `/api/finanzas/ingresos`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -167,7 +169,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath:
 
                 setDatoTablaIngreso([...dataUpdate]);
 
-                fetch(APIpath+`/api/finanzas/ingresos`, {
+                fetch(APIpath + `/api/finanzas/ingresos`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -200,7 +202,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath:
           onRowAdd: (newData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                fetch(APIpath+`/api/finanzas/egresos`, {
+                fetch(APIpath + `/api/finanzas/egresos`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -244,7 +246,7 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath:
 
                 setDatoTablaEgreso([...dataUpdate]);
 
-                fetch(APIpath+`/api/finanzas/egresos`, {
+                fetch(APIpath + `/api/finanzas/egresos`, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -269,112 +271,120 @@ export default function Ingresos({ DatosIngreso, DatosEgreso, Reportes, APIpath:
     </div>
   );
 }
-export async function getServerSideProps({ req, res }) {
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  const APIpath = process.env.API_DOMAIN;
 
-  let DatosEgreso = [];
-  let DatosIngreso = [];
-  let Reportes = [];
-
-  const { Auth } = withSSRContext({ req });
-  try {
-    const user = await Auth.currentAuthenticatedUser();
-  } catch (err) {
-    res.writeHead(302, { Location: "/" });
-    res.end();
-  }
-
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-
-  /* Consulta para extraer los datos de Clientes */
-  try {
-    let client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("Ingreso");
-
-    let result = await collection
-      .find({})
-      .project({
-        _id: 0
-      })
-      .toArray();
-    DatosIngreso = result;
-  } catch (error) {
-    console.log("error - " + error);
-  } finally {
-    client.close();
-  }
-  try {
-    let client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("Egreso");
-
-    let result = await collection
-      .find({})
-      .project({
-        _id: 0
-      })
-      .toArray();
-    DatosEgreso = result;
-  } catch (error) {
-    console.log("error - " + error);
-  } finally {
-    client.close();
-  }
-
-  try {
-    let client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("ReportesFinanzas");
-
-    let result = await collection
-      .find({})
-      .project({
-        _id: 0
-      })
-      .toArray();
-    Reportes = result;
-  } catch (error) {
-    console.log("error - " + error);
-  } finally {
-    client.close();
-  }
-
-  return {
-    props: {
-      DatosIngreso: DatosIngreso,
-      DatosEgreso: DatosEgreso,
-      Reportes: Reportes,
-      APIpath:APIpath
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  };
-}
+    //---------------------------------------------------------------------------------------------------------------------
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
+    const APIpath = process.env.API_DOMAIN;
+
+    let DatosEgreso = [];
+    let DatosIngreso = [];
+    let Reportes = [];
+
+    let client = new MongoClient(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    /* Consulta para extraer los datos de Clientes */
+    try {
+      let client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("Ingreso");
+
+      let result = await collection
+        .find({})
+        .project({
+          _id: 0
+        })
+        .toArray();
+      DatosIngreso = result;
+    } catch (error) {
+      console.log("error - " + error);
+    } finally {
+      client.close();
+    }
+    try {
+      let client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("Egreso");
+
+      let result = await collection
+        .find({})
+        .project({
+          _id: 0
+        })
+        .toArray();
+      DatosEgreso = result;
+    } catch (error) {
+      console.log("error - " + error);
+    } finally {
+      client.close();
+    }
+
+    try {
+      let client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("ReportesFinanzas");
+
+      let result = await collection
+        .find({})
+        .project({
+          _id: 0
+        })
+        .toArray();
+      Reportes = result;
+    } catch (error) {
+      console.log("error - " + error);
+    } finally {
+      client.close();
+    }
+
+    return {
+      props: {
+        DatosIngreso: DatosIngreso,
+        DatosEgreso: DatosEgreso,
+        Reportes: Reportes,
+        APIpath: APIpath
+      }
+    };
+
+
+  },
+  ironOptions
+);

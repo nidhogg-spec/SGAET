@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { MongoClient } from "mongodb";
 import { resetServerContext } from "react-beautiful-dnd";
 import styles from '@/globalStyles/DetalleServicioEscogido.module.css'
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 //Componentes
 // import AutoFormulario from "@/components/AutoFormulario/AutoFormulario";
@@ -45,37 +47,37 @@ const ServicioEscogido = (
         });
         if (Estado_val == 3) {
           setModalOpen(true)
-        }else if(Estado_val == 4){
-          if (ServicioEscogido["Estado"]==3) {
+        } else if (Estado_val == 4) {
+          if (ServicioEscogido["Estado"] == 3) {
             await Promise.all([
-              new Promise(async(resolve,reject)=>{
+              new Promise(async (resolve, reject) => {
                 await axios.put(
                   `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
                   { ServicioEscogido: { Estado: Estado_val } }
                 );
                 resolve();
               }),
-              new Promise(async(resolve,reject)=>{
+              new Promise(async (resolve, reject) => {
                 await axios.post(props.URL_path + "/api/finanzas/ingresos", {
                   accion: "create",
                   data: {
                     Total: ServicioEscogido["PrecioCotiUnitario"] * ServicioEscogido["Cantidad"],
                     TotalNeto: 0,
                     Comision: 0,
-                    IdServicioEscogido:IdServicioEscogido,
+                    IdServicioEscogido: IdServicioEscogido,
                   }
                 });
                 resolve();
               }),
             ])
-          }else{
+          } else {
             await axios.put(
               `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
               { ServicioEscogido: { Estado: Estado_val } }
             );
-          }          
+          }
         }
-        else{
+        else {
           await axios.put(
             `${props.URL_path}/api/ServicioEscogido/CRUD/${IdServicioEscogido}`,
             { ServicioEscogido: { Estado: Estado_val } }
@@ -147,7 +149,7 @@ const ServicioEscogido = (
       setModalOpen(false);
       setLoading(true);
       let Estado_val = parseInt(refEstado.current.value);
-      
+
       await Promise.all([
         new Promise(async (resolve, reject) => {
           await axios.put(
@@ -165,14 +167,14 @@ const ServicioEscogido = (
                 ServicioEscogido["Cantidad"],
               TotalNeto: 0,
               Comision: 0,
-              IdServicioEscogido:IdServicioEscogido,
+              IdServicioEscogido: IdServicioEscogido,
               ...data
             }
           });
           resolve();
         })
       ]);
-      setLoading(false);      
+      setLoading(false);
     }
   };
   return (
@@ -197,8 +199,8 @@ const ServicioEscogido = (
       </Modal>
       <div>
         <h2>{ServicioEscogido["NombreServicio"]}</h2>
-        <button onClick={handleSave}><img src="/resources/save-black-18dp.svg"/></button>
-        
+        <button onClick={handleSave}><img src="/resources/save-black-18dp.svg" /></button>
+
         <div>
           <select
             value={ServicioEscogido["Estado"]}
@@ -531,124 +533,139 @@ const ServicioEscogido = (
 };
 export default ServicioEscogido;
 
-export async function getServerSideProps(context) {
-  //-------------------------------------------------------------------------------
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  const IdServicioEscogido = context.query.IdServicioEscogido;
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  let OrdenServicio;
-  let ServicioEscogido;
-  let Proveedor;
-  await client.connect();
-  try {
-    let dbo = client.db(dbName);
-    let collection = dbo.collection("ServicioEscogido");
-    //---------------------------- Obtener data Servicio Escogido ---------------------
-    ServicioEscogido = await collection.findOne(
-      { IdServicioEscogido: IdServicioEscogido },
-      { projection: { _id: 0 } }
-    );
-    let coleccion_producto = "";
-    let Id_coleccion_producto = "";
-    switch (ServicioEscogido["IdServicioProducto"].slice(0, 2)) {
-      case "PA":
-        coleccion_producto = "ProductoAgencias";
-        Id_coleccion_producto = "IdProductoAgencia";
-        break;
-      case "PG":
-        coleccion_producto = "ProductoGuias";
-        Id_coleccion_producto = "IdProductoGuia";
-        break;
-      case "PH":
-        coleccion_producto = "ProductoHoteles";
-        Id_coleccion_producto = "IdProductoHotel";
-        break;
-      case "PO":
-        coleccion_producto = "ProductoOtros";
-        Id_coleccion_producto = "IdProductoOtro";
-        break;
-      case "PR":
-        coleccion_producto = "ProductoRestaurantes";
-        Id_coleccion_producto = "IdProductoRestaurante";
-        break;
-      case "PS":
-        coleccion_producto = "ProductoSitioTuristico";
-        Id_coleccion_producto = "IdProductoSitioTuristico";
-        break;
-      case "PF":
-        coleccion_producto = "ProductoTransFerroviario";
-        Id_coleccion_producto = "IdProductoTransFerroviario";
-        break;
-      case "PT":
-        coleccion_producto = "ProductoTransportes";
-        Id_coleccion_producto = "IdProductoTransporte";
-        break;
-      default:
-        coleccion_producto = "Error";
-        break;
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps(context) {
+    const user = context.req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-    //---------------------------- Obtener data Proveedor ---------------------
-    let Producto;
+    //---------------------------------------------------------------------------------------------------------------------
+    resetServerContext();
+    //-------------------------------------------------------------------------------
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
+    const IdServicioEscogido = context.query.IdServicioEscogido;
+    let client = new MongoClient(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    let OrdenServicio;
+    let ServicioEscogido;
+    let Proveedor;
+    await client.connect();
     try {
-      Producto = await dbo.collection(coleccion_producto).findOne(
-        {
-          [Id_coleccion_producto]: ServicioEscogido["IdServicioProducto"]
-        },
-        { projection: { _id: 0, IdProveedor: 1 } }
+      let dbo = client.db(dbName);
+      let collection = dbo.collection("ServicioEscogido");
+      //---------------------------- Obtener data Servicio Escogido ---------------------
+      ServicioEscogido = await collection.findOne(
+        { IdServicioEscogido: IdServicioEscogido },
+        { projection: { _id: 0 } }
       );
-      console.log("sgfsdf");
-      console.log(Producto);
-    } catch (error) {
-      console.log("Error - 103");
-      console.log("error  => " + error);
-    }
-    try {
-      Proveedor = await dbo
-        .collection("Proveedor")
-        .findOne(
-          { IdProveedor: Producto["IdProveedor"] },
-          { projection: { _id: 0 } }
+      let coleccion_producto = "";
+      let Id_coleccion_producto = "";
+      switch (ServicioEscogido["IdServicioProducto"].slice(0, 2)) {
+        case "PA":
+          coleccion_producto = "ProductoAgencias";
+          Id_coleccion_producto = "IdProductoAgencia";
+          break;
+        case "PG":
+          coleccion_producto = "ProductoGuias";
+          Id_coleccion_producto = "IdProductoGuia";
+          break;
+        case "PH":
+          coleccion_producto = "ProductoHoteles";
+          Id_coleccion_producto = "IdProductoHotel";
+          break;
+        case "PO":
+          coleccion_producto = "ProductoOtros";
+          Id_coleccion_producto = "IdProductoOtro";
+          break;
+        case "PR":
+          coleccion_producto = "ProductoRestaurantes";
+          Id_coleccion_producto = "IdProductoRestaurante";
+          break;
+        case "PS":
+          coleccion_producto = "ProductoSitioTuristico";
+          Id_coleccion_producto = "IdProductoSitioTuristico";
+          break;
+        case "PF":
+          coleccion_producto = "ProductoTransFerroviario";
+          Id_coleccion_producto = "IdProductoTransFerroviario";
+          break;
+        case "PT":
+          coleccion_producto = "ProductoTransportes";
+          Id_coleccion_producto = "IdProductoTransporte";
+          break;
+        default:
+          coleccion_producto = "Error";
+          break;
+      }
+      //---------------------------- Obtener data Proveedor ---------------------
+      let Producto;
+      try {
+        Producto = await dbo.collection(coleccion_producto).findOne(
+          {
+            [Id_coleccion_producto]: ServicioEscogido["IdServicioProducto"]
+          },
+          { projection: { _id: 0, IdProveedor: 1 } }
         );
-    } catch (error) {
-      console.log("Error - 104");
-      console.log("error  => " + error);
-    }
-    try {
-      OrdenServicio = await dbo
-        .collection("OrdenServicio")
-        .findOne(
-          { IdServicioEscogido: IdServicioEscogido },
-          { projection: { _id: 0 } }
-        );
-      console.log(OrdenServicio);
-      if (OrdenServicio == null) {
-        OrdenServicio = {};
+        console.log("sgfsdf");
+        console.log(Producto);
+      } catch (error) {
+        console.log("Error - 103");
+        console.log("error  => " + error);
+      }
+      try {
+        Proveedor = await dbo
+          .collection("Proveedor")
+          .findOne(
+            { IdProveedor: Producto["IdProveedor"] },
+            { projection: { _id: 0 } }
+          );
+      } catch (error) {
+        console.log("Error - 104");
+        console.log("error  => " + error);
+      }
+      try {
+        OrdenServicio = await dbo
+          .collection("OrdenServicio")
+          .findOne(
+            { IdServicioEscogido: IdServicioEscogido },
+            { projection: { _id: 0 } }
+          );
+        console.log(OrdenServicio);
+        if (OrdenServicio == null) {
+          OrdenServicio = {};
+        }
+      } catch (error) {
+        console.log("Error - 104");
+        console.log("error  => " + error);
       }
     } catch (error) {
-      console.log("Error - 104");
-      console.log("error  => " + error);
+      console.log("Error - 102");
+      console.log("error - Obtener cambios dolar => " + error);
+      // res.redirect("/500");
+      res.status(500).json({ error: "Algun error" });
+    } finally {
+      client.close();
     }
-  } catch (error) {
-    console.log("Error - 102");
-    console.log("error - Obtener cambios dolar => " + error);
-    // res.redirect("/500");
-    res.status(500).json({ error: "Algun error" });
-  } finally {
-    client.close();
-  }
-  return {
-    props: {
-      URL_path: process.env.API_DOMAIN,
-      OrdenServicio: OrdenServicio,
-      ServicioEscogido: ServicioEscogido,
-      Proveedor: Proveedor
-    }
-  };
-}
+    return {
+      props: {
+        URL_path: process.env.API_DOMAIN,
+        OrdenServicio: OrdenServicio,
+        ServicioEscogido: ServicioEscogido,
+        Proveedor: Proveedor
+      }
+    };
+
+  },
+  ironOptions
+);
 
 function useBoolOrdenServicio(OrdenServicio) {
   const [Existe, setExiste] = useState(false);
