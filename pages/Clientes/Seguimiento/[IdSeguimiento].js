@@ -150,9 +150,6 @@ export default function Seguimiento({ Datos, APIpath }) {
     </div>
   );
 }
-export async function getServerSideProps(context) {
-
-}
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req, res }) {
