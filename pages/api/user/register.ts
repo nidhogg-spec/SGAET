@@ -1,6 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { RegisterUser } from "@/src/UseCases/UserManagement-usecases";
-import { userInterface } from "@/utils/interfaces/db";
+import {
+  TipoDocumento,
+  TipoUsuario,
+  userInterface
+} from "@/utils/interfaces/db";
 import * as uuid from "uuid";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -17,11 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         errors.push("El apellido es requerido para el registro");
       if (!req.body.TipoUsuario)
         errors.push("El tipo de usuario es requerido para el registro");
-      if (
-        req.body.TipoUsuario != "Administrador" &&
-        req.body.TipoUsuario != "Ventas" &&
-        req.body.TipoUsuario != "Marketing"
-      )
+      if (Object.values(TipoUsuario).includes(req.body.TipoUsuario))
         errors.push("El tipo de usuario es incorrecto");
       if (errors.length > 0) {
         res.status(400).json({
@@ -49,7 +49,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
               data: result.data,
               message: result.message
             });
-            return; 
+            return;
           }
           res.status(200).json(result);
         });

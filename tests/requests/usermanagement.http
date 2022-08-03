@@ -7,18 +7,43 @@ POST {{url}}/api/user/login
 Content-Type: application/json
 
 {
-  "email": "root@root.adm",
-  "password": "root"
+  "email": "gerencia1",
+  "password": "gerencia12345."
 }
+
+
+# {
+#   "email": "root@root.adm",
+#   "password": "root"
+# }
 
 ### Registro
 POST {{url}}/api/user/register
 Content-Type: application/json
 
 {
-  "Email": "test@test.ol",
-  "Password": "12345",
-  "Nombre": "test",
-  "Apellido": "test",
-  "TipoUsuario": "Ventas"
+  "Email": "gerencia1",
+  "Password": "gerencia12345.",
+  "Nombre": "Gerencia",
+  "Apellido": "Gerencia",
+  "TipoUsuario": "Administrador"
 }
+
+# {
+#   "Email": "test@test.ol",
+#   "Password": "12345",
+#   "Nombre": "test",
+#   "Apellido": "test",
+#   "TipoUsuario": "Ventas"
+# }
+
+### Get session info
+GET {{url}}/api/user/user
+Content-Type: application/json
+
+###
+GET {{url}}/api/user/user-info
+
+### Logout
+GET {{url}}/api/user/logout
+Content-Type: application/json

@@ -1,6 +1,4 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
-import { withSSRContext } from "aws-amplify";
-
 
 export async function CRUD_log(
   req,
@@ -23,13 +21,11 @@ export async function CRUD_log(
 
 async function Create(req, Log) {
   const { db } = await connectToDatabase();
-  const { Auth } = withSSRContext({ req });
-  const user = await Auth.currentAuthenticatedUser();
   const Ahora = new Date();
 
   let result = await db.collection("Log").insertOne({
     LogMessage: Log.Message,
-    user: user.username,
+    user: "User not specified",
     time: Ahora.toISOString(),
   });
   return (result.insertedCount);

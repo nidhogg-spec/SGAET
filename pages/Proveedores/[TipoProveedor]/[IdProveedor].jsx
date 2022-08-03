@@ -5,6 +5,8 @@ import MaterialTable from "material-table";
 import React, { useEffect, useState, useCallback } from "react";
 import { MongoClient } from "mongodb";
 import axios from "axios";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 //componentes
 import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
@@ -811,89 +813,103 @@ export default function TipoProveedor(
   );
 }
 
-export async function getServerSideProps(context) {
-  resetServerContext();
-  const uruId = context.query.IdProveedor;
-  const provDinamico = context.query.TipoProveedor.toLowerCase();
-
-  /*---------------------------------------------------------------------------------*/
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  await client.connect();
-  let [Proveedor, ServicioProducto] = await Promise.all([
-    new Promise(async (resolve, reject) => {
-      try {
-        let collection = client.db(dbName).collection("Proveedor");
-        let result = await collection.findOne(
-          { IdProveedor: uruId },
-          { projection: { _id: 0 } }
-        );
-        // Proveedor = JSON.stringify(result);
-        // result._id = JSON.stringify(result._id);
-        // Proveedor = result;
-        resolve(result);
-      } catch (error) {
-        console.log("Error cliente Mongo 1 => " + error);
-      }
-    }),
-    new Promise(async (resolve, reject) => {
-      let collectionName = "";
-      switch (provDinamico) {
-        case "hotel":
-          collectionName = "ProductoHoteles";
-          break;
-        case "restaurante":
-          collectionName = "ProductoRestaurantes";
-          break;
-        case "transporteterrestre":
-          collectionName = "ProductoTransportes";
-          break;
-        case "transporteferroviario":
-          collectionName = "ProductoTransFerroviario";
-          break;
-        case "sitioturistico":
-          collectionName = "ProductoSitioTuristico";
-          break;
-        case "guia":
-          collectionName = "ProductoGuias";
-          break;
-        case "agencia":
-          collectionName = "ProductoAgencias";
-          break;
-        default:
-          collectionName = "ProductoOtros";
-          break;
-      }
-      try {
-        let collection = client.db(dbName).collection(collectionName);
-        let result = await collection
-          .find({ IdProveedor: uruId })
-          .project({
-            _id: 0
-          })
-          .toArray();
-        resolve(result);
-      } catch (error) {
-        console.log("Error cliente Mongo 1 => " + error);
-      }
-    })
-  ]);
-  client.close();
-
-  // console.log(Proveedor.IdProveedor)
-  // const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
-  return {
-    props: {
-      ServicioProducto: ServicioProducto,
-      Proveedor: Proveedor,
-      APIpath: process.env.API_DOMAIN
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps(context) {
+    const user = context.req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  };
-}
+    //---------------------------------------------------------------------------------------------------------------------
+
+    resetServerContext();
+    const uruId = context.query.IdProveedor;
+    const provDinamico = context.query.TipoProveedor.toLowerCase();
+
+    /*---------------------------------------------------------------------------------*/
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
+    let client = new MongoClient(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    await client.connect();
+    let [Proveedor, ServicioProducto] = await Promise.all([
+      new Promise(async (resolve, reject) => {
+        try {
+          let collection = client.db(dbName).collection("Proveedor");
+          let result = await collection.findOne(
+            { IdProveedor: uruId },
+            { projection: { _id: 0 } }
+          );
+          // Proveedor = JSON.stringify(result);
+          // result._id = JSON.stringify(result._id);
+          // Proveedor = result;
+          resolve(result);
+        } catch (error) {
+          console.log("Error cliente Mongo 1 => " + error);
+        }
+      }),
+      new Promise(async (resolve, reject) => {
+        let collectionName = "";
+        switch (provDinamico) {
+          case "hotel":
+            collectionName = "ProductoHoteles";
+            break;
+          case "restaurante":
+            collectionName = "ProductoRestaurantes";
+            break;
+          case "transporteterrestre":
+            collectionName = "ProductoTransportes";
+            break;
+          case "transporteferroviario":
+            collectionName = "ProductoTransFerroviario";
+            break;
+          case "sitioturistico":
+            collectionName = "ProductoSitioTuristico";
+            break;
+          case "guia":
+            collectionName = "ProductoGuias";
+            break;
+          case "agencia":
+            collectionName = "ProductoAgencias";
+            break;
+          default:
+            collectionName = "ProductoOtros";
+            break;
+        }
+        try {
+          let collection = client.db(dbName).collection(collectionName);
+          let result = await collection
+            .find({ IdProveedor: uruId })
+            .project({
+              _id: 0
+            })
+            .toArray();
+          resolve(result);
+        } catch (error) {
+          console.log("Error cliente Mongo 1 => " + error);
+        }
+      })
+    ]);
+    client.close();
+
+    // console.log(Proveedor.IdProveedor)
+    // const APIpath = process.env.API_DOMAIN + "/api/proveedores/listaProveedores";
+    return {
+      props: {
+        ServicioProducto: ServicioProducto,
+        Proveedor: Proveedor,
+        APIpath: process.env.API_DOMAIN
+      }
+    };
+  },
+  ironOptions
+);
 
 function deepEqual(object1, object2) {
   const keys1 = Object.keys(object1);

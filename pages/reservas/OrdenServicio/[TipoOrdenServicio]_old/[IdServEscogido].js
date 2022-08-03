@@ -1,6 +1,5 @@
 import MaterialTable from "material-table";
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
-import { withSSRContext } from "aws-amplify";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { MongoClient } from "mongodb";
@@ -1834,8 +1833,6 @@ export async function getServerSideProps({ params, req, res }) {
   const dbName = process.env.MONGODB_DB;
   const APIpath = process.env.API_DOMAIN;
 
-  const { Auth } = withSSRContext({ req });
-
   let IdServicioEscogido = params.IdServEscogido;
   let TipoOrdenServicio = params.TipoOrdenServicio;
 
@@ -1848,14 +1845,6 @@ export async function getServerSideProps({ params, req, res }) {
   let coleccionProducto = null;
   let idProductoProveedor = null;
 
-  /*Seccion para Asegurar la Ruta de la API*/
-  try {
-    //const user = await Auth.currentAuthenticatedUser()
-    //console.log(user)
-  } catch (err) {
-    res.writeHead(302, { Location: "/" });
-    res.end();
-  }
   /*------------------------------------------------------------------------------*/
 
   let client = new MongoClient(url, {

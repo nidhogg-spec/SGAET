@@ -4,7 +4,10 @@ import CampoTexto from "@/components/Formulario/CampoTexto/CampoTexto";
 import CampoGranTexto from "@/components/Formulario/CampoGranTexto/CampoGranTexto";
 import { useRouter } from "next/router";
 
-export default function Seguimiento({ Datos,APIpath }) {
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
+
+export default function Seguimiento({ Datos, APIpath }) {
   let x = {};
   const router = useRouter();
   const { IdSeguimiento } = router.query;
@@ -25,7 +28,7 @@ export default function Seguimiento({ Datos,APIpath }) {
     if (Object.keys(dataActualizada).length === 0) {
       console.log(dataActualizada);
     } else {
-      await fetch(APIpath+`/api/cliente/seguimiento`, {
+      await fetch(APIpath + `/api/cliente/seguimiento`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -147,39 +150,53 @@ export default function Seguimiento({ Datos,APIpath }) {
     </div>
   );
 }
-export async function getServerSideProps(context) {
-  var Datos = [];
-  let urlIdSeg = context.query.IdSeguimiento;
-  /*---------------------------------------------------------------------------------*/
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  const APIpath = process.env.API_DOMAIN;
 
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-
-  try {
-    console.log("mongo xdxdxdxd");
-    await client.connect();
-    let collection = client.db(dbName).collection("Seguimiento");
-    let result = await collection.find({}).project({ _id: 0 }).toArray();
-    // DatosProveedor = JSON.stringify(result);
-    result.map((x) => {
-      if (x.IdSeguimiento == urlIdSeg) {
-        Datos = x;
-      }
-    });
-  } catch (error) {
-    console.log("Error cliente Mongo 1 => " + error);
-  } finally {
-    client.close();
-  }
-
-  return {
-    props: {
-      Datos: Datos, APIpath:APIpath
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  };
-}
+    //---------------------------------------------------------------------------------------------------------------------
+    var Datos = [];
+    let urlIdSeg = context.query.IdSeguimiento;
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
+    const APIpath = process.env.API_DOMAIN;
+
+    let client = new MongoClient(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    try {
+      await client.connect();
+      let collection = client.db(dbName).collection("Seguimiento");
+      let result = await collection.find({}).project({ _id: 0 }).toArray();
+      // DatosProveedor = JSON.stringify(result);
+      result.map((x) => {
+        if (x.IdSeguimiento == urlIdSeg) {
+          Datos = x;
+        }
+      });
+    } catch (error) {
+      console.log("Error cliente Mongo 1 => " + error);
+    } finally {
+      client.close();
+    }
+
+    return {
+      props: {
+        Datos: Datos, APIpath: APIpath
+      }
+    };
+
+
+  },
+  ironOptions
+);

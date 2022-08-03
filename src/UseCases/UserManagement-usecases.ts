@@ -25,7 +25,7 @@ async function RegisterUser(UserData: any) {
   return await UserRepository.createUser(newUser);
 }
 
-async function LoginUser(
+async function LoginUserReturnToken(
   email: string,
   password: string
 ): Promise<UsesCase_to_API_response> {
@@ -74,6 +74,58 @@ async function LoginUser(
       message: "Error interno"
     };
   }
+}
+
+async function LoginUserReturnUser(
+  email: string,
+  password: string
+): Promise<UsesCase_to_API_response> {
+  try {
+    let result = (await UserRepository.ReadUserByEmail(email)) as userInterface;
+
+    if (result) {
+      result = validateUserDb(result);
+
+      if (result.Password === password) {
+        return {
+          data: {
+            idUser: result.IdUser,
+            email: result.Email,
+            tipoUsuario: result.TipoUsuario
+          },
+          message: "Login correcto",
+          status: 200
+        };
+      } else {
+        return {
+          message: "Password incorrecto",
+          data: null,
+          status: 401
+        };
+      }
+    } else {
+      return {
+        message: "Usuario no existe",
+        data: null,
+        status: 401
+      };
+    }
+  } catch (error) {
+    return {
+      data: null,
+      errorList: [error as string],
+      status: 500,
+      error: true,
+      message: "Error interno"
+    };
+  }
+}
+
+async function GetUserById(id: string): Promise<userInterface> {
+  const user: userInterface = (await UserRepository.ReadUser(
+    id
+  )) as userInterface;
+  return user;
 }
 
 async function ChangePassword(
@@ -132,4 +184,11 @@ function validateUserDb(data: any): userInterface {
   };
 }
 
-export { RegisterUser, LoginUser, ChangePassword, UpdateUser };
+export {
+  RegisterUser,
+  LoginUserReturnToken,
+  LoginUserReturnUser,
+  ChangePassword,
+  UpdateUser,
+  GetUserById
+};

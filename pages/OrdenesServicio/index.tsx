@@ -1,6 +1,5 @@
 import React, { useState, useEffect, SetStateAction } from "react";
 import { useRouter } from "next/router";
-import { withSSRContext } from "aws-amplify";
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import {
   proveedorInterface,
@@ -8,6 +7,8 @@ import {
   servicioEscogidoInterface
 } from "@/utils/interfaces/db";
 import { ListarReservaProveedores_get_response as api_response } from "@/utils/interfaces/API/responsesInterface";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 // Componentes
 import MaterialTable from "material-table";
@@ -176,22 +177,30 @@ const Index = ({}) => {
     </div>
   );
 };
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  let DataReservas = [];
 
-  const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
-
-  const { Auth } = withSSRContext({ req });
-  try {
-    const user = await Auth.currentAuthenticatedUser();
-  } catch (err) {
-    res.writeHead(302, { Location: "/" });
-    res.end();
-  }
-  return {
-    props: {
-      APIPath: process.env.API_DOMAIN
-    }
-  };
-};
 export default Index;
+
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
+    }
+    //---------------------------------------------------------------------------------------------------------------------
+    let DataReservas = [];
+
+    const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
+
+    return {
+      props: {
+        APIPath: process.env.API_DOMAIN
+      }
+    };
+  },
+  ironOptions
+);

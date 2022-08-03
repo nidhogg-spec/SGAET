@@ -1,5 +1,9 @@
 import { connectToDatabase } from "./API/connectMongo-v2";
-import { dbColeccionesFormato, userInterface } from "./interfaces/db/index";
+import {
+  dbColeccionesFormato,
+  TipoUsuario,
+  userInterface
+} from "./interfaces/db/index";
 import * as uuid from "uuid";
 
 export default function InitConfiguration() {
@@ -27,7 +31,7 @@ export default function InitConfiguration() {
         Nombre: "root",
         Apellido: "root",
         Estado: "Activo",
-        TipoUsuario: "Administrador"
+        TipoUsuario: TipoUsuario.Administrador
       };
       await collection.insertOne(rooUser);
     }

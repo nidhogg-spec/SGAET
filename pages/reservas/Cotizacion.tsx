@@ -1,9 +1,10 @@
 //Paquetes
 import React, { useEffect, useState, useContext, createContext } from "react";
 import { useRouter } from "next/router";
-import { withSSRContext } from "aws-amplify";
 import MaterialTable from "material-table";
 import axios from "axios";
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 //Componentes
 import CampoTexto from "@/components/Formulario_V2/CampoTexto/CampoTexto";
@@ -368,24 +369,32 @@ const Cotizacion = ({ APIpath, APIpathGeneral }: Props) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const APIpath = process.env.API_DOMAIN;
-  const { Auth } = withSSRContext({ req });
-  try {
-    const user = await Auth.currentAuthenticatedUser();
-  } catch (err) {
-    res.writeHead(302, { Location: "/" });
-    res.end();
-  }
-  // const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
-
-  return {
-    props: {
-      APIpath: APIpath
-      // APIpathGeneral: APIpathGeneral,
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res, query }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  };
-};
+    //---------------------------------------------------------------------------------------------------------------------
+
+    const APIpath = process.env.API_DOMAIN;
+    // const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
+
+    return {
+      props: {
+        APIpath: APIpath
+        // APIpathGeneral: APIpathGeneral,
+      }
+    };
+  },
+  ironOptions
+);
+
 export default Cotizacion;
 
 // componentes

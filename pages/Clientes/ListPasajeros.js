@@ -1,8 +1,10 @@
 import MaterialTable from "material-table";
 import { MongoClient } from "mongodb";
 import Router from "next/router";
-import { withSSRContext } from 'aws-amplify'
 import { useState } from "react";
+
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
 // Estilos
 import globalStyles from '@/globalStyles/modules/global.module.css'
@@ -131,46 +133,53 @@ export default function Home({ Datos, APIpath }) {
     </div>
   )
 }
-export async function getServerSideProps({ req, res }) {
-  var Datos = [];
 
-  /*---------------------------------------------------------------------------------*/
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  const APIpath = process.env.API_DOMAIN;
-
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
-  const { Auth } = withSSRContext({ req })
-  try {
-    const user = await Auth.currentAuthenticatedUser()
-  } catch (err) {
-    res.writeHead(302, { Location: '/' })
-    res.end()
-  }
-
-  try {
-    console.log("mongo xdxdxdxd");
-    await client.connect();
-    let collection = client.db(dbName).collection("Cliente");
-    let result = await collection.find({}).project({ "_id": 0 }).toArray();
-    // DatosProveedor = JSON.stringify(result);
-
-    result._id = JSON.stringify(result._id);
-    Datos = result;
-
-  } catch (error) {
-    console.log("Error cliente Mongo 1 => " + error);
-  } finally {
-    client.close();
-  }
-
-  return {
-    props: {
-      Datos: Datos, APIpath: APIpath
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
     }
-  }
-}
+    //---------------------------------------------------------------------------------------------------------------------
+
+    var Datos = [];
+
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
+    const APIpath = process.env.API_DOMAIN;
+
+    let client = new MongoClient(url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    try {
+      console.log("mongo xdxdxdxd");
+      await client.connect();
+      let collection = client.db(dbName).collection("Cliente");
+      let result = await collection.find({}).project({ "_id": 0 }).toArray();
+      // DatosProveedor = JSON.stringify(result);
+
+      result._id = JSON.stringify(result._id);
+      Datos = result;
+
+    } catch (error) {
+      console.log("Error cliente Mongo 1 => " + error);
+    } finally {
+      client.close();
+    }
+
+    return {
+      props: {
+        Datos: Datos, APIpath: APIpath
+      }
+    }
+
+  },
+  ironOptions
+);

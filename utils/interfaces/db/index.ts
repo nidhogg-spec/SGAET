@@ -443,8 +443,8 @@ export interface ingresoInterface {
   Adelanto: number;
   MetodoPago: string;
   IdIngreso: string;
-  FechaCreacion: Date
-  FechaModificacion: Date
+  FechaCreacion: Date;
+  FechaModificacion: Date;
 }
 // ------------------Egreso-------------------
 export interface egresoInterface {
@@ -453,12 +453,12 @@ export interface egresoInterface {
   TotalNeto: number;
   Comision: number;
   /* IdReservaCotizacion: string; */
-  ListaRelacionesId:  any;
+  ListaRelacionesId: any;
   Adelanto: number;
   MetodoPago: string;
   IdEgreso: string;
-  FechaCreacion: Date
-  FechaModificacion: Date
+  FechaCreacion: Date;
+  FechaModificacion: Date;
 }
 // ------------------Evaluacion Actividad-------------------
 export interface evaluacionActividadInterface {
@@ -544,9 +544,15 @@ export interface userInterface {
   Apellido: string;
   Email: string;
   Password: string;
-  TipoUsuario: "Administrador" | "Ventas" | "Marketing" | "";
+  TipoUsuario: TipoUsuario | "";
   Estado: "Activo" | "Inactivo" | string;
   IdUser: string;
+}
+export enum TipoUsuario {
+  Administrador = "Administrador",
+  Ventas = "Ventas",
+  Marketing = "Marketing",
+  Operaciones = "Operaciones",
 }
 
 export enum TipoDocumento {

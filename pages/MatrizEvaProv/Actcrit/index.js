@@ -1,56 +1,59 @@
 import MaterialTable from "material-table";
 import { MongoClient } from "mongodb";
-import {useEffect, useRef, useState} from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { withIronSessionSsr } from "iron-session/next";
+import { ironOptions } from "@/utils/config";
 
-export default function AñadirEvaluacion({DatosActividad, DatosCriterio,APIpath}){
 
-    const [datosActEditables, setDatosActEditables] = useState(DatosActividad)
-    const [datosCritEditables, setDatosCritEditables] = useState(DatosCriterio)
+export default function AñadirEvaluacion({ DatosActividad, DatosCriterio, APIpath }) {
 
-    const isInitialMount = useRef(true)
+  const [datosActEditables, setDatosActEditables] = useState(DatosActividad)
+  const [datosCritEditables, setDatosCritEditables] = useState(DatosCriterio)
 
-    let y = {}
-    DatosCriterio.map((x)=>{
-      y[x.criterio] = x.criterio
-    })
+  const isInitialMount = useRef(true)
 
-    let ColumnasCriterio = [
-        {title: "Nombre Criterio",field: "criterio",},
-        {
-          title: "Estado",
-          field: "estado",
-          lookup: {0:"Inactivo",1:"Activo"}
-        },
-    ]
-    let ColumnasActividad = [
-      {title: "Descripcion",field: "descripcion",},
-      {title: "Valor",field: "valor",},
-      {
-        title: "Criterio",
-        field: "criterio",
-        lookup: y
-      },
-      {
-        title: "Estado",
-        field: "estado",
-        lookup: {0:"Inactivo",1:"Activo"}
-      },
+  let y = {}
+  DatosCriterio.map((x) => {
+    y[x.criterio] = x.criterio
+  })
+
+  let ColumnasCriterio = [
+    { title: "Nombre Criterio", field: "criterio", },
+    {
+      title: "Estado",
+      field: "estado",
+      lookup: { 0: "Inactivo", 1: "Activo" }
+    },
   ]
-  useEffect(()=>{
+  let ColumnasActividad = [
+    { title: "Descripcion", field: "descripcion", },
+    { title: "Valor", field: "valor", },
+    {
+      title: "Criterio",
+      field: "criterio",
+      lookup: y
+    },
+    {
+      title: "Estado",
+      field: "estado",
+      lookup: { 0: "Inactivo", 1: "Activo" }
+    },
+  ]
+  useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
-    }else{
+    } else {
       let dataFetch = []
       let estructuraFetch = {}
-      datosCritEditables.map((x,index)=>{
-        datosActEditables.map((y,index2)=>{
-          if(x.estado == 0 && x.criterio == y.criterio){
+      datosCritEditables.map((x, index) => {
+        datosActEditables.map((y, index2) => {
+          if (x.estado == 0 && x.criterio == y.criterio) {
             y.estado = 0
             setDatosActEditables([...datosActEditables])
-            
+
           }//el problema es este if
-  
-          if(x.estado == 1 && y.criterio==x.criterio){
+
+          if (x.estado == 1 && y.criterio == x.criterio) {
             y.estado = 1
             setDatosActEditables([...datosActEditables])
           }
@@ -71,31 +74,31 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio,APIpath
       //   }
       // })
       // // console.log(idFetch)
-      datosActEditables.map(act=>{
-        estructuraFetch ={
+      datosActEditables.map(act => {
+        estructuraFetch = {
           updateOne:
           {
-            "filter": {IdActividad: act.IdActividad},
-            "update": {$set:{estado: act.estado}}
+            "filter": { IdActividad: act.IdActividad },
+            "update": { $set: { estado: act.estado } }
           }
         }
         dataFetch.push(estructuraFetch)
       })
-      
-      fetch(APIpath+`/api/proveedores/actividad`,{
-        method:"POST",
-        headers:{"Content-Type": "application/json"},
+
+      fetch(APIpath + `/api/proveedores/actividad`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           data: dataFetch,
           accion: "updateEstado",
         }),
       })
-      .then(r=>r.json())
-      .then(data=>{
-        alert(data.message);
-      })
+        .then(r => r.json())
+        .then(data => {
+          alert(data.message);
+        })
     }
-  },[datosCritEditables])
+  }, [datosCritEditables])
 
   // useEffect(()=>{
   //   let idFetch = []
@@ -123,241 +126,257 @@ export default function AñadirEvaluacion({DatosActividad, DatosCriterio,APIpath
   //     alert(data.message);
   //   })
   // },datosActEditables)
-    return(
-      <div>
-        <MaterialTable
-              columns={ColumnasCriterio}
-              data= {datosCritEditables}
-              title="Criterio por Actividad de Evaluacion de Proveedores"
-              editable={{
-                onRowAdd: newData =>
-                  new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        fetch(APIpath+`/api/proveedores/criterio`,{
-                          method:"POST",
-                          headers:{"Content-Type": "application/json"},
-                          body: JSON.stringify({
-                            data: newData,
-                            accion: "create",
-                          }),
-                        })
-                        .then(r=>r.json())
-                        .then(data=>{
-                          alert(data.message);
-                        })
-                      setDatosCritEditables([...datosCritEditables, newData]);
-                      resolve();
-                    }, 1000)
+  return (
+    <div>
+      <MaterialTable
+        columns={ColumnasCriterio}
+        data={datosCritEditables}
+        title="Criterio por Actividad de Evaluacion de Proveedores"
+        editable={{
+          onRowAdd: newData =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                fetch(APIpath + `/api/proveedores/criterio`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    data: newData,
+                    accion: "create",
                   }),
-                onRowUpdate: (newData, oldData) =>
-                  new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                      const dataUpdate = [...datosActEditables];
-                      const index = oldData.tableData.id;
-                      dataUpdate[index] = newData;
-                      setDatosCritEditables([...dataUpdate]);
+                })
+                  .then(r => r.json())
+                  .then(data => {
+                    alert(data.message);
+                  })
+                setDatosCritEditables([...datosCritEditables, newData]);
+                resolve();
+              }, 1000)
+            }),
+          onRowUpdate: (newData, oldData) =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                const dataUpdate = [...datosActEditables];
+                const index = oldData.tableData.id;
+                dataUpdate[index] = newData;
+                setDatosCritEditables([...dataUpdate]);
 
-                      delete dataUpdate[index]._id
+                delete dataUpdate[index]._id
 
-                      fetch(APIpath+`/api/proveedores/criterio`,{
-                        method:"POST",
-                        headers:{"Content-Type": "application/json"},
-                        body: JSON.stringify({
-                          idProducto: dataUpdate[index].IdCriterio,
-                          data: dataUpdate[index],
-                          accion: "update",
-                        }),
-                      })
-                      .then(r=>r.json())
-                      .then(data=>{
-                        alert(data.message);
-                      })
-
-                      resolve();
-                    }, 1000)
+                fetch(APIpath + `/api/proveedores/criterio`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    idProducto: dataUpdate[index].IdCriterio,
+                    data: dataUpdate[index],
+                    accion: "update",
                   }),
-                onRowDelete: oldData =>
-                  new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                      const dataDelete = [...datosActEditables];
-                      const index = oldData.tableData.id;
+                })
+                  .then(r => r.json())
+                  .then(data => {
+                    alert(data.message);
+                  })
 
-                      // console.log(dataDelete[index])
-                      // console.log(dataDelete[index].IdProductoHotel)
+                resolve();
+              }, 1000)
+            }),
+          onRowDelete: oldData =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                const dataDelete = [...datosActEditables];
+                const index = oldData.tableData.id;
 
-                      fetch(APIpath+`/api/proveedores/criterio`,{
-                        method:"POST",
-                        headers:{"Content-Type": "application/json"},
-                        body: JSON.stringify({
-                          idProducto: dataDelete[index].IdCriterio,
-                          accion: "delete",
-                        }),
-                      })
-                      .then(r=>r.json())
-                      .then(data=>{
-                        alert(data.message);
-                      })
+                // console.log(dataDelete[index])
+                // console.log(dataDelete[index].IdProductoHotel)
 
-                      dataDelete.splice(index, 1);
-                      setDatosActEditables([...dataDelete]);
-
-                      resolve()
-                    }, 1000)
+                fetch(APIpath + `/api/proveedores/criterio`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    idProducto: dataDelete[index].IdCriterio,
+                    accion: "delete",
                   }),
-              }}
-              options={{
-                actionsColumnIndex: -1,
-              }}
-          />
-        <MaterialTable
-              columns={ColumnasActividad}
-              data= {datosActEditables}
-              title="Actividad de Evaluacion de Proveedores"
-              editable={{
-                onRowAdd: newData =>
-                  new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        fetch(APIpath+`/api/proveedores/actividad`,{
-                          method:"POST",
-                          headers:{"Content-Type": "application/json"},
-                          body: JSON.stringify({
-                            data: newData,
-                            accion: "create",
-                          }),
-                        })
-                        .then(r=>r.json())
-                        .then(data=>{
-                          alert(data.message);
-                        })
-                      setDatosActEditables([...datosActEditables, newData]);
-                      resolve();
-                    }, 1000)
+                })
+                  .then(r => r.json())
+                  .then(data => {
+                    alert(data.message);
+                  })
+
+                dataDelete.splice(index, 1);
+                setDatosActEditables([...dataDelete]);
+
+                resolve()
+              }, 1000)
+            }),
+        }}
+        options={{
+          actionsColumnIndex: -1,
+        }}
+      />
+      <MaterialTable
+        columns={ColumnasActividad}
+        data={datosActEditables}
+        title="Actividad de Evaluacion de Proveedores"
+        editable={{
+          onRowAdd: newData =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                fetch(APIpath + `/api/proveedores/actividad`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    data: newData,
+                    accion: "create",
                   }),
-                onRowUpdate: (newData, oldData) =>
-                  new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                      const dataUpdate = [...datosActEditables];
-                      const index = oldData.tableData.id;
-                      dataUpdate[index] = newData;
-                      setDatosActEditables([...dataUpdate]);
+                })
+                  .then(r => r.json())
+                  .then(data => {
+                    alert(data.message);
+                  })
+                setDatosActEditables([...datosActEditables, newData]);
+                resolve();
+              }, 1000)
+            }),
+          onRowUpdate: (newData, oldData) =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                const dataUpdate = [...datosActEditables];
+                const index = oldData.tableData.id;
+                dataUpdate[index] = newData;
+                setDatosActEditables([...dataUpdate]);
 
-                      // delete dataUpdate[index]._id
+                // delete dataUpdate[index]._id
 
-                      fetch(APIpath+`/api/proveedores/actividad`,{
-                        method:"POST",
-                        headers:{"Content-Type": "application/json"},
-                        body: JSON.stringify({
-                          idProducto: dataUpdate[index].IdActividad,
-                          data: dataUpdate[index],
-                          accion: "update",
-                        }),
-                      })
-                      .then(r=>r.json())
-                      .then(data=>{
-                        alert(data.message);
-                      })
-
-                      resolve();
-                    }, 1000)
+                fetch(APIpath + `/api/proveedores/actividad`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    idProducto: dataUpdate[index].IdActividad,
+                    data: dataUpdate[index],
+                    accion: "update",
                   }),
-                onRowDelete: oldData =>
-                  new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                      const dataDelete = [...datosActEditables];
-                      const index = oldData.tableData.id;
+                })
+                  .then(r => r.json())
+                  .then(data => {
+                    alert(data.message);
+                  })
 
-                      // console.log(dataDelete[index])
-                      // console.log(dataDelete[index].IdProductoHotel)
+                resolve();
+              }, 1000)
+            }),
+          onRowDelete: oldData =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                const dataDelete = [...datosActEditables];
+                const index = oldData.tableData.id;
 
-                      fetch(APIpath+`/api/proveedores/actividad`,{
-                        method:"POST",
-                        headers:{"Content-Type": "application/json"},
-                        body: JSON.stringify({
-                          idProducto: dataDelete[index].IdActividad,
-                          accion: "delete",
-                        }),
-                      })
-                      .then(r=>r.json())
-                      .then(data=>{
-                        alert(data.message);
-                      })
+                // console.log(dataDelete[index])
+                // console.log(dataDelete[index].IdProductoHotel)
 
-                      dataDelete.splice(index, 1);
-                      setDatosActEditables([...dataDelete]);
-
-                      resolve()
-                    }, 1000)
+                fetch(APIpath + `/api/proveedores/actividad`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    idProducto: dataDelete[index].IdActividad,
+                    accion: "delete",
                   }),
-              }}
-              options={{
-                actionsColumnIndex: -1,
-              }}
-          />
-      </div>
-    )
+                })
+                  .then(r => r.json())
+                  .then(data => {
+                    alert(data.message);
+                  })
+
+                dataDelete.splice(index, 1);
+                setDatosActEditables([...dataDelete]);
+
+                resolve()
+              }, 1000)
+            }),
+        }}
+        options={{
+          actionsColumnIndex: -1,
+        }}
+      />
+    </div>
+  )
 }
 
-export async function getStaticProps() {
-  let DatosActividad = []
-  let DatosCriterio = []
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req, res }) {
+    const user = req.session.user;
+    if (!user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login"
+        }
+      };
+    }
+    //---------------------------------------------------------------------------------------------------------------------
 
-  const url = process.env.MONGODB_URI;
-  const dbName = process.env.MONGODB_DB;
-  const APIpath = process.env.API_DOMAIN;
+    let DatosActividad = []
+    let DatosCriterio = []
 
-  let client = new MongoClient(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  try {
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.MONGODB_DB;
+    const APIpath = process.env.API_DOMAIN;
 
-    client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("Criterio");
-
-    let result = await collection.find({}).project({"_id":0}).toArray()
-
-    DatosCriterio=result
-
-  } catch (error) {
-    console.log("error - " + error);
-  }
-  finally{
-    client.close();
-  }
-
-  try {
     let client = new MongoClient(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    client = new MongoClient(url, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    await client.connect();
-    const dbo = client.db(dbName);
-    const collection = dbo.collection("Actividad");
+    try {
 
-    let result = await collection.find({}).project({"_id":0}).toArray()
-    result._id = JSON.stringify(result._id);
-    DatosActividad=result
+      client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("Criterio");
 
-  } catch (error) {
-    console.log("error - " + error);
-  }
-  finally{
-    client.close();
-  }
+      let result = await collection.find({}).project({ "_id": 0 }).toArray()
 
-  return {
-    props:{
-      DatosActividad: DatosActividad, 
-      DatosCriterio:DatosCriterio,
-      APIpath:APIpath
-    }}
-}
+      DatosCriterio = result
+
+    } catch (error) {
+      console.log("error - " + error);
+    }
+    finally {
+      client.close();
+    }
+
+    try {
+      let client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      client = new MongoClient(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+      await client.connect();
+      const dbo = client.db(dbName);
+      const collection = dbo.collection("Actividad");
+
+      let result = await collection.find({}).project({ "_id": 0 }).toArray()
+      result._id = JSON.stringify(result._id);
+      DatosActividad = result
+
+    } catch (error) {
+      console.log("error - " + error);
+    }
+    finally {
+      client.close();
+    }
+
+    return {
+      props: {
+        DatosActividad: DatosActividad,
+        DatosCriterio: DatosCriterio,
+        APIpath: APIpath
+      }
+    }
+
+  },
+  ironOptions
+);
