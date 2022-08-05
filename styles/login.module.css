@@ -1,73 +1,82 @@
-.loginHeader{
-    padding-top: 25px;
-    text-align: center;
-    color: #434343;
-    font-weight: bold;
+.loginHeader {
+  padding-top: 25px;
+  text-align: center;
+  color: #434343;
+  font-weight: bold;
 }
-.formularioLogin{
-    display: grid;
-    grid-template: 1fr 1fr 1fr 1fr/ 25%;
-    row-gap: 20px;
-    justify-content: center;
-    align-content: center;
+.formularioLogin {
+  display: grid;
+  grid-template: 1fr 1fr 1fr 1fr/ 25%;
+  row-gap: 20px;
+  justify-content: center;
+  align-content: center;
 }
-.formularioLogin_correo{
-    display: grid;
-    grid-template: 1fr 1fr / 1fr;
+.formularioLogin_correo {
+  display: grid;
+  grid-template: 1fr 1fr / 1fr;
 }
-.formularioLogin_password{
-    display: grid;
-    grid-template: 1fr 1fr / 1fr;
+.formularioLogin_password {
+  display: grid;
+  grid-template: 1fr 1fr / 1fr;
 }
-.formularioLogin_label{
-    text-align: center;
+.formularioLogin_label {
+  font-size: 17px;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  text-align: start;
 }
-.formularioLogin_input{
-    height: 40px;
-    background-color: rgba(174, 174, 174, 34%);
-    border-radius: 15px;
+.formularioLogin_input {
+  text-align: center;
+  font-size: 17px;
+  height: 40px;
+  background-color: rgba(174, 174, 174, 34%);
+  border-radius: 15px;
 }
-.formularioLogin_button{
-    justify-self: center;
-    width: 50%;
-    border-radius: 15px;
-    height:50%;
+.formularioLogin_button {
+  justify-self: center;
+  width: 50%;
+  border-radius: 15px;
+  height: 50%;
 }
-
-
+.errorMessage {
+  color: red;
+  font-size: 17px;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  text-align: center;
+  justify-self: center;
+}
 
 /* -------------------------------------------- */
 
-.mainContainer{
-    padding: 0px 20px 50px 20px;
-    background-color: white;
-    width: 100%;
-    height: auto;
+.mainContainer {
+  padding: 0px 20px 50px 20px;
+  background-color: white;
+  width: 100%;
+  height: auto;
 }
-.opcionesAdmin{
-    display: flex;
-    flex-direction: column;
-    row-gap: 10px;
+.opcionesAdmin {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
 }
-.opcionesAdmin div{
-    margin-left: 20px;
-    display: flex;
-    flex-direction: row;
-    column-gap: 20px;
-    align-items: center;
+.opcionesAdmin div {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+  align-items: center;
 }
-.notification__container{
-    display: flex;
-    position: absolute;
-    /* top: 0; */
-    right: 20px;
-    margin-right: 20px;
-    margin-top: 25px;
-    /* bottom: 1rem; */
-    /* align-self: flex-end; */
-    border: 1px solid #000000;
-    background-color: white;
+.notification__container {
+  display: flex;
+  position: absolute;
+  /* top: 0; */
+  right: 20px;
+  margin-right: 20px;
+  margin-top: 25px;
+  /* bottom: 1rem; */
+  /* align-self: flex-end; */
+  border: 1px solid #000000;
+  background-color: white;
 }
-.button__logs{
-    margin: 30px 0 0 20px;
+.button__logs {
+  margin: 30px 0 0 20px;
 }
