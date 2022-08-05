@@ -1,85 +1,100 @@
-.button{
-    display: flex;
-    flex-direction: row;
-    width: fit-content;
-    height: 40px;
-    border: none;
-    border-radius: 25px;
-    padding: 5px 20px;
-    align-items: center;
-    column-gap: 0.5rem;
+.button {
+  display: flex;
+  flex-direction: row;
+  width: fit-content;
+  height: 40px;
+  border: none;
+  border-radius: 25px;
+  padding: 5px 20px;
+  align-items: center;
+  column-gap: 0.5rem;
 }
-.button_border{
-    border: 1px solid #000 ;
-    /* border-radius: 25px; */
+.button_border {
+  border: 1px solid #000;
+  /* border-radius: 25px; */
 }
 /* ----------------Login----------------------- */
-.buttonLogin{
-    background-color: hsl(192, 100%, 50%);    
+.buttonLogin {
+  background-color: hsl(192, 100%, 50%);
 }
-.buttonLogin:hover{
-    background-color: hsl(192, 75%, 50%);
+.buttonLogin:hover {
+  background-color: hsl(192, 75%, 50%);
 }
-.buttonLogin:active{
-    background-color: hsl(192, 50%, 50%);
+.buttonLogin:active {
+  background-color: hsl(192, 50%, 50%);
+}
+.buttonLogin_conf {
+  justify-self: center;
+  display: flex;
+  width: 150px;
+  height: 45px;
+  border-radius: 25px;
+  padding: 5px 20px;
+  align-items: center;
+  justify-content: center;
+}
+.buttonLogin_conf span {
+  text-align: center;
+  font-size: 17px;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  color: black;
 }
 /* ----------------Guardar----------------------- */
-.buttonGuardar{
-    background-color: #5cb85c;    
+.buttonGuardar {
+  background-color: #5cb85c;
 }
-.buttonGuardar:hover{
-    background-color: #4cae4c;
+.buttonGuardar:hover {
+  background-color: #4cae4c;
 }
-.buttonGuardar:active{
-    background-color: #449d44;
+.buttonGuardar:active {
+  background-color: #449d44;
 }
 /* ----------------Cancelar----------------------- */
-.buttonCancelar{
-    background: #d9534f;    
+.buttonCancelar {
+  background: #d9534f;
 }
-.buttonCancelar:hover{
-    background: #c9302c;
+.buttonCancelar:hover {
+  background: #c9302c;
 }
-.buttonCancelar:active{
-    background: #bd2c00;
+.buttonCancelar:active {
+  background: #bd2c00;
 }
 /* ----------------Retroceder----------------------- */
-.BackButton{
-    background: #ffffff;    
+.BackButton {
+  background: #ffffff;
 }
-.BackButton:hover{
-    background: #ebebeb;
+.BackButton:hover {
+  background: #ebebeb;
 }
-.BackButton:active{
-    background: #d8d8d8;
+.BackButton:active {
+  background: #d8d8d8;
 }
 
 /* ----------------generic Button----------------------- */
-.GenerickButton{
-    background: hsl(0, 0%, 100%);    
+.GenerickButton {
+  background: hsl(0, 0%, 100%);
 }
-.GenerickButton:hover{
-    background: hsl(0, 0%, 90%);
+.GenerickButton:hover {
+  background: hsl(0, 0%, 90%);
 }
-.GenerickButton:active{
-    background: hsl(0, 0%, 60%);
+.GenerickButton:active {
+  background: hsl(0, 0%, 60%);
 }
-
 
 /* Enlaces que deben de parecer botones */
-.enlaceBton{
-    margin: 0px 20px;
-    background-color: rgb(240, 240, 240);
-    border-radius: 100%;
-    border: none;
-    height: 2rem;
-    width: 2rem;
-    transition: 0.5s;
-    justify-content: center;
-    align-items: center;
-    display: flex;
+.enlaceBton {
+  margin: 0px 20px;
+  background-color: rgb(240, 240, 240);
+  border-radius: 100%;
+  border: none;
+  height: 2rem;
+  width: 2rem;
+  transition: 0.5s;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 
-.enlaceBton:hover{
-    background-color: rgb(165, 165, 165);
+.enlaceBton:hover {
+  background-color: rgb(165, 165, 165);
 }
