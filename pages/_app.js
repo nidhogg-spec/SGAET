@@ -2,8 +2,6 @@ import '../styles/globals.css'
 import '../styles/global_var.css'
 import Header from "../components/header/Header"
 import NavLateral from "../components/navLateral/NavLateral"
-import { Amplify } from 'aws-amplify'
-import config from 'src/aws-exports'
 import Router from "next/router";
 import { useState } from 'react'
 import Head from 'next/head'
@@ -13,7 +11,6 @@ import PublicHeader from "../components/PublicHeader/PublicHeader"
 
 //this import is using the next.config,js how we see we aren't specification the exact path
 
-Amplify.configure({ ...config, ssr: true })
 
 
 function MyApp({ Component, pageProps }) {
@@ -22,12 +19,6 @@ function MyApp({ Component, pageProps }) {
     setAppLoading(true)
   });
   Router.events.on('routeChangeComplete', () => setAppLoading(false));
-  // const { data, revalidate } = useSWR("/api/me", async function (args) {
-  //   const res = await fetch(args);
-  //   return res.json();
-  // });
-  //tener en cuenta quer los estado que se manejen en esta pagina seran persistente para
-  //las vinculadas posteriorment
   return (
     /*Here is where the indexjs is rendering is something like the index in react you can also
     add the footer under the component and will work like the footer don't delete the <> </> cause throws and error

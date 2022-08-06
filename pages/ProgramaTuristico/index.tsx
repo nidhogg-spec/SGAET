@@ -1,5 +1,4 @@
 //packege
-// import fetch from "isomorphic-unfetch";
 import router from "next/router";
 import React, { useEffect, useState, createContext, useRef } from "react";
 // import {Data_ProgramasTuristicos} from '../../query/query'
