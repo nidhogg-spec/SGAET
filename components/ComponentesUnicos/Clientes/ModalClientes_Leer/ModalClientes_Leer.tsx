@@ -37,7 +37,7 @@ export default function ModalProgramTuris_Nuevo({
   Actualizando,
   setActualizando
 }: props) {
-  const router = useRouter();
+  const router = useRouter()
   const [openSiguientePaso, setOpenSiguientePaso] = useState(false);
   const {
     register,

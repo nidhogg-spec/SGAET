@@ -209,6 +209,18 @@ export default function NavLateral() {
         },
       ]
     },
+    {
+      modulo: "Administracion",
+      svg: "account_box-black-18dp.svg",
+      subModulos: [
+        {
+          tipo: "link",
+          subModuloName: "Usuarios",
+          link: "/Administracion/Administracion"
+        }
+      
+      ]
+    }
     // {
     //   modulo: "Ventas",
     //   svg:"account_box-black-18dp.svg",
