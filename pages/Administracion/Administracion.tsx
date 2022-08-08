@@ -171,10 +171,12 @@ export const getServerSideProps = withIronSessionSsr(
         if (user.tipoUsuario !== "Administrador") {
             return {
                 redirect: {
+                    permanent: false,
                     destination: "/Home"
                 }
             };
         }
+
         const headers = req.headers;
         const dataUsuarios = await axios.get(`${process.env.API_DOMAIN}/api/user/users`, {
             headers
@@ -187,4 +189,4 @@ export const getServerSideProps = withIronSessionSsr(
         };
 
     }, ironOptions
-)
+);

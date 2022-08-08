@@ -54,7 +54,6 @@ const obtenerUsuarios = async (req: NextApiRequest, res: NextApiResponse<any>) =
         const collection: Collection<any> = db.collection(coleccion.coleccion);
         const result = await collection.find({}).toArray();
         const filtro = result.filter((usuario: userInterface) => usuario.Estado === "Activo");
-        console.log(filtro);
         res.send({
             ok: true,
             data: filtro
@@ -93,7 +92,6 @@ const actualizarUsuario = async (req: NextApiRequest, res: NextApiResponse<any>)
 const crearUsuario = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     const coleccion = dbColeccionesFormato.User;
     const usuario: userInterface = req.body.data;
-    console.log(usuario);
     const nuevoUsuario: userInterface = {
         ...usuario,
         IdUser: v4()
