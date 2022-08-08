@@ -5,25 +5,50 @@ import styles from "@/globalStyles/login.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
 import axios from "axios";
 import router from "next/router";
+import { ironOptions } from "@/utils/config";
+import { withIronSessionSsr } from "iron-session/next/dist";
+import LoadingComp from "@/components/Loading/Loading";
 
 export default function loginPrincipal() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState({
+    error: false,
+    message: ""
+  });
 
   async function signIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setLoading(true);
     try {
-      const response = await axios.post(`/api/user/login`, {
-        email: userName,
-        password: password
-      });
+      const response = await axios.post(
+        `/api/user/login`,
+        {
+          email: userName,
+          password: password
+        },
+        {
+          validateStatus: function (status) {
+            return status < 500; // Resuelve solo si el código de estado es menor que 500
+          }
+        }
+      );
       if (response.data.ok) {
         router.push("/home");
       } else {
-        alert(response.data.message);
+        setLoading(false);
+        setError({
+          error: true,
+          message: "Usuario o contraseña incorrectos"
+        });
       }
     } catch (error) {
-      console.log("error signing in", error);
+      setLoading(false);
+      setError({
+        error: true,
+        message: "Error al iniciar sesión"
+      });
     }
   }
 
@@ -32,6 +57,7 @@ export default function loginPrincipal() {
   }, []);
   return (
     <div className={`${styles.mainContainer}`}>
+      <LoadingComp Loading={loading} key={"loading_1"} />
       <h1 className={styles.loginHeader}>
         Sistema de Gestion Administrativa de Empresas Turisticas
       </h1>
@@ -54,24 +80,38 @@ export default function loginPrincipal() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <input
-          className={`${botones.button} ${botones.button_primary}`}
+        <button
+          className={`${botones.buttonLogin_conf} ${botones.GenerickButton}`}
           // className={styles.formularioLogin_button}
           type="submit"
-          value="Login"
-        />
+        >
+          <span>Login</span>
+        </button>
+        {error.error && (
+          <span className={styles.errorMessage}>{error.message}</span>
+        )}
       </form>
     </div>
   );
 }
-export async function getServerSideProps() {
-  const APIpath = process.env.API_DOMAIN;
-  // const APIpathGeneral = process.env.API_DOMAIN + "/api/general";
 
-  return {
-    props: {
-      APIpath: APIpath
-      // APIpathGeneral: APIpathGeneral,
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req }) {
+    const user = req.session.user;
+    if (user) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/home"
+        }
+      };
     }
-  };
-}
+    return {
+      props: {
+        publicPage: true
+        // APIpathGeneral: APIpathGeneral,
+      }
+    };
+  },
+  ironOptions
+);

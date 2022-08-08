@@ -36,24 +36,29 @@ function MyApp({ Component, pageProps }) {
       <Head>
         <title>Sistema SGAET</title>
       </Head>
-      {pageProps.publicPage ? <>
-        <PublicHeader />
-        <Component {...pageProps} />
-      </> : 
-      <AppWrapper>
-        <AppLoader
-          Loading={AppLoading}
-          key={'AppLoader001'}
-        />
-        <Header />
-        <NavLateral />
-        <Component {...pageProps} />
-      </AppWrapper>}
+      {
+        pageProps.publicPage ?
+          <div className="PublicMainContainer">
+            <PublicHeader />
+            <Component {...pageProps} />
+          </ div> :
+          <div className="MainContainer">
+            <AppWrapper>
+              <AppLoader
+                Loading={AppLoading}
+                key={'AppLoader001'}
+              />
+              <Header />
+              <NavLateral />
+              <Component {...pageProps} />
+            </AppWrapper>
+          </div>
+      }
     </>
   )
 }
-// MyApp.getInitialProps = async ({req,res}) => {
-//   const { Auth } = withSSRContext({req})
+// MyApp.getInitialProps = async ({req, res}) => {
+//   const {Auth} = withSSRContext({req})
 
 //   console.log(await Auth.currentAuthenticatedUser())
 //   // try{

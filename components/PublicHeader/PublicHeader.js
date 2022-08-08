@@ -11,7 +11,7 @@ export default function PublicHeader() {
     <header className={styles.HeaderDiv}>
       <img src='/resources/logo.png' className={styles.HeaderLogo} />
       <div className={styles.MainTittleContainer}>
-        <span className={styles.HeaderSideName} >Sistema Interno</span>
+        {/* <span className={styles.HeaderSideName} >Sistema Interno</span> */}
       </div>
     </header>
   )

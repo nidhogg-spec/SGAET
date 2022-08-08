@@ -4,8 +4,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    background-color: var(--main--background-color);
-
+  background-color: var(--main--background-color);
 }
 
 a {
@@ -16,9 +15,9 @@ a {
 * {
   box-sizing: border-box;
 }
- .MainContainer{
+.MainContainer {
   position: fixed;
-  transition: margin-left .5s;
+  transition: margin-left 0.5s;
   width: 85%;
   height: 90%;
   top: 10%;
@@ -26,4 +25,16 @@ a {
   padding: 20px;
   overflow-x: hidden;
   /* margin: 10% 0 0 15%; */
- }
+}
+
+.PublicMainContainer {
+  position: fixed;
+  transition: margin-left 0.5s;
+  width: 100%;
+  height: 90%;
+  top: 10%;
+  left: 0;
+  /* padding: 20px; */
+  overflow-x: hidden;
+  /* margin: 10% 0 0 15%; */
+}
