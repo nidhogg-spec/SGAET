@@ -160,7 +160,7 @@ export const getServerSideProps = withIronSessionSsr(
         result._id = JSON.stringify(result._id);
         Datos = result;
       });
-    } catch (error) {
+    } catch (error) {   
       console.log("Error cliente Mongo 1 => " + error);
     }
 
