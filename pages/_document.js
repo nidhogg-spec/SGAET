@@ -15,7 +15,7 @@ class MyDocument extends Document {
           <link rel="icon" href="/resources/mini_logo.png" />
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
           <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@900&display=swap" rel="stylesheet" />
         </Head>
         <body>
