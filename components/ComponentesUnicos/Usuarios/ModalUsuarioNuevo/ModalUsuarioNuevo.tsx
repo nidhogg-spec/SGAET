@@ -24,8 +24,8 @@ export default function ModalUsuarioNuevo({ open, setOpen }: { open: boolean, se
         Apellido: "",
         Email: "",
         Contrasena: "",
-        TipoUsuario: "",
-        Estado: ""
+        TipoUsuario: "Operaciones",
+        Estado: "Activo"
     }
 
     const {
@@ -121,18 +121,18 @@ export default function ModalUsuarioNuevo({ open, setOpen }: { open: boolean, se
                                 </div>
                                 <div className={`${globalStyles.global_textInput_container}`}>
                                     <label htmlFor="">Tipo de usuario</label>
-                                    <select {...register("TipoUsuario")}>
+                                    <select {...register("TipoUsuario")} defaultValue="Operaciones">
                                         <option key="Administrador" value="Administrador">Administrador</option>
                                         <option key="Ventas" value="Ventas">Ventas</option>
                                         <option key="Marketing" value="Marketing">Marketing</option>
-                                        <option key="Operaciones" value="Operaciones">Operaciones</option>
+                                        <option key="Operaciones" value="Operaciones" selected>Operaciones</option>
                                     </select>
                                     <span className={`${globalStyles.global_error_message}`}></span>
                                 </div>
                                 <div className={`${globalStyles.global_textInput_container}`}>
                                     <label htmlFor="">Estado de usuario</label>
-                                    <select {...register("Estado")}>
-                                        <option key="Activo" value="Activo">Activo</option>
+                                    <select {...register("Estado")} defaultValue="Activo">
+                                        <option selected key="Activo" value="Activo" >Activo</option>
                                         <option key="Inactivo" value="Inactivo">Inactivo</option>
                                     </select>
                                     <span className={`${globalStyles.global_error_message}`}></span>
