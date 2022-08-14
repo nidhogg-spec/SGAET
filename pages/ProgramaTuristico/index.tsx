@@ -4,7 +4,6 @@ import React, { useEffect, useState, createContext, useRef } from "react";
 // import {Data_ProgramasTuristicos} from '../../query/query'
 import { resetServerContext } from "react-beautiful-dnd";
 
-
 //css
 import CustomStyles from "@/globalStyles/ProgramasTuristicos.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
@@ -18,7 +17,6 @@ import AutoModal_v2 from "@/components/AutoModal_v2/AutoModal_v2";
 import FusionProgramas from "@/components/ComponentesUnicos/ProgramaTuristico/FusionProgramas/FusionProgramas";
 import Loader from "@/components/Loading/Loading";
 import axios from "axios";
-import { route } from "next/dist/next-server/server/router";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "@/utils/config";
 

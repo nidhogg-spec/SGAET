@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Dialog, DialogContent } from "@material-ui/core";
+import { Table, Dialog, DialogContent } from "@mui/material";
 import MaterialTable from "material-table";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -175,20 +175,21 @@ export default function ModalProveedores_EditProv({
     setProveedorContacto((proveedor_init_info.Contacto as never[]) || []);
   }, [proveedor_init_info]);
 
-
   const handleDelete = () => {
-    axios.post("/api/proveedores/listaProveedores", {
-      accion: "delete",
-      IdProveedor: proveedor_init_info.IdProveedor || ""
-    }).then(res => {
-      if (res.status === 200) {
-        // setOpen(false);
-        setOpenSiguientePaso(true);
-      } else {
-        alert("Error al guardar");
-      }
-    });
-  }
+    axios
+      .post("/api/proveedores/listaProveedores", {
+        accion: "delete",
+        IdProveedor: proveedor_init_info.IdProveedor || ""
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          // setOpen(false);
+          setOpenSiguientePaso(true);
+        } else {
+          alert("Error al guardar");
+        }
+      });
+  };
 
   return (
     <>

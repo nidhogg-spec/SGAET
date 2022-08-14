@@ -7,7 +7,7 @@ import {
   Box,
   Fade,
   Backdrop
-} from "@material-ui/core";
+} from "@mui/material";
 import MaterialTable from "material-table";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -169,9 +169,7 @@ export default function ModalProgramTuris_Nuevo({
       >
         <DialogContent>
           <div className={customStyle.postRegistro__container}>
-            <h4>
-              Cliente nuevo registrado. ¿Cual es su siguiente paso?
-            </h4>
+            <h4>Cliente nuevo registrado. ¿Cual es su siguiente paso?</h4>
             {/* <button
               onClick={() => {
                 if (Link_ultimoIngresado !== "") {

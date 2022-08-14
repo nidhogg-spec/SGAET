@@ -2,7 +2,7 @@
 import styles from "./Header.module.css";
 import botonStyle from "@/globalStyles/modules/boton.module.css";
 
-import { ArrowBack } from "@material-ui/icons";
+import { ArrowBack } from "@mui/icons-material";
 import Router, { useRouter } from "next/router";
 import Link from "next/link";
 import { useEffect, useState, useContext } from "react";

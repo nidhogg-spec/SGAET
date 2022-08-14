@@ -1,7 +1,7 @@
 //Package
 import styles from "./CampoEmail.module.css";
 import React from "react";
-import { Send } from "@material-ui/icons";
+import { Send } from "@mui/icons-material";
 
 //Componentes
 
@@ -12,10 +12,10 @@ const CampoEmail = (
     setDato: () => {},
     Dato: {},
     KeyDato: "nombre",
-    Reiniciar: true,
+    Reiniciar: true
   }
 ) => {
-  const value = props.Dato[props.KeyDato] || '';
+  const value = props.Dato[props.KeyDato] || "";
   if (props.ModoEdicion == true) {
     return (
       <div className={styles.divMadre}>
@@ -25,8 +25,8 @@ const CampoEmail = (
           onChange={(event) => {
             props.setDato({
               ...props.Dato,
-             [props.KeyDato]: event.target.value
-            })
+              [props.KeyDato]: event.target.value
+            });
             // let temp_dato = props.Dato;
             // temp_dato[props.KeyDato] = event.target.value;
             // props.setDato(temp_dato);
@@ -39,13 +39,11 @@ const CampoEmail = (
       <div className={styles.divMadre}>
         <span>{props.Title}</span>
         <input value={value} disabled />
-        {value!=null & value!=""?
+        {(value != null) & (value != "") ? (
           <a href={`mailto:${value}`} title="Enviar correo">
-            <Send/>
-          </a> 
-        :null
-        }
-              
+            <Send />
+          </a>
+        ) : null}
       </div>
     );
   }
