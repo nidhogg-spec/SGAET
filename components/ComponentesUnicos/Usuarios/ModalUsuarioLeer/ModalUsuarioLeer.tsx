@@ -37,8 +37,8 @@ export default function ModalUsuarioLeer({
     Apellido: "",
     Email: "",
     Password: "",
-    TipoUsuario: "",
-    Estado: ""
+    TipoUsuario: "Operaciones",
+    Estado: "Activo"
   };
 
   const router = useRouter();
@@ -59,10 +59,11 @@ export default function ModalUsuarioLeer({
 
   const onSubmit = (data: any) => {
     const actualizar = async () => {
-      const { Nombre, Apellido, Email, TipoUsuario, IdUser } = data;
+      const { Nombre, Apellido, Password, TipoUsuario, IdUser } = data;
       const usuario = {
         Nombre,
         Apellido,
+        Password,
         TipoUsuario
       };
       setOpen(false);
@@ -161,9 +162,25 @@ export default function ModalUsuarioLeer({
                       "El apellido del usuario es obligatorio"}
                   </span>
                 </div>
+                <div className={globalStyles.global_textInput_container}>
+                  <label>Contraseña</label>
+                  <input
+                    disabled={!actualizando}
+                    type="password"
+                    {...register("Password", { required: true })}
+                  ></input>
+                  <span className={globalStyles.global_error_message}>
+                    {errors.Password?.type == "required" &&
+                      "La contraseña es obligatoria"}
+                  </span>
+                </div>
                 <div className={`${globalStyles.global_textInput_container}`}>
                   <label htmlFor="">Tipo de usuario</label>
-                  <select {...register("TipoUsuario")} disabled={!actualizando}>
+                  <select
+                    {...register("TipoUsuario")}
+                    disabled={!actualizando}
+                    defaultValue="Operaciones"
+                  >
                     <option key="Administrador" value="Administrador">
                       Administrador
                     </option>
@@ -173,7 +190,7 @@ export default function ModalUsuarioLeer({
                     <option key="Marketing" value="Marketing">
                       Marketing
                     </option>
-                    <option key="Operaciones" value="Operaciones">
+                    <option key="Operaciones" value="Operaciones" selected>
                       Operaciones
                     </option>
                   </select>
