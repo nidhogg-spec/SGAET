@@ -1,27 +1,14 @@
+// Paquetes
 import React, { useState, useEffect, useContext } from "react";
-import {
-  Table,
-  Dialog,
-  DialogContent,
-  Modal,
-  Box,
-  Fade,
-  Backdrop
-} from "@material-ui/core";
-import MaterialTable from "material-table";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-
-// Estilos
-import globalStyles from "@/globalStyles/modules/global.module.css";
-import botones from "@/globalStyles/modules/boton.module.css";
-import customStyle from "./Cotizacion_defCliente.module.css";
-import { clienteProspectoInterface } from "@/utils/interfaces/db";
-import LoadingComp from "@/components/Loading/Loading";
-
-import { programaTuristicoInterface } from "@/utils/interfaces/db";
 import { useRouter } from "next/router";
 
+// Interfaces
+import {
+  clienteProspectoInterface,
+  programaTuristicoInterface
+} from "@/utils/interfaces/db";
 interface props {
   open: boolean;
   setOpen: Function;
@@ -30,7 +17,25 @@ interface props {
   clienteProspecto: clienteProspectoInterface;
   setClienteProspecto: (cliente: clienteProspectoInterface) => {};
 }
-export default function Cotizacion_defCliente({
+
+// Estilos
+import globalStyles from "@/globalStyles/modules/global.module.css";
+import botones from "@/globalStyles/modules/boton.module.css";
+import customStyle from "./Fase_1.module.css";
+
+// Componentes
+import {
+  Table,
+  Dialog,
+  DialogContent,
+  Modal,
+  Box,
+  Fade,
+  Backdrop,  
+} from "@mui/material";
+import MaterialTable from "material-table";
+import LoadingComp from "@/components/Loading/Loading";
+export default function RealizarCotizacion_Fase1 ({
   fase,
   setFase,
   clienteProspecto,
@@ -320,16 +325,16 @@ export default function Cotizacion_defCliente({
               <h2>Paso 1: Define al cliente</h2>
               <div className={`${customStyle.botones_container}`}>
                 <button
-                  className={`${botones.button} ${botones.buttonGuardar}`}
+                  className={`${botones.button} ${botones.GenerickButton} ${botones.button_border}`}
                   onClick={siguienteFase}
                 >
-                  Siguiente paso
+                  Siguiente paso →
                 </button>
                 <button
                   className={`${botones.button} ${botones.buttonGuardar}`}
                   onClick={() => setOpen(true)}
                 >
-                  Nuevo Cliente
+                  Nuevo Cliente +
                 </button>
               </div>
             </div>

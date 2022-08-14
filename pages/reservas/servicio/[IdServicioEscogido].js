@@ -11,7 +11,7 @@ import { ironOptions } from "@/utils/config";
 import AutoFormulario_v2 from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
 import Loader from "@/components/Loading/Loading";
 import axios from "axios";
-import { Modal } from "@material-ui/core";
+import { Modal } from "@mui/material";
 resetServerContext();
 const ServicioEscogido = (
   props = {

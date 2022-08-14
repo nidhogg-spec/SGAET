@@ -7,7 +7,7 @@ import {
   Box,
   Fade,
   Backdrop
-} from "@material-ui/core";
+} from "@mui/material";
 import MaterialTable from "material-table";
 import axios from "axios";
 import { useForm } from "react-hook-form";

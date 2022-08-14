@@ -18,7 +18,7 @@ import ModalOSInfo from "@/components/ComponentesUnicos/OrdenServicio/ModalOSInf
 //CSS
 import global_style from "@/globalStyles/modules/global.module.css";
 import axios from "axios";
-import { Box, Modal, Dialog, DialogContent } from "@material-ui/core";
+import { Box, Modal, Dialog, DialogContent } from "@mui/material";
 import { log } from "console";
 
 const Index = ({}) => {

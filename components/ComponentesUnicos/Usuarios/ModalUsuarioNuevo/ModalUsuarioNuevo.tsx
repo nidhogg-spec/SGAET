@@ -1,5 +1,13 @@
 import React from "react";
-import { Table, Dialog, DialogContent, Modal, Box, Fade, Backdrop } from "@material-ui/core";
+import {
+  Table,
+  Dialog,
+  DialogContent,
+  Modal,
+  Box,
+  Fade,
+  Backdrop
+} from "@mui/material";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 
@@ -12,21 +20,26 @@ import LoadingComp from "@/components/Loading/Loading";
 import { programaTuristicoInterface } from "@/utils/interfaces/db";
 import { useRouter } from "next/router";
 
+export default function ModalUsuarioNuevo({
+  open,
+  setOpen
+}: {
+  open: boolean;
+  setOpen: Function;
+}) {
+  const router = useRouter();
+  const [abrirSiguientePaso, setAbrirSiguientePaso] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [enlaceUltimoRegistro, setEnlaceUltimoRegistro] = React.useState("");
 
-export default function ModalUsuarioNuevo({ open, setOpen }: { open: boolean, setOpen: Function }) {
-    const router = useRouter();
-    const [abrirSiguientePaso, setAbrirSiguientePaso] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-    const [enlaceUltimoRegistro, setEnlaceUltimoRegistro] = React.useState("");
-
-    const defaultValues = {
-        Nombre: "",
-        Apellido: "",
-        Email: "",
-        Contrasena: "",
-        TipoUsuario: "Operaciones",
-        Estado: "Activo"
-    }
+  const defaultValues = {
+    Nombre: "",
+    Apellido: "",
+    Email: "",
+    Contrasena: "",
+    TipoUsuario: "Operaciones",
+    Estado: "Activo"
+  };
 
     const {
         register,
@@ -35,9 +48,9 @@ export default function ModalUsuarioNuevo({ open, setOpen }: { open: boolean, se
         getValues
     } = useForm({ defaultValues, mode: "onBlur" });
 
-    const handleClose = () => {
-        setOpen(false);
-    }
+  const handleClose = () => {
+    setOpen(false);
+  };
 
     const onSubmit = (data: any) => {
         const crear = async () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Dialog, DialogContent } from "@material-ui/core";
+import { Table, Dialog, DialogContent } from "@mui/material";
 import MaterialTable from "material-table";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -254,8 +254,7 @@ export default function ModalProgramTuris_Nuevo({
                 <label>Duracion Noches</label>
                 <input
                   type="number"
-                  {...register("DuracionNoche",
-                  {
+                  {...register("DuracionNoche", {
                     validate: (value: number) => {
                       const DuracionDias = parseInt(
                         getValues("DuracionDias").toString()
@@ -268,8 +267,7 @@ export default function ModalProgramTuris_Nuevo({
                         DuracionDias == val_int + 1
                       );
                     }
-                  }
-                  )}
+                  })}
                   min={0}
                 />
                 <span className={`${globalStyles.global_error_message}`}>
