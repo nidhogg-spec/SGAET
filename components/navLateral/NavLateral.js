@@ -199,14 +199,9 @@ export default function NavLateral() {
       subModulos: [
         {
           tipo: "link",
-          subModuloName: "Ingresos",
-          link: "/Finanzas/Ingresos"
-        },
-        {
-          tipo: "link",
-          subModuloName: "Egresos",
-          link: "/Finanzas/Egresos"
-        },
+          subModuloName: "Ingresos/Egresos",
+          link: "/Finanzas/IngresosEgresos"
+        }
       ]
     },
     {

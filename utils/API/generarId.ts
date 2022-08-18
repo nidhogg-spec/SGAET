@@ -78,3 +78,12 @@ export const obtenerUltimo = async ({ coleccion, keyId } : { coleccion : string,
     });
     return objetoEncontrado;    
 }
+
+
+
+
+export const obtenerMesSiguiente = (mes : string, anio : string) => {
+    const numeroMes = +mes;
+    return numeroMes === 12 ? `${+anio + 1}-01-01` : `${anio}-0${numeroMes + 1}-01`;
+}
+
