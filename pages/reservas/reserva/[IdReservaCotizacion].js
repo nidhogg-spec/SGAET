@@ -14,7 +14,7 @@ import axios from "axios";
 import Cotizacion from "../Cotizacion";
 import { resetServerContext } from "react-beautiful-dnd";
 
-import { Modal } from "@material-ui/core";
+import { Modal } from "@mui/material";
 
 // Estilos
 import styles from "@/globalStyles/DetalleReservaCotizacion.module.css";

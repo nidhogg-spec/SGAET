@@ -6,7 +6,7 @@ import botones from "@/globalStyles/modules/boton.module.css";
 import axios from "axios";
 import router from "next/router";
 import { ironOptions } from "@/utils/config";
-import { withIronSessionSsr } from "iron-session/next/dist";
+import { withIronSessionSsr } from "iron-session/next";
 import LoadingComp from "@/components/Loading/Loading";
 
 export default function loginPrincipal() {

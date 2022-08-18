@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Dialog, DialogContent } from "@material-ui/core";
+import { Table, Dialog, DialogContent } from "@mui/material";
 import MaterialTable from "material-table";
 
 import { ListarReservaProveedores_get_response } from "@/utils/interfaces/API/responsesInterface";
