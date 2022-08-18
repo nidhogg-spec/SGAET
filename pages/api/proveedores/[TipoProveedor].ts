@@ -1,4 +1,5 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
+
 import { NextApiRequest, NextApiResponse } from "next";
 import { productoHotelesInterface, productoRestaurantesInterface, productoTransportesInterface, productoGuiasInterface, productoAgenciaInterface, productoTransFerroviarioInterface, productoSitioTuristicoInterface, productoOtrosInterface, dbColeccionesFormato } from "@/utils/interfaces/db";
 import { generarIdNuevo } from "@/utils/API/generarId";

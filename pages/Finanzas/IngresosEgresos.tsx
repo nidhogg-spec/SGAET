@@ -275,9 +275,9 @@ export default function IngresosEgresos({ ingresos, egresos }: { ingresos: any[]
                     </div>
 
                 </div>
-
+                <h2>Ingresos</h2>
                 {getMaterialTable("ingresos")}
-
+                <h2>Egresos</h2>
                 {getMaterialTable("egresos")}
 
             </div>

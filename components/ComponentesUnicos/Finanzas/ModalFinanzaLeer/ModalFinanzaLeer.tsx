@@ -1,7 +1,10 @@
 import React from "react";
-import { Modal, Box, Fade, Backdrop } from "@material-ui/core";
+import { Modal, Box, Fade, Backdrop } from "@mui/material";
+
 import { useForm } from "react-hook-form";
+
 import globalStyles from "@/globalStyles/modules/global.module.css";
+
 import customStyle from "../../Clientes/ModalClientes_Leer/ModalClientes_Leer.module.css";
 
 import LoadingComp from "@/components/Loading/Loading";

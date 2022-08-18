@@ -1,9 +1,9 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
-import { NextApiRequest, NextApiResponse } from "next";
 import { reservaCotizacionInterface, dbColeccionesFormato, egresoInterface, ingresoInterface } from "@/utils/interfaces/db";
 import { construirId, generarIdNuevo, obtenerUltimo } from "@/utils/API/generarId";
 import { Collection, Db } from "mongodb";
 import { estadosReservaCotizacion } from "@/utils/dominio";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "POST") {
