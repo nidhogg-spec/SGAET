@@ -1,7 +1,8 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { NextApiRequest, NextApiResponse } from "next";
+
 import { egresoInterface, dbColeccionesFormato } from "@/utils/interfaces/db";
-import { construirId, generarIdElementoNuevo, generarIdNuevo, obtenerUltimo } from "@/utils/API/generarId";
+import { construirId, generarIdElementoNuevo, generarIdNuevo, obtenerMesSiguiente, obtenerUltimo } from "@/utils/API/generarId";
 import { Collection, Db } from "mongodb";
 
 
@@ -287,7 +288,7 @@ const obtenerEgreso = async (req: NextApiRequest, res: NextApiResponse<any>) => 
             } else if (filtro.hasOwnProperty("mes") && filtro.hasOwnProperty("anio")) {
                 const { mes, anio } = filtro;
                 const fechaInicio : string = `${anio}-${mes}-01`;
-                const fechaFinal : string = `${anio}-${mes}-${obtenerFinMes(mes, anio)}`;
+                const fechaFinal : string = obtenerMesSiguiente(mes, anio);
                 const data = await collection.find({
                     FechaCreacion: {
                         $gte: new Date(fechaInicio),
@@ -308,23 +309,4 @@ const obtenerEgreso = async (req: NextApiRequest, res: NextApiResponse<any>) => 
         }
 
     });
-}
-
-const obtenerFinMes = (mes : string, anio : string) : string => {
-    const numeroAnio : number = +anio;
-    if (["01", "03", "05", "07", "08", "10", "12"].includes(mes)) {
-        return "31";
-    } else if (["04", "06", "09", "11"].includes(mes)) {
-        return "30";
-    }
-    
-    if (mes === "02" && !(numeroAnio % 4)) {
-        if (!(numeroAnio % 100)) {
-            return !(numeroAnio % 400) ? "29" : "28";
-        } else {
-            return "29";
-        }
-    } else {
-        return "28";
-    }
 }

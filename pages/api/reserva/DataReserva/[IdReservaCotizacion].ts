@@ -1,7 +1,7 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
-import { NextApiRequest, NextApiResponse } from "next";
 import { dbColeccionesFormato } from "@/utils/interfaces/db";
 import { Collection, Db } from "mongodb";
+import { NextApiRequest, NextApiResponse } from "next";
 
 
 export default async (req : NextApiRequest, res : NextApiResponse<any>) => {

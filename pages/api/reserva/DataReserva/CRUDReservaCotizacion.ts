@@ -1,9 +1,9 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
-import { NextApiRequest, NextApiResponse } from "next";
 import { reservaCotizacionInterface, dbColeccionesFormato, egresoInterface, ingresoInterface } from "@/utils/interfaces/db";
 import { construirId, generarIdNuevo, obtenerUltimo } from "@/utils/API/generarId";
 import { Collection, Db } from "mongodb";
 import { estadosReservaCotizacion } from "@/utils/dominio";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "POST") {
@@ -24,39 +24,38 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                 break;
         }
     } else if (req.method === "GET") {
+
         await obtenerReservaCotizacion(req, res);
     }
 }
 
 
 const obtenerReservaCotizacion = async (req: NextApiRequest, res: NextApiResponse<any>) => {
+    const coleccion = dbColeccionesFormato.ReservaCotizacion;
     await connectToDatabase().then(async connectedObject => {
-        const dbo: Db = connectedObject.db;
-        obtenerReservaCotizacionCallback(dbo, (err: any, data: any) => {
-            if (err) {
-                res.status(500).json({
-                    error: true,
-                    message: "Ocurrio un error al listar"
-                });
-                return;
+        const db: Db = connectedObject.db;
+        const filtro: any = req.query;
+        const collection: Collection<any> = db.collection(coleccion.coleccion);
+        try {
+            if (filtro.hasOwnProperty("idReservaCotizacion")) {
+                const { idReservaCotizacion } = filtro;
+                const data = await collection.find({
+                    IdReservaCotizacion: idReservaCotizacion
+                }).toArray();
+                res.status(200).json({ data });
+            } else {
+                const data = await collection.find({}).toArray();
+                res.status(200).json({ data });
             }
-            // Antiguo : .json({data});
-            res.status(200).send(data);
-        });
+        } catch (error : any) {
+            res.status(500).json({
+                error: true,
+                message: `Ocurrio un error - ${error.message}`
+            });
+        } 
     });
 }
 
-const obtenerReservaCotizacionCallback = async (dbo: Db, callback: any) => {
-    const coleccion: {
-        prefijo: string,
-        coleccion: string,
-        keyId: string
-    } = dbColeccionesFormato.ReservaCotizacion;
-    const { coleccion: coleccionNombre }: { coleccion: string } = coleccion;
-    const collection: Collection<any> = dbo.collection(coleccionNombre);
-    collection.find({}).toArray(callback);
-
-}
 
 const crearReservaCotizacion = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     const coleccion: {
@@ -151,11 +150,11 @@ const eliminarReservaCotizacion = async (req: NextApiRequest, res: NextApiRespon
     });
 }
 
-const verificarEstadoCotizacion = async ({ Estado, ...reservaCotizacion }: reservaCotizacionInterface, idReservaCotizacion : string) => {
+const verificarEstadoCotizacion = async ({ Estado, ...reservaCotizacion }: reservaCotizacionInterface, idReservaCotizacion: string) => {
     const { ServicioProducto: servicios } = reservaCotizacion;
     switch (Estado) {
         case 4:
-            const filtroProveedor: { [key: string]: { precioTotal : number, idServicios : string[]} } = {};
+            const filtroProveedor: { [key: string]: { precioTotal: number, idServicios: string[] } } = {};
             for (let servicio of servicios) {
                 const { IdProveedor: idProveedor } = servicio;
                 const { PrecioConfiUnitario: precioUnitario, Cantidad: cantidad } = servicio;
@@ -172,18 +171,18 @@ const verificarEstadoCotizacion = async ({ Estado, ...reservaCotizacion }: reser
                     };
                 }
             }
-            
+
             await registrarEgreso(filtroProveedor, idReservaCotizacion);
 
             break;
         case 5:
             let precioTotal: number = 0;
-            const idServicios : string[] = []; 
+            const idServicios: string[] = [];
             for (let servicio of servicios) {
-                const { 
-                    PrecioCotiUnitario: precioUnitario, 
-                    Cantidad: cantidad, 
-                    IdServicioProducto: idServicioProducto 
+                const {
+                    PrecioCotiUnitario: precioUnitario,
+                    Cantidad: cantidad,
+                    IdServicioProducto: idServicioProducto
                 } = servicio;
                 precioTotal += precioUnitario * cantidad;
                 idServicios.push(idServicioProducto);
@@ -201,19 +200,19 @@ const verificarEstadoCotizacion = async ({ Estado, ...reservaCotizacion }: reser
     }
 }
 
-const registrarEgreso = async (proveedores : { [key: string]: { precioTotal : number, idServicios : string[]}}, idReservaCotizacion : string) => {
-    const coleccion : {
+const registrarEgreso = async (proveedores: { [key: string]: { precioTotal: number, idServicios: string[] } }, idReservaCotizacion: string) => {
+    const coleccion: {
         prefijo: string,
         coleccion: string,
         keyId: string
     } = dbColeccionesFormato.Egreso;
 
-    const nuevosEgresos : egresoInterface[] = [];
-    const hoy : Date = new Date();
+    const nuevosEgresos: egresoInterface[] = [];
+    const hoy: Date = new Date();
 
     for (let proveedor in proveedores) {
         const { precioTotal, idServicios } = proveedores[proveedor];
-        const nuevoEgreso : egresoInterface = {
+        const nuevoEgreso: egresoInterface = {
             Total: precioTotal,
             TotalNeto: 0,
             Comision: 0,
@@ -256,17 +255,17 @@ const registrarEgreso = async (proveedores : { [key: string]: { precioTotal : nu
 
 }
 
-const registrarIngreso = async ({ idReservaCotizacion, idServicios, precioTotal} : { idReservaCotizacion : string, idServicios : string[], precioTotal : number}) => {
-    const coleccion : {
+const registrarIngreso = async ({ idReservaCotizacion, idServicios, precioTotal }: { idReservaCotizacion: string, idServicios: string[], precioTotal: number }) => {
+    const coleccion: {
         prefijo: string,
         coleccion: string,
         keyId: string
     } = dbColeccionesFormato.Ingreso;
 
-    const hoy : Date = new Date();
-    const totalNeto : number = precioTotal - (precioTotal * 0.18)
+    const hoy: Date = new Date();
+    const totalNeto: number = precioTotal - (precioTotal * 0.18)
 
-    const nuevoIngreso : ingresoInterface = {
+    const nuevoIngreso: ingresoInterface = {
         Total: precioTotal,
         TotalNeto: +totalNeto.toFixed(2),
         Comision: 0,
@@ -283,10 +282,10 @@ const registrarIngreso = async ({ idReservaCotizacion, idServicios, precioTotal}
 
     console.log(nuevoIngreso);
 
-    
+
     await connectToDatabase().then(async connectedObject => {
-        const db : Db = connectedObject.db;
-        const collection : Collection<any> = db.collection(coleccion.coleccion);
+        const db: Db = connectedObject.db;
+        const collection: Collection<any> = db.collection(coleccion.coleccion);
         try {
             const result = await collection.insertOne(nuevoIngreso);
             console.log("Egreso creado a partir de una nueva reserva cotizacion ");
@@ -294,6 +293,6 @@ const registrarIngreso = async ({ idReservaCotizacion, idServicios, precioTotal}
             console.log(`Error al crear nuevo egreso - ${err}`);
         }
     });
-    
+
 }
 
