@@ -2,7 +2,7 @@ import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { egresoInterface, dbColeccionesFormato } from "@/utils/interfaces/db";
-import { construirId, generarIdElementoNuevo, generarIdNuevo, obtenerMesSiguiente, obtenerUltimo } from "@/utils/API/generarId";
+import { construirId, generarIdElementoNuevo, generarIdNuevo, obtenerMesSiguiente, obtenerUltimo, procesarFinanza } from "@/utils/API/generarId";
 import { Collection, Db } from "mongodb";
 
 
@@ -284,7 +284,8 @@ const obtenerEgreso = async (req: NextApiRequest, res: NextApiResponse<any>) => 
                         $lte: new Date(fechaFin)
                     }
                 }).toArray();
-                res.status(200).json({data});
+                const dataProcesada = procesarFinanza(data);
+                res.status(200).json({data: dataProcesada});
             } else if (filtro.hasOwnProperty("mes") && filtro.hasOwnProperty("anio")) {
                 const { mes, anio } = filtro;
                 const fechaInicio : string = `${anio}-${mes}-01`;
@@ -295,10 +296,12 @@ const obtenerEgreso = async (req: NextApiRequest, res: NextApiResponse<any>) => 
                         $lte: new Date(fechaFinal)
                     }
                 }).toArray();
-                res.status(200).json({ data });
+                const dataProcesada = procesarFinanza(data);
+                res.status(200).json({ data: dataProcesada });
             } else {
                 const data = await collection.find({}).toArray();
-                res.status(200).json({ data });
+                const dataProcesada = procesarFinanza(data);
+                res.status(200).json({ data : dataProcesada });
             }
 
         } catch (error: any) {
@@ -310,3 +313,4 @@ const obtenerEgreso = async (req: NextApiRequest, res: NextApiResponse<any>) => 
 
     });
 }
+
