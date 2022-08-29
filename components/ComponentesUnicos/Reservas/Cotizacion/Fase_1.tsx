@@ -35,16 +35,15 @@ import {
 } from "@mui/material";
 import MaterialTable from "material-table";
 import LoadingComp from "@/components/Loading/Loading";
+
 export default function RealizarCotizacion_Fase1 ({
   fase,
   setFase,
   clienteProspecto,
   setClienteProspecto
 }: props) {
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [openSiguientePaso, setOpenSiguientePaso] = useState(false);
-  const [Link_ultimoIngresado, setLink_ultimoIngresado] = useState("");
   const {
     register,
     handleSubmit,
@@ -356,7 +355,7 @@ export default function RealizarCotizacion_Fase1 ({
               />
             </div>
             <div className={`${globalStyles.global_textInput_container}`}>
-              <label>Numero de Documento</label>
+              <label>Numero de Pasajeros</label>
               <input
                 type="text"
                 disabled

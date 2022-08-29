@@ -265,6 +265,7 @@ export interface programaTuristicoInterface {
   }[];
   ServicioProducto: {
     IdServicioProducto: string;
+    IdProveedor: String;
     TipoServicio: string;
     PrecioConfiUnitario: number;
     NombreServicio: string;
@@ -333,7 +334,7 @@ export interface proveedorInterface {
 }
 // ------------------ReservaCotizacion-------------------
 export interface reservaCotizacionInterface {
-  _id: string;
+  _id?: string;
   NombreGrupo: string;
   CodGrupo: string;
   NpasajerosAdult: number | string;
@@ -345,17 +346,15 @@ export interface reservaCotizacionInterface {
   DuracionNoche: number | string;
   Localizacion: string;
   Descripcion: string;
-  Itinerario: [
-    {
-      Dia: number;
-      "Hora Inicio": string;
-      "Hora Fin": string;
-      Actividad: string;
-      tableData: {
-        id: number;
-      };
-    }
-  ];
+  Itinerario: {
+    Dia: number;
+    "Hora Inicio": string;
+    "Hora Fin": string;
+    Actividad: string;
+    tableData?: {
+      id: number;
+    };
+  }[];
   Incluye: {
     Actividad: string;
     tableData?: {
@@ -374,37 +373,35 @@ export interface reservaCotizacionInterface {
       id: number;
     };
   }[];
-  ServicioProducto: [
-    {
-      IdServicioProducto: string;
-      TipoServicio: string;
-      PrecioConfiUnitario: number;
-      NombreServicio: string;
-      Dia: number;
-      Cantidad: number;
-      PrecioCotiUnitario: number;
-      IGV: boolean;
-      PrecioCotiTotal: number;
-      PrecioConfiTotal: number;
-      Currency: "Dolar" | "Soles" | string;
-      PrecioPublicado: number;
-      tableData: {
-        id: number;
-      };
-      FechaReserva: string;
-      IdReservaCotizacion: string;
-      IdServicioEscogido: string;
-      FechaLimitePago: Date;
-      Estado: number;
-      IdProveedor: string;
-    }
-  ];
+  ServicioProducto: {
+    IdServicioProducto: string;
+    TipoServicio: string;
+    PrecioConfiUnitario: number;
+    NombreServicio: string;
+    Dia: number;
+    Cantidad: number;
+    PrecioCotiUnitario: number;
+    IGV: boolean;
+    PrecioCotiTotal: number;
+    PrecioConfiTotal: number;
+    Currency: "Dolar" | "Soles" | string;
+    PrecioPublicado: number;
+    FechaReserva: string;
+    IdReservaCotizacion: string;
+    IdServicioEscogido: string;
+    FechaLimitePago?: Date;
+    Estado: number;
+    IdProveedor: string;
+    tableData?: {
+      id: number;
+    };
+  }[];
   IdProgramaTuristico: string;
   FechaIN: string;
   Estado: number;
   NumPaxTotal: number;
   IdClienteProspecto: string;
-  IdReservaCotizacion: string;
+  IdReservaCotizacion?: string;
   ListaPasajeros?: pasajeroInterface[];
 }
 // ------------------Orden de Servicio-------------------
@@ -552,7 +549,7 @@ export enum TipoUsuario {
   Administrador = "Administrador",
   Ventas = "Ventas",
   Marketing = "Marketing",
-  Operaciones = "Operaciones",
+  Operaciones = "Operaciones"
 }
 
 export enum TipoDocumento {

@@ -17,7 +17,6 @@ import customStyle from "../../Clientes/ModalClientes_Nuevo/ModalClientes_Nuevo.
 import { userInterface } from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 
-import { programaTuristicoInterface } from "@/utils/interfaces/db";
 import { useRouter } from "next/router";
 
 export default function ModalUsuarioNuevo({
