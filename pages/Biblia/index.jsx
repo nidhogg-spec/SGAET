@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 
 import MaterialTable from "material-table";
 import Loader from "@/components/Loading/Loading";
+import Equipo from "@/components/ComponentesUnicos/Biblia/Equipo/Equipo";
+import Observacion from "@/components/ComponentesUnicos/Biblia/Observacion/Observacion";
 
 //CSS
 import global_style from "@/globalStyles/modules/global.module.css";
@@ -11,11 +13,15 @@ import styles from "@/globalStyles/Biblia.module.css";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "@/utils/config";
 
+
 const Index = ({ APIPath }) => {
   const router = useRouter();
   const [Loading, setLoading] = useState(false);
   const [DataCotizacion, setDataCotizacion] = useState([]);
   const [BibliaData_pasajeros, setBibliaData_pasajeros] = useState([]);
+
+  const [equipos, setEquipos] = useState([]);
+  const [observaciones, setObservaciones] = useState([]);
 
   useEffect(async () => {
     setLoading(true);
@@ -156,28 +162,10 @@ const Index = ({ APIPath }) => {
               data={DataCotizacion}
               title={null}
             />
-            <h2>Equipo</h2>
-            <MaterialTable
-              columns={[
-                { title: "Id", field: "IdReservaCotizacion" },
-                { title: "Nombre de equipo", field: "" },
-                { title: "Cantidad", field: "" },
-                { title: "Descripcion", field: "" }
-              ]}
-              data={DataCotizacion}
-              title={null}
-            />
-            <h2>Observaciones</h2>
-            <MaterialTable
-              columns={[
-                { title: "Id", field: "IdReservaCotizacion" },
-                { title: "Nombre", field: "" },
-                { title: "Descripcion", field: "" },
-                { title: "Otro", field: "" }
-              ]}
-              data={DataCotizacion}
-              title={null}
-            />
+            <Equipo equipos={equipos} setEquipo={setEquipos}/>
+            
+            <Observacion observaciones={observaciones} setObservaciones={setObservaciones} />
+            
           </div>
         </div>
       </div>
