@@ -1,19 +1,20 @@
 import React from "react";
 import {
-  Table,
-  Dialog,
-  DialogContent,
-  Modal,
-  Box,
-  Fade,
-  Backdrop
-} from "@mui/material";
+    Table,
+    Dialog,
+    DialogContent,
+    Modal,
+    Box,
+    Fade,
+    Backdrop
+  } from "@mui/material";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 
 import globalStyles from "@/globalStyles/modules/global.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
 import customStyle from "../../Clientes/ModalClientes_Nuevo/ModalClientes_Nuevo.module.css";
+
 import { userInterface } from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 

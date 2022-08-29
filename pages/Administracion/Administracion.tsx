@@ -12,7 +12,6 @@ import axios from "axios";
 
 import ModalUsuarioNuevo from "@/components/ComponentesUnicos/Usuarios/ModalUsuarioNuevo/ModalUsuarioNuevo";
 import ModalUsuarioLeer from "@/components/ComponentesUnicos/Usuarios/ModalUsuarioLeer/ModalUsuarioLeer";
-import router from "next/router";
 import { userInterface } from "@/utils/interfaces/db";
 
 function Administracion({ usersData }: { usersData: any }) {
