@@ -3,6 +3,7 @@ import { ironOptions } from "@/utils/config";
 import { withIronSessionSsr } from "iron-session/next";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { resetServerContext } from "react-beautiful-dnd";
 
 // Interfaces
 import {
@@ -13,6 +14,7 @@ import {
 
 // Componentes
 import Fase1 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_1";
+import Fase2 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_2";
 import Loader from "@/components/Loading/Loading";
 
 // Estilos
@@ -27,6 +29,7 @@ export default function RealizarCotizacion() {
   const [cliente, setcliente] = useState<clienteProspectoInterface>(
     {} as clienteProspectoInterface
   );
+  const [Cotizacion, setCotizacion] = useState<reservaCotizacionInterface>();
 
   return (
     <div
@@ -42,12 +45,20 @@ export default function RealizarCotizacion() {
         clienteProspecto={cliente}
         setClienteProspecto={setcliente as any}
       />
+      <Fase2
+        fase={Fase}
+        setFase={setFase}
+        Cotizacion={Cotizacion}
+        setCotizacion={setCotizacion}
+        ClienteProspecto={cliente}
+      />
     </div>
   );
 }
 
 export const getServerSideProps = withIronSessionSsr(
   async function getServerSideProps({ req, res, query }) {
+    resetServerContext();
     const user = req.session.user;
     if (!user) {
       return {

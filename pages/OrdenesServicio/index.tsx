@@ -64,7 +64,9 @@ const Index = ({}) => {
     rowData: reservaCotizacionInterface | reservaCotizacionInterface[]
   ) => {
     setLoading(true);
-    setIdReserva((rowData as reservaCotizacionInterface).IdReservaCotizacion);
+    setIdReserva(
+      (rowData as reservaCotizacionInterface).IdReservaCotizacion as string
+    );
     axios
       .get(
         "/api/reserva/ListarReservaProveedores?IdReserva=" +

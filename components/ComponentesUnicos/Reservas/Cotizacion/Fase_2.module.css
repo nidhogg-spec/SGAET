@@ -1,0 +1,22 @@
+.Fase2_titulo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.Fase2_titulo h2 {
+  margin-right: 40px;
+}
+.Formulario_Fase2 {
+}
+.botones_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: left;
+}
+.botones_container button {
+  margin: 0 10px;
+}
+.botones_container_final {
+  margin: 40px 0px;
+}
