@@ -9,7 +9,6 @@ import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "@/utils/config";
 
 //CSS
-import TablaSimple from "@/components/Formulario_V2/TablaSimple/TablaSimple";
 import formStyle from "@/globalStyles/modules/input.module.css";
 import botonStyle from "@/globalStyles/modules/boton.module.css";
 import { getOneData } from "@/utils/API/conexionMongo";

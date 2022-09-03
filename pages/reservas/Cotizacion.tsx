@@ -15,12 +15,14 @@ import {
 // Componentes
 import Fase1 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_1";
 import Fase2 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_2";
+import Fase3 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_3";
 import Loader from "@/components/Loading/Loading";
 
 // Estilos
 import styles from "@/globalStyles/Cotizacion.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
 import globalStyles from "@/globalStyles/modules/global.module.css";
+
 
 export default function RealizarCotizacion() {
   const router = useRouter();
@@ -46,6 +48,13 @@ export default function RealizarCotizacion() {
         setClienteProspecto={setcliente as any}
       />
       <Fase2
+        fase={Fase}
+        setFase={setFase}
+        Cotizacion={Cotizacion}
+        setCotizacion={setCotizacion}
+        ClienteProspecto={cliente}
+      />
+      <Fase3
         fase={Fase}
         setFase={setFase}
         Cotizacion={Cotizacion}

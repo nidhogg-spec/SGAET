@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { RegisterUser } from "@/src/UseCases/UserManagement-usecases";
+import { RegisterUser } from "@/src/UseCases/user/UserManagement-usecases";
 import {
   TipoDocumento,
   TipoUsuario,
