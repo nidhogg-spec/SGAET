@@ -23,7 +23,6 @@ import styles from "@/globalStyles/Cotizacion.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
 import globalStyles from "@/globalStyles/modules/global.module.css";
 
-
 export default function RealizarCotizacion() {
   const router = useRouter();
   const [Loading, setLoading] = useState(false);
@@ -57,7 +56,7 @@ export default function RealizarCotizacion() {
       <Fase3
         fase={Fase}
         setFase={setFase}
-        Cotizacion={Cotizacion}
+        Cotizacion={Cotizacion as reservaCotizacionInterface}
         setCotizacion={setCotizacion}
         ClienteProspecto={cliente}
       />

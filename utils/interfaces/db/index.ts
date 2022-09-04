@@ -128,8 +128,15 @@ export const dbColeccionesFormato = {
   }
 };
 
-export interface servicioEscogidoInterface {
+interface mongoBaseCollection {
   _id?: string;
+  Estado: number;
+  tableData?: {
+    id?: number;
+  };
+}
+
+export interface servicioEscogidoInterface extends mongoBaseCollection {
   IdServicioProducto: string;
   TipoServicio: "Restaurante" | string;
   PrecioConfiUnitario: number;
@@ -147,18 +154,13 @@ export interface servicioEscogidoInterface {
   IdReservaCotizacion: string;
   IdServicioEscogido: string;
   FechaLimitePago: Date;
-  Estado: number;
 }
 // ------------------Productos-------------------
-export interface productoInterface {
-  _id?: string;
+export interface productoInterface extends mongoBaseCollection {
   IdProveedor: string;
   precioPubli: number;
   precioConfi: number;
   precioCoti: number;
-  tableData?: {
-    id: number;
-  };
 }
 export interface productoAgenciaInterface extends productoInterface {
   TipoPaxs: string;
@@ -225,9 +227,7 @@ export interface productoTransportesInterface extends productoInterface {
 }
 
 // ------------------Programa Turistico-------------------
-export interface programaTuristicoInterface {
-  _id?: string;
-  Estado: number;
+export interface programaTuristicoInterface extends mongoBaseCollection {
   NombrePrograma: string;
   CodigoPrograma: string;
   Tipo: string;
@@ -284,8 +284,7 @@ export interface programaTuristicoInterface {
   IdProgramaTuristico: string;
 }
 // ------------------Proveedor-------------------
-export interface proveedorInterface {
-  _id?: string;
+export interface proveedorInterface extends mongoBaseCollection {
   tipo: string;
   RazonSocial: string;
   nombre: string;
@@ -295,7 +294,6 @@ export interface proveedorInterface {
   TipoMoneda: "Dolar" | "Soles" | string;
   NumeroPrincipal: string;
   EmailPrincipal: string;
-  Estado: number | string;
   NombreRepresentanteLegal: string;
   NroDocIdentRepresentanteLegal: string;
   EnlaceDocumento: string;
@@ -333,8 +331,7 @@ export interface proveedorInterface {
   PaginaWeb: string;
 }
 // ------------------ReservaCotizacion-------------------
-export interface reservaCotizacionInterface {
-  _id?: string;
+export interface reservaCotizacionInterface extends mongoBaseCollection {
   NombreGrupo: string;
   CodGrupo: string;
   NpasajerosAdult: number | string;
@@ -398,17 +395,14 @@ export interface reservaCotizacionInterface {
   }[];
   IdProgramaTuristico: string;
   FechaIN: string;
-  Estado: number;
   NumPaxTotal: number;
   IdClienteProspecto: string;
   IdReservaCotizacion?: string;
   ListaPasajeros?: pasajeroInterface[];
 }
 // ------------------Orden de Servicio-------------------
-export interface ordenServicioInterface {
-  _id?: string;
+export interface ordenServicioInterface extends mongoBaseCollection {
   TipoOrden: "A" | "B" | "C" | "D" | string;
-  Estado: number | string;
   CodigoOrdenServicio: string;
   IdServicioEscogido: string;
   IdOrdenServicio: string;
@@ -430,8 +424,7 @@ export interface ordenServicioDInterface extends ordenServicioInterface {
   Idioma: string;
 }
 // ------------------Ingresos-------------------
-export interface ingresoInterface {
-  _id?: string;
+export interface ingresoInterface extends mongoBaseCollection {
   Total: number;
   TotalNeto: number;
   Comision: number;
@@ -444,8 +437,7 @@ export interface ingresoInterface {
   FechaModificacion: Date;
 }
 // ------------------Egreso-------------------
-export interface egresoInterface {
-  _id?: string;
+export interface egresoInterface extends mongoBaseCollection {
   Total: number;
   TotalNeto: number;
   Comision: number;
@@ -458,8 +450,7 @@ export interface egresoInterface {
   FechaModificacion: Date;
 }
 // ------------------Evaluacion Actividad-------------------
-export interface evaluacionActividadInterface {
-  _id?: string;
+export interface evaluacionActividadInterface extends mongoBaseCollection {
   evaperiodo: {
     descripcion: string;
     valor: number | string;
@@ -475,22 +466,18 @@ export interface evaluacionActividadInterface {
   IdEvaluacionActividad: string;
 }
 // ------------------Actividad-------------------
-export interface actividadInterface {
-  _id: string;
+export interface actividadInterface extends mongoBaseCollection {
   descripcion: string;
   valor: number | string;
   criterio: string;
-  estado: number;
   IdActividad: string;
   tableData: {
     id: number;
   };
 }
 // ------------------Criterio-------------------
-export interface criterioInterface {
-  _id?: string;
+export interface criterioInterface extends mongoBaseCollection {
   criterio: string;
-  estado: number | string;
   IdCriterio: string;
   tableData: {
     id: number;
@@ -512,8 +499,7 @@ export interface clienteProspectoInterface {
   };
 }
 // ------------------Cliente Prospecto-------------------
-export interface pasajeroInterface {
-  _id?: string;
+export interface pasajeroInterface extends mongoBaseCollection {
   Nombres: string;
   Apellidos: string;
   TipoDocumento: TipoDocumento;
@@ -530,19 +516,14 @@ export interface pasajeroInterface {
   ProblemasMedicos: boolean;
   ProblemasMedicosDescripcion: string;
   NumPasajero: number;
-  tableData?: {
-    id: number;
-  };
 }
 // ------------------ Usuarios -------------------
-export interface userInterface {
-  _id?: string;
+export interface userInterface extends mongoBaseCollection {
   Nombre: string;
   Apellido: string;
   Email: string;
   Password: string;
   TipoUsuario: TipoUsuario | "";
-  Estado: "Activo" | "Inactivo" | string;
   IdUser: string;
 }
 export enum TipoUsuario {

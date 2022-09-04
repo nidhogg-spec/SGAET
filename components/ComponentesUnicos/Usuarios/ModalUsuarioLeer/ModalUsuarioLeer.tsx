@@ -40,7 +40,7 @@ export default function ModalUsuarioLeer({
     Email: "",
     Password: "",
     TipoUsuario: "Operaciones",
-    Estado: "Activo"
+    Estado: 1
   };
 
   const router = useRouter();
@@ -89,7 +89,7 @@ export default function ModalUsuarioLeer({
       Email: usuario.Email || "",
       Password: usuario.Password || "",
       TipoUsuario: usuario.TipoUsuario || "",
-      Estado: usuario.Estado || ""
+      Estado: usuario.Estado || 1
     });
   }, [usuario]);
 

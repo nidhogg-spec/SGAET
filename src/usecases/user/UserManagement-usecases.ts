@@ -1,4 +1,4 @@
-import * as UserRepository from "../../infraestructure/repository/user-repository";
+import * as UserRepository from "../../adapters/repository/user-repository";
 import jsonwebtoken from "jsonwebtoken";
 import { userInterface } from "@/utils/interfaces/db";
 import { UsesCase_to_API_response } from "@/utils/interfaces/API/responsesInterface";

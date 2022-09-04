@@ -12,7 +12,7 @@ interface User {
   Apellido: string;
   Email: string;
   TipoUsuario: TipoUsuario | "";
-  Estado: "Activo" | "Inactivo" | string;
+  Estado: 1 | 0;
   IdUser: string;
 }
 

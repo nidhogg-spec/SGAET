@@ -5,3 +5,5 @@
 ###
 GET {{url}}/api/Cotizacion/ObtenerTodosServicios
 
+###
+get  {{url}}/api/reserva/DataReserva/CRUDReservaCotizacion
