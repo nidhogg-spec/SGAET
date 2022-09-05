@@ -1,4 +1,3 @@
-import { myMongoDB } from "@/src/infraestructure/mongoDb/mongoDb";
 import {
   dbColeccionesFormato,
   reservaCotizacionInterface
