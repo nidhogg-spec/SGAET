@@ -38,7 +38,7 @@ export default function ModalUsuarioNuevo({
     Email: "",
     Contrasena: "",
     TipoUsuario: "Operaciones",
-    Estado: "Activo"
+    Estado: 1
   };
 
     const {
@@ -144,9 +144,9 @@ export default function ModalUsuarioNuevo({
                                 </div>
                                 <div className={`${globalStyles.global_textInput_container}`}>
                                     <label htmlFor="">Estado de usuario</label>
-                                    <select {...register("Estado")} defaultValue="Activo">
-                                        <option selected key="Activo" value="Activo" >Activo</option>
-                                        <option key="Inactivo" value="Inactivo">Inactivo</option>
+                                    <select {...register("Estado")} defaultValue={1}>
+                                        <option selected key="Activo" value={1} >Activo</option>
+                                        <option key="Inactivo" value={0}>Inactivo</option>
                                     </select>
                                     <span className={`${globalStyles.global_error_message}`}></span>
                                 </div>

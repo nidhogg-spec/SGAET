@@ -116,7 +116,8 @@ export default function LlenadoPasajeros({
           NumPasajero: index + 1,
           RegimenAlimenticioEspecial:
             pasajero.RegimenAlimenticioDescripcion == "NO_ESPECIFICO",
-          ProblemasMedicos: pasajero.ProblemasMedicosDescripcion != ""
+          ProblemasMedicos: pasajero.ProblemasMedicosDescripcion != "",
+          Estado: 1
         };
       }
     );
@@ -477,7 +478,8 @@ export const getServerSideProps: GetServerSideProps = async ({
             RegimenAlimenticioEspecial: false,
             ProblemasMedicos: false,
             ProblemasMedicosDescripcion: "",
-            NumPasajero: index + 1
+            NumPasajero: index + 1,
+            Estado: 1
           });
         }
       } else {

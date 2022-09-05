@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 import { ironOptions, LONG_SECRET_KEY } from "@/utils/config";
-import { GetUserById } from "@/src/UseCases/UserManagement-usecases";
+import { GetUserById } from "@/src/usecases/user/UserManagement-usecases";
 import { userInterface } from "@/utils/interfaces/db";
 
 export default withIronSessionApiRoute(async function loginRoute(req, res) {

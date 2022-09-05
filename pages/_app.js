@@ -1,13 +1,13 @@
 import '../styles/globals.css'
 import '../styles/global_var.css'
-import Header from "../components/header/Header"
-import NavLateral from "../components/navLateral/NavLateral"
+import Header from "../components/ComponentesReutilizables/header/Header"
+import NavLateral from "../components/ComponentesReutilizables/navLateral/NavLateral"
 import Router from "next/router";
 import { useState } from 'react'
 import Head from 'next/head'
 import { AppWrapper } from '@/components/Contexto'
 import AppLoader from '@/components/Loading/Loading'
-import PublicHeader from "../components/PublicHeader/PublicHeader"
+import PublicHeader from "../components/ComponentesReutilizables/PublicHeader/PublicHeader"
 
 //this import is using the next.config,js how we see we aren't specification the exact path
 

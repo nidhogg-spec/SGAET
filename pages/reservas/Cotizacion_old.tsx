@@ -7,13 +7,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "@/utils/config";
 
 //Componentes
-import CampoTexto from "@/components/Formulario_V2/CampoTexto/CampoTexto";
-import CampoFecha from "@/components/Formulario_V2/CampoFecha/CampoFecha";
 import CampoGranTexto from "@/components/Formulario_V2/CampoGranTexto/CampoGranTexto";
-// import Selector from "@/components/Formulario/Selector/Selector";
-import CampoNumero from "@/components/Formulario_V2/CampoNumero/CampoNumero";
-// import CampoMoney from "@/components/Formulario/CampoMoney/CampoMoney";
-// import BotonAnadir from "@/components/BotonAnadir/BotonAnadir";
 import TablaSimple from "@/components/Formulario_V2/TablaSimple/TablaSimple";
 import TablaServicioCotizacion from "@/components/Formulario/CustomComponenteFormu/TablaServicioCotizacion/TablaServicioCotizacion";
 import Loader from "@/components/Loading/Loading";

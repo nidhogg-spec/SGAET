@@ -1,6 +1,5 @@
 import { createDocument, updateDocument } from "@/utils/API/conexionMongo";
 import { generarIdElementoNuevo } from "@/utils/API/generarId";
-import { CRUD_log } from "../../../src/FuncionalidadInterna/Log/CRUD";
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { NextApiRequest, NextApiResponse } from "next";
 
