@@ -7,6 +7,7 @@ import customStyle from "../../Clientes/ModalClientes_Nuevo/ModalClientes_Nuevo.
 import { useRouter } from "next/router";
 import LoadingComp from "@/components/Loading/Loading";
 import { v4 } from "uuid";
+import equipoForm from "@/components/ComponentesUnicos/Biblia/Equipo/equipoForm.module.css";
 
 export default function ModalEquipoNuevo({open, setOpen, agregarEquipo } : {open : boolean, setOpen : Function, agregarEquipo : Function }) {
     const router = useRouter();
@@ -18,7 +19,7 @@ export default function ModalEquipoNuevo({open, setOpen, agregarEquipo } : {open
         Descripcion: "",
         Cantidad: 0
     };
-    const { register, handleSubmit, formState: { errors }} = useForm({ defaultValues, mode: "onBlur"});
+    const { register, reset, handleSubmit, formState: { errors }} = useForm({ defaultValues, mode: "onBlur"});
 
     const handleClose = () => {
         setOpen(false);
@@ -34,6 +35,12 @@ export default function ModalEquipoNuevo({open, setOpen, agregarEquipo } : {open
         setOpen(false);
         setLoading(false);
     }
+
+    React.useEffect(() => {
+        if (open) {
+            reset({ NombreEquipo: "", Descripcion: "", Cantidad: 0 });
+        }
+    }, [open]);
     
     return (
         <>
@@ -41,8 +48,7 @@ export default function ModalEquipoNuevo({open, setOpen, agregarEquipo } : {open
             <Dialog
                 open={abrirSiguientePaso}
                 onClose={() => router.reload()}
-                fullWidth
-                maxWidth="xs">
+                maxWidth="lg">
                     <DialogContent>
                         <div>
                             <h4>Equipo registrado</h4>
@@ -58,16 +64,11 @@ export default function ModalEquipoNuevo({open, setOpen, agregarEquipo } : {open
                 BackdropProps={{ timeout: 5000 }}
             >
                 <Fade in={open}>
-                    <Box className={globalStyles.modal__MainContainer}>
+                    <Box className={`${globalStyles.modal__MainContainer} ${equipoForm.form__container}`}>
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className={globalStyles.title_and_buttons_container}> 
-                                <h1 className={customStyle.title} >Nuevo Equipo</h1>
-                            </div>
+                            
                             <div>
-                                <button className={`${botones.button} ${botones.buttonGuardar}`} type="submit">Guardar</button>
-                            </div>
-                            <div>
-                                <h2>Datos de Equipo</h2>
+                                <h2 className={`${globalStyles.global_textInput_container}`}>Datos de Equipo</h2>
                                 <div className={`${globalStyles.global_textInput_container}`}>
                                     <label>Nombre de Equipo</label>
                                     <input type="text" {...register("NombreEquipo", { required: true})}></input>
@@ -85,7 +86,7 @@ export default function ModalEquipoNuevo({open, setOpen, agregarEquipo } : {open
                                 </div>
                             </div>
                             <div className={`${customStyle.botones_container} ${customStyle.botones_container_final}`}>
-                                <button className={`${botones.button} ${botones.buttonGuardar}`} type="submit">Guardar</button>
+                                <button className={`${botones.button} ${botones.buttonGuardar} ${equipoForm.btn__guardar}`} type="submit">Guardar</button>
                             </div>
                         </form>
 
