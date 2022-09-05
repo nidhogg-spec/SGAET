@@ -1,5 +1,5 @@
 // import { NextApiRequest, NextApiResponse } from "next";
-// import { LoginUser } from "@/src/UseCases/UserManagement-usecases";
+// import { LoginUser } from "@/src/usecases/UserManagement-usecases";
 
 // export default async (req: NextApiRequest, res: NextApiResponse) => {
 //   switch (req.method) {
@@ -27,7 +27,7 @@
 
 import { withIronSessionApiRoute } from "iron-session/next";
 import { LONG_SECRET_KEY } from "@/utils/config";
-import { LoginUserReturnUser } from "@/src/UseCases/UserManagement-usecases";
+import { LoginUserReturnUser } from "@/src/usecases/user/UserManagement-usecases";
 
 export default withIronSessionApiRoute(
   async function loginRoute(req, res) {

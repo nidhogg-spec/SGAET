@@ -15,6 +15,7 @@ import {
 // Componentes
 import Fase1 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_1";
 import Fase2 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_2";
+import Fase3 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_3";
 import Loader from "@/components/Loading/Loading";
 
 // Estilos
@@ -49,6 +50,13 @@ export default function RealizarCotizacion() {
         fase={Fase}
         setFase={setFase}
         Cotizacion={Cotizacion}
+        setCotizacion={setCotizacion}
+        ClienteProspecto={cliente}
+      />
+      <Fase3
+        fase={Fase}
+        setFase={setFase}
+        Cotizacion={Cotizacion as reservaCotizacionInterface}
         setCotizacion={setCotizacion}
         ClienteProspecto={cliente}
       />

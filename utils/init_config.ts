@@ -30,7 +30,7 @@ export default function InitConfiguration() {
         Password: "root",
         Nombre: "root",
         Apellido: "root",
-        Estado: "Activo",
+        Estado: 1,
         TipoUsuario: TipoUsuario.Administrador
       };
       await collection.insertOne(rooUser);

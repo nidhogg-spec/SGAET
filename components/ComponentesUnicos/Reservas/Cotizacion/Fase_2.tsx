@@ -33,13 +33,13 @@ import {
 import MaterialTable from "material-table";
 import LoadingComp from "@/components/Loading/Loading";
 
-export default ({
+export default function Fase2({
   fase,
   setFase,
   Cotizacion,
   setCotizacion,
   ClienteProspecto
-}: props) => {
+}: props) {
   const CotizacionTemp = useRef<reservaCotizacionInterface | undefined>(
     undefined
   );
@@ -197,4 +197,4 @@ export default ({
       )}
     </>
   );
-};
+}

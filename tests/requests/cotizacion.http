@@ -1,0 +1,9 @@
+@dominio = localhost
+@port = 3000
+@protocol = http
+@url = {{protocol}}://{{dominio}}:{{port}}
+###
+GET {{url}}/api/Cotizacion/ObtenerTodosServicios
+
+###
+get  {{url}}/api/reserva/DataReserva/CRUDReservaCotizacion

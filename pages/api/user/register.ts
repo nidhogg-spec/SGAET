@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { RegisterUser } from "@/src/UseCases/UserManagement-usecases";
+import { RegisterUser } from "@/src/usecases/user/UserManagement-usecases";
 import {
   TipoDocumento,
   TipoUsuario,
@@ -39,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         Nombre: req.body.Nombre,
         Apellido: req.body.Apellido,
         TipoUsuario: req.body.TipoUsuario,
-        Estado: "Activo"
+        Estado: 1
       };
 
       try {

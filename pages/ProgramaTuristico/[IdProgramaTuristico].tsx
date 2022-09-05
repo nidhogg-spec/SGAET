@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "./DetalleProgramaTuristico.module.css";
-import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
-import { MongoClient } from "mongodb";
 import axios from "axios";
 import { useRouter } from "next/router";
-import TablaProgramaServicio_v2 from "@/components/Formulario/CustomComponenteFormu/TablaProgramaServicio_v2/TablaProgramaServicio_v2";
 import MaterialTable from "material-table";
 import { resetServerContext } from "react-beautiful-dnd";
 import TablaProgramaServicio_v3 from "@/components/ComponentesUnicos/ProgramaTuristico/TablaProgramaServicio_v3/TablaProgramaServicio_v3";
@@ -255,7 +252,7 @@ export const getServerSideProps = withIronSessionSsr(
       };
     }
     //---------------------------------------------------------------------------------------------------------------------
-
+    resetServerContext();
     const IdProgramaTuristico = query.IdProgramaTuristico;
 
     let [ProgramaTuristico, resultProveedores]: any[] = [];

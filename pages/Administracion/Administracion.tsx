@@ -52,8 +52,8 @@ function Administracion({ usersData }: { usersData: any }) {
       title: "Estado",
       field: "Estado",
       lookup: {
-        Activo: "Activo",
-        Inactivo: "Inactivo"
+        Activo: 1,
+        Inactivo: 0
       }
     }
   ];
@@ -92,7 +92,7 @@ function Administracion({ usersData }: { usersData: any }) {
           Email,
           Password,
           TipoUsuario,
-          Estado: "Inactivo"
+          Estado: 0
         }
       });
     };
