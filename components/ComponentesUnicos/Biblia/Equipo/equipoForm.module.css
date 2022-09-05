@@ -1,0 +1,14 @@
+.form__container {
+    display: flex;
+    justify-content: center;
+    max-width: max-content;
+    max-height: 75%;
+}
+
+.btn__guardar {
+    cursor:pointer;
+}
+.btn__guardar:hover {
+    color: white;
+    background-color: #3e8a3e;
+}
