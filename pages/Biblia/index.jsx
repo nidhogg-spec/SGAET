@@ -12,6 +12,7 @@ import styles from "@/globalStyles/Biblia.module.css";
 
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "@/utils/config";
+import axios from "axios";
 
 const columnasReserva = [
   { title: "Id", field: "IdReservaCotizacion", hidden: true },
@@ -20,6 +21,30 @@ const columnasReserva = [
   { title: "Nombre del programa", field: "NombrePrograma" },
   { title: "Tipo", field: "Tipo" },
   { title: "Fecha IN", field: "FechaIN" }
+];
+
+const columnasTransporte = [
+  { title: "IdServicioProducto", field: "IdServicioProducto", hidden: true },
+  { title: "Nombre", field: "NombreServicio" },
+  { title: "Cantidad", field: "Cantidad" },
+  { title: "Fecha de reserva", field: "FechaReserva" },
+  { title: "Fecha limite de pago", field: "FechaLimitePago"} 
+];
+
+const columnasBriefing = [
+  { title: "Nombre", field: "NombreServicio" },
+  { title: "Cantidad", field: "Cantidad" },
+  { title: "Fecha de reserva", field: "FechaReserva" },
+  { title: "Fecha limite de pago", field: "FechaLimitePago" }
+];
+
+const columnasCliente = [
+  { title: "Nombre completo", field: "NombreCompleto" },
+  { title: "Tipo de cliente", field: "TipoCliente" },
+  { title: "Tipo de documento", field: "TipoDocumento" },
+  { title: "Numero de documento", field: "NroDocumento" },
+  { title: "Celular", field: "Celular" },
+  { title: "Email", field: "Email" }
 ];
 
 
@@ -33,6 +58,9 @@ const Index = ({ APIPath }) => {
   const [equipos, setEquipos] = useState([]);
   const [observaciones, setObservaciones] = useState([]);
 
+  const [transportes, setTransportes] = useState([]);
+  const [briefing, setBriefing] = useState([]);
+  const [cliente, setCliente] = useState([]);
   const infoSection = React.useRef();
 
   useEffect(() => {
@@ -45,16 +73,35 @@ const Index = ({ APIPath }) => {
     setLoading(false);
   }, []);
 
+  const obtenerTransportes = async (servicios) => {
+    const productosTransportes = servicios.filter((servicio) => servicio.IdServicioProducto.startsWith("PT") || servicio.IdServicioProducto.startsWith("PF"));
+    setTransportes(productosTransportes);
+  }
+
+  const obtenerBriefing = async (servicios) => {
+    const productosBriefing = servicios.filter((servicio) => servicio.IdServicioProducto.startsWith("PR"));
+    setBriefing(productosBriefing);
+  }
+
+  const obtenerCliente = async (idCliente) => {
+    const params = { cliente: idCliente };
+    const resultado = await axios.get(`${APIPath}/api/cliente/clientes`, { params });
+    setCliente(resultado.data.Cliente);
+  }
+
   const accionesReserva = [
     {
       icon: () => <img src="/resources/remove_red_eye-24px.svg" />,
       tooltip: "Ver mas datos",
       onClick: async (event, rowData) => {
         setLoading(true);
+
+        const { ServicioProducto : servicios, IdClienteProspecto } = rowData;
+        await obtenerCliente(IdClienteProspecto);
+        await obtenerTransportes(servicios);
+        await obtenerBriefing(servicios);
+
         setSeleccion(true);
-        await new Promise(resolve => {
-          setTimeout(resolve, 1500);
-        });
         setBibliaData_pasajeros([]);
         setLoading(false);
       }
@@ -97,44 +144,8 @@ const Index = ({ APIPath }) => {
             <br />
             <h2>Lista de clientes</h2>
             <MaterialTable
-              columns={[
-                { title: "Id", field: "" },
-                { title: "Nombres", field: "" },
-                { title: "Apellidos", field: "" },
-                {
-                  title: "Edad",
-                  field: ""
-                },
-                {
-                  title: "Numero de Pasajeros",
-                  field: ""
-                },
-                {
-                  title: "Nacionalidad",
-                  field: ""
-                },
-                {
-                  title: "Fecha de NAcimiento",
-                  field: ""
-                },
-                {
-                  title: "Etapa",
-                  field: ""
-                },
-                {
-                  title: "Vegetariano",
-                  field: ""
-                },
-                {
-                  title: "Alergia",
-                  field: ""
-                },
-                {
-                  title: "Noche extra",
-                  field: ""
-                }
-              ]}
-              data={BibliaData_pasajeros}
+              columns={columnasCliente}
+              data={cliente}
               title={null}
             />
             <div className={styles.second__biblia_data_container}>
@@ -155,27 +166,16 @@ const Index = ({ APIPath }) => {
                 />
                 <h2>Transporte</h2>
                 <MaterialTable
-                  columns={[
-                    { title: "Id", field: "IdReservaCotizacion" },
-                    { title: "Inicio", field: "" },
-                    { title: "Llegada", field: "" },
-                    { title: "Fecha y Hora", field: "" }
-                  ]}
-                  data={DataCotizacion}
+                  columns={columnasTransporte}
+                  data={transportes}
                   title={null}
                 />
               </div>
               <div>
                 <h2>Briefing</h2>
                 <MaterialTable
-                  columns={[
-                    { title: "Id", field: "IdReservaCotizacion" },
-                    { title: "Inicio", field: "" },
-                    { title: "Llegada", field: "" },
-                    { title: "Tipo", field: "" },
-                    { title: "Fecha y Hora", field: "" }
-                  ]}
-                  data={DataCotizacion}
+                  columns={columnasBriefing}
+                  data={briefing}
                   title={null}
                 />
                 <Equipo equipos={equipos} setEquipo={setEquipos} />
