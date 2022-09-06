@@ -4,7 +4,6 @@ import { clienteProspectoInterface, dbColeccionesFormato } from "@/utils/interfa
 import { generarIdNuevo } from "@/utils/API/generarId";
 import { Collection, Db, MongoError } from "mongodb";
 
-
 export default async (req: NextApiRequest, res: NextApiResponse<any>) => {
   if (req.method === "POST") {
     switch (req.body.accion) {
@@ -164,10 +163,20 @@ const obtenerCliente = async (req: NextApiRequest, res: NextApiResponse<any>) =>
   await connectToDatabase().then(async connectedObject => {
     const db: Db = connectedObject.db;
     const collection: Collection<any> = db.collection(coleccion.coleccion);
-    const result = await collection.find({}).toArray();
-    res.status(200).json({
-      ListaClientes: result
-    });
+    const filtro = req.query;
+    if (filtro.hasOwnProperty("cliente")) {
+      const result = await collection.find({
+        IdClienteProspecto: filtro.cliente
+      }).toArray();
+      res.status(200).json({
+        Cliente: result
+      });
+    } else {
+      const result = await collection.find({}).toArray();
+      res.status(200).json({
+        ListaClientes: result
+      });
+    }
     res.end();
   })
 }
