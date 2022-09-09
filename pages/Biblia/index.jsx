@@ -13,6 +13,7 @@ import styles from "@/globalStyles/Biblia.module.css";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "@/utils/config";
 import axios from "axios";
+import ModalPasajeros from "@/components/ComponentesUnicos/Biblia/Pasajeros/ModalPasajero";
 
 const columnasReserva = [
   { title: "Id", field: "IdReservaCotizacion", hidden: true },
@@ -38,29 +39,29 @@ const columnasBriefing = [
   { title: "Fecha limite de pago", field: "FechaLimitePago" }
 ];
 
-const columnasCliente = [
-  { title: "Nombre completo", field: "NombreCompleto" },
-  { title: "Tipo de cliente", field: "TipoCliente" },
+const columnasPasajero = [
+  { title: "Nombre", field: "Nombre" },
+  { title: "Apellido", field: "Apellido" },
   { title: "Tipo de documento", field: "TipoDocumento" },
   { title: "Numero de documento", field: "NroDocumento" },
+  { title: "Sexo", field: "Sexo" },
   { title: "Celular", field: "Celular" },
-  { title: "Email", field: "Email" }
+  { title: "Nacionalidad", field: "Nacionalidad" }
 ];
 
 
 const Index = ({ APIPath }) => {
-  const router = useRouter();
+  const [display, setDisplay] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [seleccion, setSeleccion] = useState(false);
   const [DataCotizacion, setDataCotizacion] = useState([]);
-  const [BibliaData_pasajeros, setBibliaData_pasajeros] = useState([]);
 
   const [equipos, setEquipos] = useState([]);
   const [observaciones, setObservaciones] = useState([]);
-
   const [transportes, setTransportes] = useState([]);
   const [briefing, setBriefing] = useState([]);
-  const [cliente, setCliente] = useState([]);
+  const [pasajeros, setPasajeros] = useState([]);
+  const [pasajeroSeleccionado, setPasajeroSeleccionado] = useState(null);
   const infoSection = React.useRef();
 
   useEffect(() => {
@@ -69,24 +70,18 @@ const Index = ({ APIPath }) => {
       .then((r) => r.json())
       .then((data) => {
         setDataCotizacion(data.Cotizaciones);
+        setLoading(false);
       });
-    setLoading(false);
   }, []);
 
-  const obtenerTransportes = async (servicios) => {
+  const obtenerTransportes = (servicios) => {
     const productosTransportes = servicios.filter((servicio) => servicio.IdServicioProducto.startsWith("PT") || servicio.IdServicioProducto.startsWith("PF"));
     setTransportes(productosTransportes);
   }
 
-  const obtenerBriefing = async (servicios) => {
+  const obtenerBriefing = (servicios) => {
     const productosBriefing = servicios.filter((servicio) => servicio.IdServicioProducto.startsWith("PR"));
     setBriefing(productosBriefing);
-  }
-
-  const obtenerCliente = async (idCliente) => {
-    const params = { cliente: idCliente };
-    const resultado = await axios.get(`${APIPath}/api/cliente/clientes`, { params });
-    setCliente(resultado.data.Cliente);
   }
 
   const accionesReserva = [
@@ -95,15 +90,24 @@ const Index = ({ APIPath }) => {
       tooltip: "Ver mas datos",
       onClick: async (event, rowData) => {
         setLoading(true);
-
-        const { ServicioProducto : servicios, IdClienteProspecto } = rowData;
-        await obtenerCliente(IdClienteProspecto);
-        await obtenerTransportes(servicios);
-        await obtenerBriefing(servicios);
-
+        const { ServicioProducto : servicios, listaPasajeros } = rowData;
+        setPasajeros(listaPasajeros);
+        obtenerTransportes(servicios);
+        obtenerBriefing(servicios);
+        await new Promise(resolve => setTimeout(resolve, 250));
         setSeleccion(true);
-        setBibliaData_pasajeros([]);
         setLoading(false);
+      }
+    }
+  ]
+
+  const accionesPasajeros = [
+    {
+      icon: () => <img src="/resources/remove_red_eye-24px.svg" />,
+      tooltip: "Ver mas detalles",
+      onClick: async (event, rowData) => {
+        setPasajeroSeleccionado(rowData);
+        setDisplay(true);
       }
     }
   ]
@@ -142,10 +146,17 @@ const Index = ({ APIPath }) => {
           <div className={global_style.main_work_space_container}>
             <h1>Datos de Reserva</h1>
             <br />
-            <h2>Lista de clientes</h2>
+            <h2>Lista de pasajeros</h2>
+            <ModalPasajeros
+              open={display}
+              setOpen={setDisplay}
+              pasajero={pasajeroSeleccionado}
+            />
             <MaterialTable
-              columns={columnasCliente}
-              data={cliente}
+              columns={columnasPasajero}
+              data={pasajeros}
+              actions={accionesPasajeros}
+              options={{ actionsColumnIndex: -1 }}
               title={null}
             />
             <div className={styles.second__biblia_data_container}>
