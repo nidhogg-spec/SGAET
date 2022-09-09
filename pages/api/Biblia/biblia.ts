@@ -54,7 +54,8 @@ const listarReserva = async (req : NextApiRequest, res : NextApiResponse<any>) =
                     Localizacion: 1,
                     Estado: 1,
                     ServicioProducto: 1,
-                    IdClienteProspecto: 1
+                    IdClienteProspecto: 1,
+                    listaPasajeros: 1
                 }
             }).toArray();
             res.status(200).json({
