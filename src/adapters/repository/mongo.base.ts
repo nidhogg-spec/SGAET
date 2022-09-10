@@ -33,11 +33,11 @@ export abstract class mongoBaseRepository<T extends { _id?: any }> {
       };
       for (const iterator of estado) {
         // @ts-ignore
-        filter.$or?.push({ estado: iterator });
+        filter.$or?.push({ Estado: iterator });
       }
     } else
       filter = {
-        estado: 0
+        Estado: estado as number
       } as FilterQuery<T>;
     const res = collection.find(filter);
     return res.toArray();
@@ -66,7 +66,7 @@ export abstract class mongoBaseRepository<T extends { _id?: any }> {
   async insertOne(data: T) {
     const collection = await this.getMongoCollectionClient(this.collection);
     const res = await collection.insertOne(data as OptionalId<T>);
-    return res;
+    return res.ops[0] ? res.ops[0] : null;
   }
   async updateOne(id: string, idKey: string, data: T) {
     const collection = await this.getMongoCollectionClient(this.collection);
@@ -75,7 +75,7 @@ export abstract class mongoBaseRepository<T extends { _id?: any }> {
     filter[idKey] = id;
     //@ts-ignore
     const res = await collection.updateOne(filter, data as OptionalId<T>);
-    return res;
+    return res.result.ok;
   }
 
   async softDeleteOne(id: string, idKey: string) {
@@ -86,10 +86,11 @@ export abstract class mongoBaseRepository<T extends { _id?: any }> {
     //@ts-ignore
     const res = await collection.updateOne(filter, {
       $set: {
-        estado: 0
+        Estado: 0
       }
     });
-    return res;
+
+    return res ? res : null;
   }
 
   async reactiveOne(id: string, idKey: string) {
@@ -100,7 +101,7 @@ export abstract class mongoBaseRepository<T extends { _id?: any }> {
     //@ts-ignore
     const res = await collection.updateOne(filter, {
       $set: {
-        estado: 1
+        Estado: 1
       }
     });
     return res;

@@ -1,6 +1,6 @@
 import { withIronSessionApiRoute } from "iron-session/next";
 import { ironOptions, LONG_SECRET_KEY } from "@/utils/config";
-import { GetUserById } from "@/src/usecases/user/UserManagement-usecases";
+import { GetUserById } from "@/src/application/usecases/user/UserManagement-usecases";
 import { TipoUsuario, userInterface } from "@/utils/interfaces/db";
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
 import { Collection, Db } from "mongodb";
