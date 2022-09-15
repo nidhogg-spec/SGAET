@@ -49,6 +49,14 @@ const columnasPasajero = [
   { title: "Nacionalidad", field: "Nacionalidad" }
 ];
 
+const columnasEntrada = [
+  { title: "Nombre", field: "NombreServicio" },
+  { title: "Dia", field: "Dia" },
+  { title: "Cantidad", field: "Cantidad" },
+  { title: "Fecha de reserva", field: "FechaReserva" },
+  { title: "Fecha limite de pago", field: "FechaLimitePago" }
+];
+
 
 const Index = ({ APIPath }) => {
   const [display, setDisplay] = useState(false);
@@ -61,7 +69,9 @@ const Index = ({ APIPath }) => {
   const [transportes, setTransportes] = useState([]);
   const [briefing, setBriefing] = useState([]);
   const [pasajeros, setPasajeros] = useState([]);
+  const [entradas, setEntradas] = useState([]);
   const [pasajeroSeleccionado, setPasajeroSeleccionado] = useState(null);
+
   const infoSection = React.useRef();
 
   useEffect(() => {
@@ -84,6 +94,11 @@ const Index = ({ APIPath }) => {
     setBriefing(productosBriefing);
   }
 
+  const obtenerEntradas = (servicios) => {
+    const productosEntrada = servicios.filter(servicio => servicio.IdServicioProducto.startsWith("PS"));
+    setEntradas(productosEntrada);
+  }
+
   const accionesReserva = [
     {
       icon: () => <img src="/resources/remove_red_eye-24px.svg" />,
@@ -94,6 +109,7 @@ const Index = ({ APIPath }) => {
         setPasajeros(listaPasajeros);
         obtenerTransportes(servicios);
         obtenerBriefing(servicios);
+        obtenerEntradas(servicios);
         await new Promise(resolve => setTimeout(resolve, 250));
         setSeleccion(true);
         setLoading(false);
@@ -163,16 +179,8 @@ const Index = ({ APIPath }) => {
               <div>
                 <h2>Entradas</h2>
                 <MaterialTable
-                  columns={[
-                    { title: "Id", field: "IdReservaCotizacion" },
-                    { title: "Nombre Entrada", field: "" },
-                    { title: "Fecha", field: "" },
-                    {
-                      title: "Codigo",
-                      field: ""
-                    }
-                  ]}
-                  data={DataCotizacion}
+                  columns={columnasEntrada}
+                  data={entradas}
                   title={null}
                 />
                 <h2>Transporte</h2>
