@@ -16,6 +16,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { ReservaCotizacionRepository } from "@/src/adapters/repository/reservaCotizacion.repository";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const { query : { idReservaCotizacion }} = req;
   if (req.method === "POST") {
     switch (req.body.accion) {
       case "create":
@@ -42,34 +43,54 @@ const obtenerReservaCotizacion = async (
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) => {
-  // const coleccion = dbColeccionesFormato.ReservaCotizacion;
-  // await connectToDatabase().then(async connectedObject => {
-  //     const db: Db = connectedObject.db;
-  //     const filtro: any = req.query;
-  //     const collection: Collection<any> = db.collection(coleccion.coleccion);
-  //     try {
-  //         if (filtro.hasOwnProperty("idReservaCotizacion")) {
-  //             const { idReservaCotizacion } = filtro;
-  //             const data = await collection.find({
-  //                 IdReservaCotizacion: idReservaCotizacion
-  //             }).toArray();
-  //             res.status(200).json({ data });
-  //         } else {
-  //             const data = await collection.find({}).toArray();
-  //             res.status(200).json({ data });
-  //         }
-  //     } catch (error : any) {
-  //         res.status(500).json({
-  //             error: true,
-  //             message: `Ocurrio un error - ${error.message}`
-  //         });
-  //     }
-  // });
+   const coleccion = dbColeccionesFormato.ReservaCotizacion;
+   await connectToDatabase().then(async connectedObject => {
+       const db: Db = connectedObject.db;
+       const filtro: any = req.query;
+       const collection: Collection<any> = db.collection(coleccion.coleccion);
+       try {
+           if (filtro.hasOwnProperty("idReservaCotizacion")) {
+               const { idReservaCotizacion } = filtro;
+               const data = await collection.find({
+                   IdReservaCotizacion: idReservaCotizacion
+               }).toArray();
+               res.status(200).json({ data });
+           } else {
+               const data = await collection.find({}).toArray();
+               res.status(200).json({ data });
+           }
+       } catch (error : any) {
+           res.status(500).json({
+               error: true,
+               message: `Ocurrio un error - ${error.message}`
+           });
+       }
+  });
 
-  const reservaCotizacionRepository = new ReservaCotizacionRepository();
+  /* const reservaCotizacionRepository = new ReservaCotizacionRepository();
   const result = await reservaCotizacionRepository.find("all");
-  res.status(200).send(result);
+  res.status(200).send(result); */
 };
+
+/* const obtenerUnaReservaCotizacion = async(req : NextApiRequest, res : NextApiResponse<any>) => {
+  const coleccion = dbColeccionesFormato.ReservaCotizacion;
+  await connectToDatabase().then(async connectedObject => {
+    const db : Db = connectedObject.db;
+    const collection : Collection<any> = db.collection(coleccion.coleccion);
+    const { query : { idReservaCotizacion }} = req;
+    try {
+      const data = await collection.find({
+        IdReservaCotizacion: idReservaCotizacion
+      }).toArray();
+      res.status(200).json({ data });
+    } catch (error : any) {
+      res.status(500).json({
+        error: true,
+        message: `Ocurrio un error - ${error.message}`
+      })
+    }
+  })
+} */
 
 const crearReservaCotizacion = async (
   req: NextApiRequest,
