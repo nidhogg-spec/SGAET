@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
-import { dbColeccionesFormato } from "@/utils/interfaces/db";
+import { biblia, dbColeccionesFormato } from "@/utils/interfaces/db";
 import { Collection, Db } from "mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 

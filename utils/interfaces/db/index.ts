@@ -125,6 +125,11 @@ export const dbColeccionesFormato = {
     prefijo: "US",
     coleccion: "User",
     keyId: "IdUser"
+  },
+  Biblia: {
+    prefijo: "BI",
+    coleccion: "Biblia",
+    keyId: "IdRegistroBiblia"
   }
 };
 
@@ -540,4 +545,12 @@ export enum TipoDocumento {
   CARNET_EXTRANJERIA = "CARNET_EXTRANJERIA",
   CEDULA_DIPLOMATICA = "CEDULA_DIPLOMATICA",
   OTRO = "OTRO"
+}
+
+// ------------------- Biblia --------------------
+export interface biblia {
+  IdRegistroBiblia: string,
+  IdReservaCotizacion: string,
+  Equipos: any[],
+  Observaciones: any[]
 }
