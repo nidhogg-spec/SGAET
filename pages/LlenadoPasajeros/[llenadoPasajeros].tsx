@@ -444,8 +444,8 @@ export const getServerSideProps: GetServerSideProps = async ({
         error = "No se encontro data de la reserva";
 
       NumPasajeros =
-        parseInt((reservaCotizacion.NpasajerosAdult as string) || "0") +
-        parseInt((reservaCotizacion.NpasajerosChild as string) || "0");
+        parseInt(reservaCotizacion.NpasajerosAdult.toString() || "0") +
+        parseInt(reservaCotizacion.NpasajerosChild.toString() || "0");
 
       if (NumPasajeros == null || NumPasajeros <= 0)
         error = "Error interno con el numero de pasajeros";

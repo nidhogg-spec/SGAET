@@ -136,9 +136,9 @@ export const dbColeccionesFormato = {
 interface mongoBaseCollection {
   _id?: string;
   Estado: number;
-  tableData?: {
-    id?: number;
-  };
+  // tableData?: {
+  //   id?: number;
+  // };
 }
 
 export interface servicioEscogidoInterface extends mongoBaseCollection {
@@ -336,16 +336,36 @@ export interface proveedorInterface extends mongoBaseCollection {
   PaginaWeb: string;
 }
 // ------------------ReservaCotizacion-------------------
+export interface servicioProductoOfReservaCotizacionInterface {
+  IdServicioProducto: string;
+  TipoServicio: string;
+  NombreServicio: string;
+  Dia: number;
+  Cantidad: number;
+  IGV: boolean;
+  PrecioCotiUnitario: number;
+  PrecioCotiTotal: number;
+  PrecioConfiUnitario: number;
+  PrecioConfiTotal: number;
+  Currency: "Dolar" | "Soles" | string;
+  PrecioPublicado: number;
+  FechaReserva: string;
+  IdReservaCotizacion: string;
+  IdServicioEscogido: string;
+  FechaLimitePago?: string;
+  Estado: number;
+  IdProveedor: string;
+}
 export interface reservaCotizacionInterface extends mongoBaseCollection {
   NombreGrupo: string;
   CodGrupo: string;
-  NpasajerosAdult: number | string;
-  NpasajerosChild: number | string;
+  NpasajerosAdult: number;
+  NpasajerosChild: number;
   NombrePrograma: string;
   CodigoPrograma: string;
   Tipo: string;
-  DuracionDias: number | string;
-  DuracionNoche: number | string;
+  DuracionDias: number;
+  DuracionNoche: number;
   Localizacion: string;
   Descripcion: string;
   Itinerario: {
@@ -353,51 +373,17 @@ export interface reservaCotizacionInterface extends mongoBaseCollection {
     "Hora Inicio": string;
     "Hora Fin": string;
     Actividad: string;
-    tableData?: {
-      id: number;
-    };
   }[];
   Incluye: {
     Actividad: string;
-    tableData?: {
-      id: number;
-    };
   }[];
   NoIncluye: {
     Actividad: string;
-    tableData?: {
-      id: number;
-    };
   }[];
   RecomendacionesLlevar: {
     Recomendacion: string;
-    tableData?: {
-      id: number;
-    };
   }[];
-  ServicioProducto: {
-    IdServicioProducto: string;
-    TipoServicio: string;
-    PrecioConfiUnitario: number;
-    NombreServicio: string;
-    Dia: number;
-    Cantidad: number;
-    PrecioCotiUnitario: number;
-    IGV: boolean;
-    PrecioCotiTotal: number;
-    PrecioConfiTotal: number;
-    Currency: "Dolar" | "Soles" | string;
-    PrecioPublicado: number;
-    FechaReserva: string;
-    IdReservaCotizacion: string;
-    IdServicioEscogido: string;
-    FechaLimitePago?: Date;
-    Estado: number;
-    IdProveedor: string;
-    tableData?: {
-      id: number;
-    };
-  }[];
+  ServicioProducto: servicioProductoOfReservaCotizacionInterface[];
   IdProgramaTuristico: string;
   FechaIN: string;
   NumPaxTotal: number;

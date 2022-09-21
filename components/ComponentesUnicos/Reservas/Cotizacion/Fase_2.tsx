@@ -32,6 +32,7 @@ import {
 } from "../../../ComponentesReutilizables/AlertViewer/AlertViewer.component";
 import MaterialTable from "material-table";
 import LoadingComp from "@/components/Loading/Loading";
+import moment from "moment";
 
 export default function Fase2({
   fase,
@@ -43,6 +44,9 @@ export default function Fase2({
   const CotizacionTemp = useRef<reservaCotizacionInterface | undefined>(
     undefined
   );
+  const ProgramaTuristicoSelect = useRef<
+    programaTuristicoInterface | undefined
+  >(undefined);
   const [Loading, setLoading] = useState(false);
   const [AlertViewerData, setAlertViewerData] = useState<alertViewerData>({
     show: false,
@@ -65,7 +69,8 @@ export default function Fase2({
     defaultValues: {
       NroPasajeros: 1,
       Nombre: "",
-      Codigo: ""
+      Codigo: "",
+      FechaIN: moment().format("YYYY-MM-DD")
     },
     mode: "onBlur"
   });
@@ -82,6 +87,47 @@ export default function Fase2({
   }, []);
 
   const siguienteFase = () => {
+    const numeroPasajeros = getValues("NroPasajeros");
+    const FechaIN = getValues("FechaIN");
+    if (!numeroPasajeros || numeroPasajeros <= 0) {
+      setAlertViewerData({
+        aletType: "error",
+        message: "Ingrese un numero de pasajeros valido",
+        show: true
+      });
+      return;
+    }
+    if (!moment(FechaIN).isValid()) {
+      setAlertViewerData({
+        aletType: "error",
+        message: "Fecha de inicio no valido",
+        show: true
+      });
+      return;
+    }
+    if (!ProgramaTuristicoSelect.current) {
+      setAlertViewerData({
+        aletType: "error",
+        message: "No se selecciono un Programa Turistico",
+        show: true
+      });
+      return;
+    }
+    if (!ClienteProspecto) {
+      setAlertViewerData({
+        aletType: "error",
+        message: "Error - reinicie el proceso, por favor",
+        show: true
+      });
+      return;
+    }
+
+    CotizacionTemp.current = generarCotizacion(
+      ProgramaTuristicoSelect.current,
+      numeroPasajeros,
+      ClienteProspecto,
+      FechaIN
+    );
     if (CotizacionTemp.current) {
       setCotizacion(CotizacionTemp.current);
       setFase(3);
@@ -138,6 +184,10 @@ export default function Fase2({
                 disabled
               />
             </div>
+            <div className={`${globalStyles.global_textInput_container}`}>
+              <label>Fecha de Inicio</label>
+              <input type="date" {...register("FechaIN", { required: true })} />
+            </div>
             <MaterialTable
               title="Seleccione un programa turistico"
               columns={[
@@ -162,22 +212,11 @@ export default function Fase2({
                   tooltip: "Seleccione Cliente",
                   onClick: (event, rowData) => {
                     if (ClienteProspecto) {
+                      ProgramaTuristicoSelect.current =
+                        rowData as programaTuristicoInterface;
                       const numeroPasajeros = getValues("NroPasajeros");
-                      if (!numeroPasajeros || numeroPasajeros <= 0) {
-                        setAlertViewerData({
-                          aletType: "error",
-                          message: "Ingrese un numero de pasajeros valido",
-                          show: true
-                        });
-                        return;
-                      }
-                      CotizacionTemp.current = generarCotizacion(
-                        rowData as programaTuristicoInterface,
-                        getValues("NroPasajeros"),
-                        ClienteProspecto
-                      );
                       reset({
-                        NroPasajeros: numeroPasajeros,
+                        NroPasajeros: numeroPasajeros ? numeroPasajeros : 1,
                         Codigo: (rowData as programaTuristicoInterface)
                           .CodigoPrograma,
                         Nombre: (rowData as programaTuristicoInterface)

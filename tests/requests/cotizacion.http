@@ -7,3 +7,16 @@ GET {{url}}/api/Cotizacion/ObtenerTodosServicios
 
 ###
 get  {{url}}/api/reserva/DataReserva/CRUDReservaCotizacion
+
+###
+get  {{url}}/api/v2/reservaCotizacion?estado=0
+
+###
+post  {{url}}/api/v2/reservaCotizacion
+Content-Type: application/json
+
+{
+  "reservaCotizacion" :{
+    "asd":"asd"
+  }
+}
