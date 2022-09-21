@@ -1,8 +1,9 @@
 // Paquetes
 import { ironOptions } from "@/utils/config";
 import { withIronSessionSsr } from "iron-session/next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
 import { resetServerContext } from "react-beautiful-dnd";
 
 // Interfaces
@@ -11,11 +12,13 @@ import {
   programaTuristicoInterface,
   reservaCotizacionInterface
 } from "@/utils/interfaces/db";
+import { listarServiciosHttp } from "@/utils/interfaces/API/cotizacion/listarServicio.interface";
 
 // Componentes
 import Fase1 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_1";
 import Fase2 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_2";
 import Fase3 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_3";
+import Fase4 from "@/components/ComponentesUnicos/Reservas/Cotizacion/Fase_4";
 import Loader from "@/components/Loading/Loading";
 
 // Estilos
@@ -31,6 +34,20 @@ export default function RealizarCotizacion() {
     {} as clienteProspectoInterface
   );
   const [Cotizacion, setCotizacion] = useState<reservaCotizacionInterface>();
+  const [ListaTodosServicios, setListaTodosServicios] = useState<
+    listarServiciosHttp[]
+  >([]);
+
+  useEffect(() => {
+    axios
+      .get<{ data: listarServiciosHttp[] }>(
+        "/api/Cotizacion/ObtenerTodosServicios"
+      )
+      .then((res) => {
+        console.log(res);
+        setListaTodosServicios(res.data.data as listarServiciosHttp[]);
+      });
+  }, []);
 
   return (
     <div
@@ -54,6 +71,14 @@ export default function RealizarCotizacion() {
         ClienteProspecto={cliente}
       />
       <Fase3
+        fase={Fase}
+        setFase={setFase}
+        Cotizacion={Cotizacion as reservaCotizacionInterface}
+        setCotizacion={setCotizacion}
+        ListaTodosServicios={ListaTodosServicios}
+        setListaTodosServicios={setListaTodosServicios}
+      />
+      <Fase4
         fase={Fase}
         setFase={setFase}
         Cotizacion={Cotizacion as reservaCotizacionInterface}

@@ -334,13 +334,13 @@ export interface proveedorInterface extends mongoBaseCollection {
 export interface servicioProductoOfReservaCotizacionInterface {
   IdServicioProducto: string;
   TipoServicio: string;
-  PrecioConfiUnitario: number;
   NombreServicio: string;
   Dia: number;
   Cantidad: number;
-  PrecioCotiUnitario: number;
   IGV: boolean;
+  PrecioCotiUnitario: number;
   PrecioCotiTotal: number;
+  PrecioConfiUnitario: number;
   PrecioConfiTotal: number;
   Currency: "Dolar" | "Soles" | string;
   PrecioPublicado: number;
