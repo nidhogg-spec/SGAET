@@ -69,7 +69,7 @@ export default function IngresosEgresos({ ingresos, egresos, fechaInicio, fechaF
     const obtenerNombreReserva = async (idReservaCotizacion : string) => {
         const params = { idReservaCotizacion };
         const data = await axios.get("/api/reserva/DataReserva/CRUDReservaCotizacion", { params });
-        const nombre = `${data.data.data[0].NombreGrupo || ""} / ${data.data.data[0].NombrePrograma || ""}`;
+        const nombre = `${data.data.data[0]?.NombreGrupo || ""} / ${data.data.data[0]?.NombrePrograma || ""}`;
         return nombre;
     }
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 
 import MaterialTable from "material-table";
 import Loader from "@/components/Loading/Loading";
@@ -14,6 +13,7 @@ import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "@/utils/config";
 import axios from "axios";
 import ModalPasajeros from "@/components/ComponentesUnicos/Biblia/Pasajeros/ModalPasajero";
+import botones from "@/globalStyles/modules/boton.module.css";
 
 const columnasReserva = [
   { title: "Id", field: "IdReservaCotizacion", hidden: true },
@@ -49,6 +49,14 @@ const columnasPasajero = [
   { title: "Nacionalidad", field: "Nacionalidad" }
 ];
 
+const columnasEntrada = [
+  { title: "Nombre", field: "NombreServicio" },
+  { title: "Dia", field: "Dia" },
+  { title: "Cantidad", field: "Cantidad" },
+  { title: "Fecha de reserva", field: "FechaReserva" },
+  { title: "Fecha limite de pago", field: "FechaLimitePago" }
+];
+
 
 const Index = ({ APIPath }) => {
   const [display, setDisplay] = useState(false);
@@ -61,7 +69,12 @@ const Index = ({ APIPath }) => {
   const [transportes, setTransportes] = useState([]);
   const [briefing, setBriefing] = useState([]);
   const [pasajeros, setPasajeros] = useState([]);
+  const [entradas, setEntradas] = useState([]);
   const [pasajeroSeleccionado, setPasajeroSeleccionado] = useState(null);
+  const [reserva, setReserva] = useState("");
+
+  const [biblia, setBiblia] = useState([]);
+
   const infoSection = React.useRef();
 
   useEffect(() => {
@@ -74,6 +87,20 @@ const Index = ({ APIPath }) => {
       });
   }, []);
 
+  const obtenerExtras = async (IdReservaCotizacion) => {
+    const params = {
+      IdReservaCotizacion
+    };
+    const resultado = await axios.get(APIPath + "/api/Biblia/bibliaExtras", { params });
+    const biblia = resultado.data.data[0];
+    if (biblia) {
+      const { Equipos, Observaciones } = biblia;
+      setEquipos(Equipos);
+      setObservaciones(Observaciones);
+    }
+    setBiblia(biblia);
+  }
+
   const obtenerTransportes = (servicios) => {
     const productosTransportes = servicios.filter((servicio) => servicio.IdServicioProducto.startsWith("PT") || servicio.IdServicioProducto.startsWith("PF"));
     setTransportes(productosTransportes);
@@ -84,16 +111,26 @@ const Index = ({ APIPath }) => {
     setBriefing(productosBriefing);
   }
 
+  const obtenerEntradas = (servicios) => {
+    const productosEntrada = servicios.filter(servicio => servicio.IdServicioProducto.startsWith("PS"));
+    setEntradas(productosEntrada);
+  }
+
   const accionesReserva = [
     {
       icon: () => <img src="/resources/remove_red_eye-24px.svg" />,
       tooltip: "Ver mas datos",
       onClick: async (event, rowData) => {
         setLoading(true);
-        const { ServicioProducto : servicios, listaPasajeros } = rowData;
+        setEquipos([]);
+        setObservaciones([]);
+        const { ServicioProducto : servicios, listaPasajeros, IdReservaCotizacion } = rowData;
         setPasajeros(listaPasajeros);
         obtenerTransportes(servicios);
         obtenerBriefing(servicios);
+        obtenerEntradas(servicios);
+        obtenerExtras(IdReservaCotizacion);
+        setReserva(IdReservaCotizacion);
         await new Promise(resolve => setTimeout(resolve, 250));
         setSeleccion(true);
         setLoading(false);
@@ -111,6 +148,22 @@ const Index = ({ APIPath }) => {
       }
     }
   ]
+
+  const guardarBiblia =  async () => {
+    setLoading(true);
+    const nuevoRegistro = {
+      IdReservaCotizacion: reserva,
+      Equipos: equipos,
+      Observaciones: observaciones
+    };
+    biblia ? await axios.put(`${APIPath}/api/Biblia/bibliaExtras`, {
+      data: nuevoRegistro
+    }) : await axios.post(`${APIPath}/api/Biblia/bibliaExtras`, {
+      data: nuevoRegistro
+    });
+    obtenerExtras(reserva);
+    setLoading(false);
+  }
 
   const scrollHere = () => {
     infoSection.current.scrollIntoView({
@@ -163,16 +216,8 @@ const Index = ({ APIPath }) => {
               <div>
                 <h2>Entradas</h2>
                 <MaterialTable
-                  columns={[
-                    { title: "Id", field: "IdReservaCotizacion" },
-                    { title: "Nombre Entrada", field: "" },
-                    { title: "Fecha", field: "" },
-                    {
-                      title: "Codigo",
-                      field: ""
-                    }
-                  ]}
-                  data={DataCotizacion}
+                  columns={columnasEntrada}
+                  data={entradas}
                   title={null}
                 />
                 <h2>Transporte</h2>
@@ -194,6 +239,10 @@ const Index = ({ APIPath }) => {
                 <Observacion observaciones={observaciones} setObservaciones={setObservaciones} />
 
               </div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}> 
+              <button className={`${botones.button} ${botones.buttonGuardar}`} onClick={guardarBiblia}>Guardar informacion</button>
+
             </div>
           </div>
           { scrollHere() }
