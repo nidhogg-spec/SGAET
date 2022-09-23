@@ -8,6 +8,8 @@ import {
 } from "../interfaces/db";
 
 export const generarCotizacion = (
+  NombreGrupo: string,
+  CodGrupo: string,
   programaTuristico: programaTuristicoInterface,
   nmrPasajero: number,
   clienteProspecto: clienteProspectoInterface,
@@ -45,8 +47,8 @@ export const generarCotizacion = (
     });
 
   cotizacion = {
-    NombreGrupo: "", // after
-    CodGrupo: "", // after
+    NombreGrupo: NombreGrupo,
+    CodGrupo: CodGrupo,
     NpasajerosAdult: nmrPasajero,
     NpasajerosChild: 0,
     NombrePrograma: programaTuristico.NombrePrograma,
@@ -67,7 +69,8 @@ export const generarCotizacion = (
     NumPaxTotal: nmrPasajero,
     IdClienteProspecto: clienteProspecto.IdClienteProspecto ?? "",
     IdReservaCotizacion: undefined,
-    ListaPasajeros: undefined
+    ListaPasajeros: undefined,
+    URLLlenadoPasajeros: ""
   };
 
   return cotizacion;

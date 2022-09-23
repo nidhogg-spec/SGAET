@@ -109,7 +109,7 @@ export default function Fase3({
           IdReservaCotizacion: servi["IdReservaCotizacion"],
           IdServicioEscogido: servi["IdServicioEscogido"],
           FechaLimitePago: servi["FechaLimitePago"],
-          Estado: servi["Estado"],
+          Estado: 1,
           IdProveedor: servi["IdProveedor"]
         };
       });

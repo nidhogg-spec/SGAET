@@ -6,7 +6,7 @@ import {
 } from "@/utils/interfaces/db";
 import { ReservaCotizacionRepository } from "../../adapters/repository/reservaCotizacion.repository";
 import { createReservaCotizacionDataDTO } from "./dto/reseervaCotizacion.dto";
-
+import { AES, enc } from "crypto-js";
 export class ReservaCotizacionUsecase {
   reservaCotizacionRepository: ReservaCotizacionRepository;
   coleccion: { prefijo: string; coleccion: string; keyId: string };
@@ -15,7 +15,7 @@ export class ReservaCotizacionUsecase {
     this.coleccion = dbColeccionesFormato.ReservaCotizacion;
   }
 
-  async create(newReserCoti: createReservaCotizacionDataDTO) {
+  async create(newReserCoti: createReservaCotizacionDataDTO, host: string) {
     const newId = await generarIdNuevo(this.coleccion);
 
     const servicios = newReserCoti.ServicioProducto.map((servi) => {
@@ -48,12 +48,17 @@ export class ReservaCotizacionUsecase {
       });
     }
 
+    // Generacion de url de lennado dew pasajeros encriptado
+    const secretKey = process.env.SECRET_KEY as string;
+    const idUrl = encodeURIComponent(AES.encrypt(newId, secretKey).toString());
+
     let reservaCotizacion: reservaCotizacionInterface = {
       ...newReserCoti,
-      Estado: 1,
+      Estado: 0,
       IdReservaCotizacion: newId,
       ServicioProducto: servicios,
-      ListaPasajeros: listaPasajeros
+      ListaPasajeros: listaPasajeros,
+      URLLlenadoPasajeros: host + "/LlenadoPasajeros/" + idUrl
     };
     const result = await this.reservaCotizacionRepository.insertOne(
       reservaCotizacion

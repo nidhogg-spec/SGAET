@@ -16,7 +16,7 @@ export default async function reservaCottizacionHttp(
       await crearReservaCotizacion(req, res);
       return;
       break;
-    case "put":
+    case "PUT":
       await actualizarReservaCotizacion(req, res);
       return;
       break;
@@ -98,7 +98,8 @@ async function crearReservaCotizacion(
     NumPaxTotal: reservaCotizacionreqBody.NumPaxTotal,
     IdClienteProspecto: reservaCotizacionreqBody.IdClienteProspecto
   };
-  const result = await reservaCotizacionUsecase.create(dto);
+  const host = req.headers.host || "";
+  const result = await reservaCotizacionUsecase.create(dto, host);
   res.status(200).send(result);
 }
 
