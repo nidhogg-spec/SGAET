@@ -390,6 +390,7 @@ export interface reservaCotizacionInterface extends mongoBaseCollection {
   IdClienteProspecto: string;
   IdReservaCotizacion?: string;
   ListaPasajeros?: pasajeroInterface[];
+  URLLlenadoPasajeros: string
 }
 // ------------------Orden de Servicio-------------------
 export interface ordenServicioInterface extends mongoBaseCollection {

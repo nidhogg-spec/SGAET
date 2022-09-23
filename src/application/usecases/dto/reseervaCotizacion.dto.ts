@@ -21,6 +21,7 @@ export interface createReservaCotizacionDataDTO
     | "IdReservaCotizacion"
     | "ListaPasajeros"
     | "ServicioProducto"
+    | "URLLlenadoPasajeros"
   > {
   ServicioProducto: servicioCreateReservaCotizacionDataDTO[];
 }

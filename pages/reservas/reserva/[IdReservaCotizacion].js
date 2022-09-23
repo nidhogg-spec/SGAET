@@ -190,7 +190,11 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
       setLoading(false);
     }
   };
-
+  let idEncripted = "";
+  if (ReservaCotizacion?.URLLlenadoPasajeros) {
+    idEncripted = ReservaCotizacion.URLLlenadoPasajeros.split('LlenadoPasajeros/')
+    idEncripted = idEncripted[1] ?? "";
+  }
   return (
     <>
       <Loader Loading={Loading} />
@@ -431,11 +435,12 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
             <div className={`${styles.Pasajeros_Input_container}`}>
               <span>Link de Formulario de pasajeros</span>
               <input
-                value={APIpath + `/LlenadoPasajeros/${IdReservaCotizacion}`}
+                value={ReservaCotizacion.URLLlenadoPasajeros ?? ""}
                 disabled
               />
               <Link
-                href={APIpath + `/LlenadoPasajeros/${IdReservaCotizacion}`}
+                // href={ReservaCotizacion.URLLlenadoPasajeros ?? (APIpath + `/LlenadoPasajeros/${IdReservaCotizacion}`)}
+                href={`/LlenadoPasajeros/${idEncripted}`}
               >
                 <a className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}>Llenar Lista de Pasajeros</a>
               </Link>

@@ -21,6 +21,7 @@ export interface createReservaCotizacionBodyParam
     | "IdReservaCotizacion"
     | "ListaPasajeros"
     | "ServicioProducto"
+    | "URLLlenadoPasajeros"
   > {
   ServicioProducto: servicioCreateReservaCotizacionBodyParam[];
 }

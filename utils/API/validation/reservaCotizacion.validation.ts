@@ -144,7 +144,7 @@ export function validateCreateReservaCotizacionBodyParam(
             "PrecioPublicado",
             "FechaReserva",
             "IdServicioEscogido",
-            "FechaLimitePago",
+            // "FechaLimitePago",
             "Estado",
             "IdProveedor"
           ],
@@ -216,7 +216,7 @@ export function validateCreateReservaCotizacionBodyParam(
         type: "string"
       }
     },
-    additionalProperties: false
+    additionalProperties: true
   };
   try {
     const validate = ajv.compile(schema);
