@@ -14,6 +14,7 @@ import { ironOptions } from "@/utils/config";
 import axios from "axios";
 import ModalPasajeros from "@/components/ComponentesUnicos/Biblia/Pasajeros/ModalPasajero";
 import botones from "@/globalStyles/modules/boton.module.css";
+import { useRouter } from "next/router";
 
 const columnasReserva = [
   { title: "Id", field: "IdReservaCotizacion", hidden: true },
@@ -59,6 +60,7 @@ const columnasEntrada = [
 
 
 const Index = ({ APIPath }) => {
+  const router = useRouter();
   const [display, setDisplay] = useState(false);
   const [Loading, setLoading] = useState(false);
   const [seleccion, setSeleccion] = useState(false);
@@ -163,6 +165,7 @@ const Index = ({ APIPath }) => {
     });
     obtenerExtras(reserva);
     setLoading(false);
+    router.reload();
   }
 
   const scrollHere = () => {
