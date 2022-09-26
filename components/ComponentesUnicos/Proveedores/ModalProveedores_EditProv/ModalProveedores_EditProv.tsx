@@ -169,7 +169,7 @@ export default function ModalProveedores_EditProv({
       NombreGuia: proveedor_init_info.NombreGuia || "",
       Idiomas: (proveedor_init_info.Idiomas as never[]) || [],
       //------------------ Hotel
-      NEstrellas: parseInt(proveedor_init_info.NEstrellas.toString()) || 0
+      NEstrellas: parseInt(proveedor_init_info?.NEstrellas?.toString()) || 0
     });
     setProveedorBanco((proveedor_init_info.DatosBancarios as never[]) || []);
     setProveedorContacto((proveedor_init_info.Contacto as never[]) || []);

@@ -60,11 +60,11 @@ export default async (req : NextApiRequest, res : NextApiResponse<any>) => {
 
 const crearColeccion = async (req : NextApiRequest, res : NextApiResponse<any>) => {
     await connectToDatabase().then(async connectedObject => {
-        if (!(coleccion in coleccion)) {
-            const { prefijo, collectionName, idKey } = coleccion;
+        if (("idKey" in coleccion)) {
+            const { prefijo, coleccion : coleccionName, idKey } = coleccion;
             coleccion = {
                 prefijo,
-                coleccion: collectionName,
+                coleccion: coleccionName,
                 keyId: idKey
             };
         }
@@ -91,11 +91,11 @@ const crearColeccion = async (req : NextApiRequest, res : NextApiResponse<any>) 
 }
 
 const actualizarColeccion = async (req : NextApiRequest, res : NextApiResponse<any>) => {
-    if (!(coleccion in coleccion)) {
-        const { prefijo, collectionName, idKey } = coleccion;
+    if (("idKey" in coleccion)) {
+        const { prefijo, coleccion : coleccionName, idKey } = coleccion;
         coleccion = {
             prefijo,
-            coleccion: collectionName,
+            coleccion: coleccionName,
             keyId: idKey
         };
     }
@@ -123,11 +123,11 @@ const actualizarColeccion = async (req : NextApiRequest, res : NextApiResponse<a
 }
 
 const eliminarColeccion = async (req : NextApiRequest, res : NextApiResponse<any>) => {
-    if (!(coleccion in coleccion)) {
-        const { prefijo, collectionName, idKey } = coleccion;
+    if (("idKey" in coleccion)) {
+        const { prefijo, coleccion : coleccionName, idKey } = coleccion;
         coleccion = {
             prefijo,
-            coleccion: collectionName,
+            coleccion: coleccionName,
             keyId: idKey
         };
     }
