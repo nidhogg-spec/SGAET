@@ -84,7 +84,10 @@ export default function ModalPasajeros({ open, setOpen, pasajero }: any) {
                                 </div>
                                 <div className={globalStyles.global_textInput_container}>
                                     <label>Descripcion de los problemas medicos</label>
-                                    <textarea defaultValue={pasajero?.ProblemasMedicosDescripcion} disabled style={{ resize: "none"}}></textarea>
+                                </div>
+                                <div className={globalStyles.global_textInput_container}>
+                                    <textarea defaultValue={pasajero?.ProblemasMedicosDescripcion} disabled style={{ resize: "none" }}></textarea>
+
                                 </div>
                             </div>
                         </div>

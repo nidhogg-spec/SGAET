@@ -19,11 +19,22 @@ import { Modal } from "@mui/material";
 // Estilos
 import styles from "@/globalStyles/DetalleReservaCotizacion.module.css";
 import botones from '@/globalStyles/modules/boton.module.css'
-import globalStyles from '@/globalStyles/modules/global.module.css'
+import globalStyles from '@/globalStyles/modules/global.module.css';
+import ModalPasajeros from "@/components/ComponentesUnicos/Biblia/Pasajeros/ModalPasajero";
 
 
 const estadosReservaCotizacion_array = Object.values(estadosReservaCotizacion);
 console.log(estadosReservaCotizacion_array);
+
+const columnasPasajero = [
+  { title: "Nombre", field: "Nombre" },
+  { title: "Apellido", field: "Apellido" },
+  { title: "Tipo de documento", field: "TipoDocumento" },
+  { title: "Numero de documento", field: "NroDocumento" },
+  { title: "Sexo", field: "Sexo" },
+  { title: "Celular", field: "Celular" },
+  { title: "Nacionalidad", field: "Nacionalidad" }
+];
 
 const ReservaCotizacion = ({ APIPatch, APIpath }) => {
   const router = useRouter();
@@ -45,6 +56,11 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
   const [CambioDolar, setCambioDolar] = useState(0);
 
   const refEstado = useRef(null);
+
+
+  // Para pasajeros
+  const [display, setDisplay] = useState(false);
+  const [pasajeroSeleccionado, setPasajeroSeleccionado] = useState(null);
   //--------------------------------------------------------------------------------------
   useEffect(async () => {
     setLoading(true);
@@ -195,6 +211,19 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
     idEncripted = ReservaCotizacion.URLLlenadoPasajeros.split('LlenadoPasajeros/')
     idEncripted = idEncripted[1] ?? "";
   }
+
+
+  const accionesPasajeros = [
+    {
+      icon: () => <img src="/resources/remove_red_eye-24px.svg" />,
+      tooltip: "Ver mas detalles",
+      onClick: async (event, rowData) => {
+        setPasajeroSeleccionado(rowData);
+        setDisplay(true);
+      }
+    }
+  ]
+
   return (
     <>
       <Loader Loading={Loading} />
@@ -502,6 +531,21 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
           callback_delete={null}
           callback_update={null}
         /> */}
+          </div>
+          <div>
+            <h3>Lista de pasajeros</h3>
+            <ModalPasajeros
+              open={display}
+              setOpen={setDisplay}
+              pasajero={pasajeroSeleccionado}
+            />
+            <MaterialTable
+              columns={columnasPasajero}
+              data={ReservaCotizacion?.listaPasajeros}
+              actions={accionesPasajeros}
+              options={{ actionsColumnIndex: -1 }}
+              title={null}
+            />
           </div>
           <div>
             <TablaServicioCotizacion
