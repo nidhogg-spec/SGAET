@@ -46,7 +46,7 @@
 }
 
 .global_textInput_container textarea {
-  width: 250px;
+  width: 100%;
   min-height: 7rem;
   border: 2px solid black;
   border-radius: 5px;
