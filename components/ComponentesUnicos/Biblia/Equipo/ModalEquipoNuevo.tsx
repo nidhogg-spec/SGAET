@@ -61,7 +61,7 @@ export default function ModalEquipoNuevo({open, setOpen, agregarEquipo } : {open
                 onClose={handleClose}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
-                BackdropProps={{ timeout: 5000 }}
+                BackdropProps={{ timeout: 500 }}
             >
                 <Fade in={open}>
                     <Box className={`${globalStyles.modal__MainContainer} ${equipoForm.form__container}`}>
