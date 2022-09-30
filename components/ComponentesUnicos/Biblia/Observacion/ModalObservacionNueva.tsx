@@ -62,7 +62,7 @@ export default function ModalObservacionNueva({open, setOpen, agregarObservacion
                 onClose={handleClose}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
-                BackdropProps={{ timeout: 5000 }}
+                BackdropProps={{ timeout: 500 }}
             >
                 <Fade in={open}>
                     <Box className={`${globalStyles.modal__MainContainer} ${equipoForm.form__container}`}>

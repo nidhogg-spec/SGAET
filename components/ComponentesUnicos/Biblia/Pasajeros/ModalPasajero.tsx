@@ -20,7 +20,7 @@ export default function ModalPasajeros({ open, setOpen, pasajero }: any) {
                 onClose={handleClose}
                 closeAfterTransition
                 BackdropComponent={Backdrop}
-                BackdropProps={{ timeout: 5000 }}>
+                BackdropProps={{ timeout: 500 }}>
                 <Fade in={open}>
                     <Box className={`${globalStyles.modal__MainContainer} ${equipoForm.form__container}`} >
                         <div>
@@ -32,7 +32,7 @@ export default function ModalPasajeros({ open, setOpen, pasajero }: any) {
                                 </div>
                                 <div className={globalStyles.global_textInput_container}>
                                     <label>Apellido del pasajero</label>
-                                    <input type="input" defaultValue={pasajero?.Apellidos} disabled></input>
+                                    <input type="input" defaultValue={pasajero?.Apellidos || pasajero?.Apellido} disabled></input>
                                 </div>
                                 <div className={globalStyles.global_textInput_container}>
                                     <label>Tipo de documento</label>
