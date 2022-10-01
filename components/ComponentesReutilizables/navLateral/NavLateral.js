@@ -15,8 +15,8 @@ export default function NavLateral() {
         },
         {
           tipo: "link",
-          subModuloName: "Programa Turistico",
-          link: "/ProgramaTuristico"
+          subModuloName: "Lista de Reserva/Cotizacion",
+          link: "/reservas/ListaReservaCotizacion"
         },
         // {
         //   tipo: "link",
@@ -30,8 +30,8 @@ export default function NavLateral() {
         // },
         {
           tipo: "link",
-          subModuloName: "Lista de Reserva/Cotizacion",
-          link: "/reservas/ListaReservaCotizacion"
+          subModuloName: "Programa Turistico",
+          link: "/ProgramaTuristico"
         },
       ]
     },
@@ -44,11 +44,11 @@ export default function NavLateral() {
           subModuloName: "Lista de Clientes",
           link: "/Clientes/ListClienteProspecto"
         },
-        {
-          tipo: "link",
-          subModuloName: "Lista de Pasajeros",
-          link: "/Clientes/ListPasajeros"
-        },
+        // {
+        //   tipo: "link",
+        //   subModuloName: "Lista de Pasajeros",
+        //   link: "/Clientes/ListPasajeros"
+        // },
       ]
     },
     {
@@ -109,7 +109,7 @@ export default function NavLateral() {
           subModuloName: "Usuarios",
           link: "/Administracion/Administracion"
         }
-      
+
       ]
     }
     // {

@@ -1,6 +1,7 @@
 import { createReservaCotizacionDataDTO } from "@/src/application/usecases/dto/reseervaCotizacion.dto";
 import { ReservaCotizacionUsecase } from "@/src/application/usecases/reservaCorizacion.usecase";
 import { validateCreateReservaCotizacionBodyParam } from "@/utils/API/validation/reservaCotizacion.validation";
+import { Currency, Idiomas } from "@/utils/dominio";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function reservaCottizacionHttp(
@@ -96,7 +97,13 @@ async function crearReservaCotizacion(
     IdProgramaTuristico: reservaCotizacionreqBody.IdProgramaTuristico,
     FechaIN: reservaCotizacionreqBody.FechaIN,
     NumPaxTotal: reservaCotizacionreqBody.NumPaxTotal,
-    IdClienteProspecto: reservaCotizacionreqBody.IdClienteProspecto
+    IdClienteProspecto: reservaCotizacionreqBody.IdClienteProspecto,
+    Idioma: reservaCotizacionreqBody.Idioma,
+    Moneda: reservaCotizacionreqBody.Moneda,
+    FechaOUT: reservaCotizacionreqBody.FechaOUT,
+    VoucherLink: reservaCotizacionreqBody.VoucherLink,
+    FechaEntregaVoucher: reservaCotizacionreqBody.FechaEntregaVoucher,
+    PrecioTotal: reservaCotizacionreqBody.PrecioTotal
   };
   const host = req.headers.host || "";
   const result = await reservaCotizacionUsecase.create(dto, host);

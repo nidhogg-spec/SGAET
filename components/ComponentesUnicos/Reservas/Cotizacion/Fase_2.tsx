@@ -67,8 +67,8 @@ export default function Fase2({
     reset
   } = useForm({
     defaultValues: {
-      NombreGrupo: "",
-      CodGrupo: "",
+      // NombreGrupo: "",
+      // CodGrupo: "",
       NroPasajeros: 1,
       Nombre: "",
       Codigo: "",
@@ -100,8 +100,8 @@ export default function Fase2({
           <form
             action=""
             onSubmit={handleSubmit((data) => {
-              const NombreGrupo = data.NombreGrupo;
-              const CodGrupo = data.CodGrupo;
+              const NombreGrupo = "";
+              const CodGrupo = "";
               const numeroPasajeros = data.NroPasajeros;
               const FechaIN = data.FechaIN;
               if (!numeroPasajeros || numeroPasajeros <= 0) {
@@ -169,7 +169,7 @@ export default function Fase2({
               </div>
             </div>
             <div className={customStyle.Formulario_Fase2}>
-              <div className={`${globalStyles.global_textInput_container}`}>
+              {/* <div className={`${globalStyles.global_textInput_container}`}>
                 <label>Nombre de grupo de nueva reserva</label>
                 <input
                   type="text"
@@ -194,7 +194,7 @@ export default function Fase2({
                   {errors.CodGrupo?.type == "required" &&
                     "El codigo de grupo es necesario"}
                 </span>
-              </div>
+              </div> */}
               <div className={`${globalStyles.global_textInput_container}`}>
                 <label>Numero de pasajeros</label>
                 <input

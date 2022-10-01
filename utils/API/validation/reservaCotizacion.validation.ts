@@ -31,7 +31,13 @@ export function validateCreateReservaCotizacionBodyParam(
       "IdProgramaTuristico",
       "FechaIN",
       "NumPaxTotal",
-      "IdClienteProspecto"
+      "IdClienteProspecto",
+      "FechaOUT",
+      "VoucherLink",
+      "Idioma",
+      "FechaEntregaVoucher",
+      "Moneda",
+      "PrecioTotal"
     ],
     properties: {
       NombreGrupo: {
@@ -214,6 +220,24 @@ export function validateCreateReservaCotizacionBodyParam(
       },
       IdClienteProspecto: {
         type: "string"
+      },
+      FechaOUT: {
+        type: "string"
+      },
+      VoucherLink: {
+        type: "string"
+      },
+      Idioma: {
+        type: "string"
+      },
+      FechaEntregaVoucher: {
+        type: "string"
+      },
+      Moneda: {
+        type: "string"
+      },
+      PrecioTotal: {
+        type: "number"
       }
     },
     additionalProperties: true

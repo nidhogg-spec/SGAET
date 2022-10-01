@@ -386,11 +386,17 @@ export interface reservaCotizacionInterface extends mongoBaseCollection {
   ServicioProducto: servicioProductoOfReservaCotizacionInterface[];
   IdProgramaTuristico: string;
   FechaIN: string;
+  FechaOUT: string;
+  VoucherLink: string;
+  Idioma: string;
+  FechaEntregaVoucher: string;
+  Moneda: string;
+  PrecioTotal: number;
   NumPaxTotal: number;
   IdClienteProspecto: string;
   IdReservaCotizacion?: string;
   ListaPasajeros?: pasajeroInterface[];
-  URLLlenadoPasajeros: string
+  URLLlenadoPasajeros: string;
 }
 // ------------------Orden de Servicio-------------------
 export interface ordenServicioInterface extends mongoBaseCollection {
@@ -536,8 +542,8 @@ export enum TipoDocumento {
 
 // ------------------- Biblia --------------------
 export interface biblia {
-  IdRegistroBiblia: string,
-  IdReservaCotizacion: string,
-  Equipos: any[],
-  Observaciones: any[]
+  IdRegistroBiblia: string;
+  IdReservaCotizacion: string;
+  Equipos: any[];
+  Observaciones: any[];
 }
