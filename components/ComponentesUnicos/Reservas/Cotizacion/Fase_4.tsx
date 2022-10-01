@@ -38,6 +38,11 @@ import TablaServicioCotizacion from "./other/TablaServicioCotizacion/TablaServic
 import moment from "moment";
 import Router from "next/router";
 import { createReservaCotizacionBodyParam } from "@/utils/interfaces/API/reservaCotizacion.interface";
+import { Currency, Idiomas } from "@/utils/dominio";
+import {
+  formInterface,
+  generarCotizacionParte4
+} from "@/utils/functions/generarCotizacionParte4";
 
 //---------------------------------------------------------------------------------------
 
@@ -62,7 +67,7 @@ export default function Fase4({
     formState: { errors },
     getValues,
     reset
-  } = useForm({
+  } = useForm<formInterface>({
     defaultValues: {
       NombreGrupo: "",
       CodGrupo: "",
@@ -79,7 +84,9 @@ export default function Fase4({
       FechaIN: "",
       NumPaxTotal: 0,
       IdClienteProspecto: "",
-      IdReservaCotizacion: ""
+      IdReservaCotizacion: "",
+      Idioma: Idiomas.Español as string,
+      Moneda: Currency.Soles as string
     }
   });
 
@@ -93,53 +100,15 @@ export default function Fase4({
   //     .then((res) => setListaServicios(res.data));
   // }, []);
 
-  const finalizarGuardar = async () => {
+  const finalizarGuardar = async (data: formInterface) => {
     try {
       setLoading(true);
-      let tempCotizacion: createReservaCotizacionBodyParam = {
-        ServicioProducto: Cotizacion.ServicioProducto.map((servi) => {
-          return {
-            FechaLimitePago: servi.FechaLimitePago ?? "",
-            IdServicioProducto: servi.IdServicioProducto,
-            TipoServicio: servi.TipoServicio,
-            NombreServicio: servi.NombreServicio,
-            Dia: parseInt(servi.Dia.toString()),
-            Cantidad: parseInt(servi.Cantidad.toString()),
-            IGV: servi.IGV,
-            PrecioCotiUnitario: parseInt(servi.PrecioCotiUnitario.toString()),
-            PrecioCotiTotal: parseInt(servi.PrecioCotiTotal.toString()),
-            PrecioConfiUnitario: parseInt(servi.PrecioConfiUnitario.toString()),
-            PrecioConfiTotal: parseInt(servi.PrecioConfiTotal.toString()),
-            Currency: servi.Currency,
-            PrecioPublicado: parseInt(servi.PrecioPublicado.toString()),
-            FechaReserva: servi.FechaReserva,
-            IdServicioEscogido: servi.IdServicioEscogido,
-            Estado: parseInt(servi.Estado.toString()),
-            IdProveedor: servi.IdProveedor
-          };
-        }),
-        NombreGrupo: Cotizacion.NombreGrupo,
-        CodGrupo: Cotizacion.CodGrupo,
-        NpasajerosAdult: parseInt(Cotizacion.NpasajerosAdult.toString()),
-        NpasajerosChild: parseInt(Cotizacion.NpasajerosChild.toString()),
-        NombrePrograma: Cotizacion.NombrePrograma,
-        CodigoPrograma: Cotizacion.CodigoPrograma,
-        Tipo: Cotizacion.Tipo.toString(),
-        DuracionDias: parseInt(Cotizacion.DuracionDias.toString()),
-        DuracionNoche: parseInt(Cotizacion.DuracionNoche.toString()),
-        Localizacion: Cotizacion.Localizacion,
-        Descripcion: Cotizacion.Descripcion,
-        IdProgramaTuristico: Cotizacion.IdProgramaTuristico,
-        FechaIN: Cotizacion.FechaIN,
-        NumPaxTotal: parseInt(Cotizacion.NumPaxTotal.toString()),
-        IdClienteProspecto: Cotizacion.IdClienteProspecto,
-        Itinerario: [...Cotizacion.Itinerario],
-        Incluye: [...Cotizacion.Incluye],
-        NoIncluye: [...Cotizacion.NoIncluye],
-        RecomendacionesLlevar: [...Cotizacion.RecomendacionesLlevar]
-      };
+      const [reservaCotizacion, err] = await generarCotizacionParte4(
+        data,
+        Cotizacion
+      );
       const res = await axios.post(`/api/v2/reservaCotizacion`, {
-        reservaCotizacion: tempCotizacion
+        reservaCotizacion: reservaCotizacion
       });
       if (res.status != 200) {
         setLoading(false);
@@ -179,7 +148,9 @@ export default function Fase4({
         FechaIN: Cotizacion["FechaIN"],
         NumPaxTotal: Cotizacion["NumPaxTotal"],
         IdClienteProspecto: Cotizacion["IdClienteProspecto"],
-        IdReservaCotizacion: Cotizacion["IdReservaCotizacion"]
+        IdReservaCotizacion: Cotizacion["IdReservaCotizacion"],
+        Idioma: Cotizacion["Idioma"] ?? Idiomas.Español,
+        Moneda: Cotizacion["Moneda"] ?? Currency.Dolares
       });
     }
   }, [Cotizacion]);
@@ -193,108 +164,140 @@ export default function Fase4({
             alertViewerData={AlertViewerData}
             setData={setAlertViewerData}
           />
-          <div className={customStyle.Fase4_titulo}>
-            <h2>Paso 4: Revision de datos de cotizacion</h2>
-            <div className={`${customStyle.botones_container}`}>
-              <button
-                className={`${botones.button} ${botones.GenerickButton} ${botones.button_border}`}
-                onClick={finalizarGuardar}
-              >
-                Finalizar y guardar
-              </button>
-            </div>
-            <div className={customStyle.formContainer}>
-              <h3>
-                Programa Turistico seleccionado: {Cotizacion.NombrePrograma}
-              </h3>
-              <div className={`${globalStyles.global_textInput_container}`}>
-                <label>Duracion Dias</label>
-                <input
-                  type="number"
-                  {...register("DuracionDias", { required: true })}
-                  disabled
-                ></input>
-                <span className={`${globalStyles.global_error_message}`}>
-                  {/* {errors.Cantidad?.type == "required" &&
+          <form action="" onSubmit={handleSubmit(finalizarGuardar)}>
+            <div className={customStyle.Fase4_titulo}>
+              <h2>Paso 4: Revision de datos de cotizacion</h2>
+              <div className={`${customStyle.botones_container}`}>
+                <button
+                  className={`${botones.button} ${botones.GenerickButton} ${botones.button_border}`}
+                  type="submit"
+                  // onClick={finalizarGuardar}
+                >
+                  Finalizar y guardar
+                </button>
+              </div>
+              <div className={customStyle.formContainer}>
+                <h3>
+                  Programa Turistico seleccionado: {Cotizacion.NombrePrograma}
+                </h3>
+                <div className={`${globalStyles.global_textInput_container}`}>
+                  <label>Nombre de grupo de nueva reserva</label>
+                  <input
+                    type="text"
+                    {...register("NombreGrupo", {
+                      required: true
+                    })}
+                  />
+                  <span className={`${globalStyles.global_error_message}`}>
+                    {errors.NombreGrupo?.type == "required" &&
+                      "El nombre de grupo es necesario"}
+                  </span>
+                </div>
+                <div className={`${globalStyles.global_textInput_container}`}>
+                  <label>Codigo custom de Grupo</label>
+                  <input
+                    type="text"
+                    {...register("CodGrupo", {
+                      required: true
+                    })}
+                  />
+                  <span className={`${globalStyles.global_error_message}`}>
+                    {errors.CodGrupo?.type == "required" &&
+                      "El codigo de grupo es necesario"}
+                  </span>
+                </div>
+                <div className={`${globalStyles.global_textInput_container}`}>
+                  <label>Idioma</label>
+                  <select {...register("Idioma")}>
+                    {Object.values(Idiomas).map((idioma) => {
+                      return (
+                        <option key={idioma} value={idioma}>
+                          {idioma}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <span className={`${globalStyles.global_error_message}`}>
+                    {errors.Idioma?.type == "required" &&
+                      "El idioma es necesario"}
+                  </span>
+                </div>
+                <div className={`${globalStyles.global_textInput_container}`}>
+                  <label>Tipo de moneda</label>
+                  <select {...register("Moneda")}>
+                    {Object.values(Currency).map((current) => {
+                      return (
+                        <option key={current} value={current}>
+                          {current}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <span className={`${globalStyles.global_error_message}`}>
+                    {errors.Moneda?.type == "required" &&
+                      "La moneda es necesario"}
+                  </span>
+                </div>
+                <div className={`${globalStyles.global_textInput_container}`}>
+                  <label>Duracion Dias</label>
+                  <input
+                    type="number"
+                    {...register("DuracionDias", { required: true })}
+                    disabled
+                  ></input>
+                  <span className={`${globalStyles.global_error_message}`}>
+                    {/* {errors.Cantidad?.type == "required" &&
                     "La cantidad es obligatoria"} */}
-                </span>
-              </div>
-              <div className={`${globalStyles.global_textInput_container}`}>
-                <label>Duracion Noches</label>
-                <input
-                  type="number"
-                  {...register("DuracionNoche", { required: true })}
-                  disabled
-                ></input>
-                <span className={`${globalStyles.global_error_message}`}></span>
-              </div>
-              <div className={`${globalStyles.global_textArea_container}`}>
-                <label>Descripcion del Programa turistico</label>
-                <textarea
-                  id=""
-                  cols={30}
-                  rows={10}
-                  {...register("Descripcion", { required: true })}
-                ></textarea>
-                <span className={`${globalStyles.global_error_message}`}>
-                  {/* {errors.Descripcion?.type == "required" &&
+                  </span>
+                </div>
+                <div className={`${globalStyles.global_textInput_container}`}>
+                  <label>Duracion Noches</label>
+                  <input
+                    type="number"
+                    {...register("DuracionNoche", { required: true })}
+                    disabled
+                  ></input>
+                  <span
+                    className={`${globalStyles.global_error_message}`}
+                  ></span>
+                </div>
+                <div className={`${globalStyles.global_textArea_container}`}>
+                  <label>Descripcion del Programa turistico</label>
+                  <textarea
+                    id=""
+                    cols={30}
+                    rows={10}
+                    {...register("Descripcion", { required: true })}
+                  ></textarea>
+                  <span className={`${globalStyles.global_error_message}`}>
+                    {/* {errors.Descripcion?.type == "required" &&
                     "El localizacion es obligatorio"} */}
-                </span>
-              </div>
-              <div className={`${globalStyles.global_table_container}`}>
-                <span>Servicios</span>
-                <MaterialTable
-                  title={""}
-                  columns={columnasServicioProducto}
-                  data={Cotizacion.ServicioProducto}
-                />
-              </div>
-              {/* <TablaServicioCotizacion
+                  </span>
+                </div>
+                <div className={`${globalStyles.global_table_container}`}>
+                  <span>Servicios</span>
+                  <MaterialTable
+                    title={""}
+                    columns={columnasServicioProducto}
+                    data={Cotizacion.ServicioProducto}
+                  />
+                </div>
+                {/* <TablaServicioCotizacion
                 FechaIn={moment()}
                 ListaServicioProductoSeleccionados={[]}
                 ListaServicios={[]}
                 SetListaServicioProductoSeleccionados={() => {}}
               /> */}
 
-              <div className={`${globalStyles.global_table_container}`}>
-                <span>Itinierario</span>
-                <MaterialTable
-                  title={""}
-                  columns={columnasItinerario}
-                  data={Cotizacion.Itinerario}
-
-                  // editable={{
-                  //   onRowAdd: (newData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // setData([...Data, newData]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     }),
-                  //   onRowUpdate: (newData, oldData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // const dataUpdate = [...Data];
-                  //         // const index = oldData.tableData.id;
-                  //         // dataUpdate[index] = newData;
-                  //         // setData([...dataUpdate]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     }),
-                  //   onRowDelete: (oldData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // const dataDelete = [...Data];
-                  //         // const index = oldData.tableData.id;
-                  //         // dataDelete.splice(index, 1);
-                  //         // setData([...dataDelete]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     })
-                  // }}
-                />
-              </div>
-              {/* <div className={`${globalStyles.global_textArea_container}`}>
+                <div className={`${globalStyles.global_table_container}`}>
+                  <span>Itinierario</span>
+                  <MaterialTable
+                    title={""}
+                    columns={columnasItinerario}
+                    data={Cotizacion.Itinerario}
+                  />
+                </div>
+                {/* <div className={`${globalStyles.global_textArea_container}`}>
                 <label>Descripcion de Itinerario</label>
                 <textarea
                   id=""
@@ -305,126 +308,33 @@ export default function Fase4({
                 <span className={`${globalStyles.global_error_message}`}>
                 </span>
               </div> */}
-              <div className={`${globalStyles.global_table_container}`}>
-                <span>Incluye</span>
-                <MaterialTable
-                  title={""}
-                  columns={columnasIncluye}
-                  data={Cotizacion.Incluye}
-                  // editable={{
-                  //   onRowAdd: (newData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // setData([...Data, newData]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     }),
-                  //   onRowUpdate: (newData, oldData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // const dataUpdate = [...Data];
-                  //         // const index = oldData.tableData.id;
-                  //         // dataUpdate[index] = newData;
-                  //         // setData([...dataUpdate]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     }),
-                  //   onRowDelete: (oldData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // const dataDelete = [...Data];
-                  //         // const index = oldData.tableData.id;
-                  //         // dataDelete.splice(index, 1);
-                  //         // setData([...dataDelete]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     })
-                  // }}
-                />
-              </div>
-              <div className={`${globalStyles.global_table_container}`}>
-                <span>No incluye</span>
-                <MaterialTable
-                  title={""}
-                  columns={columnasNoIncluye}
-                  data={Cotizacion.NoIncluye}
-                  // editable={{
-                  //   onRowAdd: (newData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // setData([...Data, newData]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     }),
-                  //   onRowUpdate: (newData, oldData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // const dataUpdate = [...Data];
-                  //         // const index = oldData.tableData.id;
-                  //         // dataUpdate[index] = newData;
-                  //         // setData([...dataUpdate]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     }),
-                  //   onRowDelete: (oldData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // const dataDelete = [...Data];
-                  //         // const index = oldData.tableData.id;
-                  //         // dataDelete.splice(index, 1);
-                  //         // setData([...dataDelete]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     })
-                  // }}
-                />
-              </div>
-              <div className={`${globalStyles.global_table_container}`}>
-                <span>Recomendaciones para llevar</span>
-                <MaterialTable
-                  title={""}
-                  columns={columnasRecomendacionesLlevar}
-                  data={[]}
-                  // editable={{
-                  //   onRowAdd: (newData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // setData([...Data, newData]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     }),
-                  //   onRowUpdate: (newData, oldData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // const dataUpdate = [...Data];
-                  //         // const index = oldData.tableData.id;
-                  //         // dataUpdate[index] = newData;
-                  //         // setData([...dataUpdate]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     }),
-                  //   onRowDelete: (oldData) =>
-                  //     new Promise((resolve, reject) => {
-                  //       setTimeout(() => {
-                  //         // const dataDelete = [...Data];
-                  //         // const index = oldData.tableData.id;
-                  //         // dataDelete.splice(index, 1);
-                  //         // setData([...dataDelete]);
-                  //         // resolve();
-                  //       }, 1000);
-                  //     })
-                  // }}
-                />
-              </div>
-              <div className={`${customStyle.botones_container}`}>
-                <button
-                  className={`${botones.button} ${botones.buttonGuardar}`}
-                >
-                  Guardar
-                </button>
+                <div className={`${globalStyles.global_table_container}`}>
+                  <span>Incluye</span>
+                  <MaterialTable
+                    title={""}
+                    columns={columnasIncluye}
+                    data={Cotizacion.Incluye}
+                  />
+                </div>
+                <div className={`${globalStyles.global_table_container}`}>
+                  <span>No incluye</span>
+                  <MaterialTable
+                    title={""}
+                    columns={columnasNoIncluye}
+                    data={Cotizacion.NoIncluye}
+                  />
+                </div>
+                <div className={`${globalStyles.global_table_container}`}>
+                  <span>Recomendaciones para llevar</span>
+                  <MaterialTable
+                    title={""}
+                    columns={columnasRecomendacionesLlevar}
+                    data={Cotizacion.RecomendacionesLlevar}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          </form>
         </>
       )}
     </>

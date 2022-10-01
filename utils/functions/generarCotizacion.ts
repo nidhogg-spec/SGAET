@@ -6,6 +6,7 @@ import {
   programaTuristicoInterface,
   reservaCotizacionInterface
 } from "../interfaces/db";
+import { Currency, Idiomas } from "../dominio";
 
 export const generarCotizacion = (
   NombreGrupo: string,
@@ -70,7 +71,13 @@ export const generarCotizacion = (
     IdClienteProspecto: clienteProspecto.IdClienteProspecto ?? "",
     IdReservaCotizacion: undefined,
     ListaPasajeros: undefined,
-    URLLlenadoPasajeros: ""
+    URLLlenadoPasajeros: "",
+    Idioma: Idiomas.Español,
+    Moneda: Currency.Dolares,
+    FechaOUT: "",
+    VoucherLink: "",
+    FechaEntregaVoucher: "",
+    PrecioTotal: 0
   };
 
   return cotizacion;

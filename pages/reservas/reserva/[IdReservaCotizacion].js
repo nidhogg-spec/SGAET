@@ -56,6 +56,7 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
           .then((r) => r.json())
           .then((data) => {
             setReservaCotizacion(data.reservaCotizacion);
+            setServiciosEscogidos(data.reservaCotizacion?.ServicioProducto ?? [])
             setClienteCotizacion(data.clienteProspecto);
             if (data.reservaCotizacion["Estado"]) {
               setEstado(data.reservaCotizacion["Estado"]);
@@ -65,16 +66,16 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
             resolve();
           });
       }),
-      new Promise(async (resolve, reject) => {
-        await fetch(
-          APIPatch + "/api/reserva/DataServicio/" + IdReservaCotizacion
-        )
-          .then((r) => r.json())
-          .then((data) => {
-            setServiciosEscogidos(data.AllServicioEscogido);
-            resolve();
-          });
-      }),
+      // new Promise(async (resolve, reject) => {
+      //   await fetch(
+      //     APIPatch + "/api/reserva/DataServicio/" + IdReservaCotizacion
+      //   )
+      //     .then((r) => r.json())
+      //     .then((data) => {
+      //       setServiciosEscogidos(data.AllServicioEscogido);
+      //       resolve();
+      //     });
+      // }),
       new Promise(async (resolve, reject) => {
         await fetch(APIPatch + "/api/Cotizacion/ObtenerTodosServicios")
           .then((r) => r.json())
