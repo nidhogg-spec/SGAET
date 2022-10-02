@@ -121,8 +121,6 @@ export default function LlenadoPasajeros({
         };
       }
     );
-    console.log(pasajeroList);
-
     await axios.put("/api/pasajero/" + IdReservaCotizcion, {
       Pasajero: pasajeroList
     });
@@ -435,30 +433,23 @@ export const getServerSideProps: GetServerSideProps = async ({
   if (idUrl?.slice(0, 3) == "RC0") {
     await connectToDatabase().then(async (connectedObject) => {
       const collectionReservaCotizacion =
-        connectedObject.db.collection("ReservaCotizacion");
-      const reservaCotizacion: reservaCotizacionInterface =
-        await collectionReservaCotizacion.findOne({
-          IdReservaCotizacion: idUrl
-        });
+        connectedObject.db.collection<reservaCotizacionInterface>(
+          "ReservaCotizacion"
+        );
+      const reservaCotizacion = await collectionReservaCotizacion.findOne({
+        IdReservaCotizacion: idUrl
+      });
       if (reservaCotizacion == null)
         error = "No se encontro data de la reserva";
 
       NumPasajeros =
-        parseInt(reservaCotizacion.NpasajerosAdult.toString() || "0") +
-        parseInt(reservaCotizacion.NpasajerosChild.toString() || "0");
+        parseInt(reservaCotizacion?.NpasajerosAdult.toString() ?? "0") +
+        parseInt(reservaCotizacion?.NpasajerosChild.toString() ?? "0");
 
       if (NumPasajeros == null || NumPasajeros <= 0)
         error = "Error interno con el numero de pasajeros";
 
-      const collectionPasajero = connectedObject.db.collection("Pasajero");
-      const pasajeros = await collectionPasajero
-        .find({
-          IdReservaCotizacion: idUrl
-        })
-        .project({
-          _id: 0
-        })
-        .toArray();
+      const pasajeros = reservaCotizacion?.ListaPasajeros ?? [];
 
       if (pasajeros.length == 0) {
         for (let index = 0; index < NumPasajeros; index++) {

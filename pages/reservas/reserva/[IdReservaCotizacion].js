@@ -24,7 +24,6 @@ import ModalPasajeros from "@/components/ComponentesUnicos/Biblia/Pasajeros/Moda
 
 
 const estadosReservaCotizacion_array = Object.values(estadosReservaCotizacion);
-console.log(estadosReservaCotizacion_array);
 
 const columnasPasajero = [
   { title: "Nombre", field: "Nombre" },
@@ -71,6 +70,7 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
         )
           .then((r) => r.json())
           .then((data) => {
+            debugger;
             setReservaCotizacion(data.reservaCotizacion);
             setServiciosEscogidos(data.reservaCotizacion?.ServicioProducto ?? [])
             setClienteCotizacion(data.clienteProspecto);
@@ -542,7 +542,7 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
             />
             <MaterialTable
               columns={columnasPasajero}
-              data={ReservaCotizacion?.listaPasajeros}
+              data={ReservaCotizacion?.ListaPasajeros}
               actions={accionesPasajeros}
               options={{ actionsColumnIndex: -1 }}
               title={null}
@@ -698,7 +698,6 @@ const TablaServicioCotizacion = (
         temp_date.setDate(dt);
         item["FechaReserva"] = temp_date.toLocaleDateString();
       }
-      console.log(item["FechaReserva"]);
       props.setCotiServicio(temp_CotiServicio);
       // item['FechaReserva']= item['FechaReserva'].toString()
     });
@@ -843,12 +842,10 @@ const TablaServicioCotizacion = (
                   dataDelete.splice(index, 1);
                   props.setCotiServicio([...dataDelete]);
                   //--------------------------------------------------
-                  console.log(oldData);
                   let result = await axios.delete(
                     props.APIPatch +
                     `/api/ServicioEscogido/CRUD/${oldData["IdServicioEscogido"]}`
                   );
-                  console.log(result);
                   //--------------------------------------------------
 
                   resolve();
