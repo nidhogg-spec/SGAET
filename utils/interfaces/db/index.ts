@@ -541,7 +541,7 @@ export enum TipoDocumento {
 }
 
 // ------------------- Biblia --------------------
-export interface biblia {
+export interface bibliaInterface extends mongoBaseCollection {
   IdRegistroBiblia: string;
   IdReservaCotizacion: string;
   Equipos: any[];

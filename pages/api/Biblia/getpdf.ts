@@ -1,11 +1,12 @@
-import { PdfReservaCotizacionUsecase } from "@/src/application/usecases/pdf/generarReservaCotizacion.usecase";
+import { PdfBibliaUsecase } from "@/src/application/usecases/pdf/generarBiblia.usecase";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async (req: NextApiRequest, res: NextApiResponse<any>) => {
   const {
     query: { IdReservaCotizacion }
   } = req;
-  const pdfGenerator = new PdfReservaCotizacionUsecase();
+
+  const pdfGenerator = new PdfBibliaUsecase();
   if (typeof IdReservaCotizacion != "string") {
     res.status(400).send("there is no IdReservaCotizacion");
     return;

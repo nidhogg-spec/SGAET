@@ -1,0 +1,9 @@
+### Main Variables
+###
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+### Listar pasajeros por reserva
+GET http://{{host}}/api/Biblia/getpdf?IdReservaCotizacion=RC00003
