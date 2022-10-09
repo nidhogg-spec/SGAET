@@ -59,3 +59,7 @@ content-type: application/json
 
 ### Eliminar pasajeros por reserva
 DELETE http://{{host}}/api/pasajero/RS0000001
+
+
+### Listar pasajeros por reserva
+GET http://{{host}}/api/ProgramaTuristico/getpdf?IdProgramaTuristico=OS00011

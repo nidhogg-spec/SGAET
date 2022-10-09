@@ -9,10 +9,11 @@ export default async (req: NextApiRequest, res: NextApiResponse<any>) => {
   const {
     query: { IdOrdenServicio }
   } = req;
+  if (IdOrdenServicio == undefined) return;
   const ordenServicio: any = await encontrarOrdenServicio(
     req,
     res,
-    IdOrdenServicio as string | string[]
+    IdOrdenServicio 
   );
   let docDefinition = {};
   switch (ordenServicio.TipoOrdenServicio) {
