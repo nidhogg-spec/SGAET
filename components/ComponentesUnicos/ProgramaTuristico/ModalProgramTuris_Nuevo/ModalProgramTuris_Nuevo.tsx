@@ -8,7 +8,10 @@ import { useForm } from "react-hook-form";
 import globalStyles from "@/globalStyles/modules/global.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
 import customStyle from "./ModalProgramTuris_Nuevo.module.css";
-import { servicioEscogidoInterface } from "@/utils/interfaces/db";
+import {
+  reservaCotizacionInterface,
+  servicioEscogidoInterface
+} from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 
 import { programaTuristicoInterface } from "@/utils/interfaces/db";
@@ -19,6 +22,7 @@ interface props {
   open: boolean;
   setOpen: Function;
   ListaServiciosProductos: never[];
+  dataToReset: programaTuristicoInterface | null;
 }
 interface Itinerario_Interface {
   Dia: number;
@@ -68,7 +72,8 @@ interface ServicioProducto_Interface {
 export default function ModalProgramTuris_Nuevo({
   open,
   setOpen,
-  ListaServiciosProductos
+  ListaServiciosProductos,
+  dataToReset
 }: props) {
   const router = useRouter();
   const [openSiguientePaso, setOpenSiguientePaso] = useState(false);
@@ -78,7 +83,8 @@ export default function ModalProgramTuris_Nuevo({
     handleSubmit,
     watch,
     formState: { errors },
-    getValues
+    getValues,
+    reset
   } = useForm({
     defaultValues: {
       NombrePrograma: "",
@@ -156,6 +162,29 @@ export default function ModalProgramTuris_Nuevo({
         setOpenSiguientePaso(true);
       });
   };
+
+  useEffect(() => {
+    reset({
+      NombrePrograma: dataToReset?.NombrePrograma,
+      CodigoPrograma: dataToReset?.CodigoPrograma,
+      Tipo: dataToReset?.Tipo,
+      DuracionDias: parseInt((dataToReset?.DuracionDias ?? "0").toString()),
+      DuracionNoche: parseInt((dataToReset?.DuracionNoche ?? "0").toString()),
+      Localizacion: dataToReset?.Localizacion,
+      Descripcion: dataToReset?.Descripcion,
+      Itinerario: dataToReset?.Itinerario as any[],
+      Incluye: dataToReset?.Incluye as any[],
+      NoIncluye: dataToReset?.NoIncluye as any[],
+      RecomendacionesLlevar: dataToReset?.RecomendacionesLlevar as any[],
+      ServicioProducto: dataToReset?.ServicioProducto as any[],
+      IdProgramaTuristico: dataToReset?.IdProgramaTuristico
+    });
+    setItinerario(dataToReset?.Itinerario ?? []);
+    setIncluye(dataToReset?.Incluye ?? []);
+    setNoIncluye(dataToReset?.NoIncluye ?? []);
+    setRecomendacionesLlevar(dataToReset?.RecomendacionesLlevar ?? []);
+    setServicioProducto(dataToReset?.ServicioProducto ?? []);
+  }, [dataToReset]);
 
   return (
     <>

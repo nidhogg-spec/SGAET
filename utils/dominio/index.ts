@@ -3,7 +3,6 @@ export enum Currency {
   Soles = "Soles"
 }
 
-
 export const tiposProveedoresServicios = [
   {
     prefijo: "PH",
@@ -66,35 +65,43 @@ export const tiposProveedoresServicios = [
 export const estadosReservaCotizacion = {
   0: {
     estado: "Cotizacion",
-    numero: 0
+    numero: 0,
+    validNextStates: [1]
   },
   1: {
     estado: "Reserva",
-    numero: 1
+    numero: 1,
+    validNextStates: [2, 3, 4]
   },
   2: {
     estado: "Reserva / Proveedores confirmados",
-    numero: 2
+    numero: 2,
+    validNextStates: [3, 4, 5]
   },
   3: {
     estado: "Reserva / Ordenes de Servicio generadas",
-    numero: 3
+    numero: 3,
+    validNextStates: [4, 5]
   },
   4: {
     estado: "Reserva / Proveedores pagados",
-    numero: 4
+    numero: 4,
+    validNextStates: [5]
   },
   5: {
     estado: "Reserva Concluida",
-    numero: 5
+    numero: 5,
+    validNextStates: []
   },
   11: {
     estado: "Cotizacion Inactiva",
-    numero: 11
+    numero: 11,
+    validNextStates: [0]
   },
   12: {
     estado: "Reserva Inactiva",
-    numero: 12
+    numero: 12,
+    validNextStates: [1]
   }
 };
 
