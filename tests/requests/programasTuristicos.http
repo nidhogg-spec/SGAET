@@ -63,3 +63,6 @@ DELETE http://{{host}}/api/pasajero/RS0000001
 
 ### Listar pasajeros por reserva
 GET http://{{host}}/api/ProgramaTuristico/getpdf?IdProgramaTuristico=OS00011
+
+### Listar un programa turistico
+GET http://{{host}}/api/v2/programaTuristico?idProgramaTuristico=OS00011

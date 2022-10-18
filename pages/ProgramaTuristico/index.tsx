@@ -23,6 +23,10 @@ import { ironOptions } from "@/utils/config";
 //
 import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
+import {
+  programaTuristicoInterface,
+  reservaCotizacionInterface
+} from "@/utils/interfaces/db";
 
 interface Props {
   Columnas: any[];
@@ -45,6 +49,8 @@ function ProgramasTuristicos({
   const [Loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [ListarInactivos, setListarInactivos] = useState(false);
+  const [NewPrograTurisReset, setNewPrograTurisReset] =
+    useState<programaTuristicoInterface | null>(null);
 
   useEffect(() => {
     // setLoading(true);
@@ -67,6 +73,7 @@ function ProgramasTuristicos({
         open={open}
         setOpen={setOpen}
         ListaServiciosProductos={ListaServiciosProductos as never[]}
+        dataToReset={NewPrograTurisReset}
         key={"ModalProgramTuris_Nuevo"}
       />
       <div className={globalStyles.main_work_space_container}>
@@ -152,15 +159,15 @@ function ProgramasTuristicos({
             }}
           />
         </div>
-        {/* <div>
+        <div>
           <h2>Opciones Avanzadas</h2>
           <FusionProgramas
-              TablaDatos={TablaDatos as never[]}
-              DevolverEstructuraFormulario={DevolverEstructuraFormulario as any}
-              ModalDisplay={ModalDisplay}
-              APIpathGeneral={APIpathGeneral}
-            />
-        </div> */}
+            TablaDatos={TablaDatos as []}
+            APIpathGeneral={APIpathGeneral}
+            setDataToReset={setNewPrograTurisReset}
+            setModalDisplay={setOpen}
+          />
+        </div>
       </div>
     </div>
   );

@@ -4,21 +4,21 @@ import React, { useEffect, useState } from "react";
 
 //Componentes
 import MaterialTable from "material-table";
+import { programaTuristicoInterface } from "@/utils/interfaces/db";
 
 interface props {
   Title: string;
-  ModoEdicion: boolean,
+  ModoEdicion: boolean;
   // DevolverDatoFunct: (keyDato:string, Dato:any) => void,
-  setCotiServicio: (Dato:any)=>void,
+  setCotiServicio: (Dato: any) => void;
   // KeyDato: string,
-  CotiServicio: any[],
-  ListaServiciosProductos: any[],
-  Reiniciar: boolean,
+  CotiServicio: any[];
+  ListaServiciosProductos: any[];
+  Reiniciar: boolean;
 }
 
-
 const TablaProgramaServicio_v2 = (
-  props:props
+  props: props
   // {
   //   Title: "Nombre del Proveedor",
   //   ModoEdicion: true,
@@ -127,8 +127,8 @@ const TablaProgramaServicio_v2 = (
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          accion: "ObtenerCambioDolar",
-        }),
+          accion: "ObtenerCambioDolar"
+        })
       })
         .then((r) => r.json())
         .then((data) => {
@@ -152,64 +152,64 @@ const TablaProgramaServicio_v2 = (
                 field: "IdServicioProducto",
                 title: "IdServicioProducto",
                 editable: "never",
-                hidden: true,
+                hidden: true
               },
               {
                 field: "PrecioConfiUnitario",
                 title: "Precio Confidencial Unitario",
                 editable: "never",
                 type: "numeric",
-                hidden: true,
+                hidden: true
               },
               { field: "NombreServicio", title: "Nombre", editable: "never" },
               {
                 field: "Dia",
                 title: "Numero de dia",
                 editable: "always",
-                type: "numeric",
+                type: "numeric"
               },
               {
                 field: "Cantidad",
                 title: "Cantidad",
                 editable: "always",
-                type: "numeric",
+                type: "numeric"
               },
               {
                 field: "Currency",
                 title: "Moneda",
                 editable: "never",
-                lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+                lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" }
               },
               {
                 field: "PrecioCotiUnitario",
                 title: "Precio Cotizacion Unitario",
                 editable: "always",
-                type: "numeric",
+                type: "numeric"
               },
               {
                 field: "PrecioPublicado",
                 title: "Precio Publicado",
                 editable: "never",
-                type: "numeric",
+                type: "numeric"
               },
               {
                 field: "IGV",
                 title: "IGV incluido?",
                 editable: "always",
-                type: "boolean",
+                type: "boolean"
               },
               {
                 field: "PrecioCotiTotal",
                 title: "Precio Cotizacion Total",
                 editable: "never",
-                type: "numeric",
+                type: "numeric"
               },
               {
                 field: "PrecioConfiTotal",
                 title: "Precio Confidencial Total",
                 editable: "never",
-                type: "numeric",
-              },
+                type: "numeric"
+              }
             ]}
             data={props.CotiServicio}
             editable={{
@@ -226,8 +226,7 @@ const TablaProgramaServicio_v2 = (
 
                       temp_CotiServicio[id]["Cantidad"] =
                         temp_newData["Cantidad"];
-                      temp_CotiServicio[id]["Dia"] =
-                        temp_newData["Dia"];
+                      temp_CotiServicio[id]["Dia"] = temp_newData["Dia"];
                       temp_CotiServicio[id]["IGV"] = temp_newData["IGV"];
                       if (temp_CotiServicio[id]["IGV"]) {
                         //@ts-ignore
@@ -265,13 +264,13 @@ const TablaProgramaServicio_v2 = (
                 new Promise((resolve, reject) => {
                   setTimeout(() => {
                     const dataDelete = [...props.CotiServicio];
-                        //@ts-ignore
+                    //@ts-ignore
                     const index = oldData.tableData.id;
                     dataDelete.splice(index, 1);
                     props.setCotiServicio([...dataDelete]);
                     resolve(null);
                   }, 1000);
-                }),
+                })
             }}
           />
           <select
@@ -297,12 +296,12 @@ const TablaProgramaServicio_v2 = (
                 field: "IdServicioProducto",
                 title: "IdServicioProducto",
                 editable: "never",
-                hidden: true,
+                hidden: true
               },
               {
                 field: "TipoServicio",
                 title: "Tipo de Servicio",
-                editable: "never",
+                editable: "never"
               },
               { field: "Nombre", title: "Nombre", editable: "never" },
               { title: "Nombre del Proveedor", field: "NombreProveedor" },
@@ -312,26 +311,26 @@ const TablaProgramaServicio_v2 = (
                 field: "Currency",
                 title: "Moneda",
                 editable: "never",
-                lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+                lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" }
               },
               {
                 field: "Precio",
                 title: "Precio Cotizacion",
                 editable: "never",
-                type: "numeric",
+                type: "numeric"
               },
               {
                 field: "Costo",
                 title: "Precio Confidencial",
                 editable: "never",
-                type: "numeric",
+                type: "numeric"
               },
               {
                 field: "PrecioPublicado",
                 title: "Precio Publicado",
                 editable: "never",
-                type: "numeric",
-              },
+                type: "numeric"
+              }
             ]}
             data={props.ListaServiciosProductos}
             actions={[
@@ -339,10 +338,12 @@ const TablaProgramaServicio_v2 = (
                 icon: "add",
                 tooltip: "Añadir Servicio a Cotizacion",
                 onClick: (event, rowData) => {
-                  let x:any[] = [...props.CotiServicio];
+                  let x: programaTuristicoInterface["ServicioProducto"] = [
+                    ...props.CotiServicio
+                  ];
                   x.push({
                     IdServicioProducto: rowData["IdServicioProducto"],
-                    TipoServicio: rowData['TipoServicio'],
+                    TipoServicio: rowData["TipoServicio"],
                     PrecioConfiUnitario: rowData["Costo"],
                     NombreServicio: rowData["Nombre"],
                     Dia: 1,
@@ -353,6 +354,7 @@ const TablaProgramaServicio_v2 = (
                     PrecioConfiTotal: rowData["Costo"],
                     Currency: rowData["Currency"],
                     PrecioPublicado: rowData["PrecioPublicado"],
+                    IdProveedor: rowData["IdProveedor"] ?? ""
                   });
                   props.setCotiServicio(x as never[]);
                   let ActuDataTableServicios = [...DataTableServicios];
@@ -363,8 +365,8 @@ const TablaProgramaServicio_v2 = (
                     1
                   );
                   setDataTableServicios(ActuDataTableServicios);
-                },
-              },
+                }
+              }
             ]}
           />
         </div>
@@ -380,64 +382,64 @@ const TablaProgramaServicio_v2 = (
               field: "IdServicioProducto",
               title: "IdServicioProducto",
               editable: "never",
-              hidden: true,
+              hidden: true
             },
             {
               field: "PrecioConfiUnitario",
               title: "Precio Confidencial Unitario",
               editable: "never",
               type: "numeric",
-              hidden: true,
+              hidden: true
             },
             { field: "NombreServicio", title: "Nombre", editable: "never" },
             {
               field: "Dia",
               title: "Numero de dia",
               editable: "always",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "Cantidad",
               title: "Cantidad",
               editable: "always",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "Currency",
               title: "Moneda",
               editable: "never",
-              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" },
+              lookup: { Dolar: "Dolares", Sol: "Nuevos Soles" }
             },
             {
               field: "PrecioCotiUnitario",
               title: "Precio Cotizacion Unitario",
               editable: "always",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "PrecioPublicado",
               title: "Precio Publicado",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "IGV",
               title: "IGV incluido?",
               editable: "always",
-              type: "boolean",
+              type: "boolean"
             },
             {
               field: "PrecioCotiTotal",
               title: "Precio Cotizacion Total",
               editable: "never",
-              type: "numeric",
+              type: "numeric"
             },
             {
               field: "PrecioConfiTotal",
               title: "Precio Confidencial Total",
               editable: "never",
-              type: "numeric",
-            },
+              type: "numeric"
+            }
           ]}
           data={props.CotiServicio}
         />
