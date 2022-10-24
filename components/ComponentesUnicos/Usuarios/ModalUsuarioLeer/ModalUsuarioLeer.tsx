@@ -15,10 +15,11 @@ import globalStyles from "@/globalStyles/modules/global.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
 import customStyle from "../../Clientes/ModalClientes_Leer/ModalClientes_Leer.module.css";
 
-import { userInterface } from "@/utils/interfaces/db";
+import { TipoAccion, userInterface } from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 
 import { useRouter } from "next/router";
+import { generarLog } from "@/utils/functions/generarLog";
 
 export default function ModalUsuarioLeer({
   open,
@@ -75,6 +76,7 @@ export default function ModalUsuarioLeer({
         idUsuario: IdUser,
         data: usuario
       });
+      generarLog(TipoAccion.UPDATE, "usuario actualizado - " + IdUser);
     };
     actualizar();
     setLoading(false);

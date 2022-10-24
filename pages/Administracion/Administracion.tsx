@@ -12,7 +12,8 @@ import axios from "axios";
 
 import ModalUsuarioNuevo from "@/components/ComponentesUnicos/Usuarios/ModalUsuarioNuevo/ModalUsuarioNuevo";
 import ModalUsuarioLeer from "@/components/ComponentesUnicos/Usuarios/ModalUsuarioLeer/ModalUsuarioLeer";
-import { userInterface } from "@/utils/interfaces/db";
+import { TipoAccion, userInterface } from "@/utils/interfaces/db";
+import { generarLog } from "@/utils/functions/generarLog";
 
 function Administracion({ usersData }: { usersData: any }) {
   const columnas = [
@@ -95,6 +96,7 @@ function Administracion({ usersData }: { usersData: any }) {
           Estado: 0
         }
       });
+      generarLog(TipoAccion.DELETE, "usuario eliminado - " + IdUser);
     };
 
     eliminar();

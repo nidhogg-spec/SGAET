@@ -130,6 +130,11 @@ export const dbColeccionesFormato = {
     prefijo: "BI",
     coleccion: "Biblia",
     keyId: "IdRegistroBiblia"
+  },
+  SystemLog: {
+    prefijo: "SL",
+    coleccion: "SystemLog",
+    keyId: "IdSystemLog"
   }
 };
 
@@ -521,7 +526,7 @@ export interface userInterface extends mongoBaseCollection {
   Apellido: string;
   Email: string;
   Password: string;
-  TipoUsuario: TipoUsuario | "";
+  TipoUsuario: TipoUsuario | string;
   IdUser: string;
 }
 export enum TipoUsuario {
@@ -546,4 +551,22 @@ export interface bibliaInterface extends mongoBaseCollection {
   IdReservaCotizacion: string;
   Equipos: any[];
   Observaciones: any[];
+}
+
+// ------------------- Systemlog --------------------
+export interface systemLogInterface extends mongoBaseCollection {
+  IdSystemLog: string;
+  User: {
+    Email: string;
+    IdUser: string;
+    TipoUsuario: TipoUsuario | string;
+  };
+  Accion: TipoAccion | string;
+  Descripcion: string;
+  CreatedAt: string;
+}
+export enum TipoAccion {
+  CREATE = "CREATE",
+  DELETE = "DELETE",
+  UPDATE = "UPDATE"
 }

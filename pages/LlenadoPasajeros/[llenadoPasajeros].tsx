@@ -8,6 +8,7 @@ import botones from "@/globalStyles/modules/boton.module.css";
 import {
   pasajeroInterface,
   reservaCotizacionInterface,
+  TipoAccion,
   TipoDocumento
 } from "@/utils/interfaces/db";
 import { connectToDatabase } from "@/utils/API/connectMongo-v2";
@@ -16,6 +17,7 @@ import { GetServerSideProps } from "next";
 import AES from "crypto-js/aes";
 import { enc } from "crypto-js";
 import { useForm } from "react-hook-form";
+import { generarLog } from "@/utils/functions/generarLog";
 interface IProps {
   error: string | undefined;
   NumPasajeros: number;
@@ -124,6 +126,10 @@ export default function LlenadoPasajeros({
     await axios.put("/api/pasajero/" + IdReservaCotizcion, {
       Pasajero: pasajeroList
     });
+    generarLog(
+      TipoAccion.UPDATE,
+      "actualizacion de reserva - lista de pasajeros"
+    );
     router.reload();
   };
 

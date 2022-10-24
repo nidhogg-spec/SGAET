@@ -6,6 +6,7 @@ import axios from "axios";
 import { resetServerContext } from "react-beautiful-dnd";
 import { withIronSessionSsr } from "iron-session/next";
 import { ironOptions } from "@/utils/config";
+import { generarLog } from "@/utils/functions/generarLog";
 
 //componentes
 import AutoFormulario from "@/components/Formulario_V2/AutoFormulario/AutoFormulario";
@@ -97,6 +98,7 @@ export default function TipoProveedor(props = { APIpath }) {
         data: Proveedor
       }
     );
+    generarLog("CREATE", "nuevo proveedor creado");
     router.push(
       `/Proveedores/${Proveedor["tipo"]}/${result.data["IdProveedor"]}`
     );

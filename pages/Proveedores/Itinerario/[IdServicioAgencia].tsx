@@ -12,6 +12,8 @@ import { ironOptions } from "@/utils/config";
 import formStyle from "@/globalStyles/modules/input.module.css";
 import botonStyle from "@/globalStyles/modules/boton.module.css";
 import { getOneData } from "@/utils/API/conexionMongo";
+import { generarLog } from "@/utils/functions/generarLog";
+import { TipoAccion } from "@/utils/interfaces/db";
 
 export interface ItinerarioProps {
   IdServicioAgencia: string;
@@ -48,6 +50,10 @@ const Itinerario = (props: ItinerarioProps) => {
         {
           itinerario: values
         }
+      );
+      generarLog(
+        TipoAccion.UPDATE,
+        "actualizacion de itinerario"
       );
       console.log(result);
       if (result.statusText === "OK") {
