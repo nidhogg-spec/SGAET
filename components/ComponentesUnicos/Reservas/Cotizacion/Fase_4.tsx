@@ -9,7 +9,8 @@ import {
   clienteProspectoInterface,
   ordenServicioInterface,
   programaTuristicoInterface,
-  reservaCotizacionInterface
+  reservaCotizacionInterface,
+  TipoAccion
 } from "@/utils/interfaces/db";
 interface props {
   fase: number;
@@ -43,6 +44,7 @@ import {
   formInterface,
   generarCotizacionParte4
 } from "@/utils/functions/generarCotizacionParte4";
+import { generarLog } from "@/utils/functions/generarLog";
 
 //---------------------------------------------------------------------------------------
 
@@ -110,6 +112,7 @@ export default function Fase4({
       const res = await axios.post(`/api/v2/reservaCotizacion`, {
         reservaCotizacion: reservaCotizacion
       });
+      generarLog(TipoAccion.CREATE, "nueva cotizacion creada");
       if (res.status != 200) {
         setLoading(false);
         setAlertViewerData({

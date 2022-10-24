@@ -1,0 +1,22 @@
+### Main Variables
+###
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+
+### Listar logs
+GET http://{{host}}/api/v2/systemLogs
+
+
+### Crear log
+POST http://{{host}}/api/v2/systemLogs
+Content-Type: application/json
+
+{
+  "systemLog":{
+    "Accion":"UPDATE",
+    "Descripcion":"test de logs"
+  }
+}

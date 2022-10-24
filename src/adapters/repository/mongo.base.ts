@@ -1,6 +1,6 @@
 import { myMongoDB } from "@/src/infraestructure/mongoDb/mongoDb";
 import { reservaCotizacionInterface } from "@/utils/interfaces/db";
-import { Collection, Db, FilterQuery, OptionalId } from "mongodb";
+import { Collection, Db, FilterQuery, OptionalId, SchemaMember } from "mongodb";
 import { ReservaCotizacionRepository } from "./reservaCotizacion.repository";
 
 export abstract class mongoBaseRepository<T extends { _id?: any }> {
@@ -57,9 +57,12 @@ export abstract class mongoBaseRepository<T extends { _id?: any }> {
     return res.toArray();
   }
 
-  async findWithFilters(filter?: FilterQuery<T>) {
+  async findWithFilters(
+    filter?: FilterQuery<T>,
+    project?: SchemaMember<T, any>
+  ) {
     const collection = await this.getMongoCollectionClient(this.collection);
-    const res = collection.find(filter);
+    const res = collection.find(filter).project(project ?? {});
     return res.toArray();
   }
 

@@ -2,7 +2,8 @@ import axios from "axios";
 import moment from "moment";
 import { Currency } from "../dominio";
 import { createReservaCotizacionBodyParam } from "../interfaces/API/reservaCotizacion.interface";
-import { reservaCotizacionInterface } from "../interfaces/db";
+import { reservaCotizacionInterface, TipoAccion } from "../interfaces/db";
+import { generarLog } from "./generarLog";
 
 export interface formInterface {
   NombreGrupo: string;
@@ -29,7 +30,6 @@ export async function generarCotizacionParte4(
   data: formInterface,
   Cotizacion: reservaCotizacionInterface
 ): Promise<[createReservaCotizacionBodyParam, Error | null]> {
-  
   const ServicioProductoTemp = Cotizacion.ServicioProducto.map((servi) => {
     return {
       FechaLimitePago: servi.FechaLimitePago ?? "",
@@ -71,7 +71,7 @@ export async function generarCotizacionParte4(
   let CambioDolar_temp: number = parseFloat(
     sessionStorage.getItem("CambioDolar") ?? "NaN"
   );
-  if (CambioDolar_temp == NaN) {
+  if (Number.isNaN(CambioDolar_temp)) {
     const res = await axios.post(
       "/api/DataSistema",
       {

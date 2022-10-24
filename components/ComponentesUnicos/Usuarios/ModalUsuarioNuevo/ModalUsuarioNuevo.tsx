@@ -15,10 +15,11 @@ import globalStyles from "@/globalStyles/modules/global.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
 import customStyle from "../../Clientes/ModalClientes_Nuevo/ModalClientes_Nuevo.module.css";
 
-import { userInterface } from "@/utils/interfaces/db";
+import { TipoAccion, userInterface } from "@/utils/interfaces/db";
 import LoadingComp from "@/components/Loading/Loading";
 
 import { useRouter } from "next/router";
+import { generarLog } from "@/utils/functions/generarLog";
 
 export default function ModalUsuarioNuevo({
   open,
@@ -69,6 +70,7 @@ export default function ModalUsuarioNuevo({
                 accion: "create",
                 data: nuevoUsuario
             });
+            generarLog(TipoAccion.CREATE, "nuevo usuario creado");
         }
         crear();
         setLoading(false);

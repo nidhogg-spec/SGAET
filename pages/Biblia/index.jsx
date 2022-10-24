@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { generarLog } from "@/utils/functions/generarLog";
 
 import MaterialTable from "material-table";
 import Loader from "@/components/Loading/Loading";
@@ -30,7 +31,7 @@ const columnasTransporte = [
   { title: "Nombre", field: "NombreServicio" },
   { title: "Cantidad", field: "Cantidad" },
   { title: "Fecha de reserva", field: "FechaReserva" },
-  { title: "Fecha limite de pago", field: "FechaLimitePago"} 
+  { title: "Fecha limite de pago", field: "FechaLimitePago" }
 ];
 
 const columnasBriefing = [
@@ -57,7 +58,6 @@ const columnasEntrada = [
   { title: "Fecha de reserva", field: "FechaReserva" },
   { title: "Fecha limite de pago", field: "FechaLimitePago" }
 ];
-
 
 const Index = ({ APIPath }) => {
   const router = useRouter();
@@ -93,7 +93,9 @@ const Index = ({ APIPath }) => {
     const params = {
       IdReservaCotizacion
     };
-    const resultado = await axios.get(APIPath + "/api/Biblia/bibliaExtras", { params });
+    const resultado = await axios.get(APIPath + "/api/Biblia/bibliaExtras", {
+      params
+    });
     const biblia = resultado.data.data[0];
     if (biblia) {
       const { Equipos, Observaciones } = biblia;
@@ -101,22 +103,30 @@ const Index = ({ APIPath }) => {
       setObservaciones(Observaciones);
     }
     setBiblia(biblia);
-  }
+  };
 
   const obtenerTransportes = (servicios) => {
-    const productosTransportes = servicios.filter((servicio) => servicio.IdServicioProducto.startsWith("PT") || servicio.IdServicioProducto.startsWith("PF"));
+    const productosTransportes = servicios.filter(
+      (servicio) =>
+        servicio.IdServicioProducto.startsWith("PT") ||
+        servicio.IdServicioProducto.startsWith("PF")
+    );
     setTransportes(productosTransportes);
-  }
+  };
 
   const obtenerBriefing = (servicios) => {
-    const productosBriefing = servicios.filter((servicio) => servicio.IdServicioProducto.startsWith("PR"));
+    const productosBriefing = servicios.filter((servicio) =>
+      servicio.IdServicioProducto.startsWith("PR")
+    );
     setBriefing(productosBriefing);
-  }
+  };
 
   const obtenerEntradas = (servicios) => {
-    const productosEntrada = servicios.filter(servicio => servicio.IdServicioProducto.startsWith("PS"));
+    const productosEntrada = servicios.filter((servicio) =>
+      servicio.IdServicioProducto.startsWith("PS")
+    );
     setEntradas(productosEntrada);
-  }
+  };
 
   const accionesReserva = [
     {
@@ -126,19 +136,23 @@ const Index = ({ APIPath }) => {
         setLoading(true);
         setEquipos([]);
         setObservaciones([]);
-        const { ServicioProducto : servicios, listaPasajeros, IdReservaCotizacion } = rowData;
+        const {
+          ServicioProducto: servicios,
+          listaPasajeros,
+          IdReservaCotizacion
+        } = rowData;
         setPasajeros(listaPasajeros);
         obtenerTransportes(servicios);
         obtenerBriefing(servicios);
         obtenerEntradas(servicios);
         obtenerExtras(IdReservaCotizacion);
         setReserva(IdReservaCotizacion);
-        await new Promise(resolve => setTimeout(resolve, 250));
+        await new Promise((resolve) => setTimeout(resolve, 250));
         setSeleccion(true);
         setLoading(false);
       }
     }
-  ]
+  ];
 
   const accionesPasajeros = [
     {
@@ -149,30 +163,33 @@ const Index = ({ APIPath }) => {
         setDisplay(true);
       }
     }
-  ]
+  ];
 
-  const guardarBiblia =  async () => {
+  const guardarBiblia = async () => {
     setLoading(true);
     const nuevoRegistro = {
       IdReservaCotizacion: reserva,
       Equipos: equipos,
       Observaciones: observaciones
     };
-    biblia ? await axios.put(`${APIPath}/api/Biblia/bibliaExtras`, {
-      data: nuevoRegistro
-    }) : await axios.post(`${APIPath}/api/Biblia/bibliaExtras`, {
-      data: nuevoRegistro
-    });
+    biblia
+      ? await axios.put(`${APIPath}/api/Biblia/bibliaExtras`, {
+          data: nuevoRegistro
+        })
+      : await axios.post(`${APIPath}/api/Biblia/bibliaExtras`, {
+          data: nuevoRegistro
+        });
+    generarLog("UPDATE", "actualizacion de datos de biblia");
     obtenerExtras(reserva);
     setLoading(false);
     router.reload();
-  }
+  };
 
   const scrollHere = () => {
     infoSection.current.scrollIntoView({
       behavior: "smooth"
     });
-  }
+  };
 
   return (
     <div>
@@ -192,13 +209,10 @@ const Index = ({ APIPath }) => {
         />
       </div>
 
-
       <section ref={infoSection} id="Extra_info"></section>
 
-      {seleccion &&
-
+      {seleccion && (
         <>
-
           <div className={global_style.main_work_space_container}>
             <h1>Datos de Reserva</h1>
             <br />
@@ -239,17 +253,30 @@ const Index = ({ APIPath }) => {
                 />
                 <Equipo equipos={equipos} setEquipo={setEquipos} />
 
-                <Observacion observaciones={observaciones} setObservaciones={setObservaciones} />
-
+                <Observacion
+                  observaciones={observaciones}
+                  setObservaciones={setObservaciones}
+                />
               </div>
             </div>
-            <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}> 
-              <button className={`${botones.button} ${botones.buttonGuardar}`} onClick={guardarBiblia}>Guardar informacion</button>
-
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "20px"
+              }}
+            >
+              <button
+                className={`${botones.button} ${botones.buttonGuardar}`}
+                onClick={guardarBiblia}
+              >
+                Guardar informacion
+              </button>
             </div>
           </div>
-          { scrollHere() }
-        </>}
+          {scrollHere()}
+        </>
+      )}
     </div>
   );
 };
