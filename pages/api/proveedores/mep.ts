@@ -152,11 +152,18 @@ const crearMuchosEvaluacionActividad = async (req : NextApiRequest, res : NextAp
                 const db : Db = connectedObject.db;
                 const collection : Collection<any> = db.collection(coleccionNombre);
                 const result = await collection.insertMany(indicesActualizados);
-                console.log("Ingresos correctos");
+                res.status(200).send({
+                  message:"Ingresado correctamente"
+                })
             } catch (err) {
                 console.log(`Error - ${err}`);
+                res.status(400).send({
+                  message:"Error",
+                  error: err
+                })
             }
         });
+        
     } catch (err) {
         console.log(`Error - ${err}`);
     }

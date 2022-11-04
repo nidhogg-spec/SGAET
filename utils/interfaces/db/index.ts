@@ -469,8 +469,10 @@ export interface evaluacionActividadInterface extends mongoBaseCollection {
   IdEvaluacionActividad: string;
 }
 // ------------------Actividad-------------------
-export interface actividadInterface extends mongoBaseCollection {
+export interface actividadInterface
+  extends Omit<mongoBaseCollection, "Estado"> {
   descripcion: string;
+  estado: 0 | 1;
   valor: number | string;
   criterio: string;
   IdActividad: string;
