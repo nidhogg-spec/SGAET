@@ -16,7 +16,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { ReservaCotizacionRepository } from "@/src/adapters/repository/reservaCotizacion.repository";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { query : { idReservaCotizacion }} = req;
+  const {
+    query: { idReservaCotizacion }
+  } = req;
   if (req.method === "POST") {
     switch (req.body.accion) {
       case "create":
@@ -43,28 +45,30 @@ const obtenerReservaCotizacion = async (
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) => {
-   const coleccion = dbColeccionesFormato.ReservaCotizacion;
-   await connectToDatabase().then(async connectedObject => {
-       const db: Db = connectedObject.db;
-       const filtro: any = req.query;
-       const collection: Collection<any> = db.collection(coleccion.coleccion);
-       try {
-           if (filtro.hasOwnProperty("idReservaCotizacion")) {
-               const { idReservaCotizacion } = filtro;
-               const data = await collection.find({
-                   IdReservaCotizacion: idReservaCotizacion
-               }).toArray();
-               res.status(200).json({ data });
-           } else {
-               const data = await collection.find({}).toArray();
-               res.status(200).json({ data });
-           }
-       } catch (error : any) {
-           res.status(500).json({
-               error: true,
-               message: `Ocurrio un error - ${error.message}`
-           });
-       }
+  const coleccion = dbColeccionesFormato.ReservaCotizacion;
+  await connectToDatabase().then(async (connectedObject) => {
+    const db: Db = connectedObject.db;
+    const filtro: any = req.query;
+    const collection: Collection<any> = db.collection(coleccion.coleccion);
+    try {
+      if (filtro.hasOwnProperty("idReservaCotizacion")) {
+        const { idReservaCotizacion } = filtro;
+        const data = await collection
+          .find({
+            IdReservaCotizacion: idReservaCotizacion
+          })
+          .toArray();
+        res.status(200).json({ data });
+      } else {
+        const data = await collection.find({}).toArray();
+        res.status(200).json({ data });
+      }
+    } catch (error: any) {
+      res.status(500).json({
+        error: true,
+        message: `Ocurrio un error - ${error.message}`
+      });
+    }
   });
 
   /* const reservaCotizacionRepository = new ReservaCotizacionRepository();
@@ -132,13 +136,11 @@ const actualizarReservaCotizacion = async (
   const reservaCotizacion: reservaCotizacionInterface = req.body.data;
   const idReservaCotizacion: string = req.body.idProducto;
 
-  await verificarEstadoCotizacion(reservaCotizacion, idReservaCotizacion);
-
   await connectToDatabase().then(async (connectedObject) => {
     const dbo: Db = connectedObject.db;
     const collection: Collection<any> = dbo.collection(coleccion.coleccion);
     try {
-      collection.updateOne(
+      await collection.updateOne(
         {
           [coleccion.keyId]: idReservaCotizacion
         },
@@ -146,6 +148,11 @@ const actualizarReservaCotizacion = async (
           $set: reservaCotizacion
         }
       );
+      const result: reservaCotizacionInterface = await collection.findOne({
+        [coleccion.keyId]: idReservaCotizacion
+      });
+      await verificarEstadoCotizacion(result, idReservaCotizacion);
+
       res.status(200).json({
         message: "Actualizacion satisfactoria"
       });

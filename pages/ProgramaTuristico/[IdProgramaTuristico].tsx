@@ -311,7 +311,7 @@ export const getServerSideProps = withIronSessionSsr(
               //   proveedor["TipoMoneda"]="Dolar";
             } else {
               ListaServiciosProductos.push({
-                IdServicioProducto: x["IdProductoHotel"] || null,
+                IdServicioProducto: x["IdProductoHoteles"] || null,
                 IdProveedor: x["IdProveedor"] || null,
                 TipoServicio: "Hotel" || null,
                 Nombre: x["TipoPaxs"] + " - " + x["tipoHabitacion"] || null,
@@ -510,7 +510,7 @@ export const getServerSideProps = withIronSessionSsr(
               //   proveedor["TipoMoneda"]="Dolar";
             } else {
               ListaServiciosProductos.push({
-                IdServicioProducto: x["IdProductoHotel"] || null,
+                IdServicioProducto: x["IdProductoAgencias"] || null,
                 IdProveedor: x["IdProveedor"] || null,
                 TipoServicio: "Agencia" || null,
                 Nombre:

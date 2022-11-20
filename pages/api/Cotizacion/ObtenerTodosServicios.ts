@@ -81,7 +81,7 @@ const promiseHotel = (resultProveedores : any) => new Promise(async (resolve, re
                 console.log(`Proveedor eliminado - ${x.IdProveedor}`);
             } else {
                 const { 
-                    IdProductoHotel,
+                    IdProductoHoteles,
                     IdProveedor,
                     TipoPaxs,
                     tipoHabitacion,
@@ -93,7 +93,7 @@ const promiseHotel = (resultProveedores : any) => new Promise(async (resolve, re
                 } = x;
                 const { nombre, porcentajeTotal, TipoMoneda } = proveedor;
                 listaServiciosProductos.push({
-                    IdServicioProducto: IdProductoHotel || null,
+                    IdServicioProducto: IdProductoHoteles || null,
                     IdProveedor: IdProveedor || null,
                     TipoServicio: "Hotel" || null,
                     Nombre: `${TipoPaxs} - ${tipoHabitacion}` || null,
@@ -308,7 +308,7 @@ const promiseAgencia = (resultProveedores : any) => new Promise(async (resolve, 
                 console.log(`Proveedor eliminado - ${x.IdProveedor}`);
             } else {
                 const {
-                    IdProductoHotel,
+                    IdProductoHoteles,
                     IdProveedor,
                     codServicio,
                     TipoPaxs,
@@ -324,7 +324,7 @@ const promiseAgencia = (resultProveedores : any) => new Promise(async (resolve, 
                     TipoMoneda
                 } = proveedor;
                 listaServiciosProductos.push({
-                    IdServicioProducto: IdProductoHotel || null,
+                    IdServicioProducto: IdProductoHoteles || null,
                     IdProveedor: IdProveedor || null,
                     TipoServicio: "Agencia" || null,
                     Nombre: `${codServicio} - ${TipoPaxs} - ${servicio}` || null,

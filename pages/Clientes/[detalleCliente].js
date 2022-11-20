@@ -364,7 +364,7 @@ export default function detalleCliente({ Datos, DatosSeguimiento }) {
                   const index = oldData.tableData.id;
 
                   console.log(dataDelete[index]);
-                  console.log(dataDelete[index].IdProductoHotel);
+                  console.log(dataDelete[index].IdProductoHoteles);
 
                   fetch(APIpath + `/api/cliente/seguimiento`, {
                     method: "POST",

@@ -186,7 +186,7 @@ export default function AñadirEvaluacion({ DatosActividad, DatosCriterio, APIpa
                 const index = oldData.tableData.id;
 
                 // console.log(dataDelete[index])
-                // console.log(dataDelete[index].IdProductoHotel)
+                // console.log(dataDelete[index].IdProductoHoteles)
 
                 fetch(APIpath + `/api/proveedores/criterio`, {
                   method: "POST",
@@ -270,7 +270,7 @@ export default function AñadirEvaluacion({ DatosActividad, DatosCriterio, APIpa
                 const index = oldData.tableData.id;
 
                 // console.log(dataDelete[index])
-                // console.log(dataDelete[index].IdProductoHotel)
+                // console.log(dataDelete[index].IdProductoHoteles)
 
                 fetch(APIpath + `/api/proveedores/actividad`, {
                   method: "POST",

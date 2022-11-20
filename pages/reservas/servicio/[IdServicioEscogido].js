@@ -571,7 +571,7 @@ export const getServerSideProps = withIronSessionSsr(
       switch (ServicioEscogido["IdServicioProducto"].slice(0, 2)) {
         case "PA":
           coleccion_producto = "ProductoAgencias";
-          Id_coleccion_producto = "IdProductoAgencia";
+          Id_coleccion_producto = "IdProductoAgencias";
           break;
         case "PG":
           coleccion_producto = "ProductoGuias";
@@ -579,7 +579,7 @@ export const getServerSideProps = withIronSessionSsr(
           break;
         case "PH":
           coleccion_producto = "ProductoHoteles";
-          Id_coleccion_producto = "IdProductoHotel";
+          Id_coleccion_producto = "IdProductoHoteles";
           break;
         case "PO":
           coleccion_producto = "ProductoOtros";

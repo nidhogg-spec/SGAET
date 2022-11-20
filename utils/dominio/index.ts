@@ -7,14 +7,14 @@ export const tiposProveedoresServicios = [
   {
     prefijo: "PH",
     collectionName: "ProductoHoteles",
-    idKey: "IdProductoHotel",
+    idKey: "IdProductoHoteles",
     nombreGeneral: "Hotel",
     nombreTipo: "Hotel"
   },
   {
     prefijo: "PA",
     collectionName: "ProductoAgencias",
-    idKey: "IdProductoAgencia",
+    idKey: "IdProductoAgencias",
     nombreGeneral: "Agencia",
     nombreTipo: "Agencia"
   },
@@ -66,22 +66,22 @@ export const estadosReservaCotizacion = {
   0: {
     estado: "Cotizacion",
     numero: 0,
-    validNextStates: [1]
+    validNextStates: [1, 11]
   },
   1: {
     estado: "Reserva",
     numero: 1,
-    validNextStates: [2, 3, 4]
+    validNextStates: [2, 3, 4, 6, 12]
   },
   2: {
     estado: "Reserva / Proveedores confirmados",
     numero: 2,
-    validNextStates: [3, 4, 5]
+    validNextStates: [3, 4, 5, 6]
   },
   3: {
     estado: "Reserva / Ordenes de Servicio generadas",
     numero: 3,
-    validNextStates: [4, 5]
+    validNextStates: [4, 5, 6]
   },
   4: {
     estado: "Reserva / Proveedores pagados",
@@ -91,6 +91,11 @@ export const estadosReservaCotizacion = {
   5: {
     estado: "Reserva Concluida",
     numero: 5,
+    validNextStates: []
+  },
+  6: {
+    estado: "Reserva Cancelada",
+    numero: 6,
     validNextStates: []
   },
   11: {

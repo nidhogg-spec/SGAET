@@ -178,7 +178,7 @@ export interface productoAgenciaInterface extends productoInterface {
   codServicio: string;
   incluye: string;
   duracion: string;
-  IdProductoAgencia: string;
+  IdProductoAgencias: string;
 }
 export interface productoGuiasInterface extends productoInterface {
   TipoPaxs: string;
@@ -196,7 +196,7 @@ export interface productoHotelesInterface extends productoInterface {
   TipoPaxs: string;
   tipoHabitacion: string;
   descripcionHabitacion: string;
-  IdProductoHotel: string;
+  IdProductoHoteles: string;
 }
 export interface productoOtrosInterface extends productoInterface {
   TipoPaxs: string;
