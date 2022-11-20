@@ -141,7 +141,7 @@ const TablaProductoServicio = (
                     x.push({
                       //Segun esquema de columnas
                       // IdProductoServicio: rowData["NombreServicio"],
-                      IdProductoOriginal: rowData["IdProductoHotel"],
+                      IdProductoOriginal: rowData["IdProductoHoteles"],
                       NombreProducto: rowData["tipoHabitacion"],
                       DescripcionProducto: rowData["descripcionHabitacion"],
                       Precio: rowData["precioPubli"],
@@ -190,7 +190,7 @@ const TablaProductoServicio = (
                     x.push({
                       //Segun esquema de columnas
                       // IdProductoServicio: rowData["NombreServicio"],
-                      IdProductoOriginal: rowData["IdProductoAgencia"],
+                      IdProductoOriginal: rowData["IdProductoAgencias"],
                       NombreProducto: rowData["servicio"],
                       DescripcionProducto:
                         rowData["codServicio"] +

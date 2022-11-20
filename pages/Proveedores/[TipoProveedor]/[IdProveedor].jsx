@@ -22,10 +22,10 @@ export default function TipoProveedor(
   const [datosEditables, setDatosEditables] = useState(props.ServicioProducto);
   const [Proveedor, setProveedor] = useState(props.Proveedor);
   const [ProveedorContacto, setProveedorContacto] = useState(
-    Proveedor.Contacto ? Proveedor.Contacto : []
+    Proveedor.Contacto ?? []
   );
   const [ProveedorBanco, setProveedorBanco] = useState(
-    Proveedor.DatosBancarios ? Proveedor.DatosBancarios : []
+    Proveedor.DatosBancarios ?? []
   );
   let UltimoIngresado = {};
   const [ServicioProducto, setServicioProducto] = useState(
@@ -46,7 +46,7 @@ export default function TipoProveedor(
   switch (provDinamico) {
     case "hotel":
       Columnas = [
-        // { title: "ID Producto Hotel", field: "IdProductoHotel" },
+        // { title: "ID Producto Hotel", field: "IdProductoHoteles" },
         {
           title: "Tipo de Pasajero",
           field: "TipoPaxs",
@@ -592,7 +592,7 @@ export default function TipoProveedor(
                     tooltip: "Mas informacion de este Sevicio",
                     onClick: (event, rowData) => {
                       router.push(
-                        `/Proveedores/Itinerario/${rowData["IdProductoAgencia"]}`
+                        `/Proveedores/Itinerario/${rowData["IdProductoAgencias"]}`
                       );
                     }
                   },
@@ -638,10 +638,13 @@ export default function TipoProveedor(
                       newData[item.field] == undefined ||
                       newData[item.field] == null
                     ) {
-                      alert(item.title + " esta vacio");
-                      reject();
-                      SaveFlag = false;
-                      return;
+                      if (item.field == "camAdic") newData[item.field] = false;
+                      else {
+                        alert(item.title + " esta vacio");
+                        reject();
+                        SaveFlag = false;
+                        return;
+                      }
                     }
                   });
                   if (deepEqual(newData, UltimoIngresado)) {
@@ -705,7 +708,7 @@ export default function TipoProveedor(
 
                   switch (provDinamico) {
                     case "hotel":
-                      IdKey = "IdProductoHotel";
+                      IdKey = "IdProductoHoteles";
                       break;
                     case "restaurante":
                       IdKey = "IdProductoRestaurante";
@@ -723,7 +726,7 @@ export default function TipoProveedor(
                       IdKey = "IdProductoGuia";
                       break;
                     case "agencia":
-                      IdKey = "IdProductoAgencia";
+                      IdKey = "IdProductoAgencias";
                       break;
                     default:
                       IdKey = "IdProductoOtro";
@@ -756,7 +759,7 @@ export default function TipoProveedor(
                   let IdKey = "";
                   switch (provDinamico) {
                     case "hotel":
-                      IdKey = "IdProductoHotel";
+                      IdKey = "IdProductoHoteles";
                       break;
                     case "restaurante":
                       IdKey = "IdProductoRestaurante";
@@ -774,7 +777,7 @@ export default function TipoProveedor(
                       IdKey = "IdProductoGuia";
                       break;
                     case "agencia":
-                      IdKey = "IdProductoAgencia";
+                      IdKey = "IdProductoAgencias";
                       break;
                     default:
                       IdKey = "IdProductoOtro";

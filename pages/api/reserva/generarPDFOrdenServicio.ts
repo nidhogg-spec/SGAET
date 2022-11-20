@@ -5,7 +5,8 @@ import {
   productoInterface,
   proveedorInterface,
   reservaCotizacionInterface,
-  servicioEscogidoInterface
+  servicioEscogidoInterface,
+  servicioProductoOfReservaCotizacionInterface
 } from "@/utils/interfaces/db";
 import { NextApiRequest, NextApiResponse } from "next";
 import PdfPrinter from "pdfmake";
@@ -20,7 +21,7 @@ interface Obtener_datos_proveedores_reserva_result {
 interface Proveedores_por_reserva_result {
   IdProveedor: string;
   Proveedor: proveedorInterface;
-  serviciosEscogidos: servicioEscogidoInterface[];
+  serviciosEscogidos: servicioProductoOfReservaCotizacionInterface[];
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -41,7 +42,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
     switch (req.method) {
       case "GET":
-        let data = await Generar_PDF_Orden_Servicio(IdReserva as string,IdProveedor as string);
+        let data = await Generar_PDF_Orden_Servicio(
+          IdReserva as string,
+          IdProveedor as string
+        );
         res.setHeader("Content-Type", "application/pdf").send(data);
         break;
       default:
@@ -52,7 +56,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     resolve();
   });
 };
-const Generar_PDF_Orden_Servicio = async (IdReserva: string,IdProveedor:string ) => {
+const Generar_PDF_Orden_Servicio = async (
+  IdReserva: string,
+  IdProveedor: string
+) => {
   const info = await Obtener_all_data(IdReserva);
   let Lista_servicios = [
     [
@@ -61,26 +68,30 @@ const Generar_PDF_Orden_Servicio = async (IdReserva: string,IdProveedor:string )
       "Precio de Cotizacion Total",
       "Currency",
       "Fecha de Reserva"
-    ],
-  ]
+    ]
+  ];
 
-  info?.especificacionPorProveedor[info?.especificacionPorProveedor.findIndex(x=>x.IdProveedor==IdProveedor)].serviciosEscogidos.forEach((x,i)=>{
+  info?.especificacionPorProveedor[
+    info?.especificacionPorProveedor.findIndex(
+      (x) => x.IdProveedor == IdProveedor
+    )
+  ].serviciosEscogidos.forEach((x, i) => {
     Lista_servicios.push([
-      (i+1).toString(),
+      (i + 1).toString(),
       x.NombreServicio,
       x.PrecioCotiTotal.toString(),
       x.Currency,
       x.FechaReserva
-    ])
-  })
+    ]);
+  });
   //------------------------------------------------------------
   let fonts = {
     Roboto: {
-      normal: 'Helvetica',
-      bold: 'Helvetica-Bold',
-      italics: 'Helvetica-Oblique',
-      bolditalics: 'Helvetica-BoldOblique'
-    },
+      normal: "Helvetica",
+      bold: "Helvetica-Bold",
+      italics: "Helvetica-Oblique",
+      bolditalics: "Helvetica-BoldOblique"
+    }
   };
   let printer = new PdfPrinter(fonts);
   let docDefinition = {
@@ -115,9 +126,15 @@ const Generar_PDF_Orden_Servicio = async (IdReserva: string,IdProveedor:string )
           widths: [200, "*"],
           body: [
             [{ text: "Codigo de grupo", bold: true }, info?.reserva.CodGrupo],
-            [{ text: "Nombre de grupo", bold: true }, info?.reserva.NombreGrupo],
+            [
+              { text: "Nombre de grupo", bold: true },
+              info?.reserva.NombreGrupo
+            ],
             [{ text: "Fecha de inicio", bold: true }, info?.reserva.FechaIN],
-            [{ text: "Numero de pasajeros", bold: true }, info?.reserva.NumPaxTotal]
+            [
+              { text: "Numero de pasajeros", bold: true },
+              info?.reserva.NumPaxTotal
+            ]
           ]
         },
         layout: "noBorders",
@@ -171,14 +188,8 @@ const Generar_PDF_Orden_Servicio = async (IdReserva: string,IdProveedor:string )
           headerRows: 1,
           widths: [30, "*", "*", "*", "*"],
           body: [
-            [
-              "Nro.",
-              "Nombre de Pasajero",
-              "Vegeteariano",
-              "Alergias",
-            ],
-            ["1", "", "", ""],
-
+            ["Nro.", "Nombre de Pasajero", "Vegeteariano", "Alergias"],
+            ["1", "", "", ""]
           ]
         }
       }
@@ -238,7 +249,8 @@ const Obtener_all_data = async (
     }
   | undefined
 > => {
-  let DatosServEscogido: servicioEscogidoInterface[] | null = null;
+  let DatosServEscogido: servicioProductoOfReservaCotizacionInterface[] | null =
+    null;
   let data_result: Obtener_datos_proveedores_reserva_result[] = [];
   let especificacionPorProveedor: Proveedores_por_reserva_result[] = [];
   const connectedObject = await connectToDatabase();
@@ -250,22 +262,25 @@ const Obtener_all_data = async (
     IdReservaCotizacion: IdReserva
   });
   // -------------------------------------------------------------- Obtener todos los de ServicioEscogido de la reserva
-  collection = connectedObject.db.collection(
-    dbColeccionesFormato.ServicioEscogido.coleccion
-  );
-  let result01: servicioEscogidoInterface[] = await collection
-    .find({
-      IdReservaCotizacion: IdReserva
-    })
-    .toArray();
-  if (result01.length == 0) {
-    console.log("No se encontraron Servicios escogidos");
-    return;
-  }
-  DatosServEscogido = [...result01];
+  if (reserva.ServicioProducto) {
+    if (reserva.ServicioProducto.length == 0) {
+      DatosServEscogido = [
+        ...(await obtenerServiciosEscogidosDeTablaIndependiente(
+          connectedObject,
+          IdReserva
+        ))
+      ];
+    } else DatosServEscogido = [...reserva.ServicioProducto];
+  } else
+    DatosServEscogido = [
+      ...(await obtenerServiciosEscogidosDeTablaIndependiente(
+        connectedObject,
+        IdReserva
+      ))
+    ];
   await Promise.all(
     DatosServEscogido.map(
-      async (servicioEscogido: servicioEscogidoInterface) => {
+      async (servicioEscogido) => {
         // --------------------------------------------------- Obtener datos de Producto
         let tipoProveedor = tiposProveedoresServicios.find(
           (tipo) =>
@@ -347,3 +362,23 @@ const Obtener_all_data = async (
     reserva: reserva
   };
 };
+
+async function obtenerServiciosEscogidosDeTablaIndependiente(
+  connectedObject: any,
+  IdReserva: string
+) {
+  let collection = connectedObject.db.collection(
+    dbColeccionesFormato.ServicioEscogido.coleccion
+  );
+  let result01: servicioProductoOfReservaCotizacionInterface[] =
+    await collection
+      .find({
+        IdReservaCotizacion: IdReserva
+      })
+      .toArray();
+  if (result01.length == 0) {
+    console.log("No se encontraron Servicios escogidos");
+    return [];
+  }
+  return result01;
+}

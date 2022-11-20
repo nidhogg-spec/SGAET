@@ -356,9 +356,9 @@ export const getServerSideProps = withIronSessionSsr(
     //---------------------------------------------------------------------------------------------------------------------
 
     resetServerContext();
-    const IdProductoAgencia = context.params?.IdServicioAgencia;
+    const IdProductoAgencias = context.params?.IdServicioAgencia;
     let data_ProductoAgencia = await getOneData("ProductoAgencias", {
-      IdProductoAgencia: IdProductoAgencia
+      IdProductoAgencias: IdProductoAgencias
     });
     let itinerario = {};
     if (data_ProductoAgencia) {
@@ -388,7 +388,7 @@ export const getServerSideProps = withIronSessionSsr(
       }
       return {
         props: {
-          IdServicioAgencia: IdProductoAgencia,
+          IdServicioAgencia: IdProductoAgencias,
           itinerario: itinerario
         }
       };

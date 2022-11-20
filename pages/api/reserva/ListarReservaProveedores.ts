@@ -6,7 +6,8 @@ import {
   productoInterface,
   proveedorInterface,
   reservaCotizacionInterface,
-  servicioEscogidoInterface
+  servicioEscogidoInterface,
+  servicioProductoOfReservaCotizacionInterface
 } from "@/utils/interfaces/db";
 import { dbColeccionesFormato } from "@/utils/interfaces/db";
 import { exists } from "fs";
@@ -21,7 +22,7 @@ interface Obtener_datos_proveedores_reserva_result {
 interface Proveedores_por_reserva_result {
   IdProveedor: string;
   Proveedor: proveedorInterface;
-  serviciosEscogidos: servicioEscogidoInterface[];
+  serviciosEscogidos: servicioProductoOfReservaCotizacionInterface[];
 }
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -42,7 +43,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 const Obtener_datos_proveedores_reserva = async (IdReserva: string) => {
-  let DatosServEscogido: servicioEscogidoInterface[] | null = null;
+  let DatosServEscogido:
+    // | servicioEscogidoInterface[]
+    | servicioProductoOfReservaCotizacionInterface[]
+    | null = null;
   let data_result: Obtener_datos_proveedores_reserva_result[] = [];
   let especificacionPorProveedor: Proveedores_por_reserva_result[] = [];
   const connectedObject = await connectToDatabase();
@@ -50,24 +54,25 @@ const Obtener_datos_proveedores_reserva = async (IdReserva: string) => {
   let collection = connectedObject.db.collection(
     dbColeccionesFormato.ReservaCotizacion.coleccion
   );
-  let reserva:reservaCotizacionInterface = await collection.findOne({ IdReservaCotizacion: IdReserva });
+  let reserva: reservaCotizacionInterface = await collection.findOne({
+    IdReservaCotizacion: IdReserva
+  });
   // -------------------------------------------------------------- Obtener todos los de ServicioEscogido de la reserva
-  collection = connectedObject.db.collection(
-    dbColeccionesFormato.ServicioEscogido.coleccion
-  );
-  let result01: servicioEscogidoInterface[] = await collection
-    .find({
-      IdReservaCotizacion: IdReserva
-    })
-    .toArray();
-  if (result01.length == 0) {
-    console.log("No se encontraron Servicios escogidos");
-    return [];
-  }
-  DatosServEscogido = [...result01];
+  if (reserva.ServicioProducto) {
+    if (reserva.ServicioProducto.length == 0) {
+      DatosServEscogido = [
+        ...(await obtenerServiciosEscogidosDeTablaIndependiente(
+          connectedObject
+        ))
+      ];
+    } else DatosServEscogido = [...reserva.ServicioProducto];
+  } else
+    DatosServEscogido = [
+      ...(await obtenerServiciosEscogidosDeTablaIndependiente(connectedObject))
+    ];
   await Promise.all(
     DatosServEscogido.map(
-      async (servicioEscogido: servicioEscogidoInterface) => {
+      async (servicioEscogido) => {
         // --------------------------------------------------- Obtener datos de Producto
         let tipoProveedor = tiposProveedoresServicios.find(
           (tipo) =>
@@ -137,14 +142,31 @@ const Obtener_datos_proveedores_reserva = async (IdReserva: string) => {
           especificacionPorProveedor.push({
             IdProveedor: proveedor[0].IdProveedor,
             Proveedor: proveedor[0],
-            serviciosEscogidos: [servicioEscogido],
-            
+            serviciosEscogidos: [servicioEscogido]
           });
         }
         return;
       }
     )
   );
+
+  async function obtenerServiciosEscogidosDeTablaIndependiente(
+    connectedObject: any
+  ) {
+    collection = connectedObject.db.collection(
+      dbColeccionesFormato.ServicioEscogido.coleccion
+    );
+    let result01: servicioProductoOfReservaCotizacionInterface[] = await collection
+      .find({
+        IdReservaCotizacion: IdReserva
+      })
+      .toArray();
+    if (result01.length == 0) {
+      console.log("No se encontraron Servicios escogidos");
+      return [];
+    }
+    return result01;
+  }
 
   return {
     tablaProductos: data_result,

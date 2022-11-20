@@ -58,11 +58,11 @@ const determinarColeccionProducto = (prefijo : string) => {
     let [coleccionProducto, idColeccionProducto] = ["", ""];
     switch (prefijo) {
         case "PA":
-            return [coleccionProducto, idColeccionProducto] = ["ProductoAgencias", "IdProductoAgencia"];
+            return [coleccionProducto, idColeccionProducto] = ["ProductoAgencias", "IdProductoAgencias"];
         case "PG":
             return [coleccionProducto, idColeccionProducto] = ["ProductoGuias", "IdProductoGuia"];
         case "PH":
-            return [coleccionProducto, idColeccionProducto] = ["ProductoHoteles", "IdProductoHotel"];
+            return [coleccionProducto, idColeccionProducto] = ["ProductoHoteles", "IdProductoHoteles"];
         case "PO":
             return [coleccionProducto, idColeccionProducto] = ["ProductoOtros", "IdProductoOtro"];
         case "PR":

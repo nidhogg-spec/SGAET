@@ -73,6 +73,7 @@ const Index = ({}) => {
           (rowData as reservaCotizacionInterface).IdReservaCotizacion
       )
       .then((data) => {
+        debugger;
         console.log(data.data);
 
         setListarReservaProveedores_API(data.data as api_response);

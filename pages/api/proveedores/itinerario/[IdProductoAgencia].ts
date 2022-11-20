@@ -18,9 +18,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 async function get(req: NextApiRequest, res: NextApiResponse) {
     // const idProvAgente = req.query["idProvAgente"];
-    const IdProductoAgencia = req.query["IdProductoAgencia"];
+    const IdProductoAgencias = req.query["IdProductoAgencias"];
     let data_ProductoAgencia = await connectToMongoAtlas().then(async (anyDb) => { 
-        return await anyDb?.collection("ProductoAgencias").findOne({"IdProductoAgencia":IdProductoAgencia})
+        return await anyDb?.collection("ProductoAgencias").findOne({"IdProductoAgencias":IdProductoAgencias})
     })
     if (data_ProductoAgencia) {        
         if(data_ProductoAgencia.itinerario){
@@ -34,14 +34,14 @@ async function get(req: NextApiRequest, res: NextApiResponse) {
             }});
         }        
     }else{
-        res.status(400).json({"error": "No existe el IdProductoAgencia"});
+        res.status(400).json({"error": "No existe el IdProductoAgencias"});
     }
 }
 async function put(req: NextApiRequest, res: NextApiResponse) {
-    const IdProductoAgencia = req.query["IdProductoAgencia"];
+    const IdProductoAgencias = req.query["IdProductoAgencias"];
     const itinerario_ProductoAgencia = req.body["itinerario"];
     let data_ProductoAgencia = await connectToMongoAtlas().then(async (anyDb) => { 
-        return await anyDb?.collection("ProductoAgencias").updateOne({"IdProductoAgencia":IdProductoAgencia},{$set:{
+        return await anyDb?.collection("ProductoAgencias").updateOne({"IdProductoAgencias":IdProductoAgencias},{$set:{
             "itinerario":itinerario_ProductoAgencia
         }})
     })
