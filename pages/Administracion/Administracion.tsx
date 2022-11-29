@@ -6,7 +6,7 @@ import globalStyles from "@/globalStyles/modules/global.module.css";
 import styles from "@/globalStyles/Proveedor.module.css";
 import botones from "@/globalStyles/modules/boton.module.css";
 import { resetServerContext } from "react-beautiful-dnd";
-import React from "react";
+import React, { useEffect } from "react";
 import { StayCurrentLandscapeSharp } from "@mui/icons-material";
 import axios from "axios";
 
@@ -16,49 +16,6 @@ import { TipoAccion, userInterface } from "@/utils/interfaces/db";
 import { generarLog } from "@/utils/functions/generarLog";
 
 function Administracion({ usersData }: { usersData: any }) {
-  const columnas = [
-    {
-      title: "ID",
-      field: "IdUser",
-      hidden: true
-    },
-    {
-      title: "Nombre",
-      field: "Nombre"
-    },
-    {
-      title: "Apellido",
-      field: "Apellido"
-    },
-    {
-      title: "Email",
-      field: "Email"
-    },
-    {
-      title: "Password",
-      field: "Password",
-      hidden: true
-    },
-    {
-      title: "Tipo de Usuario",
-      field: "TipoUsuario",
-      lookup: {
-        Administrador: "Administrador",
-        Ventas: "Ventas",
-        Marketing: "Marketing",
-        Operaciones: "Operaciones"
-      }
-    },
-    {
-      title: "Estado",
-      field: "Estado",
-      lookup: {
-        Activo: 1,
-        Inactivo: 0
-      }
-    }
-  ];
-
   const [display, setDisplay] = React.useState<boolean>(false);
   const [displayLeer, setDisplayLeer] = React.useState<boolean>(false);
   const [modelData, setModelData] = React.useState({});
@@ -66,6 +23,17 @@ function Administracion({ usersData }: { usersData: any }) {
 
   const [datosEditables, setDatosEditables] = React.useState(usersData);
   const [editandoUsuario, setEditandoUsuario] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    new Promise<void>(async (res, rej) => {
+      const dataUsuarios = await axios.get(`/api/user/users`);
+      if (dataUsuarios.status != 200) {
+        rej();
+      }
+      setDatosEditables(dataUsuarios.data.data);
+      res();
+    });
+  }, []);
 
   const desplegarDisplayAñadirUsuario = () => {
     setDisplay(true);
@@ -179,19 +147,52 @@ export const getServerSideProps = withIronSessionSsr(
       };
     }
 
-    const headers = req.headers;
-    const dataUsuarios = await axios.get(
-      `${process.env.API_DOMAIN}/api/user/users`,
-      {
-        headers
-      }
-    );
-
     return {
-      props: {
-        usersData: dataUsuarios.data.data
-      }
+      props: {}
     };
   },
   ironOptions
 );
+
+const columnas = [
+  {
+    title: "ID",
+    field: "IdUser",
+    hidden: true
+  },
+  {
+    title: "Nombre",
+    field: "Nombre"
+  },
+  {
+    title: "Apellido",
+    field: "Apellido"
+  },
+  {
+    title: "Email",
+    field: "Email"
+  },
+  {
+    title: "Password",
+    field: "Password",
+    hidden: true
+  },
+  {
+    title: "Tipo de Usuario",
+    field: "TipoUsuario",
+    lookup: {
+      Administrador: "Administrador",
+      Ventas: "Ventas",
+      Marketing: "Marketing",
+      Operaciones: "Operaciones"
+    }
+  },
+  {
+    title: "Estado",
+    field: "Estado",
+    lookup: {
+      Activo: 1,
+      Inactivo: 0
+    }
+  }
+];

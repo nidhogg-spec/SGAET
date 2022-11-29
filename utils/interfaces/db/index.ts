@@ -432,7 +432,10 @@ export interface ingresoInterface extends mongoBaseCollection {
   TotalNeto: number;
   Comision: number;
   /* IdReservaCotizacion: string; */
-  ListaRelacionesId: any;
+  ListaRelacionesId: {
+    idReservaCotizacion: string;
+    idServicios: string[];
+  };
   Adelanto: number;
   MetodoPago: string;
   IdIngreso: string;
@@ -445,7 +448,11 @@ export interface egresoInterface extends mongoBaseCollection {
   TotalNeto: number;
   Comision: number;
   /* IdReservaCotizacion: string; */
-  ListaRelacionesId: any;
+  ListaRelacionesId: {
+    idReservaCotizacion: string;
+    idProveedor: string;
+    idServicios: string[];
+  };
   Adelanto: number;
   MetodoPago: string;
   IdEgreso: string;

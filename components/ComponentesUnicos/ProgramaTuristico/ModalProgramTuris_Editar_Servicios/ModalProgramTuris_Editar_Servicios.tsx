@@ -3,6 +3,7 @@ import { Table, Dialog, DialogContent } from "@mui/material";
 import MaterialTable from "material-table";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import _ from "lodash";
 
 // Estilos
 import globalStyles from "@/globalStyles/modules/global.module.css";
@@ -86,26 +87,36 @@ export default function ModalProgramTuris_Editar_Servicios({
   const [Loading, setLoading] = useState(false);
   const [ServicioProducto, setServicioProducto] = useState<
     ServicioProducto_Interface[]
-  >(ListaServiciosEscojidos);
+  >([]);
+  const [InitServicioProducto, setInitServicioProducto] = useState<
+    ServicioProducto_Interface[]
+  >([]);
   const [Controlador_DevolverDatos, setControlador_DevolverDatos] =
     useState(false);
+
+  useEffect(() => {
+    setInitServicioProducto(_.cloneDeep(ListaServiciosEscojidos));
+    setServicioProducto(_.cloneDeep(ListaServiciosEscojidos));
+  }, [ListaServiciosEscojidos]);
 
   const handleClose = () => {
     setOpen(false);
   };
   const onSubmit = (data: any) => {
-    const temp_ServicioProducto = [...ServicioProducto];
+    const temp_ServicioProducto = _.cloneDeep(ServicioProducto);
     setServicioProducto([]);
     let edicion_prograTuristico = {
-      ServicioProducto: temp_ServicioProducto
+      ServicioProducto: _.cloneDeep(temp_ServicioProducto)
     };
     const init_programaTuristico = {
-      ServicioProducto: [...ListaServiciosEscojidos]
+      ServicioProducto: _.cloneDeep(InitServicioProducto)
     };
+
     if (
       JSON.stringify(edicion_prograTuristico) ===
       JSON.stringify(init_programaTuristico)
     ) {
+      debugger;
       alert("No se han realizado cambios");
       router.reload();
       return;
@@ -172,7 +183,7 @@ export default function ModalProgramTuris_Editar_Servicios({
                 CotiServicio={ServicioProducto}
                 setCotiServicio={setServicioProducto}
                 // KeyDato={"ServicioProducto"}
-                ListaServiciosProductos={ListaServiciosProductos}
+                ListaServiciosProductos={ServicioProducto}
                 Reiniciar={false}
               />
             </div>
