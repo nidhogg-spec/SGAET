@@ -333,16 +333,16 @@ const ReservaCotizacion = ({ APIPatch }: { APIPatch: string }) => {
     if (estadoVal > estado) {
       if (confirm("¿Esta seguro de cambiar de estado?")) {
         setEstado(estadoVal);
-        if (estadoVal == 2) {
-          setModalOpen(true);
-        } else {
-          await axios.post(`/api/reserva/DataReserva/CRUDReservaCotizacion`, {
-            data: { Estado: estadoVal },
-            idProducto: IdReservaCotizacion,
-            accion: "update"
-          });
-          router.reload();
-        }
+        // if (estadoVal == 2) {
+        //   setModalOpen(true);
+        // } else {
+        await axios.post(`/api/reserva/DataReserva/CRUDReservaCotizacion`, {
+          data: { Estado: estadoVal },
+          idProducto: IdReservaCotizacion,
+          accion: "update"
+        });
+        router.reload();
+        // }
       }
     }
     setLoading(false);
