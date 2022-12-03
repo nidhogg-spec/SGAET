@@ -116,7 +116,6 @@ export default function ModalProgramTuris_Editar_Servicios({
       JSON.stringify(edicion_prograTuristico) ===
       JSON.stringify(init_programaTuristico)
     ) {
-      debugger;
       alert("No se han realizado cambios");
       router.reload();
       return;

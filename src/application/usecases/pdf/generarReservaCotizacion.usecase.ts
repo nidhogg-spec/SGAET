@@ -17,7 +17,7 @@ export class PdfReservaCotizacionUsecase {
 
   async generate(
     IdReservaCotizacion: string
-  ): Promise<[pdfBase64: string | null, err: Error | null]> {
+  ): Promise<[pdfBase64: Buffer | null, err: Error | null]> {
     const [reservaCotizacion, errorDB] = await this.encontrarReservaCotizacion(
       IdReservaCotizacion
     );
@@ -27,7 +27,7 @@ export class PdfReservaCotizacionUsecase {
     const [pdfBinary, err] = await this.createPdfBinary(docDefinition);
     if (err)
       return [
-        "",
+        null,
         new Error(
           "error generating pdf of reservacotizacion " + IdReservaCotizacion
         )
@@ -54,7 +54,7 @@ export class PdfReservaCotizacionUsecase {
 
   async createPdfBinary(
     pdfDoc: any
-  ): Promise<[pdfBase64: string, err: Error | null]> {
+  ): Promise<[pdfBase64: Buffer, err: Error | null]> {
     const fontDescriptors = {
       Times: {
         normal: "Times-Roman",
@@ -65,7 +65,7 @@ export class PdfReservaCotizacionUsecase {
     };
     const printer: pdfMake = new pdfMake(fontDescriptors);
     const doc: PDFKit.PDFDocument = printer.createPdfKitDocument(pdfDoc);
-    const chunks: Uint8Array[] = [];
+    const chunks: any[] = [];
     let result: Buffer;
     result = await new Promise((res, rej) => {
       doc.on("data", (chunk) => {
@@ -78,7 +78,7 @@ export class PdfReservaCotizacionUsecase {
       doc.end();
     });
 
-    return [result.toString("base64"), null];
+    return [result, null];
   }
 
   definicionDoc(
@@ -89,7 +89,7 @@ export class PdfReservaCotizacionUsecase {
       [
         "Nro.",
         "Nombre de Servicio",
-        "Precio de Cotizacion Total",
+        "Precio",
         "Currency",
         "Fecha de Reserva"
       ]
@@ -233,7 +233,7 @@ export class PdfReservaCotizacionUsecase {
             dontBreakRows: true,
             keepWithHeaderRows: 1,
             headerRows: 1,
-            widths: [30, 120, 120, 120, 120],
+            widths: [30, 120, 80, 60, 100],
             body: data_lista_servicios
           },
           margin: [0, 0, 0, 15]

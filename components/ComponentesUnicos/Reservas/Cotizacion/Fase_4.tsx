@@ -109,7 +109,7 @@ export default function Fase4({
         data,
         Cotizacion
       );
-      const res = await axios.post(`/api/v2/reservaCotizacion`, {
+      const res = await axios.post('/api/v2/reservaCotizacion', {
         reservaCotizacion: reservaCotizacion
       });
       generarLog(TipoAccion.CREATE, "nueva cotizacion creada");

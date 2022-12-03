@@ -223,7 +223,6 @@ export class PdfBibliaUsecase {
         x.Otro ?? ""
       ]);
     });
-    debugger;
 
     return {
       content: [

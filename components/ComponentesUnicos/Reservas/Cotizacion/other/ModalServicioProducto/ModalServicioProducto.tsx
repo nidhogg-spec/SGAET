@@ -102,7 +102,6 @@ export default function ModalServicioProducto({
             <form
               action=""
               onSubmit={handleSubmit((data) => {
-                debugger;
                 let tempServicioProductoIndex =
                   Cotizacion.ServicioProducto.findIndex(
                     (servi) =>

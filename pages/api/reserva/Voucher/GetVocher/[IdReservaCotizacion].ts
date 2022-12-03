@@ -15,5 +15,5 @@ export default async (req: NextApiRequest, res: NextApiResponse<any>) => {
     res
       .status(400)
       .send("there is and error generating pdf - " + JSON.stringify(err));
-  res.send(pdf);
+  res.status(200).setHeader("Content-Type", "application/pdf").send(pdf);
 };

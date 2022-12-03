@@ -316,13 +316,20 @@ const ReservaCotizacion = ({ APIPatch }: { APIPatch: string }) => {
 
   const accionVoucher = async () => {
     setLoading(true);
-    const pdf = await axios.get(
-      `${APIPatch}/api/reserva/Voucher/GetVocher/${IdReservaCotizacion}`
-    );
-    const { data } = pdf;
+    const pdf = await axios({
+      url: `/api/reserva/Voucher/GetVocher/${IdReservaCotizacion}`,
+      method: "GET",
+      responseType: "blob"
+    });
+    if (pdf.status === 400) {
+      alert("Error al generar el PDF");
+      return;
+    }
+    const url = window.URL.createObjectURL(new Blob([pdf.data]));
     const link = document.createElement("a");
-    link.download = "file.pdf";
-    link.href = "data:application/octet-stream;base64," + data.data;
+    link.href = url;
+    link.setAttribute("download", `voucher-reserva-${IdReservaCotizacion}.pdf`);
+    document.body.appendChild(link);
     link.click();
     setLoading(false);
   };
@@ -383,7 +390,6 @@ const ReservaCotizacion = ({ APIPatch }: { APIPatch: string }) => {
             className={`${botones.button_border} ${botones.button} ${botones.GenerickButton}`}
             onClick={accionVoucher}
           >
-            {" "}
             Descargar Voucher
           </button>
         </div>

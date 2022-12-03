@@ -357,6 +357,11 @@ export default function ModalProgramTuris_Nuevo({
                   onRowAdd: (newData) =>
                     new Promise<void>((resolve, reject) => {
                       setTimeout(() => {
+                        if (!newData.Actividad || newData.Actividad == "") {
+                          alert("El itinerario necesita una actividad");
+                          reject();
+                          return;
+                        }
                         //@ts-ignore
                         setItinerario([...itinerario, newData]);
                         resolve();

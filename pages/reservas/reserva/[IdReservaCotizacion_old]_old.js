@@ -70,7 +70,6 @@ const ReservaCotizacion = ({ APIPatch, APIpath }) => {
         )
           .then((r) => r.json())
           .then((data) => {
-            debugger;
             setReservaCotizacion(data.reservaCotizacion);
             setServiciosEscogidos(data.reservaCotizacion?.ServicioProducto ?? [])
             setClienteCotizacion(data.clienteProspecto);
